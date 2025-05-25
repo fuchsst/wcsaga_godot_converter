@@ -217,3 +217,5 @@ logs/
 config.ini
 secrets.json
 .secrets
+
+CLAUDE.local.md
