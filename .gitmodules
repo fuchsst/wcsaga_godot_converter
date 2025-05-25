@@ -1,0 +1,6 @@
+[submodule "source"]
+	path = source
+	url = git@github.com:niffiwan/wcsaga.git
+[submodule "target"]
+	path = target
+	url = git@github.com:fuchsst/wcsaga_godot.git
