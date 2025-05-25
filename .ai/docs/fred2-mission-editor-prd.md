@@ -38,11 +38,12 @@ Create a modern, cross-platform mission editor for WCS-Godot that preserves all 
 
 ### Target Product Vision
 **WCS-Godot Mission Editor**:
-- Godot engine plugin/tool providing mission editing capabilities
+- Godot engine plugin/tool providing mission editing capabilities (`addons/gfred2/`)
 - Native integration with Godot's 3D editor and scene system
+- Works with Godot Resources created by Python migration tools
 - Modern, responsive UI using Godot's built-in editor components
 - Real-time mission validation and testing within Godot environment
-- Seamless asset pipeline integration
+- Seamless integration with migration pipeline for legacy data
 
 ## Market Analysis & User Research
 
@@ -88,7 +89,8 @@ Create a modern, cross-platform mission editor for WCS-Godot that preserves all 
 ### Functional Requirements
 
 #### FR-001: Mission File Management
-- **Load Legacy Files**: Import existing .fs2 mission files without data loss
+- **Migration Integration**: Work with Godot Resources created by Python migration tools
+- **Load Legacy Files**: Import existing .fs2 mission files via migration tools
 - **Save Compatibility**: Export missions to .fs2 format for WCS-Godot runtime
 - **Godot Integration**: Save missions as .tscn scenes for Godot-native workflow
 - **Version Control**: Support for diff-friendly file formats and version tracking
@@ -234,7 +236,11 @@ func get_available_operators(category: String) -> Array[SexpOperator]
 - Plugin system for editor integration
 
 **External Dependencies**:
-- WCS asset pipeline (from our future EPIC-003)
+- **Python Migration Tools**: Convert WCS data formats to Godot Resources
+  - POF model converter (Python + FFmpeg for animations)
+  - Mission file parser (.fs2 → Godot Resource)
+  - Save game migrator (.PLR/.CSG → Godot Resource)
+  - Asset pipeline with FFmpeg integration
 - Configuration management (completed in EPIC-001)
 - File system utilities (standard Godot)
 

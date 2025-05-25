@@ -41,6 +41,8 @@
 - S-expression based mission scripting language
 - Custom audio engine with 3D positioning
 - Windows-specific input and file system APIs
+- Binary data formats (.POF models, .PLR saves, .CSG campaigns)
+- Proprietary file formats requiring migration tools
 
 **Performance Characteristics**: 
 - Frame rate impact: 60+ FPS for large fleet battles (30+ ships)
@@ -149,6 +151,13 @@
 
 ## High-Level System Breakdown
 
+### **Data Migration Foundation** (Phase 0 - 2-3 weeks)
+0. **Migration Tools**: Python-based tools for converting WCS data formats to Godot Resources
+   - **POF Model Converter**: Convert .POF models to Godot .glb/.tscn format
+   - **Save Game Migrator**: Convert .PLR/.CSG saves to Godot Resource format
+   - **Asset Pipeline**: FFmpeg integration for audio/video conversion
+   - **Mission File Converter**: Transform .fs2 missions to Godot scenes
+
 ### **Core Foundation Systems** (Phase 1 - 3-4 weeks)
 1. **Object Management**: Node-based entity system replacing C++ object hierarchy
 2. **Game Loop**: State machine and frame management using Godot's scene system
@@ -164,7 +173,7 @@
 ### **Content Systems** (Phase 3 - 3-4 weeks)
 9. **Mission System**: Mission loading, objectives, and campaign progression
 10. **SEXP Scripting**: Mission scripting language adapted to GDScript
-11. **Asset Pipeline**: Model, texture, and audio asset conversion workflows
+11. **FRED2 Mission Editor**: Godot plugin for mission editing using migrated data
 
 ### **Presentation Systems** (Phase 4 - 3-4 weeks)
 12. **Graphics System**: 3D rendering, effects, and post-processing

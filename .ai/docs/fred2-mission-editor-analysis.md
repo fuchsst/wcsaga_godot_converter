@@ -12,6 +12,7 @@ FRED2 (FreeSpace Editor 2) is a sophisticated mission editor for the Wing Comman
 
 **Primary Implementation**: `source/code/fred2/` (Windows MFC version)
 **Cross-Platform Attempt**: `source/code/wxfred2/` (Incomplete wxWidgets version)
+**Target Implementation**: `addons/gfred2/` (Godot plugin working with migrated data)
 
 **Main Application Structure**:
 - **CFREDApp** (`fred.cpp/h`): Main application class with Windows-specific initialization
@@ -281,34 +282,49 @@ The `source/code/wxfred2/` directory contains a **minimal, incomplete** cross-pl
 
 ### Proposed Godot Structure
 ```
-MissionEditor/
-├── core/
-│   ├── MissionData.gd          # Core mission data structure
-│   ├── ParseObject.gd          # Individual object representation
-│   ├── SexpSystem.gd           # S-expression evaluation engine
-│   └── FileIO.gd               # Mission file parser/writer
-├── ui/
-│   ├── MainEditor.tscn/gd      # Primary editor interface
-│   ├── ObjectInspector.gd      # Property editing panels
-│   ├── SexpEditor.gd           # Visual scripting interface
-│   └── Viewport3D.gd           # 3D manipulation viewport
-├── tools/
-│   ├── Validators.gd           # Mission validation tools
-│   ├── AssetManager.gd         # Asset integration system
-│   └── ExportTools.gd          # Export to runtime format
-└── data/
-    ├── ship_classes.tres       # Ship class definitions
-    ├── weapon_types.tres       # Weapon configurations
-    └── sexp_operators.tres     # SEXP operator definitions
+migration_tools/                # Python-based data conversion tools
+├── pof_converter.py            # POF model → Godot .glb/.tscn
+├── mission_parser.py           # .fs2 → Godot Resources
+├── save_migrator.py            # .PLR/.CSG → Godot Resources  
+├── asset_pipeline.py           # FFmpeg audio/video conversion
+└── godot_integration.py        # Godot import pipeline
+
+addons/gfred2/                  # Godot mission editor plugin
+├── data/                       # Resource definitions
+│   ├── MissionData.gd          # Core mission data Resource
+│   ├── MissionObjectData.gd    # Individual object Resource
+│   └── SexpData.gd             # S-expression data Resource
+├── object_management/          # Mission object lifecycle
+│   ├── MissionObjectManager.gd # Central coordinator
+│   ├── ObjectFactory.gd        # Object creation/templates
+│   └── ObjectValidator.gd      # Property validation
+├── ui/                         # User interface components
+│   ├── Fred2MainUI.gd          # Primary editor interface
+│   ├── ObjectPropertyEditor.gd # Property editing panels
+│   ├── ObjectHierarchy.gd      # Object tree view
+│   └── SexpEditor.gd           # Visual scripting interface
+├── viewport/                   # 3D editing tools
+│   ├── MissionViewport3D.gd    # 3D manipulation viewport
+│   ├── MissionObjectNode3D.gd  # 3D object representation
+│   └── gizmos/                 # Transform gizmos
+└── validation/                 # Mission validation
+    ├── MissionValidator.gd     # Comprehensive validation
+    └── AssetValidator.gd       # Asset reference checking
 ```
 
 ### Key Conversion Challenges
 
-1. **SEXP System Complexity**: 1000+ operators with complex interdependencies
-2. **3D Manipulation**: Camera controls, object selection, gizmo interactions
-3. **Real-time Validation**: Performance considerations for large missions
-4. **Asset Integration**: Seamless workflow with Godot's asset pipeline
-5. **File Format Compatibility**: Maintaining .fs2 file format compatibility
+1. **Migration Tools Development**: Python toolchain for data conversion
+   - POF model parsing and geometry conversion
+   - Binary save file (.PLR/.CSG) parsing  
+   - FFmpeg integration for multimedia assets
+   - Godot Resource generation and validation
+
+2. **SEXP System Complexity**: 1000+ operators with complex interdependencies
+3. **3D Manipulation**: Camera controls, object selection, gizmo interactions
+4. **Real-time Validation**: Performance considerations for large missions
+5. **Asset Integration**: Seamless workflow with migrated Godot Resources
+6. **File Format Compatibility**: Maintaining .fs2 file format round-trip support
 
 ## Conclusion
 

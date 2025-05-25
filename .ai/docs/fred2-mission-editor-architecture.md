@@ -28,31 +28,79 @@
 
 ```
 WCS Mission Editor Plugin
-├── addon/                          # Godot plugin structure
+├── addons/gfred2/                   # Godot plugin structure (mission editor)
 │   ├── plugin.cfg                  # Plugin configuration
 │   ├── plugin.gd                   # Main plugin entry point
-│   └── mission_editor/              # Core editor implementation
-│       ├── core/                    # Core data and logic systems
-│       ├── ui/                      # User interface components
-│       ├── tools/                   # Editing tools and utilities
-│       ├── import_export/           # File format handlers
-│       └── validation/              # Validation and testing
+│   ├── data/                       # Resource definitions for migrated data
+│   ├── object_management/          # Mission object lifecycle management
+│   ├── ui/                         # User interface components
+│   ├── viewport/                   # 3D editing tools and gizmos
+│   └── validation/                 # Validation and testing
 │
-├── autoload/                        # Global systems
-│   ├── MissionEditorManager.gd      # Central coordinator
-│   └── SexpRegistry.gd             # SEXP operator registry
+├── migration_tools/                # Python-based data conversion (separate repo/tool)
+│   ├── pof_converter.py           # POF → Godot model conversion
+│   ├── mission_converter.py       # .fs2 → Godot Resource conversion
+│   ├── save_migrator.py           # .PLR/.CSG → Godot Resource
+│   ├── asset_pipeline.py          # Audio/video conversion with FFmpeg
+│   └── godot_integration.py       # Integration with Godot import system
 │
-└── resources/                       # Resource definitions
-    ├── mission_data/               # Mission data structures
-    ├── sexp_nodes/                 # SEXP node definitions
-    └── editor_state/               # Editor configuration
+├── scripts/                        # Main game systems (separate from editor)
+│   ├── globals/                    # Game autoloads
+│   ├── core_systems/              # Physics, AI, weapons, etc.
+│   └── ship/                       # Ship mechanics
+│
+└── resources/                      # Godot Resources created by migration tools
+    ├── missions/                   # Converted mission data
+    ├── ships/                      # Ship data and models
+    ├── weapons/                    # Weapon definitions
+    └── saves/                      # Player save data
 ```
 
 ## Core Architecture Components
 
-### 1. Mission Data Model (Resource-Based)
+### 1. Migration Tools Architecture (Python-Based)
 
-**Philosophy**: Use Godot's resource system for type-safe, serializable mission data that integrates seamlessly with the editor.
+**Philosophy**: Separate data conversion layer using Python tools with FFmpeg integration for comprehensive WCS data migration to Godot Resources.
+
+```python
+# Core migration tool architecture
+class WCSMigrator:
+    """Central coordinator for WCS data migration"""
+    
+    def __init__(self):
+        self.pof_converter = POFConverter()
+        self.mission_parser = MissionParser()
+        self.save_migrator = SaveMigrator()
+        self.asset_pipeline = AssetPipeline()
+    
+    def migrate_mission(self, fs2_path: str) -> str:
+        """Convert .fs2 mission to Godot Resource"""
+        mission_data = self.mission_parser.parse_fs2(fs2_path)
+        return self.export_godot_resource(mission_data)
+    
+    def migrate_model(self, pof_path: str) -> str:
+        """Convert .POF model to Godot .glb/.tscn"""
+        return self.pof_converter.convert_to_godot(pof_path)
+
+# Asset pipeline with FFmpeg integration
+class AssetPipeline:
+    """Handles audio/video conversion using FFmpeg"""
+    
+    def convert_audio(self, wav_path: str) -> str:
+        """Convert WCS audio to OGG for Godot"""
+        subprocess.run([
+            'ffmpeg', '-i', wav_path,
+            '-codec:a', 'libvorbis', output_path
+        ])
+    
+    def convert_video(self, ani_path: str) -> str:
+        """Convert ANI files to WebM for Godot"""
+        # FFmpeg conversion logic
+```
+
+### 2. Mission Data Model (Resource-Based)
+
+**Philosophy**: Use Godot's resource system for type-safe, serializable mission data that integrates seamlessly with the editor and works with migrated data.
 
 ```gdscript
 # Core mission resource - replaces C++ mission struct
