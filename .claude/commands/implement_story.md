@@ -57,6 +57,11 @@ Follow Dev's methodical approach:
    - Follow story tasks in order
    - Document implementation decisions and deviations from original
 
+6. **Final check against C++ source code**
+   - Compare the Godot implementation in the target forlder to the equivalent C++ code in the source folder
+   - Give feedback on the current feature coverage in Godot
+   
+
 ### 4. GDScript Coding Standards (NON-NEGOTIABLE)
 - **Static Typing Always**: Every variable, parameter, and return type must be explicitly typed
 - **Class Names**: Always use `class_name` declarations for reusable classes

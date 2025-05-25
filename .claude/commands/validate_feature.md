@@ -77,7 +77,19 @@ Follow QA's comprehensive testing approach:
 2. **Architecture Review**: Verify adherence to approved design patterns
 3. **Security Review**: Check for potential security or stability issues
 4. **Maintainability Review**: Assess code clarity and documentation
-5. **Test Coverage Review**: Ensure adequate unit test coverage
+5. **Test Coverage Review**: Ensure adequate unit test coverage using gdUnit4
+
+#### Automated Testing Process (Optional - if gdUnit4 tests exist)
+1. **gdUnit4 Test Execution**: Run automated test suite if available
+   ```bash
+   # Execute gdUnit4 tests via command line (if implemented)
+   cd target/
+   godot --headless --script addons/gdUnit4/bin/GdUnitCmdTool.gd --verbose --coverage --report-html --report-junit
+   ```
+2. **Test Result Analysis**: Review generated test reports
+3. **Coverage Analysis**: Verify test coverage meets quality standards (>90%)
+4. **Performance Benchmarks**: Execute performance tests if available
+5. **Regression Testing**: Validate no existing functionality is broken
 
 ### 5. Quality Gates
 
@@ -89,7 +101,8 @@ Follow QA's comprehensive testing approach:
 
 #### Implementation Quality Gate
 - [ ] Code follows all GDScript standards
-- [ ] Unit tests written and passing
+- [ ] Unit tests written and passing (using gdUnit4 framework)
+- [ ] Test coverage >90% for core functionality
 - [ ] Performance benchmarks met
 - [ ] Integration points tested and working
 - [ ] Documentation complete and accurate
@@ -173,7 +186,13 @@ Generate comprehensive validation report:
 ## Technical Quality Review
 - **Code Standards**: [Compliance assessment]
 - **Architecture Adherence**: [Design pattern validation]
-- **Test Coverage**: [Coverage metrics and quality]
+- **Test Coverage**: [gdUnit4 coverage metrics and quality assessment]
+
+## Automated Testing Results (if gdUnit4 tests available)
+- **Test Execution**: [Results of automated test suite]
+- **Coverage Analysis**: [Test coverage percentage and areas covered]
+- **Performance Benchmarks**: [Automated performance test results]
+- **Test Report Location**: [Path to generated HTML/JUnit reports]
 
 ## Performance Validation
 - **Frame Rate**: [Target vs. actual performance]

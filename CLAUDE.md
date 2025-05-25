@@ -107,7 +107,7 @@ func take_damage(damage: float) -> void:
 ### Project Setup
 ```bash
 # Run Godot project
-Godot_v4.4.1-stable_win64 --path target/
+Godot_v4.4.1-stable_win64.exe --path target/
 
 # Run specific scene
 Godot_v4.4.1-stable_win64 --path target/ --main-scene scenes/main_menu.tscn
@@ -122,7 +122,7 @@ Godot_v4.4.1-stable_win64 --path target/ --export-release "Windows Desktop" buil
 Godot_v4.4.1-stable_win64 --path target/ --headless --script scripts/run_tests.gd
 
 # Check project for errors
-Godot_v4.4.1-stable_win64 --path target/ --check-only
+Godot_v4.4.1-stable_win64 --path target/ --check-only --headless --script-editor=false --quit 
 ```
 
 ### BMAD Workflow Commands
