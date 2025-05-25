@@ -25,8 +25,7 @@ wcsaga_godot_converter/
 │   ├── checklists/        # Quality gates
 │   └── data/              # Knowledge base
 ├── .claude/               # Claude-specific configurations
-│   ├── commands/          # Custom slash commands
-│   └── rules/             # Workflow enforcement
+│   └── commands/          # Custom slash commands
 ├── source/                # WCS C++ source (submodule)
 ├── target/                # Godot project (submodule)
 ├── CLAUDE.md             # Main Claude context file
