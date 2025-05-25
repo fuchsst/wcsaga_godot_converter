@@ -16,35 +16,46 @@ Before starting ANY implementation, verify:
 - [ ] All story dependencies are completed
 - [ ] Story has clear, testable acceptance criteria
 - [ ] Technical requirements are well-defined
+- [ ] Original C++ source code has been identified and analyzed
 
 **VIOLATION CHECK**: If any prerequisite is missing, STOP and complete required phase first.
 
 ### 3. Implementation Steps
 Follow Dev's methodical approach:
 
-1. **Architecture First**
+1. **C++ Source Code Analysis** (MANDATORY)
+   - Read and analyze the original C++ implementation from `source/code/` directory
+   - Document all functions, classes, and data structures involved
+   - Identify key algorithms, logic flows, and behavioral patterns
+   - Note performance characteristics and optimization techniques
+   - Extract configuration parameters, constants, and default values
+   - Understand edge cases and error handling in original code
+   - Document findings in implementation notes for reference
+
+2. **Architecture First**
    - Always understand the architectural design before coding
    - Reference specific architecture components and patterns
    - Ensure implementation aligns with approved design
    - Validate technical approach against architecture
+   - Map C++ components to Godot architecture patterns
 
-2. **Type Everything**
+3. **Type Everything**
    - Start with proper type declarations and work from there
    - ALL variables, parameters, and return types must be explicitly typed
    - Use `class_name` declarations for reusable classes
    - Follow snake_case for variables/functions, PascalCase for classes
 
-3. **Test-Driven Development**
+4. **Test-Driven Development**
    - Write GUT tests before or alongside implementation
    - Ensure tests cover all acceptance criteria
-   - Test edge cases and error scenarios
+   - Test edge cases and error scenarios identified in C++ analysis
    - Aim for 80% test coverage minimum
 
-4. **Incremental Implementation**
+5. **Incremental Implementation**
    - Build and test small pieces at a time
-   - Validate each component before moving to next
+   - Validate each component against original C++ behavior
    - Follow story tasks in order
-   - Document implementation decisions
+   - Document implementation decisions and deviations from original
 
 ### 4. GDScript Coding Standards (NON-NEGOTIABLE)
 - **Static Typing Always**: Every variable, parameter, and return type must be explicitly typed
@@ -108,12 +119,15 @@ Produce production-ready GDScript:
 ### 9. Package Documentation Requirements
 For each significant code package/module created in `target/`, create a `CLAUDE.md` file containing:
 - **Package Purpose**: What this package does and why it exists
+- **Original C++ Analysis**: Summary of original WCS C++ code analyzed and key findings
 - **Key Classes**: Main classes and their responsibilities  
 - **Usage Examples**: How other developers should use this package
 - **Architecture Notes**: Important design decisions and patterns
+- **C++ to Godot Mapping**: How original C++ components map to Godot implementation
 - **Integration Points**: How this package connects with other systems
 - **Performance Considerations**: Any performance-critical aspects
 - **Testing Notes**: How to test this package and any special considerations
+- **Implementation Deviations**: Any intentional differences from original C++ behavior and justifications
 
 ## Critical Reminders (Dev's Standards)
 - You're not just writing code - you're crafting maintainable, performant, and elegant GDScript
