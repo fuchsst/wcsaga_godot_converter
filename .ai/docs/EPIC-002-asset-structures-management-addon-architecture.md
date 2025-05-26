@@ -1,7 +1,7 @@
 # EPIC-002: Asset Structures and Management Addon - Architecture
 
-**Document Version**: 1.0  
-**Date**: 2025-01-26  
+**Document Version**: 2.0  
+**Date**: 2025-01-27 (Major revision based on source code analysis)  
 **Architect**: Mo (Godot Architect)  
 **Epic**: EPIC-002 - Asset Structures and Management Addon  
 **System**: Shared asset data structures, loading system, registry  
@@ -14,6 +14,15 @@
 > **"Shared code is clean code - one source of truth for all asset operations."**
 > 
 > This addon architecture creates a centralized, reusable foundation for asset management that eliminates code duplication between the main game and FRED2 editor while providing type-safe, performant asset operations.
+
+### Source Code Analysis Insights
+**WCS Asset Complexity**: Analysis of 21 primary WCS asset files (~50,000+ lines) reveals complex interdependencies, particularly circular references between ship.h ↔ weapon.h. The WCS system uses aggressive caching (4,750 texture slots) and intricate relationship management.
+
+**Godot Solution**: Godot's Resource system elegantly solves these challenges through:
+- **Resource References**: Replace circular C++ includes with Godot Resource paths
+- **Built-in Caching**: Eliminate custom cache management - Godot handles it efficiently  
+- **Dependency Resolution**: ResourceLoader automatically resolves asset dependencies
+- **Performance**: No concerns for 15+ year old assets on modern hardware
 
 ### Core Design Principles
 
@@ -70,7 +79,7 @@ func is_valid() -> bool
 func get_validation_errors() -> Array[String]
 func get_asset_type() -> AssetTypes.Type
 
-# Ship Asset Extension
+# Ship Asset Extension (Circular Dependency Solution)
 class_name ShipData
 extends BaseAssetData
 
@@ -78,6 +87,22 @@ extends BaseAssetData
 @export var max_speed: float
 @export var afterburner_max_speed: float
 @export var mass: float
+
+# SOLUTION FOR CIRCULAR DEPENDENCY: ship.h ↔ weapon.h  
+# Instead of direct references, use Resource paths for weapons
+@export var weapon_slots: Array[WeaponSlotData] = []
+
+# WeaponSlotData holds weapon reference by path, not direct object
+class_name WeaponSlotData
+extends Resource
+
+@export var weapon_resource_path: String  # "res://weapons/laser_cannon.tres"
+@export var mount_position: Vector3
+@export var mount_type: String
+
+# Weapon is loaded on-demand, breaking circular dependency
+func get_weapon() -> WeaponData:
+    return load(weapon_resource_path) as WeaponData
 @export var max_shield_strength: float
 @export var max_hull_strength: float
 # ... (all existing ship properties preserved)
@@ -109,9 +134,8 @@ func load_asset(asset_path: String) -> BaseAssetData
 func load_assets_by_type(asset_type: AssetTypes.Type) -> Array[BaseAssetData]
 func preload_asset_group(group_name: String) -> void
 
-# Caching system
-var _asset_cache: Dictionary = {}
-var _type_caches: Dictionary = {}
+# Resource system handles caching automatically - no custom cache needed
+# Godot's ResourceLoader provides efficient built-in caching
 
 # Registry Manager for Asset Discovery
 class_name RegistryManager

@@ -11,6 +11,8 @@
 ## Epic Description
 Extract existing asset management data structures from the main game into a shared addon that provides data definitions, folder organization, and resource loading capabilities for both the main game and FRED2 editor. This addon will serve as the foundation for all asset-related operations while maintaining clear separation of concerns.
 
+**Source Code Analysis Insights**: Analysis of 21 primary WCS asset files (~50,000+ lines) reveals complex interdependencies, particularly circular references between ship and weapon systems. However, Godot's Resource system and component architecture can elegantly handle these relationships while maintaining clean separation.
+
 ## Scope Definition
 
 ### In Scope (Addon Responsibility)
@@ -105,13 +107,13 @@ addons/wcs_asset_core/
 
 ## Risks and Mitigation
 
-### Technical Risks
-1. **Breaking Changes**: Refactoring existing asset loading
-   - *Mitigation*: Gradual migration with backward compatibility
-2. **Performance Impact**: Additional abstraction layers
-   - *Mitigation*: Benchmarking and optimization focus
-3. **Circular Dependencies**: Addon depending on game code
-   - *Mitigation*: Strict interface definitions and dependency injection
+### Technical Risks (Based on source analysis)
+1. **Circular Ship-Weapon Dependencies**: WCS has ship.h ↔ weapon.h circular references
+   - *Mitigation*: Use Godot Resource references instead of direct includes, break cycles with indices
+2. **Complex Asset Relationships**: 21 files with intricate dependencies (~50,000+ lines)
+   - *Mitigation*: Leverage Godot's Resource system to handle relationships automatically
+3. **Asset Loading Performance**: 4,750-slot texture cache and model caching in WCS
+   - *Mitigation*: Not a concern - Godot handles caching efficiently for 15+ year old assets
 
 ### Project Risks
 1. **Scope Creep**: Adding game logic to addon

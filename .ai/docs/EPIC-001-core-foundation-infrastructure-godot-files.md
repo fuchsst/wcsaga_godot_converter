@@ -1,111 +1,147 @@
 # EPIC-001: Core Foundation & Infrastructure - Godot Files
 
+**Epic**: EPIC-001 - Core Foundation & Infrastructure  
+**Architect**: Mo (Godot Architect)  
+**Version**: 2.0 (Based on source code analysis and Godot-native approach)  
+**Date**: 2025-01-27  
+
 ## Overview
-Foundation infrastructure providing platform abstraction, file I/O, mathematical utilities, and data parsing frameworks. This epic establishes the architectural foundation that ALL other epics depend upon.
 
-## Autoload Singletons (Critical Global Systems)
+Foundation infrastructure providing platform abstraction, file I/O, mathematical utilities, and data parsing frameworks. **Architectural Revolution**: Based on comprehensive WCS source analysis, this epic leverages Godot's built-in systems instead of porting WCS complexity, dramatically simplifying implementation.
 
-### Core Management
-- `res://autoloads/core_manager.gd`: Central system initialization and coordination
-- `res://autoloads/file_system_manager.gd`: Cross-platform file system operations and VP archive integration
-- `res://autoloads/math_utilities.gd`: Space simulation mathematical functions and vector operations
-- `res://autoloads/platform_abstraction.gd`: Operating system abstraction layer
-- `res://autoloads/vp_archive_manager.gd`: WCS VP archive file access and management
+**Key Insight**: Most WCS foundation complexity (58+ files, 100+ dependencies) can be replaced with Godot's native capabilities.
 
-## Core Infrastructure Scripts
+## Godot Project Structure
 
-### File System Layer
-- `res://systems/core/file_system/file_path_resolver.gd`: Cross-platform path resolution and validation
-- `res://systems/core/file_system/vp_archive_reader.gd`: VP archive file table parsing and extraction
-- `res://systems/core/file_system/resource_locator.gd`: WCS asset location and loading coordination
-- `res://systems/core/file_system/file_validator.gd`: File integrity checking and validation
+### Core Constants and Types (Minimal Custom Code)
 
-### Mathematical Utilities
-- `res://systems/core/math/vector_math.gd`: 3D vector operations optimized for space simulation
-- `res://systems/core/math/matrix_math.gd`: Transformation matrix operations and rotations
-- `res://systems/core/math/physics_math.gd`: Physics calculations (ballistics, orbital mechanics)
-- `res://systems/core/math/interpolation.gd`: Various interpolation functions for smooth animations
-- `res://systems/core/math/fixed_point_math.gd`: Fixed-point arithmetic for deterministic calculations
-- `res://systems/core/math/intersection_math.gd`: Find Vector Intersection (FVI) algorithms
-- `res://systems/core/math/spline_math.gd`: Spline interpolation and curve mathematics
+#### `res://scripts/core/constants/`
+- `wcs_constants.gd`: Global game constants as static class
+- `wcs_types.gd`: Enums and type definitions
+- `wcs_paths.gd`: Standard game directory paths
 
-### Data Parsing Framework
-- `res://systems/core/parsing/config_parser.gd`: Configuration file (.cfg, .tbl) parsing
-- `res://systems/core/parsing/table_parser.gd`: WCS data table parsing and validation
-- `res://systems/core/parsing/lua_integration.gd`: Lua script integration for configuration
-- `res://systems/core/parsing/data_validator.gd`: Parsed data validation and error reporting
-- `res://systems/core/parsing/encryption_handler.gd`: File encryption/decryption for secure parsing
-- `res://systems/core/parsing/checksum_validator.gd`: CRC32 and checksum validation
+**Implementation Note**: These replace WCS's `globalincs/pstypes.h` and complex type system with simple GDScript classes.
 
-### Platform Abstraction
-- `res://systems/core/platform/os_abstraction.gd`: Operating system specific functionality
-- `res://systems/core/platform/directory_services.gd`: Platform-specific directory operations
-- `res://systems/core/platform/process_manager.gd`: External process management (for tools)
-- `res://systems/core/platform/memory_monitor.gd`: Memory usage monitoring and reporting
+### Configuration System (Resource-Based)
 
-## Configuration Resources
+#### `res://resources/config/`
+- `game_config.tres`: Main game configuration (extends Resource)
+- `player_profile.tres`: Player data and settings (extends Resource)
+- `control_settings.tres`: Input mapping configuration (extends Resource)
 
-### Core Configuration
-- `res://resources/core/core_settings.tres`: Core system configuration parameters
-- `res://resources/core/file_system_config.tres`: File system and VP archive configuration
-- `res://resources/core/platform_config.tres`: Platform-specific settings and paths
-- `res://resources/core/debug_config.tres`: Debug and development configuration
+#### `res://scripts/core/config/`
+- `game_config.gd`: GameConfig resource class
+- `player_profile.gd`: PlayerProfile resource class  
+- `control_settings.gd`: ControlSettings resource class
 
-### Mathematical Constants
-- `res://resources/core/space_constants.tres`: Space simulation constants (physics, scales)
-- `res://resources/core/conversion_factors.tres`: Unit conversion factors (WCS to Godot)
+**Implementation Note**: Replaces WCS's complex configuration parsing with Godot's built-in Resource system.
 
-## Utility Scripts
+### Asset Management (Godot-Native)
 
-### Development Tools
-- `res://systems/core/utilities/debug_logger.gd`: Centralized logging system with categories
-- `res://systems/core/utilities/performance_tracker.gd`: System performance monitoring
-- `res://systems/core/utilities/error_handler.gd`: Global error handling and recovery
-- `res://systems/core/utilities/version_manager.gd`: Version tracking and compatibility
-- `res://systems/core/utilities/safe_strings.gd`: Cross-platform safe string operations
-- `res://systems/core/utilities/color_constants.gd`: Predefined color constants (alpha colors)
-- `res://systems/core/utilities/game_constants.gd`: Game-wide constants and limits
+#### `res://scripts/core/assets/`
+- `wcs_resource_loader.gd`: Custom ResourceLoader for WCS formats (only if needed)
+- `asset_registry.gd`: Light asset discovery system (AUTOLOAD - only if truly needed)
 
-### Data Structures
-- `res://systems/core/data_structures/priority_queue.gd`: Priority queue implementation
-- `res://systems/core/data_structures/spatial_hash.gd`: Spatial hashing for object queries
-- `res://systems/core/data_structures/ring_buffer.gd`: Circular buffer for streaming data
+**Implementation Note**: Most asset loading uses Godot's native ResourceLoader. Custom loader only for specialized WCS formats.
+
+### Utilities (Wrapper Functions)
+
+#### `res://scripts/core/utils/`
+- `math_utils.gd`: Wrapper functions for Godot's Vector3/Transform3D operations
+- `file_utils.gd`: Simple file operation helpers using FileAccess
+- `debug_utils.gd`: Debug output and logging helpers
+
+**Implementation Note**: These provide WCS-compatible API while using Godot's built-in math and file systems.
+
+## Autoload Singletons (MINIMAL - Only When Necessary)
+
+### `res://autoloads/asset_registry.gd` (ONLY IF NEEDED)
+```gdscript
+# ONLY create this autoload if asset discovery is truly needed
+# Most cases should use direct ResourceLoader.load() calls
+```
+
+**Mo's Opinion**: Resist the temptation to create autoloads. Most "global" systems can be handled with static classes or dependency injection.
 
 ## Testing Infrastructure
 
-### Unit Tests
-- `res://tests/core/test_file_system.gd`: File system and VP archive tests
-- `res://tests/core/test_math_utilities.gd`: Mathematical function validation tests
-- `res://tests/core/test_parsing.gd`: Configuration and table parsing tests
-- `res://tests/core/test_platform_abstraction.gd`: Platform layer tests
+#### `res://tests/core/`
+- `test_wcs_constants.gd`: Constants validation tests
+- `test_game_config.gd`: Configuration system tests
+- `test_math_utils.gd`: Mathematical operation accuracy tests
+- `test_file_utils.gd`: File operation tests
 
-### Integration Tests
-- `res://tests/core/integration/test_core_systems_integration.gd`: Cross-system integration validation
-- `res://tests/core/integration/test_vp_archive_loading.gd`: VP archive integration tests
+## Scene Files (Minimal)
 
-### Performance Tests
-- `res://tests/core/performance/test_math_performance.gd`: Mathematical operation benchmarks
-- `res://tests/core/performance/test_file_io_performance.gd`: File I/O performance validation
+#### `res://scenes/core/`
+- `debug_overlay.tscn`: Debug information display (Control node tree)
 
-## Documentation
+**Note**: Most foundation systems are pure scripts, not scenes. Keep scene count minimal.
 
-### System Documentation
-- `res://docs/core/CLAUDE.md`: Core infrastructure package documentation
-- `res://docs/core/api_reference.md`: Core API reference and usage examples
-- `res://docs/core/performance_guidelines.md`: Performance optimization guidelines
+## Project Configuration Files
+
+#### `res://`
+- `project.godot`: Updated with custom resource types and settings
+- `export_presets.cfg`: Export configurations for different platforms
+
+#### `.godot/` (Generated)
+- Godot's generated files - do not modify directly
+
+## Resource Definition Files
+
+#### `res://scripts/core/resources/`
+- `base_wcs_resource.gd`: Base class for all WCS data resources
+- `wcs_data_validator.gd`: Validation utilities for converted data
 
 ## File Count Summary
-- **Autoload Files**: 5 critical global systems
-- **Core Scripts**: 25 infrastructure implementation files (added fixed-point math, FVI, splines, encryption, checksums)
-- **Resource Files**: 6 configuration and constant definitions
-- **Utility Scripts**: 10 development and debugging tools (added safe strings, color constants, game constants)
-- **Test Files**: 7 comprehensive test suites
-- **Documentation**: 3 system documentation files
-- **Total Files**: 56 files establishing the foundation architecture
 
-## Critical Dependencies
-**External Dependencies**: None (this IS the foundation)
-**Internal Dependencies**: All files within this epic are interconnected
-**Provides To**: ALL other epics in the WCS-Godot conversion
+**Total Implementation Files**: ~15-20 files (compared to 58+ WCS files)
+- **Core Scripts**: 8-10 files
+- **Resource Classes**: 3-5 files  
+- **Utilities**: 3-4 files
+- **Test Files**: 4-5 files
+- **Autoloads**: 0-1 files (only if absolutely necessary)
 
-This foundation epic provides the essential infrastructure that enables proper Godot-native development while maintaining WCS system compatibility and performance requirements.
+## Implementation Priority
+
+### Phase 1: Essential Foundation (Week 1)
+1. `wcs_constants.gd` - Core constants
+2. `wcs_types.gd` - Type definitions
+3. `game_config.gd` - Configuration system
+
+### Phase 2: Utilities (Week 2)
+1. `math_utils.gd` - Mathematical wrappers
+2. `file_utils.gd` - File operation helpers
+3. `debug_utils.gd` - Debug utilities
+
+### Phase 3: Asset Integration (Week 3-4)
+1. `wcs_resource_loader.gd` - Custom resource loading (if needed)
+2. `asset_registry.gd` - Asset discovery (only if required)
+3. Testing and validation
+
+## Mo's Architectural Notes
+
+**Godot Strengths Leveraged**:
+- **FileAccess**: Replaces WCS's complex file I/O system
+- **Vector3/Transform3D**: Replaces custom mathematical libraries
+- **Resource System**: Replaces custom configuration parsing
+- **Built-in Caching**: Eliminates need for custom cache management
+- **Cross-Platform**: Native Godot capabilities replace platform abstraction
+
+**WCS Complexity Eliminated**:
+- No custom memory management (Godot handles it)
+- No platform-specific code (Godot abstracts it)
+- No custom file parsing (Resource system handles it)
+- No performance optimization needed (15+ year old game)
+
+**Quality Standards**:
+- 100% static typing in all scripts
+- Every public function has docstring documentation
+- All Resource classes use @export for Godot editor integration
+- Comprehensive test coverage for mathematical accuracy
+
+**Warning**: Resist the urge to over-engineer. If Godot provides it natively, use Godot's solution.
+
+---
+
+**Implementation Confidence**: This simplified architecture is achievable in 4-6 weeks and provides a robust foundation for all subsequent epics.

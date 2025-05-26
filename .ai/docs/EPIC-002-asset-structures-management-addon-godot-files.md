@@ -1,189 +1,297 @@
 # EPIC-002: Asset Structures & Management Addon - Godot Files
 
+**Epic**: EPIC-002 - Asset Structures & Management Addon  
+**Architect**: Mo (Godot Architect)  
+**Version**: 2.0 (Based on source code analysis and circular dependency solution)  
+**Date**: 2025-01-27  
+
 ## Overview
+
 Comprehensive asset management system implemented as a Godot addon, providing Resource-based data structures, efficient loading systems, and component architecture for all WCS assets.
+
+**Architectural Revolution**: Analysis of 21 WCS asset files (~50,000+ lines) revealed complex interdependencies, particularly circular references between ship.h ↔ weapon.h. Godot's Resource system provides an elegant solution using Resource paths instead of direct object references.
+
+**Key Innovation**: Circular dependency resolution through Resource path references, eliminating the need for complex dependency management while maintaining clean asset relationships.
 
 ## Addon Structure
 
-### Plugin Configuration
-- `res://addons/wcs_assets/plugin.cfg`: Addon metadata and activation configuration
+### `res://addons/wcs_assets/`
 
-### Core Asset Management
-- `res://addons/wcs_assets/asset_manager.gd`: Central asset coordination and caching system
-- `res://addons/wcs_assets/asset_registry.gd`: Asset registration and lookup system
-- `res://addons/wcs_assets/asset_cache.gd`: Memory-efficient asset caching with LRU eviction
+#### Plugin Configuration
+- `plugin.cfg`: Addon metadata and activation configuration
+- `plugin.gd`: Main addon plugin class (extends EditorPlugin)
 
-## Resource Definitions (Data Structures)
+## Core Resource Definitions (WCS Data Structures)
 
-### Ship Resources
-- `res://addons/wcs_assets/resources/ship_class.gd`: Ship class Resource with technical specifications
-- `res://addons/wcs_assets/resources/ship_template.gd`: Complete ship configuration template
-- `res://addons/wcs_assets/resources/ship_variant.gd`: Ship class variant with modifications
-- `res://addons/wcs_assets/resources/ship_loadout.gd`: Weapon and equipment loadout configuration
+### Base Asset System
 
-### Weapon Resources
-- `res://addons/wcs_assets/resources/weapon_definition.gd`: Weapon Resource with ballistics and effects
-- `res://addons/wcs_assets/resources/weapon_mount.gd`: Weapon mounting point specification
-- `res://addons/wcs_assets/resources/ammunition_type.gd`: Ammunition and projectile definitions
-- `res://addons/wcs_assets/resources/weapon_group.gd`: Weapon grouping and firing patterns
+#### `res://addons/wcs_assets/resources/base/`
+- `base_asset_data.gd`: Base class for all WCS assets (extends Resource)
+- `asset_types.gd`: Asset type enumerations and constants
+- `asset_validator.gd`: Validation utilities for asset integrity
 
-### Mission Resources
-- `res://addons/wcs_assets/resources/mission_template.gd`: Mission structure and metadata
-- `res://addons/wcs_assets/resources/mission_objective.gd`: Individual mission objective definition
-- `res://addons/wcs_assets/resources/campaign_data.gd`: Campaign progression and branching
-- `res://addons/wcs_assets/resources/briefing_data.gd`: Mission briefing content and sequences
+```gdscript
+# base_asset_data.gd - Foundation for all assets
+class_name BaseAssetData
+extends Resource
 
-### Pilot Resources
-- `res://addons/wcs_assets/resources/pilot_profile.gd`: Pilot statistics and career tracking
-- `res://addons/wcs_assets/resources/pilot_skills.gd`: Pilot skill progression system
-- `res://addons/wcs_assets/resources/squadron_data.gd`: Squadron information and statistics
-- `res://addons/wcs_assets/resources/medal_definition.gd`: Medal and award definitions
+@export var asset_name: String
+@export var asset_id: String  
+@export var description: String
+@export var asset_type: AssetTypes.Type
+@export var metadata: Dictionary = {}
 
-### Environment Resources
-- `res://addons/wcs_assets/resources/star_system.gd`: Star system definition and properties
-- `res://addons/wcs_assets/resources/nebula_definition.gd`: Nebula visual and gameplay properties
-- `res://addons/wcs_assets/resources/background_definition.gd`: Space background configuration
+func is_valid() -> bool
+func get_validation_errors() -> Array[String]
+```
 
-## Component System
+### Ship Asset System (Complex Dependency Resolution)
 
-### Asset Components
-- `res://addons/wcs_assets/components/ship_component.gd`: Ship data component for entities
-- `res://addons/wcs_assets/components/weapon_component.gd`: Weapon data component system
-- `res://addons/wcs_assets/components/mission_component.gd`: Mission-specific data component
-- `res://addons/wcs_assets/components/pilot_component.gd`: Pilot information component
-- `res://addons/wcs_assets/components/loadout_component.gd`: Equipment and loadout component
+#### `res://addons/wcs_assets/resources/ships/`
+- `ship_data.gd`: Ship class definitions with weapon mount system
+- `weapon_slot_data.gd`: Weapon mounting configuration (breaks circular dependency)
+- `ship_subsystem_data.gd`: Ship component system definitions
+- `shield_data.gd`: Shield system specifications
 
-### Component Management
-- `res://addons/wcs_assets/components/component_factory.gd`: Component instantiation and pooling
-- `res://addons/wcs_assets/components/component_registry.gd`: Component type registration
-- `res://addons/wcs_assets/components/component_validator.gd`: Component data validation
+```gdscript
+# ship_data.gd - Circular Dependency Solution
+class_name ShipData
+extends BaseAssetData
 
-## Asset Loaders
+# Ship properties (100+ properties from WCS analysis)
+@export var max_speed: float
+@export var afterburner_max_speed: float
+@export var mass: float
+@export var max_hull_strength: float
 
-### Specialized Loaders
-- `res://addons/wcs_assets/loaders/ship_loader.gd`: Ship asset loading with model integration
-- `res://addons/wcs_assets/loaders/weapon_loader.gd`: Weapon definition loading and validation
-- `res://addons/wcs_assets/loaders/mission_loader.gd`: Mission file parsing and Resource creation
-- `res://addons/wcs_assets/loaders/pilot_loader.gd`: Pilot data loading and career management
-- `res://addons/wcs_assets/loaders/campaign_loader.gd`: Campaign structure and progression loading
+# SOLUTION: Weapon references by path, not object
+@export var weapon_slots: Array[WeaponSlotData] = []
 
-### Loader Infrastructure
-- `res://addons/wcs_assets/loaders/base_loader.gd`: Foundation loader class with common functionality
-- `res://addons/wcs_assets/loaders/loader_registry.gd`: Loader registration and dispatch system
-- `res://addons/wcs_assets/loaders/async_loader.gd`: Asynchronous loading with progress tracking
+# weapon_slot_data.gd - Breaks ship↔weapon circular dependency
+class_name WeaponSlotData
+extends Resource
 
-## Data Processing
+@export var weapon_resource_path: String  # "res://weapons/laser_cannon.tres"
+@export var mount_position: Vector3
+@export var mount_type: String
+@export var mount_flags: int
 
-### Validation System
-- `res://addons/wcs_assets/validation/asset_validator.gd`: Asset integrity validation
-- `res://addons/wcs_assets/validation/schema_validator.gd`: Data schema validation and enforcement
-- `res://addons/wcs_assets/validation/reference_validator.gd`: Asset reference validation
-- `res://addons/wcs_assets/validation/compatibility_checker.gd`: Version compatibility validation
+# Weapon loaded on-demand, breaking circular dependency
+func get_weapon() -> WeaponData:
+    return load(weapon_resource_path) as WeaponData
+```
 
-### Conversion Utilities
-- `res://addons/wcs_assets/conversion/wcs_data_converter.gd`: WCS format to Godot Resource conversion
-- `res://addons/wcs_assets/conversion/unit_converter.gd`: Unit conversion (WCS to Godot scales)
-- `res://addons/wcs_assets/conversion/format_migrator.gd`: Asset format migration between versions
+### Weapon Asset System  
 
-## Database and Indexing
+#### `res://addons/wcs_assets/resources/weapons/`
+- `weapon_data.gd`: Weapon definitions and behavior specifications
+- `weapon_behavior_data.gd`: Weapon behavior flags and configuration
+- `projectile_data.gd`: Projectile physics and visual specifications
 
-### Asset Database
-- `res://addons/wcs_assets/database/asset_database.gd`: Asset metadata database
-- `res://addons/wcs_assets/database/search_index.gd`: Asset search and filtering system
-- `res://addons/wcs_assets/database/dependency_tracker.gd`: Asset dependency mapping
-- `res://addons/wcs_assets/database/version_tracker.gd`: Asset version and change tracking
+```gdscript
+# weapon_data.gd - Independent weapon definitions
+class_name WeaponData
+extends BaseAssetData
 
-### Query System
-- `res://addons/wcs_assets/database/query_builder.gd`: Asset query construction
-- `res://addons/wcs_assets/database/filter_system.gd`: Asset filtering and categorization
-- `res://addons/wcs_assets/database/sorting_system.gd`: Asset sorting and ordering
+# Weapon properties (from WCS weapon.h analysis)
+@export var damage: float
+@export var energy_consumed: float
+@export var projectile_speed: float
+@export var rate_of_fire: float
+@export var weapon_behavior_flags: int
 
-## Configuration and Settings
+# Compatible ship classes by path reference (no circular dependency)
+@export var compatible_ship_paths: Array[String] = []
+```
 
-### Asset Configuration
-- `res://addons/wcs_assets/config/asset_config.gd`: Asset system configuration
-- `res://addons/wcs_assets/config/cache_config.gd`: Caching behavior configuration
-- `res://addons/wcs_assets/config/loader_config.gd`: Loader system configuration
-- `res://addons/wcs_assets/config/validation_config.gd`: Validation rules configuration
+### 3D Model Asset System
 
-## Editor Integration
+#### `res://addons/wcs_assets/resources/models/`
+- `model_data.gd`: 3D model specifications and LOD configuration
+- `submodel_data.gd`: Hierarchical model component system
+- `attachment_point_data.gd`: Weapon/component mounting points
 
-### Editor Tools
-- `res://addons/wcs_assets/editor/asset_browser.gd`: Asset browsing and management interface
-- `res://addons/wcs_assets/editor/asset_inspector.gd`: Asset property inspection and editing
-- `res://addons/wcs_assets/editor/dependency_viewer.gd`: Asset dependency visualization
-- `res://addons/wcs_assets/editor/validation_reporter.gd`: Validation results and error reporting
+```gdscript
+# model_data.gd - POF model conversion data
+class_name ModelData
+extends BaseAssetData
 
-### Editor Dock
-- `res://addons/wcs_assets/editor/wcs_assets_dock.gd`: Main editor dock interface
-- `res://addons/wcs_assets/editor/asset_preview_generator.gd`: Asset thumbnail generation
-- `res://addons/wcs_assets/editor/quick_actions.gd`: Common asset operations shortcuts
+@export var model_scene_path: String  # "res://models/ships/fighter.tscn"
+@export var collision_shape_path: String
+@export var submodels: Array[SubmodelData] = []
+@export var attachment_points: Array[AttachmentPointData] = []
+@export var bounding_radius: float
+```
 
-## Example Asset Data
+### Texture Asset System
 
-### Sample Ship Classes
-- `res://addons/wcs_assets/examples/ship_classes/fighter_light.tres`: Light fighter example
-- `res://addons/wcs_assets/examples/ship_classes/bomber_heavy.tres`: Heavy bomber example
-- `res://addons/wcs_assets/examples/ship_classes/capital_destroyer.tres`: Destroyer example
+#### `res://addons/wcs_assets/resources/textures/`
+- `texture_data.gd`: Texture specifications and format information
+- `texture_set_data.gd`: Grouped texture collections for models
 
-### Sample Weapons
-- `res://addons/wcs_assets/examples/weapons/laser_cannon_mk1.tres`: Basic laser weapon
-- `res://addons/wcs_assets/examples/weapons/missile_harpoon.tres`: Homing missile example
-- `res://addons/wcs_assets/examples/weapons/beam_cannon_heavy.tres`: Beam weapon example
+```gdscript
+# texture_data.gd - Simplified texture management
+class_name TextureData
+extends BaseAssetData
 
-### Sample Missions
-- `res://addons/wcs_assets/examples/missions/training_basic.tres`: Basic training mission
-- `res://addons/wcs_assets/examples/missions/patrol_routine.tres`: Patrol mission template
+@export var texture_path: String  # "res://textures/ships/fighter_hull.png"
+@export var original_format: String  # "PCX", "TGA", etc.
+@export var resolution: Vector2
+@export var has_transparency: bool
+```
+
+## Asset Management System
+
+### Core Management
+
+#### `res://addons/wcs_assets/scripts/management/`
+- `asset_loader.gd`: Core asset loading functionality (uses ResourceLoader)
+- `asset_registry.gd`: Asset discovery and cataloging system
+- `asset_cache_manager.gd`: Memory management (minimal - Godot handles most caching)
+
+```gdscript
+# asset_loader.gd - Simplified asset loading
+class_name AssetLoader
+extends RefCounted
+
+# Uses Godot's built-in ResourceLoader - no custom caching needed
+static func load_asset(asset_path: String) -> BaseAssetData:
+    return ResourceLoader.load(asset_path) as BaseAssetData
+
+static func load_assets_by_type(asset_type: AssetTypes.Type) -> Array[BaseAssetData]:
+    # Use Godot's ResourceLoader with type filtering
+    pass
+```
+
+### Asset Discovery
+
+#### `res://addons/wcs_assets/scripts/discovery/`
+- `asset_scanner.gd`: Directory scanning for asset discovery
+- `asset_indexer.gd`: Asset metadata indexing for search
+- `asset_validator.gd`: Asset integrity validation
+
+## Specialized Asset Types
+
+### Mission Assets
+
+#### `res://addons/wcs_assets/resources/missions/`
+- `mission_data.gd`: Mission configuration and metadata
+- `objective_data.gd`: Mission objective definitions
+- `waypoint_data.gd`: Navigation waypoint system
+
+### Effect Assets
+
+#### `res://addons/wcs_assets/resources/effects/`
+- `effect_data.gd`: Visual effect specifications
+- `fireball_data.gd`: Explosion effect definitions
+- `trail_data.gd`: Engine trail configurations
+
+### Species and Faction Assets
+
+#### `res://addons/wcs_assets/resources/factions/`
+- `species_data.gd`: Species-specific configurations
+- `iff_data.gd`: Identification Friend/Foe system
+- `faction_data.gd`: Faction relationships and properties
+
+## Addon Integration System
+
+### Editor Integration
+
+#### `res://addons/wcs_assets/editor/`
+- `asset_inspector.gd`: Custom inspector for WCS assets
+- `asset_dock.gd`: Asset browser dock for editor
+- `asset_importer.gd`: Import pipeline integration
+
+### Runtime Integration
+
+#### `res://addons/wcs_assets/runtime/`
+- `asset_preloader.gd`: Runtime asset preloading system
+- `asset_query.gd`: Runtime asset search and filtering
+- `asset_factory.gd`: Asset instantiation utilities
 
 ## Testing Infrastructure
 
-### Unit Tests
-- `res://tests/asset_management/test_resource_loading.gd`: Resource loading and validation tests
-- `res://tests/asset_management/test_component_system.gd`: Component creation and management tests
-- `res://tests/asset_management/test_asset_database.gd`: Database operations and queries tests
-- `res://tests/asset_management/test_validation_system.gd`: Asset validation tests
+#### `res://addons/wcs_assets/tests/`
+- `test_asset_loading.gd`: Asset loading validation tests
+- `test_circular_dependencies.gd`: Circular dependency prevention tests
+- `test_resource_integrity.gd`: Resource data integrity tests
+- `test_performance.gd`: Asset loading performance benchmarks
 
-### Integration Tests
-- `res://tests/asset_management/integration/test_loader_integration.gd`: Loader system integration
-- `res://tests/asset_management/integration/test_cache_performance.gd`: Caching system performance
-- `res://tests/asset_management/integration/test_dependency_resolution.gd`: Dependency resolution tests
+## Configuration and Data Files
 
-### Performance Tests
-- `res://tests/asset_management/performance/test_loading_performance.gd`: Asset loading benchmarks
-- `res://tests/asset_management/performance/test_memory_usage.gd`: Memory usage profiling
-- `res://tests/asset_management/performance/test_cache_efficiency.gd`: Cache hit rate analysis
+### Asset Definitions
 
-## Documentation
+#### `res://addons/wcs_assets/data/`
+- `asset_registry.json`: Master asset registry (generated)
+- `asset_paths.json`: Standard asset path definitions
+- `validation_rules.json`: Asset validation configuration
 
-### API Documentation
-- `res://addons/wcs_assets/docs/CLAUDE.md`: Asset management package documentation
-- `res://addons/wcs_assets/docs/api_reference.md`: Complete API reference
-- `res://addons/wcs_assets/docs/usage_examples.md`: Usage examples and best practices
-- `res://addons/wcs_assets/docs/resource_schemas.md`: Resource structure documentation
+### Template Resources
 
-### Developer Guides
-- `res://addons/wcs_assets/docs/extending_system.md`: Guide for extending the asset system
-- `res://addons/wcs_assets/docs/performance_optimization.md`: Performance optimization guidelines
-- `res://addons/wcs_assets/docs/migration_guide.md`: Asset migration and conversion guide
+#### `res://addons/wcs_assets/templates/`
+- `ship_template.tres`: Default ship data template
+- `weapon_template.tres`: Default weapon data template
+- `model_template.tres`: Default model data template
 
 ## File Count Summary
-- **Plugin Files**: 1 configuration file
-- **Core System**: 3 central management files
-- **Resource Definitions**: 18 Resource class definitions
-- **Component System**: 9 component and factory files
-- **Loader System**: 8 specialized loader implementations
-- **Data Processing**: 7 validation and conversion utilities
-- **Database System**: 7 database and indexing files
-- **Configuration**: 4 system configuration files
-- **Editor Integration**: 7 editor tools and interfaces
-- **Example Assets**: 8 sample Resource files
-- **Testing**: 9 comprehensive test suites
-- **Documentation**: 7 documentation files
-- **Total Files**: 88 files providing comprehensive asset management
 
-## Integration Points
-**Depends On**: EPIC-001 (Core Infrastructure) for file system and VP archive access
-**Provides To**: EPIC-003 (Data Migration), EPIC-004 (SEXP), EPIC-005 (GFRED2), all gameplay epics
-**Critical APIs**: AssetManager singleton, Resource loading system, Component factory
+**Total Implementation Files**: ~25-30 files (for 50,000+ lines of WCS complexity)
+- **Resource Classes**: 12-15 files
+- **Management Scripts**: 6-8 files  
+- **Editor Integration**: 3-4 files
+- **Testing**: 4-5 files
+- **Configuration**: 3-4 files
 
-This addon provides the robust, extensible foundation for all WCS asset management while maintaining optimal performance and developer experience.
+## Implementation Priority
+
+### Phase 1: Core Resources (Week 1)
+1. `base_asset_data.gd` - Foundation class
+2. `asset_types.gd` - Type definitions
+3. `ship_data.gd` - Ship definitions
+4. `weapon_slot_data.gd` - Circular dependency solution
+
+### Phase 2: Asset Management (Week 2)
+1. `weapon_data.gd` - Weapon definitions
+2. `model_data.gd` - 3D model integration
+3. `asset_loader.gd` - Loading system
+4. `asset_registry.gd` - Discovery system
+
+### Phase 3: Specialized Assets (Week 3)
+1. `texture_data.gd` - Texture management
+2. `species_data.gd` - Faction system
+3. `effect_data.gd` - Visual effects
+4. Editor integration components
+
+### Phase 4: Integration & Testing (Week 4)
+1. Runtime integration systems
+2. Testing infrastructure
+3. Performance optimization
+4. Documentation and validation
+
+## Mo's Architectural Notes
+
+**Circular Dependency Solution**:
+- **Problem**: WCS ship.h ↔ weapon.h circular references
+- **Solution**: Resource path strings instead of direct object references
+- **Benefit**: Clean dependencies, Godot-native approach, maintainable code
+
+**Resource System Advantages**:
+- **Built-in Caching**: No need for custom 4,750-slot texture cache
+- **Automatic Loading**: ResourceLoader handles dependencies automatically
+- **Editor Integration**: @export properties work seamlessly in editor
+- **Type Safety**: Strong typing with Resource subclasses
+
+**Performance Confidence**:
+- **15+ Year Old Game**: No performance concerns with modern hardware
+- **Godot Efficiency**: Built-in Resource system is highly optimized
+- **Minimal Overhead**: Clean architecture reduces complexity overhead
+
+**Quality Standards**:
+- 100% static typing with Resource subclasses
+- Every Resource class documented with usage examples
+- Comprehensive test coverage for circular dependency prevention
+- Editor integration for asset browsing and validation
+
+---
+
+**Implementation Confidence**: This addon architecture elegantly solves WCS's complex asset interdependencies while leveraging Godot's Resource system strengths. Achievable in 4 weeks with robust, maintainable results.

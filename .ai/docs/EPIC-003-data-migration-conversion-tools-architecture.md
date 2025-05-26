@@ -1,8 +1,21 @@
 # EPIC-003: Data Migration & Conversion Tools Architecture
 
+**Document Version**: 2.0  
+**Date**: 2025-01-27 (Major revision based on source code analysis)  
+**Architect**: Mo (Godot Architect)  
+
 ## Architecture Overview
 
 The Data Migration & Conversion Tools system provides comprehensive utilities for converting WCS assets and data structures into Godot-compatible formats, enabling seamless migration of existing WCS content while maintaining data integrity and visual fidelity.
+
+### Source Code Analysis Insights
+**WCS Conversion Architecture**: Analysis of 27 conversion-related files reveals **exceptionally clean architecture** with minimal dependencies. Key findings:
+- **VP Archive System**: Foundational but completely self-contained - perfect for standalone extraction
+- **Image Format Utilities**: 5 formats (PCX, TGA, JPEG, PNG, DDS) with identical patterns - trivial to implement
+- **POF Model Parsing**: Complex but isolated in `modelread.cpp` - can be implemented independently  
+- **Clean Dependencies**: Each format parser is independent, enabling parallel development
+
+**Implementation Impact**: This clean separation makes standalone conversion tools highly feasible and dramatically simplifies the architecture.
 
 ## System Goals
 
@@ -14,18 +27,24 @@ The Data Migration & Conversion Tools system provides comprehensive utilities fo
 
 ## Core Architecture
 
-### Conversion Pipeline Hierarchy
+### Conversion Pipeline Hierarchy (Simplified Based on Analysis)
 
 ```
 ConversionManager (Python CLI)
-├── VPArchiveExtractor (Python)
-├── POFModelConverter (Python + Blender)
-├── MissionFileConverter (Python)
-├── TextureConverter (Python + ImageMagick)
-├── AudioVideoConverter (Python + FFmpeg)
-├── GodotProjectIntegrator (Python + Godot)
-└── ValidationSystem (Python)
+├── VPArchiveExtractor (Python)        # Self-contained, direct from WCS source
+├── ImageConverter (Python)            # Unified converter for 5 identical formats  
+├── POFModelConverter (Python)         # Complex but isolated parser
+├── TableDataConverter (Python)        # Simple text parsing to JSON/Resource
+├── MissionConverter (Python)          # Text-based mission files
+├── GodotImportPlugins (GDScript)      # Native Godot import integration
+└── ValidationSystem (Python)          # Lightweight validation
 ```
+
+**Architecture Benefits from Analysis**:
+- **Parallel Development**: Independent parsers can be developed simultaneously
+- **Minimal Dependencies**: Each converter is self-contained
+- **Direct Implementation**: WCS source provides exact parsing algorithms
+- **No External Tools**: Eliminate Blender/ImageMagick dependencies
 
 ### Python-Based Conversion Framework
 

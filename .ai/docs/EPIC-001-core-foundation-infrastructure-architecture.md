@@ -1,7 +1,7 @@
 # EPIC-001: Core Foundation & Infrastructure - Architecture
 
-**Document Version**: 1.1  
-**Date**: January 25, 2025 (Updated: January 26, 2025)  
+**Document Version**: 2.0  
+**Date**: January 27, 2025 (Major revision based on source code analysis)  
 **Architect**: Mo (Godot Architect)  
 **Epic**: EPIC-001 - Core Foundation & Infrastructure  
 **System**: Platform abstraction, file I/O, math utilities, data parsing  
@@ -11,23 +11,26 @@
 ### System Overview
 **Purpose**: Establish the foundational infrastructure layer that provides platform abstraction, file I/O systems, mathematical utilities, and data parsing frameworks for all WCS-Godot systems.
 
+**Source Analysis Insights**: Analysis of 58+ WCS foundation files reveals `pstypes.h` is used by 100+ files, confirming truly foundational nature. However, most functionality can be replaced with Godot's built-in systems, dramatically simplifying implementation.
+
 **Conversion Goals**: 
-- Replace WCS's platform-specific code with Godot-compatible cross-platform utilities
-- Convert VP archive system to work with Godot's ResourceLoader
-- Implement WCS mathematical operations with proper precision
-- Create robust data parsing framework for configuration and table files
+- Leverage Godot's cross-platform capabilities instead of custom platform abstraction
+- Use Godot's ResourceLoader and FileAccess for all file operations
+- Utilize Godot's Vector3/Transform3D for mathematical operations (performance non-critical for 15+ year old game)
+- Create lightweight data parsing using Godot's JSON and ConfigFile systems
 
-**Architecture Approach**: 
-- Node composition over inheritance - leverage Godot's scene system as the primary architectural pattern
-- Signal-based event system for loose coupling between major systems
-- Autoload singletons ONLY for truly global state (GameLoop, InputManager)
-- Resource-based configuration system for all data-driven aspects
+**Architecture Approach (Godot-Native)**: 
+- **Minimal Custom Code**: Replace WCS complexity with Godot built-ins wherever possible
+- **Resource-First Design**: All data as Godot Resources (.tres) instead of custom parsers
+- **Scene Composition**: Use Godot's scene system for all hierarchical structures
+- **Native Performance**: Trust Godot's optimizations rather than custom performance code
 
-### Key Design Decisions
-- **Node-Based Object System**: Replace C++ object pointers with Node references and scene composition
-- **Physics Hybrid Approach**: Use Godot physics for collision/basic simulation, custom scripts for WCS-specific feel
-- **Centralized Game State**: Single state machine controlling all major game flow (menu → mission → debrief)
-- **Input Action System**: Leverage Godot's InputMap with custom input processing for space flight controls
+### Key Design Decisions (Updated Based on Analysis)
+- **Godot-First Approach**: Use Godot's built-in systems instead of porting WCS complexity
+- **Resource-Based Data**: Convert all WCS table files to Godot Resources, eliminating custom parsers
+- **FileAccess API**: Replace WCS VP archive complexity with straightforward FileAccess operations
+- **Built-in Math**: Use Vector3, Transform3D, Basis instead of custom mathematical libraries
+- **No Performance Concerns**: 15+ year old game runs effortlessly on modern hardware with Godot
 
 ## WCS System Analysis Reference
 
@@ -74,36 +77,31 @@
 
 ### Scene Architecture
 
-#### Foundation System Structure
+#### Foundation System Structure (Simplified - Godot Native)
 ```
 Core Foundation Infrastructure
-├── Foundation Layer                   # Core infrastructure
-│   ├── SystemGlobals [AUTOLOAD]      # Global constants and types
-│   ├── PlatformUtils                 # Cross-platform utilities
-│   ├── DebugManager [AUTOLOAD]       # Debug output and logging
-│   └── VersionManager                # Version and build information
-├── File System Layer                 # File operations
-│   ├── VPArchiveLoader               # VP archive ResourceLoader
-│   ├── FileManager [AUTOLOAD]        # File operations abstraction
-│   ├── PathUtils                     # Path manipulation utilities
-│   └── ResourceCache                 # Resource caching system
-├── Mathematical Framework            # Math operations
-│   ├── WCSVector                     # Vector operations
-│   ├── WCSMatrix                     # Matrix operations
-│   ├── PhysicsMath                   # Physics calculations
-│   └── CollisionMath                 # Collision detection math
-└── Data Parsing Framework            # Configuration parsing
-    ├── ConfigParser                  # Configuration file parser
-    ├── TableParser                   # Data table parser
-    ├── ValidationManager             # Data validation system
-    └── ParseUtils                    # Parsing utility functions
+├── Core Constants                    # Simple data containers
+│   ├── WCSConstants                  # Game constants (extends Resource)
+│   ├── WCSTypes                      # Type definitions and enums
+│   └── WCSPaths                      # Standard game paths
+├── Configuration System              # Godot-native config
+│   ├── GameConfig                    # Main config (extends Resource)
+│   ├── PlayerProfile                 # Player data (extends Resource)
+│   └── ControlSettings               # Input mapping (extends Resource)
+├── Asset Management                  # Leverage Godot's systems
+│   ├── WCSResourceLoader             # Custom ResourceLoader for WCS formats
+│   └── AssetRegistry [AUTOLOAD]      # Light asset discovery (only if needed)
+└── Utilities                         # Minimal helper functions
+    ├── MathUtils                     # Wrapper functions for Godot math
+    ├── FileUtils                     # Simple file operation helpers
+    └── DebugUtils                    # Debug output helpers
 ```
 
-**Scene Rationale**: 
-- Autoload singletons for systems that need global access and persistence across scene changes
-- Clear separation of concerns with each manager handling one responsibility
-- Debug overlay always available but easy to disable in production
-- Managers are NOT autoloaded unless absolutely necessary (GameState, ObjectManager, PhysicsManager, InputManager)
+**Architecture Rationale (Based on Source Analysis)**: 
+- **Minimal Autoloads**: Only AssetRegistry if truly needed - most systems as regular classes
+- **Resource-First**: All data as Godot Resources instead of custom parsing systems  
+- **Godot Built-ins**: Use Vector3, Transform3D, FileAccess, JSON instead of custom implementations
+- **Simplified Dependencies**: Clean WCS architecture means less complex Godot implementation needed
 
 #### Component Scenes
 - **WCSObject.tscn**: Base scene for all game objects with standardized interface
