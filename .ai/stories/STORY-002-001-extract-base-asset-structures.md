@@ -1,8 +1,8 @@
-# STORY-003-001: Extract Base Asset Data Structures
+# STORY-002-001: Extract Base Asset Data Structures
 
 ## Story Overview
-**Story ID**: STORY-003-001  
-**Epic**: EPIC-003 Asset Structures and Management Addon  
+**Story ID**: STORY-002-001  
+**Epic**: EPIC-002 Asset Structures and Management Addon  
 **Story Name**: Extract Base Asset Data Structures  
 **Story Owner**: Larry (WCS Analyst)  
 **Priority**: High  

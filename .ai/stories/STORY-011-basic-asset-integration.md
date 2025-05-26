@@ -138,13 +138,13 @@ And preview updates should be responsive (<200ms)
 ### Prerequisites
 - **STORY-008**: Mission Object Management System (✅ Completed)
 - **STORY-010**: Object Property Inspector (✅ Completed)
-- **EPIC-003**: Asset Structures and Management Addon (🔄 Required)
-  - **STORY-003-001**: Extract Base Asset Data Structures (blocking)
-  - **STORY-003-002**: Create Addon Framework and Plugin Setup (blocking)
-  - **STORY-003-003**: Implement Core Asset Loading System (blocking)
+- **EPIC-002**: Asset Structures and Management Addon (🔄 Required)
+  - **STORY-002-001**: Extract Base Asset Data Structures (blocking)
+  - **STORY-002-002**: Create Addon Framework and Plugin Setup (blocking)
+  - **STORY-002-003**: Implement Core Asset Loading System (blocking)
 
 ### Blockers
-- **Asset Data Source**: Basic ship_info and weapon_info data in Godot-accessible format (resolved by EPIC-003)
+- **Asset Data Source**: Basic ship_info and weapon_info data in Godot-accessible format (resolved by EPIC-002)
 - **3D Model Assets**: POF model files converted to Godot-compatible format (placeholder models acceptable)
 
 ### Related Stories
@@ -152,9 +152,9 @@ And preview updates should be responsive (<200ms)
 - **Future Asset Stories**: Enhanced asset management, custom asset support
 
 ## Updated Implementation Notes
-**⚠️ Implementation Dependency**: This story implementation is **BLOCKED** until EPIC-003 Asset Structures and Management Addon is completed. The asset browser will integrate with the centralized asset registry and loading systems rather than implementing its own asset management.
+**⚠️ Implementation Dependency**: This story implementation is **BLOCKED** until EPIC-002 Asset Structures and Management Addon is completed. The asset browser will integrate with the centralized asset registry and loading systems rather than implementing its own asset management.
 
-Once EPIC-003 is completed, this story will be updated to:
+Once EPIC-002 is completed, this story will be updated to:
 - Use shared asset data structures from the addon
 - Integrate with centralized asset loading and validation
 - Leverage the asset registry for discovery and browsing

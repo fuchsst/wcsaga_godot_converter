@@ -1,7 +1,7 @@
-# EPIC-003: Asset Structures and Management Addon
+# EPIC-002: Asset Structures and Management Addon
 
 ## Epic Overview
-**Epic ID**: EPIC-003  
+**Epic ID**: EPIC-002  
 **Epic Name**: Asset Structures and Management Addon  
 **Epic Owner**: Larry (WCS Analyst)  
 **Priority**: High  
