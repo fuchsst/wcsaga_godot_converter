@@ -186,4 +186,28 @@ func load_ship_data(ship_id: String) -> Dictionary:
 - **Performance Tests**: Verify code meets performance requirements
 - **Edge Case Testing**: Test boundary conditions and error scenarios
 
+## Command-Line GDScript Analysis Tips (Bash)
+
+**1. Find Files & Core Declarations:**
+   - List all `.gd` files in `target/scripts/systems/`:
+     `find target/scripts/systems/ -type f -name "*.gd"`
+   - Find `class_name MySystemClass` declarations:
+     `grep -rhn --include=*.gd "^class_name\s+MySystemClass" target/`
+   - Find function definitions like `func _integrate_forces(`:
+     `grep -rhn --include=*.gd "^func\s+_integrate_forces\s*(" target/`
+   - Find signal declarations like `signal ship_destroyed`:
+     `grep -rhn --include=*.gd "^signal\s+ship_destroyed" target/`
+
+**2. Content Search (Specific Terms):**
+   - Find where `GameStateManager.current_level` is used:
+     `grep -rwn --include=*.gd "GameStateManager.current_level" target/`
+   - List files that connect to the `timeout` signal of a `Timer` node:
+     `grep -rl --include=*.gd "\.timeout.connect(" target/` # May need refinement for specific timer instances
+
+**3. Viewing Context:**
+   - Show 10 lines of context around `_physics_process(` in `player_ship.gd`:
+     `grep -C 10 -n "_physics_process(" target/scripts/player/player_ship.gd`
+
+**Key `grep` options:** `-r` (recursive), `-h` (no filename), `-n` (line number), `-w` (whole word), `-i` (case-insensitive), `-l` (filenames only), `--include=*.gd` (only GDScript files).
+
 Remember: You're not just writing code - you're crafting maintainable, performant, and elegant GDScript that will serve as the foundation for the entire WCS-Godot conversion. Every line matters.

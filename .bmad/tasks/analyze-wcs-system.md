@@ -16,10 +16,11 @@ Perform a comprehensive analysis of a specific Wing Commander Saga (WCS) system 
 ## Analysis Process
 
 ### 1. System Identification
-- Locate relevant source files in `source/code/` directory
-- Identify key classes, functions, and data structures
-- Map out file dependencies and includes
-- Document the system's entry points and main interfaces
+- Locate relevant source files in `source/code/` directory.
+- Identify key classes, functions, and data structures.
+- Compile a comprehensive list of all source files (.cpp, .h) constituting the system.
+- For each identified file, map out its direct dependencies (files it includes) and identify which other files within the system (or key external systems) include or reference it (i.e., its dependents).
+- Document the system's entry points and main interfaces.
 
 ### 2. Code Structure Analysis
 - **Class Hierarchy**: Document inheritance relationships
@@ -49,7 +50,9 @@ Perform a comprehensive analysis of a specific Wing Commander Saga (WCS) system 
 
 ## Output Format
 
-Create a comprehensive analysis document in `.ai/docs/` with the following structure:
+Create a comprehensive analysis document and two supplementary documents in `.ai/docs/`.
+
+The main analysis document, `[system-name]-analysis.md`, should follow this structure:
 
 ```markdown
 # WCS System Analysis: [System Name]
@@ -110,17 +113,51 @@ Create a comprehensive analysis document in `.ai/docs/` with the following struc
 ```
 
 ## Quality Checklist
-- [ ] All relevant source files identified and examined
-- [ ] Key classes and functions documented with file locations
-- [ ] Data flow and system interactions clearly described
-- [ ] Performance characteristics and constraints identified
-- [ ] Godot conversion considerations addressed
-- [ ] Specific code examples and function signatures included
-- [ ] Analysis is actionable for architecture and implementation phases
+- [ ] All relevant source files identified and examined.
+- [ ] Key classes and functions documented with file locations.
+- [ ] Data flow and system interactions clearly described.
+- [ ] Performance characteristics and constraints identified.
+- [ ] Godot conversion considerations addressed.
+- [ ] Specific code examples and function signatures included.
+- [ ] Analysis is actionable for architecture and implementation phases.
+- [ ] All relevant source files listed in `[system-name]-source-files.md`.
+- [ ] Key file dependencies (used by) documented in `[system-name]-source-dependencies.md`.
+
+### Supplementary Document 1: [System Name] - Source Files
+
+A markdown file named `[system-name]-source-files.md` listing all identified source code files relevant to the analyzed system.
+
+**Format:**
+```markdown
+# WCS System: [System Name] - Source Files List
+
+- `path/to/file1.cpp`: Short description of file 1
+- `path/to/file1.h`: Short description of file 2
+- `path/to/another/module/file2.cpp`: Short description of file 3
+- `path/to/another/module/file2.h`: Short description of file 4
+- ...
+```
+
+### Supplementary Document 2: [System Name] - Source Dependencies
+
+A markdown file named `[system-name]-source-dependencies.md` detailing the usage relationships between files. For each key file in the system, list the other files that include or call functions/classes from it.
+
+```markdown
+# WCS System: [System Name] - Source Dependencies (Used By)
+
+## File: `path/to/file1.h` included/used by:
+- `path/to/dependent_file_A.cpp`
+- `path/to/dependent_file_B.h`
+- ...
+
+## File: `path/to/file1.cpp` included/used by:
+- `path/to/dependent_file_A.cpp`
+- ...
+```
 
 ## Workflow Integration
 - **Input**: System identification and scope from user or Conversion Manager
-- **Output**: Detailed analysis document in `.ai/docs/[system-name]-analysis.md`
+- **Output**: Detailed analysis document (`[system-name]-analysis.md`), source file list (`[system-name]-source-files.md`), and dependency map (`[system-name]-source-dependencies.md`) in `.ai/docs/`
 - **Next Steps**: Analysis feeds into Godot Architect for system design
 - **Dependencies**: May require additional analysis of related systems
 
@@ -132,9 +169,10 @@ Create a comprehensive analysis document in `.ai/docs/` with the following struc
 - Analysis enables accurate effort estimation for conversion
 
 ## Notes for Larry (WCS Analyst)
-- Don't just read the code - understand the intent and design decisions
-- Look for comments and documentation within the source code
-- Pay attention to performance-critical sections and optimizations
-- Consider the historical context - some patterns may be legacy
-- Focus on aspects that will impact the Godot conversion
-- When in doubt, dig deeper - surface-level analysis isn't sufficient
+- Don't just read the code - understand the intent and design decisions.
+- Look for comments and documentation within the source code.
+- Pay attention to performance-critical sections and optimizations.
+- Consider the historical context - some patterns may be legacy.
+- Focus on aspects that will impact the Godot conversion.
+- When in doubt, dig deeper - surface-level analysis isn't sufficient.
+- For the `-source-dependencies.md` file, focus on identifying how key components of the analyzed system are utilized by other parts of the codebase. This 'used by' information is crucial for understanding the impact of changes. Tools like `grep` for include statements or IDE 'find usages' features can be helpful, but manual tracing will likely be needed. Prioritize accuracy for the most critical files of the system under analysis.
