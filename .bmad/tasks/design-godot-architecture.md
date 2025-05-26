@@ -70,7 +70,9 @@ Design an optimal Godot engine architecture for a WCS system based on analysis f
 
 ## Output Format
 
-Create a detailed architecture document in `.ai/docs/` with the following structure:
+Create a detailed architecture document (`[system-name]-architecture.md`) and two supplementary documents in `.ai/docs/`.
+
+The main architecture document should follow this structure:
 
 ```markdown
 # Godot Architecture: [System Name]
@@ -194,10 +196,65 @@ MainSystem (Node3D)
 - [ ] Error handling and edge cases considered
 - [ ] Static typing and best practices enforced
 - [ ] Resource management strategy defined
+- [ ] Proposed Godot file structure clearly documented in `[system-name]-godot-files.md`.
+- [ ] Proposed Godot file dependencies and interactions (scenes, scripts, signals) documented in `[system-name]-godot-dependencies.md`.
+
+### Supplementary Document 1: [System Name] - Godot Files
+
+A markdown file named `[system-name]-godot-files.md` listing all key proposed Godot script files (`.gd`) and scene files (`.tscn`) for the system.
+
+**Format:**
+```markdown
+# Godot System: [System Name] - Proposed Files List
+
+## Core Scenes
+- `res://scenes/system/[system_name]/main_[system_name].tscn`: Main scene for the [System Name].
+- `res://scenes/system/[system_name]/components/component_a.tscn`: Reusable scene for Component A.
+- ...
+
+## Core Scripts
+- `res://scripts/system/[system_name]/[system_name]_manager.gd`: Manages the overall [System Name] logic.
+- `res://scripts/system/[system_name]/components/component_a_controller.gd`: Script for Component A.
+- ...
+
+## Autoloads/Singletons (if new or heavily used by this system)
+- `res://autoloads/new_global_manager.gd`: Description of its role.
+- ...
+```
+
+### Supplementary Document 2: [System Name] - Godot Dependencies
+
+A markdown file named `[system-name]-godot-dependencies.md` detailing the proposed interactions and dependencies between the Godot files.
+
+**Format:**
+```markdown
+# Godot System: [System Name] - Proposed Dependencies
+
+## Scene: `res://scenes/system/[system_name]/main_[system_name].tscn`
+**Instances/Uses:**
+- `res://scenes/system/[system_name]/components/component_a.tscn` (as child node `ComponentA_Instance`)
+- `res://scripts/system/[system_name]/[system_name]_manager.gd` (as script attached to root)
+**Signals Connected (Emitted by this scene/its scripts):**
+- `system_initialized` (from `[system_name]_manager.gd`) connected to `HUDManager.on_system_ready`.
+**Signals Connected (Listened to by this scene/its scripts):**
+- `player_input_action` (from `InputManagerAutoload`) connected to `[system_name]_manager.gd`'s `_on_player_action` method.
+
+## Script: `res://scripts/system/[system_name]/components/component_a_controller.gd`
+**References/Uses:**
+- `MyCustomResourceType` (from `res://resources/custom_types/my_resource.gd`)
+- `Autoload.GameEventManager.emit_signal("component_a_event", data)`
+**Signals Emitted:**
+- `component_updated(new_value: String)`
+**Signals Connected To:**
+- `parent_node.some_signal.connect(self._on_parent_signal)`
+- ...
+
+*(This document should clearly outline how scenes are composed, how scripts are attached, which scripts reference others or autoloads, and key signal connections planned.)*
+```
 
 ## Workflow Integration
 - **Input**: WCS system analysis from Larry (WCS Analyst)
-- **Output**: Detailed architecture document in `.ai/docs/[system-name]-architecture.md`
+- **Output**: Detailed architecture document (`[system-name]-architecture.md`), proposed Godot file list (`[system-name]-godot-files.md`), and Godot dependency map (`[system-name]-godot-dependencies.md`) in `.ai/docs/`
 - **Next Steps**: Architecture feeds into GDScript Developer for implementation
 - **Dependencies**: May require coordination with other system architectures
 
@@ -210,11 +267,12 @@ MainSystem (Node3D)
 - Code quality standards are enforced
 
 ## Notes for Mo (Godot Architect)
-- Be ruthlessly opinionated about Godot best practices
-- Don't compromise on architecture quality for convenience
-- Think about long-term maintainability and scalability
-- Consider performance implications of every design decision
-- Leverage Godot's unique strengths (nodes, signals, scenes)
-- Design for testability and modularity
-- Document the reasoning behind architectural choices
-- Challenge any requirements that lead to poor architecture
+- Be ruthlessly opinionated about Godot best practices.
+- Don't compromise on architecture quality for convenience.
+- Think about long-term maintainability and scalability.
+- Consider performance implications of every design decision.
+- Leverage Godot's unique strengths (nodes, signals, scenes).
+- Design for testability and modularity.
+- Document the reasoning behind architectural choices.
+- Challenge any requirements that lead to poor architecture.
+- The `-godot-files.md` and `-godot-dependencies.md` documents are critical for Dev. They should clearly articulate your proposed file structure, scene instancing, script attachments, and key communication pathways (like signal connections or direct script references). This provides a concrete blueprint for implementation.
