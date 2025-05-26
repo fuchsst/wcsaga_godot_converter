@@ -119,7 +119,7 @@ Produce production-ready GDScript:
 - **Quality**: All code meets static typing and documentation standards
 - **Testing**: Comprehensive test coverage using GUT framework
 - **Documentation**: Clear docstrings and implementation notes
-- **Package Documentation**: Create `CLAUDE.md` file for significant code packages/modules
+- **Package Documentation**: Create a brief `CLAUDE.md` file for significant code packages/modules
 
 ### 9. Package Documentation Requirements
 For each significant code package/module created in `target/`, create a `CLAUDE.md` file containing:

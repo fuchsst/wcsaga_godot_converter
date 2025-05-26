@@ -21,6 +21,8 @@ Before creating ANY stories, verify:
 ### 3. Story Creation Steps
 Follow SallySM's systematic approach:
 
+Before we begin, make sure that we have an epic defined, where the story is associated. Use a appropriate prefix for the story (e.g. SHIP-001-story-title for the first story of the "EPIC-012 Ship Scene and Script implementation")
+
 1. **Story Definition**
    - Title: Clear, descriptive title explaining the story's purpose
    - User Perspective: Define who benefits from this functionality

@@ -19,7 +19,6 @@
 ## Technical Requirements
 - **Architecture Reference**: [Link to relevant architecture document section]
 - **Godot Components**: [Specific nodes, scenes, scripts required]
-- **Performance Targets**: [Frame rate, memory, loading time requirements]
 - **Integration Points**: [How this connects with other converted systems]
 
 ## Implementation Notes
@@ -37,11 +36,10 @@
 - [ ] All acceptance criteria met and verified through testing
 - [ ] Code follows GDScript standards (static typing, documentation)
 - [ ] Unit tests written and passing with adequate coverage
-- [ ] Performance targets achieved and validated
 - [ ] Integration testing completed successfully
 - [ ] Code reviewed and approved by team
 - [ ] Documentation updated (code comments, API docs, user docs)
-- [ ] Feature validated against original WCS behavior (if applicable)
+- [ ] Feature validated against original C++ code behavior
 
 ## Estimation
 - **Complexity**: Simple | Medium | Complex
@@ -59,7 +57,6 @@ Break down the story into specific implementation tasks:
 ## Testing Strategy
 - **Unit Tests**: [Specific test cases to be written]
 - **Integration Tests**: [How to test interaction with other systems]
-- **Performance Tests**: [How to validate performance requirements]
 - **Manual Tests**: [Manual testing procedures if needed]
 
 ## Notes and Comments

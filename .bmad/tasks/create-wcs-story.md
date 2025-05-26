@@ -139,6 +139,7 @@ Create a well-defined, implementable user story for WCS-Godot conversion with cl
 - Validate that acceptance criteria are truly testable
 - Check that technical requirements align with approved architecture
 - Verify that story dependencies are properly managed
+- Update the parent epic with the story status
 
 ## BMAD Workflow Compliance
 - **Prerequisites**: PRD and Architecture must be approved

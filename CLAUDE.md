@@ -149,7 +149,7 @@ Godot_v4.4.1-stable_win64 --path target/ --check-only --headless --script-editor
 ### Architecture Phase (Mo)
 - Design Godot-native solutions, not direct C++ ports
 - Leverage Godot's node system and signals
-- Plan for performance and maintainability
+- Plan for maintainability
 - Create detailed technical specifications
 - Challenge any non-optimal architectural decisions
 
@@ -158,12 +158,12 @@ Godot_v4.4.1-stable_win64 --path target/ --check-only --headless --script-editor
 - Use static typing for ALL code
 - Write comprehensive unit tests
 - Document all public APIs
-- Optimize for performance and readability
+- Optimize for readability
 - **Create Package Documentation**: For each significant code package/module in `target/`, create a `CLAUDE.md` file explaining the package's purpose, key classes, usage examples, architecture notes, integration points, performance considerations, and testing notes
 
 ### Quality Assurance (QA)
 - Validate feature parity with original WCS
-- Test performance under load
+- We do not need explicit performance tests
 - Verify code quality standards
 - Ensure proper documentation
 - Final approval before feature completion
