@@ -1,21 +1,21 @@
-# Godot Architecture Document: WCS Core Foundation Systems
+# EPIC-001: Core Foundation & Infrastructure - Architecture
 
-**Document Version**: 1.0  
-**Date**: January 25, 2025  
+**Document Version**: 1.1  
+**Date**: January 25, 2025 (Updated: January 26, 2025)  
 **Architect**: Mo (Godot Architect)  
-**System**: Core Foundation (Object Management, Game Loop, Physics, Input)  
-**Epic**: Core Systems  
+**Epic**: EPIC-001 - Core Foundation & Infrastructure  
+**System**: Platform abstraction, file I/O, math utilities, data parsing  
 
 ## Executive Summary
 
 ### System Overview
-**Purpose**: Core foundation systems that provide the fundamental infrastructure for all WCS gameplay systems - object lifecycle management, game state control, physics simulation integration, and input handling.
+**Purpose**: Establish the foundational infrastructure layer that provides platform abstraction, file I/O systems, mathematical utilities, and data parsing frameworks for all WCS-Godot systems.
 
 **Conversion Goals**: 
-- Replace C++ object hierarchy with Godot's node-based composition system
-- Integrate WCS physics simulation with Godot's physics engine while preserving exact feel
-- Implement frame-perfect game loop with proper state management
-- Create responsive input system that matches WCS control precision
+- Replace WCS's platform-specific code with Godot-compatible cross-platform utilities
+- Convert VP archive system to work with Godot's ResourceLoader
+- Implement WCS mathematical operations with proper precision
+- Create robust data parsing framework for configuration and table files
 
 **Architecture Approach**: 
 - Node composition over inheritance - leverage Godot's scene system as the primary architectural pattern
@@ -35,16 +35,17 @@
 **Analysis Document**: `.ai/docs/wcs-high-level-system-analysis.md`
 
 **Key C++ Components**:
-- **object.cpp**: Base object system with manual lifecycle management, collision detection
-- **freespace.cpp**: Main game loop, state machine, frame timing
-- **physics.cpp**: 6DOF space physics simulation with custom integration
-- **key.cpp/mouse.cpp**: Direct input handling with custom key binding system
+- **globalincs/**: Global definitions, version management, system configuration
+- **osapi/**: Operating system abstraction layer (Windows/Linux/macOS)
+- **cfile/**: File I/O, VP archive handling, virtual file system
+- **math/**: Vector mathematics, physics calculations, spatial operations
+- **parse/**: Configuration file parsing, data table processing
 
 **Critical Algorithms**: 
-- Object update loop with fixed timestep simulation
-- Physics integration with proper momentum conservation
-- Input processing with analog stick deadzone handling
-- State transition logic between game modes
+- VP archive file table parsing and extraction
+- Cross-platform file path resolution and validation
+- Vector/matrix mathematical operations with proper precision
+- Configuration file parsing with validation and error handling
 
 **Performance Characteristics**: 
 - 60 FPS with 30+ objects in scene
@@ -53,10 +54,10 @@
 
 ### Conversion Requirements
 **Must-Have Features**: 
-- Identical ship movement feel and physics response
-- Frame-perfect input responsiveness  
-- Seamless state transitions matching original
-- Support for 100+ simultaneous objects in scene
+- VP archive files load seamlessly through Godot ResourceLoader
+- Mathematical operations maintain WCS precision and accuracy
+- Cross-platform compatibility without platform-specific code
+- Configuration parsing handles all WCS data formats correctly
 
 **Enhanced Features**: 
 - Multi-threaded physics for better performance
@@ -73,25 +74,29 @@
 
 ### Scene Architecture
 
-#### Main Scene Structure
+#### Foundation System Structure
 ```
-WCSMain (Node)
-├── GameStateManager (Node) [AUTOLOAD SINGLETON]
-│   ├── StateStack (Node)
-│   └── TransitionManager (Node)
-├── ObjectManager (Node) [AUTOLOAD SINGLETON]
-│   ├── ObjectPool (Node)
-│   ├── CollisionManager (Node)
-│   └── UpdateScheduler (Node)
-├── PhysicsManager (Node) [AUTOLOAD SINGLETON]
-│   ├── CustomPhysicsServer (Node)
-│   └── PhysicsWorld (Node3D)
-├── InputManager (Node) [AUTOLOAD SINGLETON]
-│   ├── ActionProcessor (Node)
-│   └── DeviceManager (Node)
-└── DebugOverlay (CanvasLayer)
-    ├── PerformanceStats (Control)
-    └── ObjectInspector (Control)
+Core Foundation Infrastructure
+├── Foundation Layer                   # Core infrastructure
+│   ├── SystemGlobals [AUTOLOAD]      # Global constants and types
+│   ├── PlatformUtils                 # Cross-platform utilities
+│   ├── DebugManager [AUTOLOAD]       # Debug output and logging
+│   └── VersionManager                # Version and build information
+├── File System Layer                 # File operations
+│   ├── VPArchiveLoader               # VP archive ResourceLoader
+│   ├── FileManager [AUTOLOAD]        # File operations abstraction
+│   ├── PathUtils                     # Path manipulation utilities
+│   └── ResourceCache                 # Resource caching system
+├── Mathematical Framework            # Math operations
+│   ├── WCSVector                     # Vector operations
+│   ├── WCSMatrix                     # Matrix operations
+│   ├── PhysicsMath                   # Physics calculations
+│   └── CollisionMath                 # Collision detection math
+└── Data Parsing Framework            # Configuration parsing
+    ├── ConfigParser                  # Configuration file parser
+    ├── TableParser                   # Data table parser
+    ├── ValidationManager             # Data validation system
+    └── ParseUtils                    # Parsing utility functions
 ```
 
 **Scene Rationale**: 

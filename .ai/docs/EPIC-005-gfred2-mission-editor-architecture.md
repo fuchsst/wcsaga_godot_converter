@@ -1,11 +1,11 @@
-# FRED2 Mission Editor - Godot Architecture Design
+# EPIC-005: GFRED2 Mission Editor - Architecture
 
-**Document ID**: ARCH-002  
-**System**: WCS-Godot Mission Editor  
-**Version**: 1.0  
-**Date**: 2025-01-25  
+**Document Version**: 1.1  
+**Date**: 2025-01-25 (Updated: 2025-01-26)  
 **Architect**: Mo (Godot Architect)  
-**Approval Status**: PENDING (SallySM)
+**Epic**: EPIC-005 - GFRED2 Mission Editor  
+**System**: Comprehensive mission editor as Godot plugin  
+**Approval Status**: APPROVED (Progress: Phase 2 Complete)
 
 ---
 
