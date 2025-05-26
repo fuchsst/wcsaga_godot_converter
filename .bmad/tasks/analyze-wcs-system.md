@@ -3,6 +3,8 @@
 ## Objective
 Perform a comprehensive analysis of a specific Wing Commander Saga (WCS) system by examining the C++ source code to understand its functionality, architecture, and implementation details. This analysis will serve as the foundation for designing the equivalent Godot implementation.
 
+Read existing `...-analysis.md` in `.ai\docs\` related to the requested work package before you begin.
+
 ## Prerequisites
 - Access to WCS source code in `source/` submodule
 - Specific system or component identified for analysis
