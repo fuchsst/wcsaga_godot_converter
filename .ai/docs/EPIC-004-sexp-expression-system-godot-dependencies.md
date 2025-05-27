@@ -52,28 +52,46 @@ SEXP (S-Expression) system dependency mapping showing integration with core infr
 
 ## Expression System Dependencies
 
-### Script: `res://addons/sexp/sexp_parser.gd`
+### Script: `res://addons/sexp/sexp_parser.gd` (Enhanced with External Analysis)
 **Used By**: SexpManager, GFRED2 editor, mission loading systems
 **References/Uses**:
-- `res://addons/sexp/data/sexp_token.gd` for tokenization
+- `res://addons/sexp/sexp_tokenizer.gd` for enhanced RegEx tokenization
+- `res://addons/sexp/data/sexp_token.gd` for token representation with position tracking
 - `res://addons/sexp/data/sexp_node.gd` for tree construction
+- `res://addons/sexp/data/sexp_result.gd` for enhanced error reporting
 - `res://systems/core/utilities/error_handler.gd` for parse errors
 
 **Functions Called By SexpManager**:
 - `parse_expression(expression_text: String) -> SexpNode`
-- `tokenize_expression(expression_text: String) -> Array[SexpToken]`
-- `validate_syntax(expression_text: String) -> bool`
+- `parse_with_validation(expression_text: String) -> ParseResult` (NEW)
+- `validate_syntax(expression_text: String) -> ValidationResult` (Enhanced)
 
-### Script: `res://addons/sexp/sexp_evaluator.gd`
+### Script: `res://addons/sexp/sexp_tokenizer.gd` (NEW from External Analysis)
+**Used By**: SexpParser, GFRED2 syntax highlighting, validation tools
+**References/Uses**:
+- `RegEx` class for optimized pattern matching
+- `res://addons/sexp/data/sexp_token.gd` for token creation
+- Compiled regex patterns for performance
+
+**Functions Called By SexpParser**:
+- `tokenize_with_validation(sexp_text: String) -> Array[SexpToken]`
+- `get_validation_result() -> ValidationResult`
+- `get_tokenization_errors() -> Array[String]`
+
+### Script: `res://addons/sexp/sexp_evaluator.gd` (Enhanced with Godot Expression Integration)
 **References/Uses**:
 - `res://addons/sexp/runtime/execution_context.gd`
 - `res://addons/sexp/runtime/function_registry.gd`
 - `res://addons/sexp/runtime/variable_manager.gd`
+- `res://addons/sexp/data/sexp_result.gd` for enhanced error handling
+- `Expression` class (Godot built-in) for complex evaluations (External Analysis)
 - `MathUtilities` for mathematical operations
 
 **Functions Called By SexpManager**:
-- `evaluate_node(node: SexpNode, context: ExecutionContext) -> Variant`
-- `evaluate_compiled_expression(expression: SexpExpression, context: Dictionary) -> Variant`
+- `evaluate_node(node: SexpNode, context: ExecutionContext) -> SexpResult` (Enhanced)
+- `evaluate_compiled_expression(expression: SexpExpression, context: Dictionary) -> SexpResult`
+- `evaluate_with_context_hints(expression: SexpExpression, context: ExecutionContext, hints: Dictionary) -> SexpResult` (NEW)
+- `pre_validate_expression(sexp_text: String) -> ValidationResult` (NEW)
 
 ## Expression Category Dependencies
 
@@ -233,24 +251,36 @@ SexpManager.register_ship_events(ship: Node)
 "weapon-set-damage" -> _set_weapon_damage(weapon_name: String, damage: float)
 ```
 
-## Performance-Critical Dependencies
+## Performance-Critical Dependencies (Enhanced with External Analysis)
 
 ### Expression Evaluation Performance:
 ```gdscript
-# Compiled expression caching
+# Enhanced compiled expression caching with LRU strategy
 sexp_evaluator.cache_compiled_expression(expression_id: String, compiled: SexpExpression)
 sexp_evaluator.get_cached_expression(expression_id: String) -> SexpExpression
+sexp_evaluator.get_cache_statistics() -> Dictionary  # NEW: Cache analytics
 
-# Variable access optimization
+# Variable access optimization with context hints
 variable_manager.cache_frequently_accessed_variables()
 variable_manager.batch_variable_updates(updates: Dictionary)
+variable_manager.get_access_patterns() -> Dictionary  # NEW: Access pattern analysis
 ```
 
-### Function Call Optimization:
+### Function Call Optimization (External Analysis Recommendations):
 ```gdscript
-# Function call caching for expensive operations
+# Enhanced function call caching with performance monitoring
 function_registry.cache_function_result(function_name: String, args: Array, result: Variant)
 function_registry.get_cached_result(function_name: String, args: Array) -> Variant
+function_registry.track_function_performance(function_name: String, execution_time: float)  # NEW
+function_registry.get_performance_report() -> Dictionary  # NEW: Performance analytics
+```
+
+### RegEx Compilation Optimization (NEW from External Analysis):
+```gdscript
+# Pre-compiled regex patterns for tokenization performance
+sexp_tokenizer.compile_patterns_cache()
+sexp_tokenizer.get_pattern_performance() -> Dictionary
+sexp_tokenizer.optimize_tokenization_for_common_patterns()
 ```
 
 ## Signal Flow Architecture
@@ -284,3 +314,20 @@ function_registry.get_cached_result(function_name: String, args: Array) -> Varia
 ```
 
 This SEXP system provides authentic WCS mission scripting capabilities while maintaining clean integration boundaries and optimal performance for complex mission logic.
+
+---
+
+## External Analysis Integration Notes
+
+**Enhanced with Insights from**: Godot SEXP Implementation Strategy (587 lines)  
+**Integration Date**: 2025-01-27  
+**Reviewer**: Mo (Godot Architect)
+
+### Key External Analysis Integrations:
+1. **Enhanced Tokenization**: Added separate `sexp_tokenizer.gd` with optimized RegEx patterns
+2. **Godot Expression Class**: Integrated Godot's built-in Expression class for complex evaluations
+3. **Performance Analytics**: Added comprehensive performance monitoring and cache analytics
+4. **Enhanced Error Handling**: Contextual debugging with position tracking and suggestions
+5. **Validation Integration**: Pre-parse validation with detailed error reporting
+
+The dependency structure now incorporates all validated external analysis recommendations while maintaining the clean architectural boundaries established in the original design.
