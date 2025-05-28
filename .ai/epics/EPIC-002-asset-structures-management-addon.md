@@ -5,7 +5,7 @@
 **Epic Name**: Asset Structures and Management Addon  
 **Epic Owner**: Larry (WCS Analyst)  
 **Priority**: High  
-**Status**: Analysis Complete  
+**Status**: Stories Created - Ready for Implementation  
 **Created**: 2025-01-26  
 
 ## Epic Description
@@ -102,8 +102,8 @@ addons/wcs_asset_core/
 
 ### Downstream Dependencies
 - Main game asset loading (will be refactored)
-- FRED2 asset browser (STORY-011)
-- Data migration tools (future epic)
+- FRED2 asset browser (EPIC-005)
+- Data migration tools (EPIC-003)
 
 ## Risks and Mitigation
 
@@ -121,27 +121,29 @@ addons/wcs_asset_core/
 2. **Timeline Impact**: Large refactoring effort
    - *Mitigation*: Incremental delivery with MVP approach
 
-## Story Breakdown
+## User Stories (Created January 29, 2025)
 
-### Phase 1: Core Structure Extraction
-- **STORY-003-001**: Extract base asset data structures
-- **STORY-003-002**: Create addon framework and plugin setup
-- **STORY-003-003**: Implement core asset loading system
+### Phase 1: Core Structure & Framework (4 stories - 9 days)
+- **ASM-001**: [Plugin Framework and Addon Setup](../.ai/stories/EPIC-002-asset-structures-management/ASM-001-plugin-framework-addon-setup.md) - 2 days
+- **ASM-002**: [Base Asset Data Structure and Interface](../.ai/stories/EPIC-002-asset-structures-management/ASM-002-base-asset-data-structure.md) - 2 days
+- **ASM-003**: [Asset Type Definitions and Constants](../.ai/stories/EPIC-002-asset-structures-management/ASM-003-asset-type-definitions-constants.md) - 1 day
+- **ASM-004**: [Core Asset Loader Implementation](../.ai/stories/EPIC-002-asset-structures-management/ASM-004-core-asset-loader-implementation.md) - 3 days
 
-### Phase 2: Registry and Discovery
-- **STORY-003-004**: Build asset registry manager
-- **STORY-003-005**: Implement asset validation system
-- **STORY-003-006**: Create asset querying and filtering
+### Phase 2: Asset Data Structures (3 stories - 8 days)
+- **ASM-005**: [Ship Data Resource Implementation](../.ai/stories/EPIC-002-asset-structures-management/ASM-005-ship-data-resource-implementation.md) - 3 days (COMPLEX)
+- **ASM-006**: [Weapon Data Resource Implementation](../.ai/stories/EPIC-002-asset-structures-management/ASM-006-weapon-data-resource-implementation.md) - 3 days (COMPLEX)
+- **ASM-007**: [Armor Data Resource Implementation](../.ai/stories/EPIC-002-asset-structures-management/ASM-007-armor-data-resource-implementation.md) - 2 days
 
-### Phase 3: Integration and Migration
-- **STORY-003-007**: Refactor main game to use addon
-- **STORY-003-008**: Update FRED2 to use shared structures
-- **STORY-003-009**: Create comprehensive test suite
+### Phase 3: Registry and Management (3 stories - 7 days)
+- **ASM-008**: [Asset Registry Manager Implementation](../.ai/stories/EPIC-002-asset-structures-management/ASM-008-asset-registry-manager-implementation.md) - 3 days (COMPLEX)
+- **ASM-009**: [Asset Validation System](../.ai/stories/EPIC-002-asset-structures-management/ASM-009-asset-validation-system.md) - 2 days
+- **ASM-010**: [Asset Discovery and Search](../.ai/stories/EPIC-002-asset-structures-management/ASM-010-asset-discovery-search.md) - 2 days
 
-### Phase 4: Documentation and Optimization
-- **STORY-003-010**: Complete API documentation
-- **STORY-003-011**: Performance optimization and benchmarking
-- **STORY-003-012**: Final validation and approval
+### Phase 4: Integration and Testing (2 stories - 5 days)
+- **ASM-011**: [Game Integration and Migration](../.ai/stories/EPIC-002-asset-structures-management/ASM-011-game-integration-migration.md) - 3 days (COMPLEX)
+- **ASM-012**: [Complete Testing Suite and Documentation](../.ai/stories/EPIC-002-asset-structures-management/ASM-012-testing-suite-documentation.md) - 2 days
+
+**Total Estimated Development Time**: 29 days (6 weeks)
 
 ## Acceptance Criteria
 
@@ -165,7 +167,7 @@ addons/wcs_asset_core/
 - **Phase 2**: 3 stories (1 week)
 - **Phase 3**: 3 stories (1 week)
 - **Phase 4**: 3 stories (1 week)
-- **Total**: 12 stories over 4 weeks
+- **Total**: 12 stories over 6 weeks
 
 ## Related Artifacts
 - **Analysis Report**: This document
@@ -174,15 +176,27 @@ addons/wcs_asset_core/
 - **Implementation**: To be handled by Dev
 - **Validation**: To be performed by QA
 
-## Next Steps
-1. **Architecture Design**: Mo to create detailed technical architecture
-2. **Story Creation**: SallySM to break down into implementable stories
-3. **Dependency Management**: Update STORY-011 to depend on this epic
-4. **Resource Planning**: Allocate development time and priorities
+## BMAD Workflow Status
+
+### ✅ Completed Phases
+- **Analysis Phase**: Complete (Larry) - January 26, 2025
+- **PRD Creation**: Complete (Curly) - January 25, 2025  
+- **Architecture Design**: Complete (Mo) - January 27, 2025
+- **Story Creation**: Complete (SallySM) - January 29, 2025
+
+### 🎯 Current Phase
+**READY FOR IMPLEMENTATION** - All prerequisites satisfied for Dev to begin work
+
+### 📋 Next Steps
+1. **Dev Implementation**: Begin with ASM-001 (Plugin Framework) as foundation
+2. **Sequential Story Completion**: Follow phase order for optimal dependency management
+3. **Quality Gate Validation**: Run story completion checklists after each story
+4. **Epic Progress Updates**: Update this document as stories are completed
 
 ---
 
-**Analysis Completed By**: Larry (WCS Analyst)  
-**Analysis Date**: 2025-01-26  
-**Ready for Architecture Phase**: Yes  
-**BMAD Workflow Status**: Analysis → Architecture (Next)
+**Epic Completion Status**: Stories Created - Ready for Implementation  
+**Story Count**: 12 stories across 4 phases  
+**Total Estimated Duration**: 29 development days (6 weeks)  
+**Dependencies**: EPIC-001 Core Foundation must be completed first  
+**BMAD Workflow Status**: Analysis → PRD → Architecture → Stories ✅ → **Implementation (Ready)**
