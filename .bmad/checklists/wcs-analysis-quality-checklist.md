@@ -73,7 +73,8 @@ This checklist ensures that the analysis of a Wing Commander Saga (WCS) C++ syst
 - [ ] **Actionability**: The analysis provides a solid, actionable basis for PRD creation and Godot architecture design.
 - [ ] **Command-Line Tools**: Evidence or notes suggest effective use of command-line tools for exploration where appropriate.
 - [ ] **Code Snippet Readiness**: Larry is prepared to provide specific code snippets to Mo if requested.
-- [ ] **File Naming**: All output documents follow the `[system-name]-analysis.md`, `[system-name]-source-files.md`, and `[system-name]-source-dependencies.md` naming convention in `.ai/docs/`.
+- [ ] **File Naming**: The output documents `analysis.md`, `source-files.md`, and `source-dependencies.md` in `.ai/docs/[epic-name]/`.
+- [ ] **Epic Update**: Parent epic document in `.ai/epics/[epic-name].md` updated with analysis status and key findings summary.
 
 ## Checklist Completion
 

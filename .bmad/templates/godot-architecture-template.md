@@ -23,7 +23,7 @@
 ## WCS System Analysis Reference
 
 ### Original Implementation
-**Analysis Document**: [Link to WCS system analysis in `.ai/docs/[system]-analysis.md`]
+**Analysis Document**: [Link to WCS system analysis in `.ai/docs/[epic-name]/analysis.md`]
 
 **Key C++ Components**:
 - **[Component 1]**: [Description and role]
@@ -35,7 +35,7 @@
 **Performance Characteristics**: [Current performance benchmarks and requirements]
 
 ### Conversion Requirements
-**PRD Reference**: [Link to approved PRD in `.ai/docs/[system]-prd.md`]
+**PRD Reference**: [Link to approved PRD in `.ai/docs/[epic-name]/prd.md`]
 
 **Must-Have Features**: [Core features that must be preserved]
 

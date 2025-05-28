@@ -4,7 +4,7 @@
 Design an optimal Godot engine architecture for a WCS system based on analysis from the WCS Analyst. Create a detailed technical specification that leverages Godot's strengths while maintaining the essential functionality and feel of the original WCS system.
 
 ## Prerequisites
-- Completed WCS system analysis document in `.ai/docs/`
+- Completed WCS system analysis document in `.ai/docs/[epic-name]/`
 - Understanding of Godot engine architecture and best practices
 - Knowledge of the target system's requirements and constraints
 
@@ -70,7 +70,7 @@ Design an optimal Godot engine architecture for a WCS system based on analysis f
 
 ## Output Format
 
-Create a detailed architecture document (`[system-name]-architecture.md`) and two supplementary documents in `.ai/docs/`.
+Create a detailed architecture document (`architecture.md`) and two supplementary documents in `.ai/docs/[epic-name]/`.
 
 The main architecture document should follow this structure:
 
@@ -254,9 +254,10 @@ A markdown file named `[system-name]-godot-dependencies.md` detailing the propos
 
 ## Workflow Integration
 - **Input**: WCS system analysis from Larry (WCS Analyst)
-- **Output**: Detailed architecture document (`[system-name]-architecture.md`), proposed Godot file list (`[system-name]-godot-files.md`), and Godot dependency map (`[system-name]-godot-dependencies.md`) in `.ai/docs/`
+- **Output**: Detailed architecture document (`architecture.md`), proposed Godot file list (`godot-files.md`), and Godot dependency map (`godot-dependencies.md`) in `.ai/docs/[epic-name]/`
 - **Next Steps**: Architecture feeds into GDScript Developer for implementation
 - **Dependencies**: May require coordination with other system architectures
+- **Epic Update**: After completing architecture, update the parent epic document in `.ai/epics/[epic-name].md` with architecture status and key design decisions
 
 ## Success Criteria
 - Architecture provides clear implementation roadmap
@@ -275,4 +276,4 @@ A markdown file named `[system-name]-godot-dependencies.md` detailing the propos
 - Design for testability and modularity.
 - Document the reasoning behind architectural choices.
 - Challenge any requirements that lead to poor architecture.
-- The `-godot-files.md` and `-godot-dependencies.md` documents are critical for Dev. They should clearly articulate your proposed file structure, scene instancing, script attachments, and key communication pathways (like signal connections or direct script references). This provides a concrete blueprint for implementation.
+- The `godot-files.md` and `godot-dependencies.md` documents are critical for Dev. They should clearly articulate your proposed file structure, scene instancing, script attachments, and key communication pathways (like signal connections or direct script references). This provides a concrete blueprint for implementation.

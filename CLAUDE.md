@@ -37,10 +37,19 @@ This project converts Wing Commander Saga (WCS) from C++ to Godot Engine using G
 ```
 wcsaga_godot_converter/
 ├── .ai/                    # BMAD project artifacts
-│   ├── docs/              # PRDs, Architecture documents
-│   ├── stories/           # User stories and tasks
-│   ├── epics/             # High-level feature groupings
-│   └── reviews/           # Approval artifacts
+│   ├── docs/              # PRDs, Architecture documents (organized by epic)
+│   │   ├── epic-001-core-foundation-infrastructure/
+│   │   ├── epic-002-asset-structures-management/
+│   │   └── [epic-name]/   # Analysis, PRD, Architecture docs per epic
+│   ├── stories/           # User stories and tasks (organized by epic)
+│   │   ├── epic-001-core-foundation-infrastructure/
+│   │   ├── epic-002-asset-structures-management/
+│   │   └── [epic-name]/   # Story files per epic
+│   ├── epics/             # High-level epic definitions
+│   └── reviews/           # Approval artifacts (organized by epic)
+│       ├── epic-001-core-foundation-infrastructure/
+│       ├── epic-002-asset-structures-management/
+│       └── [epic-name]/   # Review documents per epic
 ├── .bmad/                 # BMAD framework (local copy)
 │   ├── personas/          # Agent personalities
 │   ├── tasks/             # Task definitions
@@ -54,6 +63,40 @@ wcsaga_godot_converter/
 ├── target/                # Godot project (submodule)
 └── CLAUDE.md             # This file
 ```
+
+## Epic-Based Organization (MANDATORY)
+
+### Folder Structure Rules
+All BMAD artifacts MUST be organized by epic to maintain project clarity and enable effective tracking:
+
+- **Analysis Documents**: `.ai/docs/[epic-name]/analysis.md`
+- **PRD Documents**: `.ai/docs/[epic-name]/prd.md` 
+- **Architecture Documents**: `.ai/docs/[epic-name]/architecture.md`
+- **User Stories**: `.ai/stories/[epic-name]/[STORY-ID]-[story-name].md`
+- **Review Documents**: `.ai/reviews/[epic-name]/[review-type].md`
+- **Epic Definitions**: `.ai/epics/[epic-name].md`
+
+### Epic Naming Convention
+Epic folders follow the pattern: `epic-XXX-{main-component}-{sub-system}-{category}`
+
+Examples:
+- `epic-001-core-foundation-infrastructure`
+- `epic-002-asset-structures-management`
+- `epic-003-data-migration-conversion`
+
+### Agent Responsibilities
+Each BMAD agent MUST:
+1. **Create artifacts in the correct epic folder**
+2. **Update the parent epic document** with status/progress after completing work
+3. **Reference epic context** when working on analysis, architecture, or stories
+4. **Maintain epic boundaries** - don't mix work across different epics
+
+### Epic Lifecycle Tracking
+The epic document (`.ai/epics/[epic-name].md`) serves as the central hub for:
+- Epic status and progress tracking
+- Links to all related artifacts
+- Summary of key findings and decisions
+- Dependencies and relationships with other epics
 
 ## Godot Development Standards (OPINIONATED & NON-NEGOTIABLE)
 
@@ -174,7 +217,7 @@ Godot_v4.4.1-stable_win64 --path target/ --check-only --headless --script-editor
 - **Location**: `source/` submodule contains WCS C++ code
 - **Focus Areas**: `source/code/` directory structure
 - **Key Systems**: Ship movement, weapons, AI, UI, missions
-- **Analysis Output**: Store in `.ai/docs/[system]-analysis.md`
+- **Analysis Output**: Store in `.ai/docs/[epic-name]/[system]-analysis.md`
 
 ### Godot Implementation
 - **Location**: `target/` submodule contains Godot project
@@ -182,11 +225,12 @@ Godot_v4.4.1-stable_win64 --path target/ --check-only --headless --script-editor
 - **Script Location**: Follow Godot project structure
 - **Asset Management**: Efficient resource loading patterns
 
-### BMAD Artifacts
-- **PRDs**: Product requirements in `.ai/docs/`
-- **Architecture**: Technical specifications in `.ai/docs/`
-- **Stories**: Implementation tasks in `.ai/stories/`
-- **Reviews**: Approval documentation in `.ai/reviews/`
+### BMAD Artifacts (Epic-Based Organization)
+- **PRDs**: Product requirements in `.ai/docs/[epic-name]/`
+- **Architecture**: Technical specifications in `.ai/docs/[epic-name]/`
+- **Stories**: Implementation tasks in `.ai/stories/[epic-name]/`
+- **Reviews**: Approval documentation in `.ai/reviews/[epic-name]/`
+- **Epic Tracking**: Epic definitions and status in `.ai/epics/[epic-name].md`
 
 ## Quality Gates & Checklists
 
@@ -231,9 +275,11 @@ Godot_v4.4.1-stable_win64 --path target/ --check-only --headless --script-editor
 2. **Single Epic Focus**: Only one epic in progress at a time
 3. **Quality Gates**: Cannot skip approval checkpoints
 4. **Documentation**: All artifacts must be documented and approved
-5. **Static Typing**: No untyped GDScript code allowed
-6. **Godot Best Practices**: Architecture must be Godot-native, not ported C++
-7. **Version Control**: MUST commit after each major workflow phase completion
+5. **Epic-Based Organization**: All docs/stories organized under respective epic folders
+6. **Epic Updates**: Agents must update parent epic documents with status/progress
+7. **Static Typing**: No untyped GDScript code allowed
+8. **Godot Best Practices**: Architecture must be Godot-native, not ported C++
+9. **Version Control**: MUST commit after each major workflow phase completion
 
 ## Git Workflow (MANDATORY)
 

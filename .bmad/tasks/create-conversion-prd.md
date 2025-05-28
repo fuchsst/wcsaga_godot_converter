@@ -4,7 +4,7 @@
 Create a comprehensive Product Requirements Document (PRD) for converting a specific WCS system to Godot, defining scope, requirements, and success criteria for the conversion effort.
 
 ## Prerequisites
-- Completed WCS system analysis document in `.ai/docs/`
+- Completed WCS system analysis document in `.ai/docs/[epic-name]/`
 - Understanding of conversion goals and constraints
 - Stakeholder input on priorities and requirements
 
@@ -85,9 +85,10 @@ Use the template from `.bmad/templates/conversion-prd-template.md` and populate 
 
 ## Workflow Integration
 - **Input**: WCS system analysis from Larry (WCS Analyst)
-- **Output**: Comprehensive PRD document in `.ai/docs/[system-name]-prd.md`
+- **Output**: Comprehensive PRD document in `.ai/docs/[epic-name]/prd.md`
 - **Next Steps**: PRD approval before architecture design phase
 - **Dependencies**: Must have completed system analysis
+- **Epic Update**: After completing PRD, update the parent epic document in `.ai/epics/[epic-name].md` with PRD status and key requirements
 
 ## Success Criteria
 - PRD provides clear guidance for architecture design
@@ -108,5 +109,5 @@ Use the template from `.bmad/templates/conversion-prd-template.md` and populate 
 - **Prerequisites**: WCS system analysis must be completed and approved
 - **Approval Required**: PRD must be approved before proceeding to architecture
 - **Quality Gates**: All checklist items must be satisfied
-- **Documentation**: Store completed PRD in `.ai/docs/` directory
+- **Documentation**: Store completed PRD in `.ai/docs/[epic-name]/` directory
 - **Next Phase**: Architecture design cannot begin without approved PRD

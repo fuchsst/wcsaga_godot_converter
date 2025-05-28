@@ -4,8 +4,8 @@
 Create a well-defined, implementable user story for WCS-Godot conversion with clear acceptance criteria, technical requirements, and proper dependency management following BMAD methodology.
 
 ## Prerequisites
-- Approved PRD document in `.ai/docs/`
-- Approved architecture document in `.ai/docs/`
+- Approved PRD document in `.ai/docs/[epic-name]/`
+- Approved architecture document in `.ai/docs/[epic-name]/`
 - Epic definition and scope established
 - Understanding of story dependencies
 
@@ -121,9 +121,10 @@ Create a well-defined, implementable user story for WCS-Godot conversion with cl
 
 ## Workflow Integration
 - **Input**: Approved PRD and architecture documents
-- **Output**: Well-defined user story in `.ai/stories/[story-name].md`
+- **Output**: Well-defined user story in `.ai/stories/[epic-name]/[STORY-nnn]-[story-name].md` (where nnn is an increasing number)
 - **Next Steps**: Story approval before implementation begins
 - **Dependencies**: Cannot create stories without approved architecture
+- **Epic Update**: After creating story, update the parent epic document in `.ai/epics/[epic-name].md` with new story status
 
 ## Success Criteria
 - Story provides clear implementation guidance
@@ -145,6 +146,6 @@ Create a well-defined, implementable user story for WCS-Godot conversion with cl
 - **Prerequisites**: PRD and Architecture must be approved
 - **Approval Required**: Story must be approved before implementation
 - **Quality Gates**: All checklist items must be satisfied
-- **Documentation**: Store completed story in `.ai/stories/` directory
+- **Documentation**: Store completed story in `.ai/stories/[epic-name]/` directory
 - **Next Phase**: Implementation cannot begin without approved story
 - **Single Epic Rule**: Ensure only one epic is in progress at a time

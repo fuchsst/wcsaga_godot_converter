@@ -52,7 +52,7 @@ Read existing `...-analysis.md` in `.ai\docs\` related to the requested work pac
 
 ## Output Format
 
-Create a comprehensive analysis document and two supplementary documents in `.ai/docs/`.
+Create a comprehensive analysis document and two supplementary documents in `.ai/docs/[epic-name]/` where `[epic-name]` matches the epic this system belongs to (e.g., `EPIC-001-core-foundation-infrastructure`).
 
 The main analysis document, `[system-name]-analysis.md`, should follow this structure:
 
@@ -159,9 +159,10 @@ A markdown file named `[system-name]-source-dependencies.md` detailing the usage
 
 ## Workflow Integration
 - **Input**: System identification and scope from user or Conversion Manager
-- **Output**: Detailed analysis document (`[system-name]-analysis.md`), source file list (`[system-name]-source-files.md`), and dependency map (`[system-name]-source-dependencies.md`) in `.ai/docs/`
+- **Output**: Detailed analysis document (`[system-name]-analysis.md`), source file list (`[system-name]-source-files.md`), and dependency map (`[system-name]-source-dependencies.md`) in `.ai/docs/[epic-name]/`
 - **Next Steps**: Analysis feeds into Godot Architect for system design
 - **Dependencies**: May require additional analysis of related systems
+- **Epic Update**: After completing analysis, update the parent epic document in `.ai/epics/[epic-name].md` with analysis status and key findings
 
 ## Success Criteria
 - Analysis provides sufficient detail for architectural design

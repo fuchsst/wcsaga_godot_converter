@@ -9,7 +9,7 @@
 [Brief overview of the epic, its purpose, and the problem it solves or value it delivers. This should be a significant, high-level body of work.]
 
 ## 2. Strategic Alignment
-- **PRD Reference(s)**: [Link to relevant PRD(s) in `.ai/docs/`]
+- **PRD Reference(s)**: [Link to relevant PRD(s) in `.ai/docs/[epic-name]/`]
 - **Conversion Goals**: [How this epic aligns with the overall WCS-Godot conversion goals and strategic priorities.]
 
 ## 3. Scope

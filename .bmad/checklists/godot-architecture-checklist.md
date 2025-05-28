@@ -116,6 +116,9 @@ This checklist ensures that Godot architecture designs meet the highest standard
 **Notes**: 
 _Document any specific issues, recommendations, or conditions for approval_
 
+**Epic Update Completion**:
+- [ ] Parent epic document in `.ai/epics/[epic-name].md` updated with architecture status and key design decisions
+
 ---
 
 **Critical Reminder**: This architecture will serve as the foundation for all implementation work. No shortcuts or compromises on quality are acceptable. The WCS-Godot conversion depends on getting the architecture right.

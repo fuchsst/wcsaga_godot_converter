@@ -151,6 +151,9 @@ This checklist ensures that user stories for WCS-Godot conversion are properly d
 - [ ] **NEEDS REFINEMENT**: Specific issues identified that must be addressed
 - [ ] **NOT READY**: Fundamental problems require significant rework
 
+**Epic Update Completion**:
+- [ ] Parent epic document in `.ai/epics/[epic-name].md` updated with new story status
+
 **Estimated Effort**: _______ days (Target: 1-3 days maximum)
 
 **Critical Dependencies** (if any):
