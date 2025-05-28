@@ -82,4 +82,5 @@ Example: If above cfg has `agent-root: root/foo/` and `tasks: (agent-root)/tasks
   - [Validate Feature Parity](validate-feature-parity.md)
   - [Performance Testing](test-performance.md)
   - [Code Quality Review](review-code-quality.md)
+  - [Review Code Implementation](review_code_implementation.md)
   - [Final Approval](In QA Specialist Memory Already)

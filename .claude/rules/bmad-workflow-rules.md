@@ -6,7 +6,7 @@ These rules ensure that Claude AI assistant strictly follows the BMAD methodolog
 ## Critical Enforcement Rules
 
 ### Rule 1: Sequential Phase Progression (MANDATORY)
-**REQUIREMENT**: Must follow PRD → Epic Definition → Architecture → Stories → Implementation → Validation
+**REQUIREMENT**: Must follow PRD → Epic Definition → Architecture → Stories → Implementation → Code Review → Validation
 
 #### Before Epic Definition
 - [ ] **STOP**: Verify PRD exists in `.ai/docs/[system]-prd.md` (or an overall project PRD).
@@ -36,6 +36,17 @@ These rules ensure that Claude AI assistant strictly follows the BMAD methodolog
 - [ ] **STOP**: Verify all acceptance criteria met
 - [ ] **STOP**: Run `.bmad/checklists/story-definition-of-done-checklist.md`
 - [ ] **VIOLATION**: If any check fails, REFUSE to mark feature complete
+
+#### Before Code Review
+- [ ] **STOP**: Verify implementation is complete for the story.
+- [ ] **STOP**: Verify the story has passed its Definition of Done checklist (`.bmad/checklists/story-definition-of-done-checklist.md`), signed off by Dev.
+- [ ] **VIOLATION**: If any check fails, REFUSE to proceed with Code Review. Implementation needs to be finalized first.
+
+#### Before Validation
+- [ ] **STOP**: Verify a code review has been conducted by QA and Godot Architect for the implemented story.
+- [ ] **STOP**: Check for the existence of a corresponding review document in `.ai/reviews/[epic-name]/[story-id]-review.md`.
+- [ ] **STOP**: Verify all critical/major issues identified in the code review document have either been addressed or have new user stories/tasks created and prioritized for them.
+- [ ] **VIOLATION**: If any check fails, REFUSE to proceed with final feature validation until code review feedback is appropriately handled.
 
 ### Rule 2: Version Control Compliance (MANDATORY)
 **REQUIREMENT**: All artifacts must be committed after each phase
