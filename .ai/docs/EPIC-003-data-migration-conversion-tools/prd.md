@@ -97,6 +97,7 @@ Develop comprehensive data migration and conversion tools to transform Wing Comm
    - **User Story**: As a developer, I want one-command conversion so that I can quickly set up the entire WCS content library for Godot development
    - **Acceptance Criteria**: 
      - [x] Single command converts entire WCS installation
+     - [x] Python environment setup via `migration_tools/setup_env.sh`
      - [x] Progress reporting with ETA and current file processing
      - [x] Comprehensive error logging with recovery suggestions
      - [x] Incremental conversion support for partial updates
@@ -123,6 +124,11 @@ Develop comprehensive data migration and conversion tools to transform Wing Comm
 - **Scalability**: Support conversion of 10GB+ WCS installations with 1000+ assets
 
 ### Godot-Specific Requirements
+- **Project Structure**:
+  - **Separate Migration Tools Project**: Located in `migration_tools/` subdirectory
+  - `migration_tools/` is in `.godotignore` in main project
+  - `migration_tools/project.godot` - Separate Godot project for tools
+  - `migration_tools/setup_env.sh` - Python environment setup script
 - **Integration**: 
   - Import plugins for automatic conversion during Godot import
   - CLI tools as external utilities for batch operations

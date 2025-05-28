@@ -124,11 +124,17 @@ Convert Wing Commander Saga's sophisticated asset management system to Godot Eng
 
 ### Godot-Specific Requirements
 - **Godot Version**: Godot 4.2+ (leveraging latest Resource system improvements)
+- **Implementation Type**: **Godot Addon/Plugin** located in `addons/wcs_asset_management/`
 - **Node Architecture**: 
-  - AssetManager autoload singleton
+  - AssetManager autoload singleton (configured via addon)
   - ComponentFactory autoload for instantiation
   - ShipClass/WeaponDefinition as Resource classes
   - Ship instances as PackedScene with ComponentNode hierarchy
+- **Addon Structure**:
+  - `addons/wcs_asset_management/plugin.cfg` - Plugin configuration
+  - `addons/wcs_asset_management/plugin.gd` - Main plugin script
+  - `addons/wcs_asset_management/autoloads/` - Singleton managers
+  - `addons/wcs_asset_management/resources/` - Custom Resource classes
 - **Scene Structure**: 
   - Clear separation between asset definitions and runtime instances
   - Component-based entity architecture using Godot nodes

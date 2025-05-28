@@ -100,7 +100,15 @@ Convert GFRED2 (FReespace EDitor version 2) from a complex Windows MFC applicati
 - **Scalability**: UI responsiveness maintained with complex missions
 
 ### Godot-Specific Requirements
+- **Implementation Type**: **Godot Addon/Plugin** located in `addons/wcs_gfred2_editor/`
 - **Godot Version**: Target Godot 4.2+
+- **Addon Structure**:
+  - `addons/wcs_gfred2_editor/plugin.cfg` - Plugin configuration
+  - `addons/wcs_gfred2_editor/plugin.gd` - Main EditorPlugin script
+  - `addons/wcs_gfred2_editor/3d_viewport/` - 3D editing viewport components
+  - `addons/wcs_gfred2_editor/sexp_editor/` - Visual SEXP editing system
+  - `addons/wcs_gfred2_editor/docks/` - Editor dock panels and UI
+  - `addons/wcs_gfred2_editor/dialogs/` - Mission editing dialogs
 - **Node Architecture**: EditorPlugin with modular dock system
 - **Scene Structure**: SubViewport for 3D, Control docks for UI panels
 - **Signal Architecture**: Event-driven communication between editor components
