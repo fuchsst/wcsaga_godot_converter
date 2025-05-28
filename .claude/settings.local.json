@@ -10,8 +10,11 @@
       "WebFetch(domain:github.com)",
       "Bash(/mnt/d/Godot/Godot_v4.4.1-stable_win64_console.exe --headless --check-only --script-editor=false --quit)",
       "Bash(mv:*)",
-      "Bash(echo:*)"
+      "Bash(echo:*)",
+      "Bash(/mnt/d/Godot/Godot_v4.4.1-stable_win64_console.exe --headless --script addons/gdUnit4/bin/ProjectScanner.cs)",
+      "Bash(/mnt/d/Godot/Godot_v4.4.1-stable_win64_console.exe --headless -s addons/gdUnit4/runtest.cmd)"
     ],
     "deny": []
-  }
+  },
+  "enableAllProjectMcpServers": false
 }
