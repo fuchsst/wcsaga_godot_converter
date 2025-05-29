@@ -15,7 +15,9 @@
       "Bash(/mnt/d/Godot/Godot_v4.4.1-stable_win64_console.exe --headless -s addons/gdUnit4/runtest.cmd)",
       "Bash(/home/fuchsst/.nvm/versions/node/v24.1.0/lib/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/x64-linux/rg -n -A 20 -B 5 \"VP.*HEADER|vp.*header|VPVP\" code/cfile/cfilesystem.cpp)",
       "Bash(./run_script.sh:*)",
-      "Bash(rg:*)"
+      "Bash(rg:*)",
+      "Bash(export:*)",
+      "Bash(bash:*)"
     ],
     "deny": []
   },
