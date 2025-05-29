@@ -202,7 +202,7 @@ Godot_v4.4.1-stable_win64 --path target/ --check-only --headless --script-editor
 - Write comprehensive unit tests
 - Document all public APIs
 - Optimize for readability
-- **Create Package Documentation**: For each significant code package/module in `target/`, create a `CLAUDE.md` file explaining the package's purpose, key classes, usage examples, architecture notes, integration points, performance considerations, and testing notes
+- **Create Package Documentation**: For each significant code package/module in `target/`, create a short `CLAUDE.md` file explaining the package's purpose, key classes, usage examples, architecture notes, integration points, performance considerations, and testing notes
 
 ### Quality Assurance (QA)
 - Validate feature parity with original WCS

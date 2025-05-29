@@ -163,7 +163,7 @@ Development HALTED until explicit approval to resume.
 
 ### Dev (GDScript Developer)
 - MUST enforce 100% static typing
-- MUST create `CLAUDE.md` for code packages
+- MUST create brief `CLAUDE.md` for code packages
 - MUST run `.bmad/checklists/story-definition-of-done-checklist.md`
 
 ### QA (Quality Assurance)

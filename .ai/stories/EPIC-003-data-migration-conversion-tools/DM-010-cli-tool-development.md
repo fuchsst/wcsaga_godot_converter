@@ -3,7 +3,7 @@
 **Epic**: EPIC-003 - Data Migration & Conversion Tools  
 **Story ID**: DM-010  
 **Created**: January 29, 2025  
-**Status**: Ready
+**Status**: In Progress
 
 ## Story Definition
 **As a**: WCS-Godot conversion developer  
