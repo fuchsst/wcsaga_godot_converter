@@ -72,7 +72,7 @@ Create a comprehensive mission scripting system that converts WCS SEXP (S-Expres
 
 ### SEXP System Structure
 ```
-target/scripts/mission/sexp/
+target/addons/sexp/
 ├── core/                            # Core SEXP engine
 │   ├── sexp_evaluator.gd           # Main expression evaluator
 │   ├── sexp_parser.gd              # SEXP expression parser
