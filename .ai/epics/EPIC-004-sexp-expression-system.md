@@ -5,7 +5,7 @@
 **Epic Name**: SEXP Expression System  
 **Epic Owner**: Larry (WCS Analyst)  
 **Priority**: Critical  
-**Status**: Architecture Complete  
+**Status**: Stories Created - Ready for Implementation  
 **Created**: 2025-01-26  
 **Position**: 3 (Data Pipeline Phase)  
 **Duration**: 8-10 weeks  
@@ -97,11 +97,17 @@ target/addons/sexp/
 │   ├── event_trigger.gd            # Event trigger definitions
 │   ├── event_conditions.gd         # Condition evaluation
 │   └── event_scheduler.gd          # Time-based event scheduling
-└── integration/                     # System integration
-    ├── mission_objectives.gd       # Mission goal management
-    ├── campaign_state.gd           # Campaign progression tracking
-    ├── message_system.gd           # Mission message integration
-    └── training_system.gd          # Training scenario support
+│── integration/                     # System integration
+│   ├── mission_objectives.gd       # Mission goal management
+│   ├── campaign_state.gd           # Campaign progression tracking
+│   ├── message_system.gd           # Mission message integration
+│   └── training_system.gd          # Training scenario support
+├── debug/                           # Development and debugging tools
+│   ├── sexp_validator.gd           # Expression validation
+│   ├── debug_evaluator.gd          # Step-by-step debugging
+│   ├── performance_profiler.gd     # Performance analysis
+│   └── error_reporter.gd           # Comprehensive error reporting
+└── tests/                          # gdUnit4 tests
 ```
 
 ### SEXP Function Categories
@@ -130,31 +136,26 @@ target/addons/sexp/
 - **Comparison**: `variable-equals`, `variable-greater-than`, `variable-less-than`
 - **String Operations**: `string-concatenate`, `string-length`, `string-contains`
 
-## Story Breakdown
+## Story Breakdown (COMPLETED - January 30, 2025)
 
-### Phase 1: Core SEXP Engine (3 weeks)
-- **STORY-SEXP-001**: SEXP Parser and Expression Tree Builder
-- **STORY-SEXP-002**: Expression Evaluator and Context Management
-- **STORY-SEXP-003**: Function Registry and Dynamic Dispatch
-- **STORY-SEXP-004**: Error Handling and Debug System
+### Core Foundation Stories (High Priority)
+- **SEXP-001**: Core Expression Parser and Tokenizer (3-4 days) - ✅ CREATED
+- **SEXP-002**: Expression Tree Structure and Result Types (2-3 days) - ✅ CREATED  
+- **SEXP-003**: Base Evaluator Engine Implementation (4-5 days) - ✅ CREATED
+- **SEXP-004**: Core Function Library Framework (3-4 days) - ✅ CREATED
 
-### Phase 2: Function Implementation (3 weeks)
-- **STORY-SEXP-005**: Core Logic and Arithmetic Functions
-- **STORY-SEXP-006**: Object and Game State Functions
-- **STORY-SEXP-007**: Mission Control and Objective Functions
-- **STORY-SEXP-008**: Variable Management Functions
+### Implementation Stories (Medium Priority)
+- **SEXP-005**: Logic and Comparison Operators (4-5 days) - ✅ CREATED
+- **SEXP-006**: Variable Management System (4-5 days) - ✅ CREATED
+- **SEXP-007**: Mission Event Integration (5-6 days) - ✅ CREATED
+- **SEXP-008**: Ship and Object Interface Functions (5-6 days) - ✅ CREATED
 
-### Phase 3: Event and Integration Systems (2-3 weeks)
-- **STORY-SEXP-009**: Mission Event System and Triggers
-- **STORY-SEXP-010**: Variable Persistence and State Management
-- **STORY-SEXP-011**: Mission Objective Integration
-- **STORY-SEXP-012**: Campaign State and Progression
+### Enhancement Stories (Low Priority)
+- **SEXP-009**: Performance Optimization and Caching (4-5 days) - ✅ CREATED
+- **SEXP-010**: Debug and Validation Framework (4-5 days) - ✅ CREATED
 
-### Phase 4: Advanced Features and Validation (2 weeks)
-- **STORY-SEXP-013**: Performance Optimization and Caching
-- **STORY-SEXP-014**: Complex Mission Support (Training, Branching)
-- **STORY-SEXP-015**: Validation and Testing Framework
-- **STORY-SEXP-016**: FRED2 Editor Integration Support
+**Total Implementation Effort**: 38-47 days
+**Stories Location**: `.ai/stories/epic-004-sexp-expression-system/`
 
 ## Acceptance Criteria
 
@@ -278,4 +279,21 @@ This epic is **critical for mission functionality** - all mission-based features
 **Analysis Date**: 2025-01-26  
 **Ready for Architecture Phase**: Yes  
 **Critical Path Status**: Required for all mission functionality  
-**BMAD Workflow Status**: Analysis → Architecture → Stories (Ready for Story Creation)
+**BMAD Workflow Status**: Analysis → Architecture → Stories → Implementation (Ready for Implementation)
+
+## Story Creation Update (January 30, 2025)
+
+**Stories Created**: 10 comprehensive user stories with detailed acceptance criteria
+**Story Template**: Consistent with EPIC-001 through EPIC-003 patterns
+**Architecture Alignment**: All stories reference approved architecture sections
+**Priority Organization**: High priority foundation stories → Medium priority implementation → Low priority enhancements
+**Dependencies**: Clearly mapped with EPIC-001 foundation requirements
+**Total Estimated Effort**: 38-47 days implementation time
+
+### Story Status Summary
+- ✅ All 10 stories created and approved by SallySM
+- ✅ Epic directory structure established
+- ✅ Dependencies mapped to foundation systems
+- ✅ Ready for sequential implementation starting with SEXP-001
+
+**Next Phase**: Begin implementation with Dev (GDScript Developer) starting with SEXP-001

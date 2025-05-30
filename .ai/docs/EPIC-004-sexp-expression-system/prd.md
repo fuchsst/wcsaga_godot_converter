@@ -105,17 +105,20 @@ Convert Wing Commander Saga's SEXP (S-Expression) mission scripting system to a 
 - **Startup Time**: SEXP system initialization in <500ms
 
 ### Godot-Specific Requirements
-- **Implementation Type**: **Godot Addon/Plugin** located in `addons/wcs_sexp_system/`
+- **Implementation Type**: **Godot Addon/Plugin** located in `addons/sexp/`
 - **Architecture**: 
   - SEXPManager autoload singleton for runtime management (configured via addon)
   - SEXPExpression class for individual expression trees
   - Signal-based integration with all game systems
 - **Addon Structure**:
-  - `addons/wcs_sexp_system/plugin.cfg` - Plugin configuration
-  - `addons/wcs_sexp_system/plugin.gd` - Main plugin script
-  - `addons/wcs_sexp_system/sexp_manager.gd` - Runtime manager singleton
-  - `addons/wcs_sexp_system/operators/` - Individual operator implementations
-  - `addons/wcs_sexp_system/debug/` - Visual debugging tools
+  - `addons/sexp/plugin.cfg` - Plugin configuration
+  - `addons/sexp/plugin.gd` - Main plugin script
+  - `addons/sexp/core/` - Core SEXP engine (parser, evaluator, cache)
+  - `addons/sexp/functions/` - SEXP function implementations
+  - `addons/sexp/variables/` - Variable management system
+  - `addons/sexp/events/` - Event system integration
+  - `addons/sexp/integration/` - System integration components
+  - `addons/sexp/debug/` - Visual debugging tools
 - **Integration**: 
   - Custom Resource class for SEXP mission data
   - Debug dock integration for visual debugging
