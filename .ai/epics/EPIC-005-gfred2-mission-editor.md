@@ -144,11 +144,11 @@ target/addons/gfred2/
 
 ## Integration Story Breakdown (REFINED BY BMAD TEAM)
 
-### Phase 1: Foundation Integration (2 weeks) - READY ⚡
+### Phase 1: Foundation Integration (2 weeks) - IN PROGRESS ⚡
 - **GFRED2-004**: Core Infrastructure Integration with EPIC-001 (2 days) ⏳ **READY**
 - **GFRED2-001**: Asset System Integration with EPIC-002 (3 days) ⏳ **READY**
-- **GFRED2-003**: Mission File Conversion Integration with EPIC-003 (3 days) ⏳ **READY**
-- **GFRED2-002**: SEXP System Integration with EPIC-004 (5 days) ⏳ **READY**
+- **GFRED2-003**: Mission File Conversion Integration with EPIC-003 (3 days) 🔴 **NOT IMPLEMENTED** (Review: [GFRED2-003-review.md](.ai/reviews/EPIC-005-gfred2-mission-editor/GFRED2-003-review.md))
+- **GFRED2-002**: SEXP System Integration with EPIC-004 (5 days) ✅ **COMPLETED** (Review: [GFRED2-002-review.md](.ai/reviews/EPIC-005-gfred2-mission-editor/GFRED2-002-review.md))
 
 ### Phase 2: User Experience Enhancement (1 week) - READY
 - **GFRED2-005**: UI Modernization and Polish (4 days) ⏳ **READY**

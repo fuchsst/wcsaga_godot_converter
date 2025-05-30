@@ -18,6 +18,8 @@
 - [ ] **AC5**: Export validation ensures mission compatibility before saving
 - [ ] **AC6**: Batch import/export operations are supported
 - [ ] **AC7**: Tests validate round-trip conversion (import → edit → export)
+- [ ] **AC8**: GFRED2 can load a campaign and missions as Godot resource as defined in EPIC-001 preserving the full featureset of WCS
+- [ ] **AC9**: GFRED2 can save a campaign and missions as Godot resource as defined in EPIC-001 preserving the full featureset of WCS
 
 ## Technical Requirements
 - **Integration**: Use `MissionConverter` from `addons/wcs_converter/`
