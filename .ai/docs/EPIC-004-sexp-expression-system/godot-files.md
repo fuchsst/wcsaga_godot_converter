@@ -7,6 +7,7 @@ SEXP (S-Expression) system implemented as a Godot addon providing mission script
 
 ### Plugin Configuration
 - `res://addons/sexp/plugin.cfg`: SEXP addon metadata and configuration
+- Note: Based on target structure, SEXP is also referenced as `fs2_sexp` addon
 
 ### Core SEXP System (Enhanced with External Analysis Insights)
 - `res://addons/sexp/sexp_manager.gd`: Central SEXP coordination and function registry
@@ -14,6 +15,11 @@ SEXP (S-Expression) system implemented as a Godot addon providing mission script
 - `res://addons/sexp/sexp_tokenizer.gd`: Enhanced RegEx-based tokenizer with validation support
 - `res://addons/sexp/sexp_evaluator.gd`: Expression evaluation with Godot Expression class integration
 - `res://addons/sexp/sexp_compiler.gd`: SEXP to GDScript compilation for performance
+
+### Mission System Integration
+- `res://scripts/scripting/`: SEXP evaluation and runtime processing
+- `res://scripts/mission_system/mission_event_manager.gd`: SEXP event processing integration
+- `res://addons/sexp/tests/`: GDUnit4 tests for SEXP functionality
 
 ## Expression Categories
 
@@ -142,27 +148,22 @@ SEXP (S-Expression) system implemented as a Godot addon providing mission script
 
 ## Testing Infrastructure
 
-### Unit Tests
-- `res://tests/sexp/test_parser.gd`: SEXP parser functionality tests
-- `res://tests/sexp/test_evaluator.gd`: Expression evaluation tests
-- `res://tests/sexp/test_expressions.gd`: Individual expression category tests
-- `res://tests/sexp/test_variable_manager.gd`: Variable management tests
-- `res://tests/sexp/test_function_registry.gd`: Function registration tests
+### Addon-Specific Tests
+- `res://addons/sexp/tests/`: GDUnit4 tests for SEXP addon functionality
+  - Parser validation and expression evaluation tests
+  - Function registry and variable management tests
+  - WCS compatibility and behavior matching tests
 
-### Integration Tests
-- `res://tests/sexp/integration/test_mission_integration.gd`: Mission system integration
-- `res://tests/sexp/integration/test_ai_integration.gd`: AI system integration
-- `res://tests/sexp/integration/test_ship_integration.gd`: Ship system integration
+### Integration Tests (Main Test Suite)
+- `res://tests/`: Main project test suite with SEXP integration tests
+  - Mission system integration testing
+  - AI system integration validation
+  - Ship system integration tests
 
-### Performance Tests
-- `res://tests/sexp/performance/test_expression_performance.gd`: Expression execution benchmarks
-- `res://tests/sexp/performance/test_compiler_performance.gd`: Compilation performance tests
-- `res://tests/sexp/performance/test_memory_usage.gd`: Memory usage analysis
-
-### WCS Compatibility Tests
-- `res://tests/sexp/compatibility/test_wcs_functions.gd`: WCS function compatibility tests
-- `res://tests/sexp/compatibility/test_behavior_matching.gd`: Behavior accuracy tests
-- `res://tests/sexp/compatibility/test_mission_conversion.gd`: Mission conversion validation
+### Mission System Integration Tests
+- Tests for SEXP integration with mission event processing
+- Validation of converted FS2 missions with SEXP expressions
+- Performance testing for real-time SEXP evaluation during missions
 
 ## Documentation
 
@@ -193,13 +194,19 @@ SEXP (S-Expression) system implemented as a Godot addon providing mission script
 - **WCS Compatibility**: 6 legacy support and migration tools
 - **Data Structures**: 8 core data type definitions (enhanced results)
 - **Examples**: 7 example and template files
-- **Testing**: 12 comprehensive test suites
-- **Documentation**: 9 documentation files
-- **Total Files**: 92 files providing complete SEXP functionality with external analysis enhancements
+- **Testing**: Tests integrated into addon structure and main test suite
+- **Documentation**: 9 documentation files including CLAUDE.md
+- **Mission Integration**: Scripts in `/scripts/scripting/` and mission system
+- **Total Files**: ~85-90 files providing complete SEXP functionality with external analysis enhancements
+
+**Implementation Status**: ⚠️ **IN PROGRESS** - Foundation in place, full implementation expanding
 
 ## Integration Points
 **Depends On**: EPIC-001 (Core Infrastructure), EPIC-002 (Asset Management)
 **Provides To**: EPIC-005 (GFRED2), EPIC-007 (Game Flow), EPIC-010 (AI), EPIC-011 (Combat)
 **Critical APIs**: SexpManager singleton, expression evaluation, function registration
+**Current Status**: Foundation systems operational, operator library expanding
+
+**Mission System Integration**: SEXP expressions are processed through `/scripts/mission_system/mission_event_manager.gd` for real-time mission event handling and objective tracking.
 
 This SEXP system provides authentic WCS mission scripting capabilities while leveraging Godot's performance and maintaining compatibility with existing WCS missions.

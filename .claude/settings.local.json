@@ -17,7 +17,10 @@
       "Bash(./run_script.sh:*)",
       "Bash(rg:*)",
       "Bash(export:*)",
-      "Bash(bash:*)"
+      "Bash(bash:*)",
+      "Bash(/home/fuchsst/.nvm/versions/node/v24.1.0/lib/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/x64-linux/rg \"scripts/resources\" conversion_tools/mission_converter/mission_resources.py)",
+      "Bash(/home/fuchsst/.nvm/versions/node/v24.1.0/lib/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/x64-linux/rg -A 5 -B 1 \"Note: Using existing\" conversion_tools/mission_converter/mission_resources.py)",
+      "Bash(/home/fuchsst/.nvm/versions/node/v24.1.0/lib/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/x64-linux/rg -A 10 \"existing_scripts = \" conversion_tools/mission_converter/mission_resources.py)"
     ],
     "deny": []
   },

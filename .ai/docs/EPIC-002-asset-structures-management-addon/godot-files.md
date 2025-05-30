@@ -15,20 +15,84 @@ Comprehensive asset management system implemented as a Godot addon, providing Re
 
 ## Addon Structure
 
-### `res://addons/wcs_assets/`
+### `res://addons/wcs_asset_core/`
 
 #### Plugin Configuration
 - `plugin.cfg`: Addon metadata and activation configuration
-- `plugin.gd`: Main addon plugin class (extends EditorPlugin)
+- `AssetCorePlugin.gd`: Main addon plugin class (extends EditorPlugin)
+
+#### Asset Loading and Management Systems
+- `loaders/asset_loader.gd`: Core asset loading functionality
+- `loaders/registry_manager.gd`: Asset discovery and cataloging
+- `loaders/validation_manager.gd`: Asset integrity checking
+
+#### Constants and Utilities
+- `constants/asset_types.gd`: Asset type enumerations and constants
+- `constants/folder_paths.gd`: Standardized asset paths
+- `utils/asset_utils.gd`: Asset manipulation utilities
+- `utils/path_utils.gd`: Path resolution utilities
 
 ## Core Resource Definitions (WCS Data Structures)
 
 ### Base Asset System
 
-#### `res://addons/wcs_assets/resources/base/`
+#### `res://addons/wcs_asset_core/structures/`
 - `base_asset_data.gd`: Base class for all WCS assets (extends Resource)
-- `asset_types.gd`: Asset type enumerations and constants
-- `asset_validator.gd`: Validation utilities for asset integrity
+- `ship_data.gd`: Ship asset definitions
+- `weapon_data.gd`: Weapon asset definitions  
+- `armor_data.gd`: Armor and shield asset definitions
+- `validation_result.gd`: Asset validation result structure
+
+#### Test Framework
+- `tests/`: GDUnit4 tests for addon functionality
+
+### WCS Game Data Structures
+
+#### `res://addons/wcs_asset_core/resources/`
+
+The comprehensive data structure definitions to maintain the addon's role as a centralized data management system.
+
+#### Mission Data Structures
+- `resources/mission/`: Mission, briefing, debriefing, and event data structures
+  - `mission_data.gd`: Complete mission definition resource
+  - `briefing_data.gd`: Mission briefing information
+  - `mission_event_data.gd`: SEXP-driven mission events
+  - `mission_objective_data.gd`: Mission goals and objectives
+
+#### Player and Campaign Data
+- `resources/player/`: Player profiles, statistics, and campaign progression
+  - `player_profile.gd`: Complete pilot profile and statistics
+  - `campaign_info.gd`: Campaign progression tracking
+  - `pilot_statistics.gd`: Flight statistics and achievements
+
+#### Ship and Weapon Systems
+- `resources/ship_weapon/`: Ship classes, weapons, and subsystems
+  - `subsystem_definition.gd`: Ship component definitions
+  - `weapon_group.gd`: Weapon grouping and firing patterns
+
+#### Configuration and Settings
+- `resources/configuration/`: Game settings and user preferences
+  - `game_settings.gd`: Core game configuration
+  - `user_preferences.gd`: Player customization settings
+
+#### Game Content Data
+- `resources/game_data/`: Audio, species, and content definitions
+  - `sound_entry.gd`: Audio resource definitions
+  - `species_info.gd`: Faction and species data
+
+#### Save System Data
+- `resources/save_system/`: Save game and campaign state structures
+  - `campaign_state.gd`: Campaign progression state
+  - `save_slot_info.gd`: Save game metadata
+
+#### AI and Autopilot Data
+- `resources/ai/`: AI behavior and navigation data
+  - `ai_profile.gd`: AI behavior definitions
+  - `resources/autopilot/`: Navigation and autopilot configuration
+
+#### Additional Data Categories
+- `resources/object/`: 3D model metadata and object definitions
+- `resources/subtitles/`: Subtitle and localization data
 
 ```gdscript
 # base_asset_data.gd - Foundation for all assets

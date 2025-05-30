@@ -3,82 +3,51 @@
 ## Epic Overview
 Comprehensive ship and combat systems providing ship definitions, subsystems, weapon integration, AI behavior, and ship lifecycle management with dynamic loading and component-based architecture.
 
-## Total Files: 143
+## Core Implementation Structure
 
-## Directory Structure
-
-### scripts/ships/ (Core Ship System - 68 files)
+### Player Ship Control System
 ```
-scripts/ships/
-├── ship_management_autoload.gd                   # Autoload for ship management services
-├── core/
-│   ├── ship_manager.gd                           # Central ship management coordinator
-│   ├── ship_factory.gd                           # Ship instantiation and configuration
-│   ├── ship_registry.gd                          # Ship type and instance registry
-│   ├── ship_lifecycle.gd                         # Ship lifecycle management
-│   ├── ship_id_manager.gd                        # Unique ship ID management
-│   └── ship_pool_manager.gd                      # Ship object pooling system
-├── base/
-│   ├── base_ship.gd                              # Core ship class (extends CharacterBody3D)
-│   ├── ship_component.gd                         # Base component interface
-│   ├── ship_subsystem.gd                         # Base subsystem interface
-│   ├── ship_state_machine.gd                     # Ship state management
-│   ├── ship_events.gd                            # Ship event system
-│   └── ship_signals.gd                           # Ship signal definitions
-├── components/
-│   ├── ship_physics.gd                           # Physics and movement component
-│   ├── ship_thrusters.gd                         # Thruster system component
-│   ├── ship_shields.gd                           # Shield system component
-│   ├── ship_hull.gd                              # Hull integrity component
-│   ├── ship_power.gd                             # Power distribution component
-│   ├── ship_sensors.gd                           # Sensor system component
-│   ├── ship_communications.gd                    # Communication system component
-│   ├── ship_cargo.gd                             # Cargo system component
-│   ├── ship_docking.gd                           # Docking system component
-│   └── ship_escape_pods.gd                       # Escape pod system component
-├── subsystems/
-│   ├── propulsion_subsystem.gd                   # Propulsion management
-│   ├── weapons_subsystem.gd                      # Weapon system management
-│   ├── defense_subsystem.gd                      # Defense system management
-│   ├── navigation_subsystem.gd                   # Navigation and autopilot
-│   ├── engineering_subsystem.gd                  # Engineering and repair
-│   ├── tactical_subsystem.gd                     # Tactical systems
-│   ├── life_support_subsystem.gd                 # Life support systems
-│   └── countermeasures_subsystem.gd              # Countermeasure systems
-├── ai/
-│   ├── ship_ai_controller.gd                     # Main AI controller
-│   ├── ai_behavior_tree.gd                       # Behavior tree system
-│   ├── ai_state_machine.gd                       # AI state management
-│   ├── ai_goal_system.gd                         # AI goal and objective system
-│   ├── ai_combat_controller.gd                   # Combat AI controller
-│   ├── ai_navigation_controller.gd               # Navigation AI controller
-│   ├── ai_formation_controller.gd                # Formation flying AI
-│   ├── ai_escort_controller.gd                   # Escort behavior AI
-│   ├── ai_patrol_controller.gd                   # Patrol behavior AI
-│   └── ai_wingman_controller.gd                  # Wingman AI controller
-├── types/
-│   ├── fighter_ship.gd                           # Fighter ship implementation
-│   ├── bomber_ship.gd                            # Bomber ship implementation
-│   ├── interceptor_ship.gd                       # Interceptor ship implementation
-│   ├── corvette_ship.gd                          # Corvette ship implementation
-│   ├── frigate_ship.gd                           # Frigate ship implementation
-│   ├── destroyer_ship.gd                         # Destroyer ship implementation
-│   ├── cruiser_ship.gd                           # Cruiser ship implementation
-│   ├── capital_ship.gd                           # Capital ship implementation
-│   ├── transport_ship.gd                         # Transport ship implementation
-│   └── civilian_ship.gd                          # Civilian ship implementation
-├── squadrons/
-│   ├── squadron_manager.gd                       # Squadron management system
-│   ├── squadron_formation.gd                     # Formation management
-│   ├── squadron_ai.gd                            # Squadron-level AI
-│   ├── squadron_communications.gd                # Squadron communications
-│   └── squadron_tactics.gd                       # Squadron tactical coordination
-├── utilities/
-│   ├── ship_utilities.gd                         # Ship utility functions
-│   ├── ship_math.gd                              # Ship-specific math utilities
-│   ├── ship_debug.gd                             # Ship debugging utilities
-│   ├── ship_performance.gd                       # Performance monitoring
-│   └── ship_validation.gd                        # Ship data validation
+scripts/player/
+├── pilot_data.gd                                 # Pilot information and statistics  
+├── player_ship_controller.gd                     # Ship control and movement
+└── player_autopilot_controller.gd                # Autopilot navigation system
+```
+
+### Foundation Systems (Autoloads)
+```
+autoload/
+├── object_manager.gd                             # Game object lifecycle management
+├── physics_manager.gd                            # Physics simulation management
+└── input_manager.gd                              # High-precision input processing
+```
+
+### Ship and Weapon Data Structures (Asset Core Addon)
+```
+addons/wcs_asset_core/resources/ship_weapon/
+├── ship_data.gd                                  # Ship class definitions and specifications
+├── weapon_data.gd                                # Weapon definitions and behavior
+├── subsystem_definition.gd                       # Ship component definitions
+└── weapon_group.gd                               # Weapon grouping and firing patterns
+```
+
+### Core Object Framework
+```
+scripts/core/
+├── wcs_object.gd                                 # Base class for all WCS game objects
+├── custom_physics_body.gd                        # Enhanced physics integration
+└── manager_coordinator.gd                        # Manager system coordination
+
+scripts/object/
+├── weapon_base.gd                                # Base weapon object class
+└── [Other object implementations]
+```
+
+### Scene Templates
+```
+scenes/core/
+├── WCSObject.tscn                                # Base object scene template
+├── PhysicsBody.tscn                              # Physics-enabled object template
+└── InputReceiver.tscn                            # Input handling component
 ```
 
 ### resources/ships/ (Ship Resources - 35 files)

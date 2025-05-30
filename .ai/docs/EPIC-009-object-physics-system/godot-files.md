@@ -5,47 +5,52 @@ Universal object management and physics simulation system providing the foundati
 
 ## Core Object Management
 
-### Central Management
-- `res://systems/objects/object_manager.gd`: Universal object lifecycle and coordination
-- `res://systems/objects/object_registry.gd`: Object registration and lookup system
-- `res://systems/objects/object_pool.gd`: Performance-optimized object pooling
-- `res://systems/objects/spatial_partitioning.gd`: Spatial optimization for object queries
+### Central Management (Autoload Systems)
+- `res://autoload/object_manager.gd`: Universal object lifecycle and coordination
+- `res://autoload/physics_manager.gd`: Physics simulation management
 
 ### Base Object Framework
-- `res://systems/objects/base_space_object.gd`: Foundation class for all space objects
-- `res://systems/objects/object_factory.gd`: Object creation and configuration
-- `res://systems/objects/object_lifecycle.gd`: Object lifecycle state management
-- `res://systems/objects/object_identifier.gd`: Unique object identification system
+- `res://scripts/core/wcs_object.gd`: Foundation class for all WCS game objects
+- `res://scripts/core/custom_physics_body.gd`: Enhanced physics integration with Godot
+- `res://scripts/core/manager_coordinator.gd`: Manager system coordination
+
+### Object Scene Templates
+- `res://scenes/core/WCSObject.tscn`: Base object scene template
+- `res://scenes/core/PhysicsBody.tscn`: Physics-enabled object template
 
 ## Physics Integration
 
 ### Physics Management
-- `res://systems/objects/collision_manager.gd`: Collision detection and response coordination
-- `res://systems/objects/physics_override.gd`: Custom physics behavior implementation
-- `res://systems/objects/physics_coordinator.gd`: Godot physics engine integration
-- `res://systems/objects/simulation_controller.gd`: Physics simulation control and optimization
+- Integrated through `res://autoload/physics_manager.gd`: Physics simulation at 60Hz fixed timestep
+- Custom physics integration via `res://scripts/core/custom_physics_body.gd`
+- Momentum conservation and 6DOF movement matching WCS feel
 
-### Physics Profiles
-- `res://systems/objects/physics_profiles/ship_physics.gd`: Ship-specific physics behavior
-- `res://systems/objects/physics_profiles/weapon_physics.gd`: Projectile and weapon physics
-- `res://systems/objects/physics_profiles/debris_physics.gd`: Debris and destruction physics
-- `res://systems/objects/physics_profiles/environmental_physics.gd`: Environmental object physics
+### Physics Profiles (Object-Specific Implementations)
+- Ship physics integrated in ship control systems
+- Weapon physics in weapon behavior implementations
+- Debris physics in debris simulation systems
+- Environmental physics for asteroid fields and hazards
 
 ## Object Components
 
-### Core Components
-- `res://systems/objects/components/ship_component.gd`: Ship-specific object behavior
-- `res://systems/objects/components/weapon_component.gd`: Weapon projectile behavior
-- `res://systems/objects/components/debris_component.gd`: Debris physics and cleanup
-- `res://systems/objects/components/waypoint_component.gd`: Navigation waypoint functionality
-- `res://systems/objects/components/cargo_component.gd`: Cargo and collectible behavior
+### Core Object Implementations
+- `res://scripts/object/asteroid.gd`: Asteroid object behavior
+- `res://scripts/object/debris.gd`: Space debris simulation
+- `res://scripts/object/weapon_base.gd`: Base weapon object class
 
 ### Component Management
-- `res://systems/objects/components/component_manager.gd`: Component lifecycle management
-- `res://systems/objects/components/component_factory.gd`: Component instantiation system
-- `res://systems/objects/components/component_pool.gd`: Component pooling for performance
+- Scene-based composition using Godot's node system
+- Object pooling implemented in `res://autoload/object_manager.gd`
+- Component lifecycle managed through Godot's scene tree
 
 ## Object Type System
+
+### Object Data Structures
+
+#### Data Resource Definitions (WCS Asset Core)
+- `res://addons/wcs_asset_core/resources/object/`: 3D model metadata and object definitions
+- Object type definitions and configuration resources
+- Physics parameter and behavior specifications
 
 ### Type Definitions
 - `res://systems/objects/types/object_types.gd`: Object type enumeration and classification
