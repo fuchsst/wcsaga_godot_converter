@@ -21,7 +21,18 @@
       "Bash(/home/fuchsst/.nvm/versions/node/v24.1.0/lib/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/x64-linux/rg \"scripts/resources\" conversion_tools/mission_converter/mission_resources.py)",
       "Bash(/home/fuchsst/.nvm/versions/node/v24.1.0/lib/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/x64-linux/rg -A 5 -B 1 \"Note: Using existing\" conversion_tools/mission_converter/mission_resources.py)",
       "Bash(/home/fuchsst/.nvm/versions/node/v24.1.0/lib/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/x64-linux/rg -A 10 \"existing_scripts = \" conversion_tools/mission_converter/mission_resources.py)",
-      "Bash(awk:*)"
+      "Bash(awk:*)",
+      "Bash(/home/fuchsst/.nvm/versions/node/v24.1.0/lib/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/x64-linux/rg -n \"ship.*(\" sexp.cpp)",
+      "Bash(/home/fuchsst/.nvm/versions/node/v24.1.0/lib/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/x64-linux/rg -n \"ship.*\\(\" sexp.cpp)",
+      "Bash(/home/fuchsst/.nvm/versions/node/v24.1.0/lib/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/x64-linux/rg -n \"sexp.*ship.*health|sexp.*ship.*shield|sexp.*ship.*alive|sexp.*ship.*position|sexp.*ship.*velocity|sexp.*ship.*damage\" sexp.cpp)",
+      "Bash(/home/fuchsst/.nvm/versions/node/v24.1.0/lib/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/x64-linux/rg -n -A5 -B5 \"get.*ship.*health|get.*ship.*shield|ship.*health|ship.*shield.*percent|ship.*hull.*percent\" sexp.cpp)",
+      "Bash(/home/fuchsst/.nvm/versions/node/v24.1.0/lib/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/x64-linux/rg -n -A15 \"GET_OBJECT_X|GET_OBJECT_Y|GET_OBJECT_Z\" sexp.cpp)",
+      "Bash(/home/fuchsst/.nvm/versions/node/v24.1.0/lib/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/x64-linux/rg -n -A20 \"sexp_get_object_coordinate\" sexp.cpp)",
+      "Bash(/home/fuchsst/.nvm/versions/node/v24.1.0/lib/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/x64-linux/rg -n -A10 \"ship_name_lookup|sexp_get_ship_from_node\" sexp.cpp)",
+      "Bash(/home/fuchsst/.nvm/versions/node/v24.1.0/lib/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/x64-linux/rg -n \"OP_SHIP_DESTROY|OP_SHIP_VANISH|OP_SHIP_INVISIBLE|OP_SHIP_VULNERABLE\" sexp.h)",
+      "Bash(/home/fuchsst/.nvm/versions/node/v24.1.0/lib/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/x64-linux/rg -n -A20 \"object_ship_wing_point_team\" sexp.cpp)",
+      "Bash(/home/fuchsst/.nvm/versions/node/v24.1.0/lib/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/x64-linux/rg -n \"OP_CURRENT_SPEED|OP_GET_THROTTLE\" sexp.h)",
+      "Bash(/home/fuchsst/.nvm/versions/node/v24.1.0/lib/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/x64-linux/rg -n -A15 \"sexp_current_speed|sexp_get_throttle\" sexp.cpp)"
     ],
     "deny": []
   },
