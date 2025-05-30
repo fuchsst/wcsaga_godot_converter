@@ -1,6 +1,6 @@
 # Code Review Document: EPIC-001 Core Foundation Infrastructure - Comprehensive Review
 
-**Epic Reviewed**: [EPIC-001 Core Foundation Infrastructure](../../epics/epic-001-core-foundation-infrastructure.md)  
+**Epic Reviewed**: [EPIC-001 Core Foundation Infrastructure](../../epics/EPIC-001-core-foundation-infrastructure.md)  
 **Date of Review**: January 28, 2025  
 **Reviewers**: QA Specialist (QA), Godot Architect (Mo)  
 **Implementation Status**: All 12 stories implemented and ready for review  

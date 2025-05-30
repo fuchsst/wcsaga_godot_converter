@@ -155,7 +155,7 @@ target/addons/sexp/
 - **SEXP-010**: Debug and Validation Framework (4-5 days) - ✅ CREATED
 
 **Total Implementation Effort**: 38-47 days
-**Stories Location**: `.ai/stories/epic-004-sexp-expression-system/`
+**Stories Location**: `.ai/stories/EPIC-004-sexp-expression-system/`
 
 ## Acceptance Criteria
 

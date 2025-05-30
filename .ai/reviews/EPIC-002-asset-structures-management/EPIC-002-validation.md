@@ -39,7 +39,7 @@ Create a shared Godot addon providing centralized asset data structures, loading
 | ASM-012 | Complete Testing Suite and Documentation | ✅ Complete | ✅ Reviewed |
 
 ### Story Review Confirmation
-**Reference**: [EPIC-002 Comprehensive Review](../EPIC-002-asset-structures-management/epic-002-comprehensive-review.md)
+**Reference**: [EPIC-002 Comprehensive Review](../EPIC-002-asset-structures-management/EPIC-002-comprehensive-review.md)
 
 **Critical/Major Issues Status**: Zero critical or major issues identified across all 12 stories. Only 3 minor/suggestion issues found - exceptional quality ratio demonstrating superior implementation standards.
 
@@ -213,7 +213,7 @@ Create a shared Godot addon providing centralized asset data structures, loading
 ## 7. Code Quality Spot-Check Summary
 
 ### Confirmation of Story-Level Fixes
-**Reference**: [EPIC-002 Comprehensive Review](../EPIC-002-asset-structures-management/epic-002-comprehensive-review.md)
+**Reference**: [EPIC-002 Comprehensive Review](../EPIC-002-asset-structures-management/EPIC-002-comprehensive-review.md)
 
 **Minor Issue R-001**: BaseAssetData.get_asset_type_name() hardcoded mapping
 - **Status**: ✅ **NOTED FOR FUTURE REFINEMENT**
