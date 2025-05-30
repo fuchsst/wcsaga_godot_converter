@@ -28,11 +28,15 @@
 - [ ] **AC10**: Integration with asset system for ship class validation and compatibility
 
 ## Technical Requirements
+**Architecture Reference**: .ai/docs/epic-005-gfred2-mission-editor/architecture.md Section 3 (Scene-Based UI Architecture) **ENHANCED 2025-05-30**
+
 - **Asset Integration**: Deep integration with EPIC-002 ship data and weapon systems
-- **UI Framework**: Multi-tab property editor with specialized configuration panels
-- **3D Preview**: Real-time ship visualization with texture and weapon preview
+- **UI Framework**: Multi-tab property editor with specialized configuration panels using scene-based architecture
+- **3D Preview**: Real-time ship visualization with texture and weapon preview (< 16ms scene instantiation, 60+ FPS UI updates)
 - **Validation**: Comprehensive configuration validation using asset system constraints
 - **Batch Operations**: Efficient multi-ship editing for wing and squadron configuration
+- **UI Architecture**: Ship configuration uses centralized scene structure from `addons/gfred2/scenes/dialogs/ship_editor/`
+- **3D Preview**: Real-time preview from `addons/gfred2/scenes/components/ship_preview_3d/`
 
 ## Implementation Notes
 - **Professional Feature**: Advanced ship configuration is essential for sophisticated mission design

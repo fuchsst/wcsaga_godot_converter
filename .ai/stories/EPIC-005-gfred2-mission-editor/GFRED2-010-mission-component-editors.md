@@ -28,11 +28,15 @@
 - [ ] **AC10**: Export compatibility for all mission components with WCS format
 
 ## Technical Requirements
+**Architecture Reference**: .ai/docs/epic-005-gfred2-mission-editor/architecture.md Section 3 (Scene-Based UI Architecture) **ENHANCED 2025-05-30**
+
 - **SEXP Integration**: Deep integration with EPIC-004 for triggers, conditions, and actions
 - **Asset Integration**: Use EPIC-002 for ship, weapon, and environmental asset references
-- **3D Visualization**: Real-time 3D preview for waypoints, asteroids, and environmental elements
+- **3D Visualization**: Real-time 3D preview for waypoints, asteroids, and environmental elements (< 16ms scene instantiation, 60+ FPS UI updates)
 - **Validation System**: Comprehensive validation ensuring component compatibility and correctness
 - **Export Format**: Compatible export for all components using EPIC-003 conversion tools
+- **UI Architecture**: Component editors use centralized scene structure from `addons/gfred2/scenes/dialogs/component_editors/`
+- **3D Preview**: Real-time environmental preview from `addons/gfred2/scenes/components/environment_preview_3d/`
 
 ## Implementation Notes
 - **Essential Components**: These editors cover critical mission elements missing from basic implementation

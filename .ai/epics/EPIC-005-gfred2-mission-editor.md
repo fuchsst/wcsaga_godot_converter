@@ -359,6 +359,16 @@ target/addons/gfred2/
    - Environment configuration, variable management
    - Foundation components for sophisticated missions
 
+- **GFRED2-011**: UI Component Refactoring to Scene-Based Architecture (5 days) ⏳ **READY** 
+   - Scene-based UI architecture for all components (gizmos, docks, dialogs)
+   - Script attachment to scene nodes instead of programmatic UI construction
+   - Scene composition and inheritance for complex UI components
+   - Specific code targets: `ui/`, `dialogs/`, `viewport/`, `sexp_editor/`, `validation/` folders
+   - Folder structure consolidation and consistent naming conventions
+   - Story Created: 2025-05-30 by SallySM (Enhanced with specific code references)
+   - **Architecture Enhanced**: 2025-05-30 by Mo (Comprehensive scene-based architecture added)
+   - **All Stories Updated**: 2025-05-30 by SallySM (15 stories updated for architecture consistency)
+
 ### Existing Story Enhancements
 - **GFRED2-002**: Added variable management UI and SEXP tools palette
 - **GFRED2-001**: Added advanced ship configuration support and 3D previews

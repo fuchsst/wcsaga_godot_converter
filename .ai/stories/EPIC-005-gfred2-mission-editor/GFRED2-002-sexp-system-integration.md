@@ -26,14 +26,16 @@
 - [ ] **AC13**: SEXP tools palette with function browser and quick insertion capabilities
 
 ## Technical Requirements
+**Architecture Reference**: .ai/docs/epic-005-gfred2-mission-editor/architecture.md Section 3 (Scene-Based UI Architecture) **ENHANCED 2025-05-30**
+
 - **Remove**: Basic SEXP implementation from `gfred2/sexp_editor/`
 - **Replace**: SEXP graph editor with integration to `addons/sexp/`
 - **Migration**: Preserve existing SEXP editor UI while upgrading backend functionality
 - **Debug Integration**: Integrate `SexpValidator`, `SexpDebugEvaluator` from EPIC-004 debug framework
-- **Performance**: Maintain SEXP editor responsiveness with large expression trees
-- **UI Enhancement**: Add debug panels, variable watch, and AI-powered suggestions to editor
-- **Variable Management**: Integrate variable creation and monitoring UI from analysis recommendations
-- **SEXP Tools**: Add function browser, quick insertion, and advanced SEXP tools palette
+- **Performance**: Maintain SEXP editor responsiveness with large expression trees (< 16ms scene instantiation, 60+ FPS UI updates)
+- **UI Enhancement**: Add debug panels, variable watch, and AI-powered suggestions using scene-based architecture
+- **Variable Management**: Integrate variable creation and monitoring UI from `addons/gfred2/scenes/dialogs/sexp_editor/`
+- **SEXP Tools**: Add function browser, quick insertion using centralized scene structure from `addons/gfred2/scenes/components/sexp_palette/`
 
 ## Implementation Notes
 - **Major Integration**: This connects GFRED2 with the complete SEXP system

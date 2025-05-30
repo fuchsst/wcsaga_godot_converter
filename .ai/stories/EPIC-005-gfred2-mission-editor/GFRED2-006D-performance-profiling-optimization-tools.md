@@ -21,10 +21,14 @@
 - [ ] **AC8**: Export performance report for mission optimization documentation
 
 ## Technical Requirements
+**Architecture Reference**: .ai/docs/epic-005-gfred2-mission-editor/architecture.md Section 3 (Scene-Based UI Architecture) **ENHANCED 2025-05-30**
+
 - **Core Integration**: Leverage EPIC-001 performance monitoring and optimization utilities
 - **SEXP Profiling**: Use EPIC-004 performance monitoring for SEXP expression analysis
 - **Asset Analysis**: Integrate with EPIC-002 asset system for resource usage tracking
-- **Real-time Monitoring**: Non-intrusive performance tracking during editor usage
+- **Real-time Monitoring**: Non-intrusive performance tracking during editor usage (< 16ms scene instantiation, 60+ FPS UI updates)
+- **UI Architecture**: Performance tools use centralized scene structure from `addons/gfred2/scenes/docks/performance_profiler/`
+- **Profiler Interface**: Real-time monitoring panels from `addons/gfred2/scenes/components/performance_monitor/`
 
 ## Implementation Notes
 - **Professional Tool**: Provides game development level performance analysis

@@ -28,11 +28,14 @@
 - [ ] **AC10**: Performance optimization for large campaigns (50+ missions)
 
 ## Technical Requirements
-- **Mission Integration**: Seamless integration with individual mission editing workflow
-- **Dependency Management**: Complex prerequisite and branching logic system
+**Architecture Reference**: .ai/docs/epic-005-gfred2-mission-editor/architecture.md Section 3 (Scene-Based UI Architecture) **ENHANCED 2025-05-30**
+
+- **Mission Integration**: Seamless integration with individual mission editing workflow using scene-based architecture
+- **Dependency Management**: Complex prerequisite and branching logic system (< 16ms scene instantiation, 60+ FPS UI updates)
 - **Variable System**: Campaign-wide variable persistence using EPIC-004 SEXP system
-- **Visualization**: Interactive campaign flow diagram with drag-drop mission organization
+- **Visualization**: Interactive campaign flow diagram with drag-drop mission organization from `addons/gfred2/scenes/dialogs/campaign_editor/`
 - **Export Format**: Compatible with WCS campaign file format using EPIC-003 conversion tools
+- **UI Architecture**: Campaign editor uses centralized scene structure from `addons/gfred2/scenes/main/campaign_editor.tscn`
 
 ## Implementation Notes
 - **Essential Feature**: Campaigns are critical for multi-mission storylines and player progression

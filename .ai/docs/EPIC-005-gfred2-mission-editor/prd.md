@@ -12,8 +12,8 @@ Convert GFRED2 (FReespace EDitor version 2) from a complex Windows MFC applicati
 
 ### Success Criteria
 - [ ] Feature parity with original GFRED2 system
-- [ ] Performance meets or exceeds original (60 FPS with 200+ objects)
 - [ ] Code follows Godot best practices with full static typing
+- [ ] Scenes are used to organise the UI components
 - [ ] Maintainable and extensible plugin architecture
 - [ ] Zero learning curve for experienced FRED2 users
 

@@ -208,39 +208,234 @@ func validate() -> ValidationResult:
     return result
 ```
 
-### 3. Editor UI Architecture (Dockable Panels)
+### 3. Editor UI Architecture (Scene-Based, Dockable Panels)
 
-**Philosophy**: Leverage Godot's built-in editor dock system for familiar, professional UI that integrates seamlessly with the main editor.
+**Philosophy**: **100% SCENE-BASED UI ARCHITECTURE** - Leverage Godot's built-in editor dock system with MANDATORY scene composition for ALL UI components. NO programmatic UI construction allowed.
+
+**CRITICAL ARCHITECTURAL DECISION**: After reviewing the current chaotic state of UI components scattered across multiple folders with inconsistent approaches, the following architecture is **NON-NEGOTIABLE**:
+
+#### 3.1 Unified Scene-Based UI Structure
+
+```
+addons/gfred2/scenes/                    # ALL UI scenes centralized here
+├── docks/                              # Editor dock scenes
+│   ├── main_editor_dock.tscn          # Primary editing interface
+│   ├── object_inspector_dock.tscn      # Object property editing
+│   ├── asset_browser_dock.tscn         # Asset browsing and selection
+│   ├── sexp_editor_dock.tscn           # SEXP visual editing
+│   └── validation_dock.tscn            # Validation and diagnostics
+├── dialogs/                            # Modal dialog scenes
+│   ├── base_dialog.tscn                # Base dialog with common functionality
+│   ├── mission_settings_dialog.tscn    # Mission configuration
+│   ├── object_creation_dialog.tscn     # Object creation wizard
+│   ├── ship_properties_dialog.tscn     # Ship configuration
+│   └── sexp_validation_dialog.tscn     # SEXP validation results
+├── components/                         # Reusable UI components
+│   ├── property_editors/               # Property editing components
+│   │   ├── base_property_editor.tscn   # Base property editor scene
+│   │   ├── string_property_editor.tscn # String property editor
+│   │   ├── number_property_editor.tscn # Number property editor
+│   │   └── sexp_property_editor.tscn   # SEXP property editor
+│   ├── gizmos/                         # 3D viewport gizmos
+│   │   ├── base_gizmo.tscn            # Base gizmo component
+│   │   ├── object_transform_gizmo.tscn # Transform manipulation
+│   │   └── selection_indicator.tscn    # Selection visualization
+│   └── panels/                         # Specialized panels
+│       ├── asset_preview_panel.tscn    # Asset preview component
+│       ├── sexp_tree_panel.tscn        # SEXP tree visualization
+│       └── validation_results_panel.tscn # Validation results display
+└── overlays/                           # Viewport overlays
+    ├── viewport_overlay.tscn           # 3D viewport UI overlay
+    ├── object_labels.tscn              # Object labeling system
+    └── grid_display.tscn               # Grid visualization
+```
+
+#### 3.2 Script Attachment Strategy
+
+**RULE**: Every UI scene has EXACTLY ONE attached script at the root node. Scripts are CONTROLLERS, not UI builders.
 
 ```gdscript
-# Main mission editor dock
-class_name MissionEditorDock
-extends EditorPlugin
+# Example: main_editor_dock.gd (attached to main_editor_dock.tscn root)
+class_name MainEditorDock
+extends Control
 
-## Primary editor interface integrated into Godot's editor
-## Uses familiar dock patterns for professional workflow
+## Main editor dock controller - manages dock behavior and coordination
+## Scene: addons/gfred2/scenes/docks/main_editor_dock.tscn
 
-var main_panel: MissionEditorPanel
-var object_inspector: ObjectInspectorDock
-var sexp_editor: SexpEditorDock
-var asset_browser: AssetBrowserDock
-var validation_panel: ValidationDock
+# Scene node references (via onready)
+@onready var object_hierarchy: Tree = $VBoxContainer/ObjectHierarchy
+@onready var toolbar: HBoxContainer = $VBoxContainer/Toolbar
+@onready var status_bar: Label = $VBoxContainer/StatusBar
 
-func _enter_tree():
-    # Register editor docks
-    main_panel = preload("res://addons/mission_editor/ui/MissionEditorPanel.tscn").instantiate()
-    add_control_to_dock(DOCK_SLOT_LEFT_UL, main_panel)
+# External scene references (loaded at runtime)
+var object_inspector_dock: ObjectInspectorDock
+var validation_dock: ValidationDock
+
+signal object_selected(mission_object: MissionObject)
+signal tool_activated(tool_name: String)
+
+func _ready() -> void:
+    _setup_dock_connections()
+    _initialize_ui_state()
+
+func _setup_dock_connections() -> void:
+    # Connect to other docks via signals (loose coupling)
+    object_selected.connect(_on_object_selection_changed)
     
-    object_inspector = preload("res://addons/mission_editor/ui/ObjectInspectorDock.tscn").instantiate()
-    add_control_to_dock(DOCK_SLOT_LEFT_BL, object_inspector)
-    
-    # Connect signals for coordinated updates
-    _connect_editor_signals()
+func _on_object_selection_changed(mission_object: MissionObject) -> void:
+    # Notify other docks of selection change
+    get_viewport().get_dock_by_type(ObjectInspectorDock).edit_object(mission_object)
+```
 
-func _exit_tree():
-    # Clean up docks
-    remove_control_from_docks(main_panel)
-    remove_control_from_docks(object_inspector)
+#### 3.3 Mandatory Scene Composition Patterns
+
+**PATTERN 1: Dock Scenes**
+```
+dock_scene.tscn
+├── Control (root) → dock_script.gd attached
+│   ├── VBoxContainer
+│   │   ├── ToolbarPanel (scene instance: toolbar_panel.tscn)
+│   │   ├── MainContentArea
+│   │   └── StatusPanel (scene instance: status_panel.tscn)
+```
+
+**PATTERN 2: Dialog Scenes**
+```
+dialog_scene.tscn
+├── AcceptDialog (root) → dialog_script.gd attached
+│   ├── VBoxContainer
+│   │   ├── HeaderPanel (scene instance: dialog_header.tscn)
+│   │   ├── ContentArea (scene instance: specific_content.tscn)
+│   │   └── ButtonRow (scene instance: dialog_buttons.tscn)
+```
+
+**PATTERN 3: Property Editor Scenes**
+```
+property_editor.tscn
+├── HBoxContainer (root) → property_editor_script.gd attached
+│   ├── PropertyLabel
+│   ├── PropertyInput (varies by type)
+│   └── ValidationIcon
+```
+
+#### 3.4 Migration Strategy for Existing Chaos
+
+**CURRENT STATE ANALYSIS**: The existing UI structure is a **DISASTER**:
+- `ui/` folder: Mixed scene/code approaches
+- `dialogs/` folder: Some `.tscn` files, some pure code
+- `viewport/` folder: Programmatic gizmos
+- `sexp_editor/` folder: Code-based UI construction  
+- `validation/` folder: Programmatic validation UI
+
+**MANDATORY REFACTORING STEPS**:
+
+1. **Create Centralized Scene Structure**:
+   ```bash
+   mkdir addons/gfred2/scenes/
+   mkdir addons/gfred2/scenes/{docks,dialogs,components,overlays}
+   mkdir addons/gfred2/scenes/components/{property_editors,gizmos,panels}
+   ```
+
+2. **Migrate Existing Components**:
+   - Convert ALL UI components to scenes first
+   - Attach scripts to scene roots as controllers
+   - Use scene composition for complex components
+   - Delete programmatic UI construction code
+
+3. **Folder Consolidation**:
+   - **DEPRECATED**: `ui/`, `dialogs/`, `viewport/ui/`, `sexp_editor/` (UI parts), `validation/` (UI parts)
+   - **NEW**: `scenes/` (centralized) + `scripts/` (logic-only)
+
+#### 3.5 Scene Inheritance Strategy
+
+**BASE SCENES** (for consistency):
+```gdscript
+# base_dock.tscn → base_dock.gd
+class_name BaseDock
+extends Control
+
+## Base class for all editor docks
+## Provides common dock functionality and patterns
+
+signal dock_activated()
+signal dock_deactivated()
+
+func activate_dock() -> void:
+    dock_activated.emit()
+    _on_dock_activated()
+
+func _on_dock_activated() -> void:
+    # Override in derived classes
+    pass
+```
+
+**DERIVED SCENES** inherit from base scenes:
+```gdscript
+# main_editor_dock.tscn inherits base_dock.tscn → main_editor_dock.gd
+class_name MainEditorDock
+extends BaseDock
+
+## Main editor dock - inherits common dock functionality
+## Adds specific main editor behavior
+
+func _on_dock_activated() -> void:
+    super._on_dock_activated()
+    _refresh_object_hierarchy()
+```
+
+#### 3.6 Signal Architecture for UI Components
+
+**MANDATORY UI SIGNAL PATTERNS**:
+```gdscript
+# UI Component signals (all UI components MUST follow this pattern)
+signal ui_state_changed(component_name: String, new_state: Dictionary)
+signal ui_validation_required(component: Control, data: Variant)
+signal ui_help_requested(component: Control, help_topic: String)
+
+# Dock-specific signals
+signal dock_content_changed(dock: BaseDock, content_type: String)
+signal dock_focus_requested(dock: BaseDock)
+
+# Dialog-specific signals  
+signal dialog_data_validated(dialog: BaseDialog, is_valid: bool, errors: Array[String])
+signal dialog_result_ready(dialog: BaseDialog, result: Dictionary)
+```
+
+#### 3.7 Performance Requirements for Scene-Based UI
+
+**PERFORMANCE MANDATES**:
+- Scene instantiation: < 16ms for any single UI component
+- Scene inheritance depth: Maximum 3 levels
+- Signal connections: Use direct connections, avoid call_group()
+- UI updates: Batch UI updates during _process() or use call_deferred()
+
+```gdscript
+# Example: Efficient scene-based UI update pattern
+class_name EfficientUIDock
+extends BaseDock
+
+var _pending_ui_updates: Array[Dictionary] = []
+var _update_timer: Timer
+
+func _ready() -> void:
+    super._ready()
+    _update_timer = Timer.new()
+    _update_timer.wait_time = 0.016  # ~60 FPS
+    _update_timer.timeout.connect(_process_ui_updates)
+    add_child(_update_timer)
+    _update_timer.start()
+
+func request_ui_update(component: Control, data: Dictionary) -> void:
+    _pending_ui_updates.append({"component": component, "data": data})
+
+func _process_ui_updates() -> void:
+    if _pending_ui_updates.is_empty():
+        return
+        
+    # Process up to 5 UI updates per frame to maintain performance
+    for i in range(min(5, _pending_ui_updates.size())):
+        var update = _pending_ui_updates.pop_front()
+        _apply_ui_update(update.component, update.data)
 ```
 
 ```gdscript
@@ -741,8 +936,69 @@ The existing architecture is **EXCEPTIONAL** and fully ready for implementation.
 **Analysis Integration**: ✅ **COMPLETE**  
 **Implementation Ready**: ✅ **YES**
 
+---
+
+## UI Architecture Critical Enhancement (2025-05-30)
+
+**Architect Review By**: Mo (Godot Architect)  
+**Review Date**: 2025-05-30  
+**Triggered By**: GFRED2-011 story creation and current UI structure analysis
+
+### 🚨 **CRITICAL ARCHITECTURAL ISSUE IDENTIFIED**
+
+**Current State**: The existing GFRED2 UI architecture is **UNACCEPTABLE** due to:
+- **Inconsistent Approaches**: Mixed scene-based and programmatic UI across folders
+- **Scattered Organization**: UI components spread across 5+ folders with no coherent strategy
+- **Anti-Pattern Usage**: Programmatic UI construction violates Godot best practices
+- **No Scene Strategy**: Haphazard mix of `.tscn` files and pure code-based UI
+
+### ✅ **ARCHITECTURAL SOLUTION PROVIDED**
+
+**Section 3 Completely Rewritten** with:
+- **Mandatory Scene-Based Architecture**: 100% scene composition required
+- **Centralized Scene Structure**: New `addons/gfred2/scenes/` organization
+- **Clear Migration Strategy**: Step-by-step refactoring approach
+- **Performance Requirements**: Specific performance mandates for scene-based UI
+- **Signal Architecture**: Standardized UI signal patterns
+- **Scene Inheritance**: Base scene patterns for consistency
+
+### 📋 **NEW ARCHITECTURAL REQUIREMENTS**
+
+1. **Folder Consolidation**:
+   - **DEPRECATED**: `ui/`, `dialogs/`, `viewport/ui/`, `sexp_editor/` (UI parts), `validation/` (UI parts)
+   - **NEW**: `scenes/` (centralized UI) + `scripts/` (logic-only)
+
+2. **Scene-Based Mandates**:
+   - Every UI component MUST be a scene (.tscn file)
+   - Scripts attach to scene root nodes as controllers
+   - NO programmatic UI construction allowed
+   - Scene composition for complex components
+
+3. **Performance Standards**:
+   - Scene instantiation: < 16ms per component
+   - Maximum 3 levels of scene inheritance
+   - Batched UI updates at 60 FPS
+   - Direct signal connections only
+
+### 🎯 **IMPLEMENTATION IMPACT**
+
+**Story GFRED2-011 Enhanced** with:
+- Complete architectural guidance
+- Specific migration steps  
+- Performance requirements
+- Scene composition patterns
+
+**Development Ready**: The implementing developer now has **DEFINITIVE** architectural guidance for:
+- Exactly which folders to consolidate
+- How to structure scene hierarchies
+- Performance requirements to meet
+- Signal patterns to follow
+
+---
+
 **Document Control**:
 - **Architect**: Mo (Godot Architect)
 - **Created**: 2025-01-25
 - **Analysis Review**: 2025-01-27
-- **Status**: ✅ **APPROVED (Phase 2 Complete)**
+- **UI Architecture Enhancement**: 2025-05-30
+- **Status**: ✅ **APPROVED (Architecture Enhanced for GFRED2-011)**

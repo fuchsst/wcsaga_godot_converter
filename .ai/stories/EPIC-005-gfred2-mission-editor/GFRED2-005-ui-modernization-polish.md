@@ -24,12 +24,13 @@
 - [x] **AC11**: Integration with Godot editor theming system
 
 ## Technical Requirements
-- **UI Framework**: Use Godot's native editor theming and styling
-- **Docking System**: Implement proper editor dock integration with layout persistence
+- **Architecture Reference**: `.ai/docs/epic-005-gfred2-mission-editor/architecture.md` Section 3 (Scene-Based UI Architecture) **ENHANCED 2025-05-30**
+- **UI Framework**: Use Godot's native editor theming and styling with mandatory scene-based architecture
+- **Docking System**: Implement proper editor dock integration with layout persistence using scenes (`addons/gfred2/scenes/docks/`)
 - **Input System**: Standardized keyboard shortcuts and input handling with full accessibility
 - **Responsive Design**: Adaptive layouts for screen resolutions from 1920x1080 to 4K
 - **Accessibility**: ARIA-compliant UI elements and screen reader support
-- **Performance**: Optimized rendering for smooth 60+ FPS interactions
+- **Performance**: Optimized rendering for smooth 60+ FPS interactions (< 16ms scene instantiation required)
 - **Theming**: Integration with Godot editor theme system and custom theme support
 
 ## Implementation Notes
@@ -113,7 +114,7 @@ This story should be implemented after core integrations are complete to provide
 - **Context Menus**: Right-click functionality with comprehensive operation access
 - **Visual Feedback**: Progress indicators and status displays throughout UI
 
-### Files Created
+### Files Created (Pre-GFRED2-011 Architecture)
 - `ui/theme_manager.gd` - Core theme management (442 lines)
 - `ui/dock_manager.gd` - Dock system controller (442 lines) 
 - `ui/shortcut_manager.gd` - Keyboard shortcut system (681 lines)
@@ -121,6 +122,8 @@ This story should be implemented after core integrations are complete to provide
 - `ui/docks/asset_browser_dock.gd` - Asset browsing interface (421 lines)
 - `ui/dialogs/shortcut_config_dialog.gd` - Configuration UI (392 lines)
 - `tests/test_ui_modernization.gd` - Comprehensive test suite (373 lines)
+
+**Note**: These files will be refactored to scene-based architecture in GFRED2-011 to `addons/gfred2/scenes/` structure
 
 **Implementation Date**: May 30, 2025  
 **Total Development Time**: 4 days as estimated  

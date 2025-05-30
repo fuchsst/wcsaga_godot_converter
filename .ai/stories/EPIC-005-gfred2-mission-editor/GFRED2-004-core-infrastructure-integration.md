@@ -21,12 +21,14 @@
 - [ ] **AC8**: Integration tests validate performance and functionality parity
 
 ## Technical Requirements
+**Architecture Reference**: .ai/docs/epic-005-gfred2-mission-editor/architecture.md Section 3 (Scene-Based UI Architecture) **ENHANCED 2025-05-30**
+
 - **Math Integration**: Replace custom math in `viewport/`, `object_management/` with core utilities
 - **File System Migration**: Update mission file operations to use core VP archive access
-- **Error Handling**: Implement standardized error patterns across all GFRED2 components
-- **Configuration**: Integrate user settings with core configuration management
-- **Performance**: Apply core optimization patterns to viewport rendering and object manipulation
-- **Memory Management**: Use core resource management for large mission data sets
+- **Error Handling**: Implement standardized error patterns across all GFRED2 components with scene-based architecture
+- **Configuration**: Integrate user settings with core configuration management using `addons/gfred2/scenes/dialogs/preferences/`
+- **Performance**: Apply core optimization patterns to viewport rendering and object manipulation (< 16ms scene instantiation, 60+ FPS UI updates)
+- **Memory Management**: Use core resource management for large mission data sets with centralized scene structure
 
 ## Implementation Notes
 - **Code Quality**: Improves maintainability through standardization

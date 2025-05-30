@@ -23,9 +23,10 @@
 - [ ] **AC10**: Validation tools integration with mission testing and quality assurance features
 
 ## Technical Requirements
+- **Architecture Reference**: `.ai/docs/epic-005-gfred2-mission-editor/architecture.md` Section 3 (Scene-Based UI Architecture) **ENHANCED 2025-05-30**
 - **Integration**: Leverage `SexpValidator`, `AssetValidationManager`, and core foundation validation
-- **Performance**: Incremental validation using dependency graphs and change tracking
-- **UI Integration**: Seamless validation indicators in property editors and object hierarchy
+- **Performance**: Incremental validation using dependency graphs and change tracking (< 100ms validation, < 16ms UI updates)
+- **UI Integration**: Scene-based validation indicators in property editors and object hierarchy (`addons/gfred2/scenes/components/`)
 - **Caching**: Efficient validation result caching with intelligent invalidation
 
 ## Implementation Notes
@@ -60,8 +61,8 @@
 - [ ] **Task 2**: Implement asset dependency tracking with missing reference detection
 - [ ] **Task 3**: Integrate SEXP validation with mission-specific context checking
 - [ ] **Task 4**: Add mission object validation with relationship verification
-- [ ] **Task 5**: Create visual validation indicators for property editors and hierarchy
-- [ ] **Task 6**: Implement dependency graph visualization for complex missions
+- [ ] **Task 5**: Create scene-based visual validation indicators for property editors and hierarchy (`scenes/components/validation_indicator.tscn`)
+- [ ] **Task 6**: Implement scene-based dependency graph visualization for complex missions (`scenes/components/dependency_graph_view.tscn`)
 - [ ] **Task 7**: Optimize validation performance with caching and incremental updates
 - [ ] **Task 8**: Add comprehensive error reporting with actionable fix suggestions
 

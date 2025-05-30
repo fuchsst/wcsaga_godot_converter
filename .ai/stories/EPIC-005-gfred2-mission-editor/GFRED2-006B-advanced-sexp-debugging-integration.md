@@ -21,9 +21,10 @@
 - [ ] **AC8**: Integration with mission testing allows live debugging of running missions
 
 ## Technical Requirements
+- **Architecture Reference**: `.ai/docs/epic-005-gfred2-mission-editor/architecture.md` Section 3 (Scene-Based UI Architecture) **ENHANCED 2025-05-30**
 - **EPIC-004 Integration**: Full utilization of `SexpDebugEvaluator`, `SexpVariableWatchSystem`
-- **UI Integration**: Debug panels integrated into mission editor layout
-- **Performance**: Debug features available without impacting editor performance
+- **UI Integration**: Scene-based debug panels integrated into mission editor layout (`addons/gfred2/scenes/components/`)
+- **Performance**: Debug features available without impacting editor performance (< 16ms scene instantiation)
 - **Session Management**: Persistent debug configurations per mission
 
 ## Implementation Notes

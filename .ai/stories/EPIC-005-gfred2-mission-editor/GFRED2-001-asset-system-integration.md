@@ -25,12 +25,15 @@
 - [ ] **AC12**: Asset preview integration with 3D ship models and weapon visualizations
 
 ## Technical Requirements
+**Architecture Reference**: .ai/docs/epic-005-gfred2-mission-editor/architecture.md Section 3 (Scene-Based UI Architecture) **ENHANCED 2025-05-30**
+
 - **Remove**: Custom `ShipClassData`, `WeaponClassData`, and `AssetRegistry` classes
 - **Replace**: Asset browser to use `RegistryManager` from `addons/wcs_asset_core/`
 - **Update**: Mission object data to reference `BaseAssetData` subclasses
-- **Integration**: Asset preview system with core asset loading
-- **Performance**: Implement lazy loading and caching for large asset collections
+- **Integration**: Asset preview system with core asset loading using scene-based UI architecture
+- **Performance**: Implement lazy loading and caching for large asset collections (< 16ms scene instantiation, 60+ FPS UI updates)
 - **Migration**: Automated conversion of existing asset references to core system
+- **UI Architecture**: Asset browser uses centralized scene structure from `addons/gfred2/scenes/dialogs/asset_browser/`
 
 ## Implementation Notes
 - **Breaking Change**: This will remove duplicate asset management code

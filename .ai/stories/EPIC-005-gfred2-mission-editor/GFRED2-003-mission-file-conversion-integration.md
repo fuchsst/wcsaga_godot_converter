@@ -23,10 +23,12 @@
 - [x] **AC9**: GFRED2 can save a campaign and missions as Godot resource as defined in EPIC-001 preserving the full featureset of WCS
 
 ## Technical Requirements
+**Architecture Reference**: .ai/docs/epic-005-gfred2-mission-editor/architecture.md Section 3 (Scene-Based UI Architecture) **ENHANCED 2025-05-30**
+
 - **Integration**: Use `MissionConverter` from `addons/wcs_converter/`
 - **Replace**: Custom FS2 parser with standardized conversion system
-- **Update**: File dialogs to use conversion system progress tracking
-- **Enhancement**: Add validation and error reporting for mission files
+- **Update**: File dialogs to use conversion system progress tracking with scene-based architecture
+- **Enhancement**: Add validation and error reporting for mission files using `addons/gfred2/scenes/dialogs/`
 
 ## Implementation Notes
 - **Standardization**: Eliminates duplicate mission file handling code
