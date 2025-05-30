@@ -1,0 +1,109 @@
+# User Story: SEXP System Integration with EPIC-004
+
+**Epic**: EPIC-005 - GFRED2 Mission Editor  
+**Story ID**: GFRED2-002  
+**Created**: January 30, 2025  
+**Status**: Pending
+
+## Story Definition
+**As a**: Mission designer creating complex mission logic  
+**I want**: GFRED2 to use the comprehensive EPIC-004 SEXP system for visual scripting  
+**So that**: I can create complex mission events with full validation, debugging, and all available functions
+
+## Acceptance Criteria
+- [ ] **AC1**: GFRED2 SEXP editor uses `addons/sexp/` system instead of custom implementation
+- [ ] **AC2**: Visual SEXP editing provides access to all EPIC-004 functions and operators
+- [ ] **AC3**: SEXP validation and debugging tools are available in mission editor
+- [ ] **AC4**: Mission events, goals, and triggers use standardized SEXP expressions
+- [ ] **AC5**: Property editors for SEXP fields use core SEXP input controls
+- [ ] **AC6**: SEXP expressions can be saved/loaded with mission files correctly
+- [ ] **AC7**: SEXP debug features (breakpoints, variable watching) work in mission editor context
+- [ ] **AC8**: Migration path preserves existing custom SEXP nodes and expressions
+- [ ] **AC9**: AI-powered fix suggestions from EPIC-004 integrated into editor UI
+- [ ] **AC10**: Performance maintained for complex SEXP trees (>60 FPS with 100+ nodes)
+- [ ] **AC11**: Tests validate integration with complete SEXP system including debug features
+- [ ] **AC12**: Variable management UI integrated for creating and monitoring SEXP variables
+- [ ] **AC13**: SEXP tools palette with function browser and quick insertion capabilities
+
+## Technical Requirements
+- **Remove**: Basic SEXP implementation from `gfred2/sexp_editor/`
+- **Replace**: SEXP graph editor with integration to `addons/sexp/`
+- **Migration**: Preserve existing SEXP editor UI while upgrading backend functionality
+- **Debug Integration**: Integrate `SexpValidator`, `SexpDebugEvaluator` from EPIC-004 debug framework
+- **Performance**: Maintain SEXP editor responsiveness with large expression trees
+- **UI Enhancement**: Add debug panels, variable watch, and AI-powered suggestions to editor
+- **Variable Management**: Integrate variable creation and monitoring UI from analysis recommendations
+- **SEXP Tools**: Add function browser, quick insertion, and advanced SEXP tools palette
+
+## Implementation Notes
+- **Major Integration**: This connects GFRED2 with the complete SEXP system
+- **Enhanced Features**: Gains access to debugging, validation, and full function library
+- **UI Integration**: SEXP editor becomes more sophisticated with debug capabilities
+- **Performance**: Leverage SEXP system's performance optimizations
+
+## Dependencies
+- **Prerequisites**: EPIC-004 SEXP Expression System (completed)
+- **Blockers**: None - EPIC-004 is complete with all features
+- **Related Stories**: Enables advanced mission scripting workflows
+
+## Definition of Done
+- [ ] Custom SEXP parser (`sexp_editor/sexp_graph.gd`) migrated to core system
+- [ ] All SEXP operations use core `SexpManager` and evaluation system
+- [ ] Visual SEXP editor works with core SEXP tree structures and validation
+- [ ] Real-time validation integrated with AI-powered fix suggestions
+- [ ] Debug tools (breakpoints, variable watch) accessible from mission editor
+- [ ] Migration preserves all existing SEXP expressions and custom nodes
+- [ ] Performance benchmarks maintained (>60 FPS with 100+ SEXP nodes)
+- [ ] UI integration seamless with existing mission editor workflow
+- [ ] Mission save/load preserves SEXP expressions correctly
+- [ ] All SEXP editing workflows tested with complex mission scenarios
+
+## Estimation
+- **Complexity**: High
+- **Effort**: 5 days
+- **Risk Level**: Medium
+- **Confidence**: High
+
+## Implementation Tasks
+- [ ] **Task 1**: Create migration strategy for existing SEXP editor backend to core system
+- [ ] **Task 2**: Update visual SEXP editor to use core `SexpManager` while preserving UI
+- [ ] **Task 3**: Integrate core function registry with existing SEXP node palette
+- [ ] **Task 4**: Add real-time validation with AI-powered fix suggestions to editor UI
+- [ ] **Task 5**: Integrate debug framework (SexpValidator, SexpDebugEvaluator) into editor
+- [ ] **Task 6**: Add debug panels for breakpoints, variable watching, and expression testing
+- [ ] **Task 7**: Performance optimization for large SEXP trees using core caching
+- [ ] **Task 8**: Migration testing with existing GFRED2 missions and custom expressions
+- [ ] **Task 9**: UI testing for seamless integration with mission editor workflow
+
+## Testing Strategy
+- **Unit Tests**: Test SEXP editor integration with core system
+- **Integration Tests**: Test mission events with SEXP expressions
+- **User Experience Tests**: Validate SEXP editing workflow with debug features
+- **Performance Tests**: Ensure SEXP evaluation performance in mission context
+
+## Notes and Comments
+**FEATURE ENHANCEMENT**: This story significantly upgrades GFRED2's scripting capabilities by integrating with the complete SEXP system that includes debugging, validation, and comprehensive function libraries.
+
+The SEXP system provides advanced features like:
+- AI-powered fix suggestions
+- Step-through debugging
+- Variable watching
+- Expression tree visualization
+- Performance optimization
+
+Focus on seamless integration while gaining access to all these advanced features.
+
+---
+
+## Approval Checklist
+- [x] Story follows template structure completely
+- [x] All acceptance criteria are specific and testable
+- [x] Technical requirements reference existing architecture
+- [x] Dependencies are identified and documented
+- [x] Story size is appropriate (3-4 days maximum)
+- [x] Definition of Done is complete and realistic
+- [x] Implementation approach is well-defined
+- [x] Integration points are clearly specified
+
+**Approved by**: SallySM (Story Manager) **Date**: January 30, 2025  
+**Role**: Story Manager

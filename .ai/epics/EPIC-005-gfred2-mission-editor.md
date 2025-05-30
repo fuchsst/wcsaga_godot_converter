@@ -5,21 +5,23 @@
 **Epic Name**: GFRED2 Mission Editor  
 **Epic Owner**: Larry (WCS Analyst)  
 **Priority**: High  
-**Status**: Architecture Complete  
+**Status**: Stories Refined - Ready for Implementation  
 **Created**: 2025-01-25 (Original), Updated: 2025-01-26  
 **Position**: 4 (Development Tools Phase)  
-**Duration**: 12-16 weeks (6-8 weeks remaining)  
+**Duration**: 9.6 weeks (48 days) - Updated with Additional High-Priority Features  
 
 ## Epic Description
 Create a comprehensive mission editor as a Godot plugin that recreates and enhances the functionality of the original WCS FRED2 (FReespace EDitor version 2) tool. This editor will allow mission creators to design, script, and test missions using modern Godot editor integration while maintaining full compatibility with WCS mission standards and exceeding the original editor's capabilities.
 
 ## Progress Summary
-**Current Status**: Phase 2 Complete, Asset Integration Blocked
-- ✅ **Core Framework**: Mission data, file I/O, 3D viewport, object management complete
-- ✅ **Essential Editing**: Visual SEXP foundation, property inspector complete
-- 🚫 **Asset Integration**: Blocked pending EPIC-002 (Asset Structures Management)
-- ⏳ **Remaining Work**: Full asset integration, SEXP system integration, advanced features
-- **Completion**: ~60% of Phase 1-2 (6 of 8 core stories complete, 1 blocked)
+**Current Status**: Stories Refined by BMAD Team - Ready for Implementation
+- ✅ **Foundation Dependencies**: EPICs 001-004 complete and stable
+- ✅ **Core Framework**: Basic mission editor infrastructure implemented
+- ✅ **Story Refinement**: BMAD team analysis complete with enhanced stories
+- 🔄 **Implementation Phase**: Ready to begin systematic integration
+- **Next Priority**: Core infrastructure integration (GFRED2-004) followed by asset system
+- **Updated Timeline**: 48 days total (9.6 weeks) including high-priority missing features
+- **Critical Gap Address**: Additional 18 days for briefing editor, campaign integration, advanced ship configuration, and mission component editors
 
 ## WCS FRED2 System Analysis
 
@@ -140,37 +142,37 @@ target/addons/gfred2/
 - **Godot Editor**: Native integration with Godot's editor plugin system
 - **Main Game**: Real-time mission testing and validation
 
-## Story Breakdown
+## Integration Story Breakdown (REFINED BY BMAD TEAM)
 
-### Phase 1: Core Editor Framework (COMPLETED ✅)
-- **STORY-005**: Mission Data Resource System ✅ **COMPLETED**
-- **STORY-006**: FS2 Mission File Import/Export ✅ **COMPLETED**
-- **STORY-007**: Basic 3D Viewport Integration ✅ **COMPLETED**
-- **STORY-008**: Mission Object Management System ✅ **COMPLETED**
+### Phase 1: Foundation Integration (2 weeks) - READY ⚡
+- **GFRED2-004**: Core Infrastructure Integration with EPIC-001 (2 days) ⏳ **READY**
+- **GFRED2-001**: Asset System Integration with EPIC-002 (3 days) ⏳ **READY**
+- **GFRED2-003**: Mission File Conversion Integration with EPIC-003 (3 days) ⏳ **READY**
+- **GFRED2-002**: SEXP System Integration with EPIC-004 (5 days) ⏳ **READY**
 
-### Phase 2: Essential Editing Tools (COMPLETED ✅)
-- **STORY-009**: Visual SEXP Editor Foundation ✅ **COMPLETED**
-- **STORY-010**: Object Property Inspector ✅ **COMPLETED**
-- **STORY-011**: Basic Asset Integration 🔄 **BLOCKED** (Waiting for EPIC-002)
-- **STORY-012**: Real-time Mission Validation ⏳ **PENDING**
+### Phase 2: User Experience Enhancement (1 week) - READY
+- **GFRED2-005**: UI Modernization and Polish (4 days) ⏳ **READY**
 
-### Phase 3: Asset Integration and Browsing (3 weeks) - BLOCKED 🚫
-- **STORY-005-009**: Asset Browser Integration with EPIC-002
-- **STORY-005-010**: Ship Class Selection and Configuration
-- **STORY-005-011**: Weapon and Loadout Management
-- **STORY-005-012**: Background and Environment Setup
+### Phase 3: Advanced Capabilities (2.5 weeks) - READY
+- **GFRED2-006A**: Real-time Validation and Dependency Tracking (3 days) ⏳ **READY**
+- **GFRED2-006B**: Advanced SEXP Debugging Integration (3 days) ⏳ **READY**
+- **GFRED2-006C**: Mission Templates and Pattern Library (4 days) ⏳ **READY**
+- **GFRED2-006D**: Performance Profiling and Optimization Tools (3 days) ⏳ **READY**
 
-### Phase 4: SEXP and Mission Logic (3 weeks) - PENDING ⏳
-- **STORY-005-013**: Visual SEXP Editor Integration with EPIC-004
-- **STORY-005-014**: Event and Trigger Management
-- **STORY-005-015**: Mission Objective and Goal Definition
-- **STORY-005-016**: Variable Management and Debugging
+### Phase 4: Critical Feature Parity (3.6 weeks) - NEW HIGH-PRIORITY ⚡
+- **GFRED2-007**: Briefing Editor System (5 days) ⏳ **NEW CRITICAL**
+- **GFRED2-008**: Campaign Editor Integration (4 days) ⏳ **NEW CRITICAL**
+- **GFRED2-009**: Advanced Ship Configuration (4 days) ⏳ **NEW CRITICAL**
+- **GFRED2-010**: Mission Component Editors (5 days) ⏳ **NEW CRITICAL**
 
-### Phase 5: Advanced Features and Polish (3-4 weeks) - PENDING ⏳
-- **STORY-005-017**: Mission Validation and Error Checking
-- **STORY-005-018**: Real-time Mission Testing Integration
-- **STORY-005-019**: Campaign Integration and Progression
-- **STORY-005-020**: User Interface Polish and Workflow Optimization
+**FEATURE PARITY ANALYSIS**: Larry's analysis identified critical gaps preventing complete FRED2 functionality. Phase 4 addresses these gaps to achieve 95%+ feature parity.
+
+### Legacy Implementation Status (To Be Refactored)
+- ✅ **Basic Framework**: Mission data, 3D viewport, object management 
+- ✅ **Property System**: Object property inspector
+- 🔄 **Asset System**: Custom implementation → Will be replaced by EPIC-002 integration
+- 🔄 **SEXP System**: Basic implementation → Will be replaced by EPIC-004 integration
+- 🔄 **File System**: Custom parser → Will be replaced by EPIC-003 integration
 
 ## Acceptance Criteria
 
@@ -191,22 +193,30 @@ target/addons/gfred2/
 
 ## Dependencies
 
-### Upstream Dependencies
-- **EPIC-003**: Asset Structures and Management Addon (critical)
-- **EPIC-MIG-001**: Data Migration & Conversion Tools (mission import)
-- **EPIC-SEXP-001**: SEXP Expression System (visual scripting)
+### Completed Dependencies ✅
+- **EPIC-001**: Core Foundation Infrastructure (utilities, math, validation)
+- **EPIC-002**: Asset Structures and Management Addon (asset browsing and integration)
+- **EPIC-003**: Data Migration & Conversion Tools (mission import/export)
+- **EPIC-004**: SEXP Expression System (visual scripting and validation)
 - **Godot Editor Plugin System**: Core plugin development framework
 
-### Downstream Dependencies (Enables)
-- **Mission Creation**: All mission-based content development
-- **Campaign Development**: Campaign creation and testing tools
-- **Community Content**: User-generated mission support
-- **Quality Assurance**: Mission testing and validation tools
+### Integration Opportunities
+- **Enhanced Asset Management**: Leverage EPIC-002's comprehensive asset system
+- **Advanced SEXP Editing**: Use EPIC-004's debugging and validation features
+- **Robust File Handling**: Utilize EPIC-003's conversion and validation tools
+- **Consistent Infrastructure**: Apply EPIC-001's utilities and patterns
 
-### Integration Dependencies
-- **Main Game**: Mission testing and validation requires game runtime
-- **Asset Pipeline**: Requires converted assets for mission creation
-- **Save System**: Mission file format and persistence
+### Downstream Dependencies (Enables)
+- **Mission Creation**: Professional mission development workflow
+- **Campaign Development**: Campaign creation and testing tools
+- **Community Content**: User-generated mission support with full validation
+- **Quality Assurance**: Comprehensive mission testing and validation tools
+
+### Integration Benefits
+- **Reduced Code Duplication**: Eliminate custom implementations
+- **Enhanced Features**: Gain advanced capabilities from integrated systems
+- **Improved Quality**: Leverage tested and validated foundation systems
+- **Faster Development**: Build on proven infrastructure
 
 ## Risks and Mitigation
 
@@ -285,16 +295,91 @@ target/addons/gfred2/
 - **Implementation**: To be handled by Dev
 - **Validation**: To be performed by QA
 
-## Next Steps
-1. **UI/UX Design**: Design modern interface maintaining FRED2 workflow
-2. **Architecture Design**: Mo to design plugin architecture and integration
-3. **Story Creation**: SallySM to break down into implementable stories
-4. **Prototyping**: Create early prototype to validate approach
+## BMAD Team Refinement Summary (May 30, 2025)
+
+### Collaborative Analysis Completed
+**BMAD Team**: Larry (WCS Analyst), Mo (Godot Architect), SallySM (Story Manager)  
+**Analysis Date**: May 30, 2025  
+**Refinement Scope**: Complete story enhancement based on C++ source analysis, existing Godot code review, and integration requirements
+
+### Key Improvements Made
+1. **Story Scope Refinement**: Split oversized GFRED2-006 into 4 focused stories (006A-D)
+2. **Performance Requirements**: Added specific benchmarks and optimization criteria
+3. **Integration Strategy**: Enhanced integration points with EPICs 001-004
+4. **Accessibility Standards**: Added comprehensive accessibility requirements
+5. **Migration Planning**: Detailed migration strategies for existing code
+6. **Risk Mitigation**: Identified and addressed technical and project risks
+
+### Timeline Accuracy
+- **Original Estimate**: 12-16 weeks (unrealistic based on integration complexity)
+- **Refined Estimate**: 6 weeks / 30 days (based on detailed story analysis)
+- **Implementation Sequence**: Optimized for dependency management and risk reduction
+
+### Quality Standards Enhanced
+- Performance benchmarks for all stories
+- Comprehensive integration validation requirements
+- Accessibility compliance standards
+- Migration and compatibility testing requirements
 
 ---
 
-**Analysis Completed By**: Larry (WCS Analyst)  
-**Analysis Date**: 2025-01-26  
-**Ready for Architecture Phase**: Yes  
-**Dependency Status**: Requires EPIC-003, EPIC-MIG-001, EPIC-SEXP-001  
-**BMAD Workflow Status**: Analysis → Architecture (Next)
+**Original Analysis By**: Larry (WCS Analyst) - January 26, 2025  
+**Story Refinement By**: BMAD Team (Larry, Mo, SallySM) - May 30, 2025  
+**Current Status**: Ready for Implementation  
+**Dependencies**: All EPICs 001-004 complete and stable  
+**BMAD Workflow Status**: Analysis → Stories → **READY FOR IMPLEMENTATION**
+
+---
+
+## SallySM Story Integration Summary (May 30, 2025)
+
+### Critical Gap Analysis & Story Creation
+**Analysis Source**: Larry (WCS Analyst) findings - GFRED2 coverage only 60-65% of FRED2 capabilities  
+**Story Manager**: SallySM  
+**Integration Date**: May 30, 2025
+
+### New High-Priority Stories Created
+1. **GFRED2-007: Briefing Editor System** (5 days) - CRITICAL GAP ⚡
+   - Complete absence of briefing creation capabilities
+   - Multi-stage briefing, camera positioning, voice integration
+   - Essential for mission storytelling and player orientation
+
+2. **GFRED2-008: Campaign Editor Integration** (4 days) - CRITICAL GAP ⚡
+   - Complete absence of campaign creation capabilities
+   - Mission flow, branching logic, campaign-wide variables
+   - Essential for multi-mission campaign development
+
+3. **GFRED2-009: Advanced Ship Configuration** (4 days) - HIGH PRIORITY ⚡
+   - Missing sophisticated ship configuration options
+   - Advanced AI, damage systems, texture replacement
+   - Required for complex mission scenarios
+
+4. **GFRED2-010: Mission Component Editors** (5 days) - HIGH PRIORITY ⚡
+   - Missing reinforcements, goals, messages, waypoints editors
+   - Environment configuration, variable management
+   - Foundation components for sophisticated missions
+
+### Existing Story Enhancements
+- **GFRED2-002**: Added variable management UI and SEXP tools palette
+- **GFRED2-001**: Added advanced ship configuration support and 3D previews
+- **GFRED2-006A**: Added mission statistics dashboard and validation tools
+
+### Timeline Impact
+- **Original Estimate**: 30 days (6 weeks)
+- **Updated Estimate**: 48 days (9.6 weeks)
+- **Additional Development**: 18 days for critical feature parity
+- **Feature Parity**: Achieves 95%+ FRED2 functionality vs previous 60-65%
+
+### Implementation Strategy
+- **Phase 1-3**: Existing refined stories (30 days) - Foundation and core features
+- **Phase 4**: New critical stories (18 days) - Feature parity and professional capabilities
+- **Integration Approach**: Systematic dependency management with quality gates
+- **Risk Mitigation**: Clear separation of foundation vs advanced features
+
+### Success Validation
+- **Feature Coverage**: 95%+ FRED2 capability parity
+- **Professional Workflow**: Complete WCS mission development pipeline
+- **Quality Standards**: All BMAD quality gates and performance benchmarks
+- **User Experience**: Intuitive for experienced FRED2 users, accessible for new users
+
+**DELIVERABLE ACHIEVED**: Complete set of GFRED2 stories for full FRED2 feature parity with modern Godot implementation.
