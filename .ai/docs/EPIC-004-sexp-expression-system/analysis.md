@@ -531,9 +531,238 @@ signal variable_changed(var_name: String, new_value: Variant)
 - Objective system for mission goals
 - Variable system for state persistence
 
+## Operator Implementation Analysis
+
+### 31. Detailed Operator Function Analysis
+
+**Analysis Date**: 2025-05-30  
+**Analyst**: Larry (WCS Analyst)  
+**Focus**: Operator implementation details from `source/code/parse/sexp.cpp`
+
+#### 31.1 Logical Operators Implementation
+
+**Core Logical Functions:**
+
+1. **`sexp_or(int n)` (Lines 6171-6214)**
+   ```cpp
+   int sexp_or(int n) {
+       int all_false = 1, result = 0;
+       // Evaluates all arguments using is_sexp_true()
+       // Returns SEXP_KNOWN_TRUE if any argument is SEXP_KNOWN_TRUE
+       // Uses short-circuit logic but evaluates all for mission log purposes
+       // Returns SEXP_KNOWN_FALSE if all arguments are SEXP_KNOWN_FALSE
+   }
+   ```
+
+2. **`sexp_and(int n)` (Lines 6219-6265)**
+   ```cpp
+   int sexp_and(int n) {
+       int all_true = 1, result = -1;
+       // Returns SEXP_KNOWN_FALSE if any argument is SEXP_KNOWN_FALSE
+       // Uses bitwise AND (&=) for result combination
+       // Evaluates all arguments despite short-circuit potential for mission logging
+   }
+   ```
+
+3. **`sexp_not(int n)` (Lines 6327-6350)**
+   ```cpp
+   int sexp_not(int n) {
+       // Handles special SEXP values:
+       // not KNOWN_FALSE == KNOWN_TRUE
+       // not KNOWN_TRUE == KNOWN_FALSE  
+       // not NAN == TRUE (special case)
+       // not NAN_FOREVER == TRUE
+   }
+   ```
+
+**Key Implementation Insights:**
+- All logical operators handle special SEXP values (KNOWN_TRUE, KNOWN_FALSE, NAN, NAN_FOREVER)
+- Mission logging requires full evaluation even when short-circuiting would be possible
+- Uses `is_sexp_true()` helper for consistent boolean evaluation
+
+#### 31.2 Comparison Operators Implementation
+
+**Number Comparison - `sexp_number_compare(int n, int op)` (Lines 6353-6419)**
+```cpp
+int sexp_number_compare(int n, int op) {
+    int first_number = eval_sexp(first_node);
+    // Compares first argument against all subsequent arguments
+    switch (op) {
+        case OP_EQUALS:
+            if (first_number != current_number) return SEXP_FALSE;
+        case OP_GREATER_THAN:
+            if (first_number <= current_number) return SEXP_FALSE;
+        case OP_LESS_THAN:
+            if (first_number >= current_number) return SEXP_FALSE;
+    }
+    // Returns SEXP_TRUE only if ALL comparisons satisfy the operator
+}
+```
+
+**String Comparison - `sexp_string_compare(int n, int op)` (Lines 6422-6456)**
+```cpp
+int sexp_string_compare(int n, int op) {
+    char* first_string = CTEXT(first_node);
+    int val = strcmp(first_string, CTEXT(current_node));
+    switch (op) {
+        case OP_STRING_EQUALS: if (val != 0) return SEXP_FALSE;
+        case OP_STRING_GREATER_THAN: if (val <= 0) return SEXP_FALSE;
+        case OP_STRING_LESS_THAN: if (val >= 0) return SEXP_FALSE;
+    }
+}
+```
+
+**Critical Implementation Details:**
+- **Multi-argument comparison**: All comparisons check first argument against ALL remaining arguments
+- **NAN handling**: Comprehensive NAN checking for numeric operations
+- **String comparison**: Uses standard `strcmp()` for lexicographic ordering
+- **Type coercion**: Uses `atoi()` for string-to-number conversion
+
+#### 31.3 Arithmetic Operators Implementation
+
+**Addition - `add_sexps(int n)` (Lines 5919-5950)**
+```cpp
+int add_sexps(int n) {
+    int sum = 0, val;
+    // First value: either eval_sexp(CAR(n)) or atoi(CTEXT(n))
+    sum = eval_sexp(CAR(n));
+    
+    // NAN propagation check
+    if (Sexp_nodes[CAR(n)].value == SEXP_NAN) return SEXP_NAN;
+    if (Sexp_nodes[CAR(n)].value == SEXP_NAN_FOREVER) return SEXP_NAN_FOREVER;
+    
+    // Sum all remaining arguments
+    while (CDR(n) != -1) {
+        val = eval_sexp(CDR(n));
+        // NAN checks for each operand
+        sum += val;
+        n = CDR(n);
+    }
+}
+```
+
+**Subtraction - `sub_sexps(int n)` (Lines 5954-5973)**
+```cpp
+int sub_sexps(int n) {
+    // Takes first argument and subtracts all remaining arguments
+    sum = eval_sexp(CAR(n));
+    while (CDR(n) != -1) {
+        sum -= eval_sexp(CDR(n));
+        n = CDR(n);
+    }
+}
+```
+
+**Multiplication - `mul_sexps(int n)` (Lines 5975-5994)**
+```cpp
+int mul_sexps(int n) {
+    // Multiplies all arguments together
+    sum = eval_sexp(Sexp_nodes[n].first);
+    while (Sexp_nodes[n].rest != -1) {
+        sum *= eval_sexp(Sexp_nodes[n].rest);
+        n = Sexp_nodes[n].rest;
+    }
+}
+```
+
+**Division - `div_sexps(int n)` (Lines 5996-6015)**
+```cpp
+int div_sexps(int n) {
+    // Divides first argument by all remaining arguments
+    sum = eval_sexp(Sexp_nodes[n].first);
+    while (Sexp_nodes[n].rest != -1) {
+        sum /= eval_sexp(Sexp_nodes[n].rest);  // No division by zero check!
+        n = Sexp_nodes[n].rest;
+    }
+}
+```
+
+**Modulo - `mod_sexps(int n)` (Lines 6017-6036)**
+```cpp
+int mod_sexps(int n) {
+    // Applies modulo operation sequentially
+    sum = eval_sexp(Sexp_nodes[n].first);
+    while (Sexp_nodes[n].rest != -1) {
+        sum = sum % eval_sexp(Sexp_nodes[n].rest);  // No modulo by zero check!
+        n = Sexp_nodes[n].rest;
+    }
+}
+```
+
+**Critical Arithmetic Implementation Issues:**
+- **No error handling**: Division and modulo operations don't check for zero divisors
+- **Integer-only arithmetic**: All operations use `int` type, no floating-point support
+- **NAN propagation**: Addition has NAN checking, but other operations don't
+- **Multi-argument operations**: All operations process variable number of arguments
+
+#### 31.4 Operator Dispatch System
+
+**Main Evaluation Switch (Lines 20670-20755)**
+```cpp
+switch (op_num) {
+    // Arithmetic operators
+    case OP_PLUS:    sexp_val = add_sexps(node); break;
+    case OP_MINUS:   sexp_val = sub_sexps(node); break;
+    case OP_MUL:     sexp_val = mul_sexps(node); break;
+    case OP_DIV:     sexp_val = div_sexps(node); break;
+    case OP_MOD:     sexp_val = mod_sexps(node); break;
+    
+    // Logical operators  
+    case OP_OR:      sexp_val = sexp_or(node); break;
+    case OP_AND:     sexp_val = sexp_and(node); break;
+    case OP_NOT:     sexp_val = sexp_not(node); break;
+    
+    // Comparison operators
+    case OP_GREATER_THAN:
+    case OP_LESS_THAN:
+    case OP_EQUALS:  sexp_val = sexp_number_compare(node, op_num); break;
+    
+    case OP_STRING_GREATER_THAN:
+    case OP_STRING_LESS_THAN:
+    case OP_STRING_EQUALS: sexp_val = sexp_string_compare(node, op_num); break;
+}
+```
+
+#### 31.5 Type System and Coercion Rules
+
+**SEXP Value Constants:**
+```cpp
+#define SEXP_TRUE           1
+#define SEXP_FALSE          0  
+#define SEXP_KNOWN_TRUE    -2147483646  // -2
+#define SEXP_KNOWN_FALSE   -2147483647  // -1
+#define SEXP_NAN           -2147483644  // -4 (ships not arrived yet)
+#define SEXP_NAN_FOREVER   -2147483643  // -5 (permanent false condition)
+```
+
+**Type Coercion Rules:**
+1. **String to Number**: Uses `atoi(CTEXT(n))` for immediate conversion
+2. **Boolean Evaluation**: `is_sexp_true()` returns true for SEXP_TRUE or SEXP_KNOWN_TRUE
+3. **Node Access**: `CAR(n)` = first child, `CDR(n)` = rest of list
+4. **Text Access**: `CTEXT(n)` = string content of node
+
+**Missing Conditional Operators:**
+- No evidence of "when", "cond", or "if" operators in the examined code sections
+- These may be handled by the mission event system rather than as direct SEXP operators
+- Need further investigation in event processing code
+
+#### 31.6 Performance Characteristics
+
+**Optimization Patterns Found:**
+1. **Cached Evaluation**: `Sexp_nodes[n].value` caches results
+2. **Lazy Evaluation**: Only re-evaluates when state changes
+3. **NAN Propagation**: Early returns for invalid states
+4. **Mission Logging**: Full evaluation ensures all events are recorded
+
+**Performance Issues Identified:**
+1. **No Division by Zero Protection**: Could cause crashes
+2. **Linear List Traversal**: O(n) for each argument list
+3. **Repeated eval_sexp Calls**: No intermediate result caching
+4. **String Operations**: strcmp() calls for every string comparison
+
 ## Final Analysis and Recommendations
 
-### 31. System Complexity Assessment
+### 32. System Complexity Assessment
 
 **Complexity Score: 9/10 (Very High)**
 
