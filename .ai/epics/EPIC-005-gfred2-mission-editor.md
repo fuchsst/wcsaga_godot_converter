@@ -155,7 +155,7 @@ target/addons/gfred2/
 
 ### Phase 3: Advanced Capabilities (2.5 weeks) - IN PROGRESS
 - **GFRED2-006A**: Real-time Validation and Dependency Tracking (3 days) ✅ **COMPLETED** (Date: May 31, 2025)
-- **GFRED2-006B**: Advanced SEXP Debugging Integration (3 days) ⏳ **READY**
+- **GFRED2-006B**: Advanced SEXP Debugging Integration (3 days) ✅ **COMPLETED** (Date: May 31, 2025)
 - **GFRED2-006C**: Mission Templates and Pattern Library (4 days) ⏳ **READY**
 - **GFRED2-006D**: Performance Profiling and Optimization Tools (3 days) ⏳ **READY**
 
