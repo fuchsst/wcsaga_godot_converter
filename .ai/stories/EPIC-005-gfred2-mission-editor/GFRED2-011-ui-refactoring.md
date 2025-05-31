@@ -24,31 +24,44 @@
 
 ## Technical Requirements
 - **Architecture Reference**: `.ai/docs/epic-005-gfred2-mission-editor/architecture.md` Section 3 (Editor UI Architecture) **ENHANCED 2025-05-30**
+- **MANDATORY ARCHITECTURE COMPLIANCE**: Implement 100% scene-based UI as specified in May 30th architecture
+- **Centralized Scene Structure**: ALL UI components MUST be organized under `addons/gfred2/scenes/` only
+- **Folder Elimination**: DEPRECATE and consolidate `ui/`, `dialogs/`, `viewport/ui/`, `sexp_editor/` (UI parts), `validation/` (UI parts)
 - **Godot Components**: 
-  - Scene files (.tscn) for all UI components
-  - Proper script attachment using scene nodes
-  - UI composition through scene hierarchies
-  - Scene instancing for reusable components
+  - Scene files (.tscn) for ALL UI components (NO programmatic UI allowed)
+  - Scripts attached ONLY to scene root nodes as controllers
+  - UI composition through scene hierarchies and inheritance
+  - Scene instancing for reusable components with base scene patterns
+- **Performance Requirements**:
+  - Scene instantiation: < 16ms per component (MANDATORY)
+  - Maximum 3 levels of scene inheritance
+  - Direct signal connections only (no call_group())
+  - Batched UI updates at 60 FPS
 - **Integration Points**: 
-  - GFRED2 plugin system integration
-  - Editor dock registration system
-  - Gizmo plugin architecture
-  - UI signal propagation between components
+  - GFRED2 plugin system integration with scene-based registration
+  - Editor dock registration using scene instances
+  - Gizmo plugin architecture with scene-based components
+  - Signal-based communication between scene components
 
 ## Implementation Notes
+- **CRITICAL VIOLATIONS TO CORRECT**:
+  - `dialog_manager.gd`: Uses `preload().new()` for UI instantiation (VIOLATION of scene-based architecture)
+  - Mixed `.tscn` and programmatic approaches across folders (ARCHITECTURAL INCONSISTENCY)
+  - No centralized scene structure (VIOLATION of May 30th architecture)
+  - Hybrid UI approaches causing technical debt (MAINTENANCE NIGHTMARE)
 - **Existing Code to Change**: 
-  - `target/addons/gfred2/ui/` - All dock and panel components using programmatic UI creation
-  - `target/addons/gfred2/dialogs/` - Dialog classes building UI through code
-  - `target/addons/gfred2/viewport/` - 3D viewport gizmos and tools with code-based UI
-  - `target/addons/gfred2/sexp_editor/` - SEXP visual editor components with programmatic UI
-  - `target/addons/gfred2/validation/` - Validation UI components built programmatically
-  - `target/addons/gfred2/plugin.gd` - Main plugin with UI registration code
-- **Folder Structure Review Required**: 
-  - Consolidate UI components into consistent scene-based architecture
-  - Review `ui/`, `dialogs/`, `viewport/`, `sexp_editor/`, and `validation/` folders for overlapping functionality
-  - Establish consistent naming convention for scene files vs script files
-  - Create clear separation between UI scenes (.tscn) and logic scripts (.gd)
-  - **Architecture Review Needed**: Architect should review and adapt architecture documents for comprehensive UI consolidation
+  - `target/addons/gfred2/ui/` - ELIMINATE: All dock and panel components using programmatic UI creation
+  - `target/addons/gfred2/dialogs/` - ELIMINATE: Dialog classes building UI through code
+  - `target/addons/gfred2/viewport/ui/` - ELIMINATE: 3D viewport gizmos and tools with code-based UI
+  - `target/addons/gfred2/sexp_editor/` - ELIMINATE: SEXP visual editor components with programmatic UI
+  - `target/addons/gfred2/validation/` - ELIMINATE: Validation UI components built programmatically
+  - `target/addons/gfred2/plugin.gd` - REFACTOR: Main plugin to use scene-based registration
+- **MANDATORY FOLDER RESTRUCTURE**: 
+  - CREATE: Centralized `addons/gfred2/scenes/` with sub-folders (docks/, dialogs/, components/, overlays/)
+  - DEPRECATE: Top-level `ui/`, `dialogs/`, `viewport/ui/` folders
+  - CONSOLIDATE: All UI components into centralized scene structure
+  - ESTABLISH: Consistent naming convention (.tscn for UI, .gd for logic only)
+  - ENFORCE: Clear separation between UI scenes (.tscn) and business logic scripts (.gd)
 - **Godot Approach**: 
   - Convert all UI classes to scene-based architecture with attached scripts
   - Use Godot's scene system for UI composition and inheritance

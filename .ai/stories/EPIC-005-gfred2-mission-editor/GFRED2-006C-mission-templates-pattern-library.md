@@ -21,14 +21,15 @@
 - [ ] **AC8**: Template documentation provides usage guidance and best practices
 
 ## Technical Requirements
-**Architecture Reference**: .ai/docs/epic-005-gfred2-mission-editor/architecture.md Section 3 (Scene-Based UI Architecture) **ENHANCED 2025-05-30**
-
+- **Architecture Reference**: `.ai/docs/epic-005-gfred2-mission-editor/architecture.md` Section 3 (Scene-Based UI Architecture) **ENHANCED 2025-05-30**
+- **ARCHITECTURAL COMPLIANCE**: ALL UI components MUST be centralized scenes in `addons/gfred2/scenes/` structure
 - **Asset Integration**: Templates use EPIC-002 asset system for compatibility validation
 - **SEXP Integration**: Pattern library leverages EPIC-004 SEXP system for complex logic
 - **Template Engine**: Flexible template system supporting parameterization and customization (< 16ms scene instantiation, 60+ FPS UI updates)
 - **Validation**: Template compatibility checking using integrated validation systems
-- **UI Architecture**: Template library uses centralized scene structure from `addons/gfred2/scenes/dialogs/template_library/`
-- **Pattern UI**: Pattern insertion interface from `addons/gfred2/scenes/components/pattern_browser/`
+- **UI Architecture**: Template library uses ONLY centralized scene structure from `addons/gfred2/scenes/dialogs/template_library/`
+- **Pattern UI**: Pattern insertion interface ONLY from `addons/gfred2/scenes/components/pattern_browser/`
+- **NO MIXED APPROACHES**: Eliminate any programmatic UI construction, use scene-based architecture exclusively
 
 ## Implementation Notes
 - **Productivity Enhancement**: Accelerates mission creation through proven patterns

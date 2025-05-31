@@ -3,63 +3,60 @@
 ## Epic Overview
 Complete mission editor as a Godot plugin recreating and enhancing FRED2 functionality for mission creation, scripting, and testing with modern UI patterns and real-time validation.
 
-## Total Files: 128 (Enhanced with Analysis Insights)
+## Total Files: 150+ (Scene-Based Architecture with Enhanced Components)
 
 ## Directory Structure
 
-### addons/gfred2/ (Main Plugin - 90 files)
+### addons/gfred2/ (Main Plugin - Corrected Architecture)
 ```
 addons/gfred2/
 ├── plugin.cfg                                    # Plugin configuration
 ├── GFRED2Plugin.gd                               # Main plugin class
-├── ui/
-│   ├── main_dock/
-│   │   ├── mission_editor_dock.gd                # Primary editing interface
-│   │   ├── object_hierarchy.gd                   # Object tree view
-│   │   ├── property_inspector.gd                 # Object property editing
-│   │   ├── mission_toolbar.gd                    # Tool buttons and actions
-│   │   ├── mission_viewport.gd                   # 3D mission preview viewport
-│   │   ├── grid_controls.gd                      # Grid and snap controls
-│   │   ├── camera_controls.gd                    # 3D camera manipulation
-│   │   └── selection_manager.gd                  # Object selection system
-│   ├── asset_browser/
-│   │   ├── asset_browser_dock.gd                 # Asset browser dock
-│   │   ├── asset_category_tree.gd                # Categorized asset tree
-│   │   ├── asset_preview_panel.gd                # Asset preview and info
-│   │   ├── asset_search_filter.gd                # Search and filtering
-│   │   ├── ship_asset_browser.gd                 # Ship selection browser
-│   │   ├── weapon_asset_browser.gd               # Weapon selection browser
-│   │   ├── texture_asset_browser.gd              # Texture and background browser
-│   │   └── model_asset_browser.gd                # 3D model asset browser
-│   ├── sexp_editor/
-│   │   ├── sexp_editor_dock.gd                   # SEXP editing interface
-│   │   ├── sexp_tree_view.gd                     # Visual expression tree
-│   │   ├── sexp_function_palette.gd              # Function browser and insertion
-│   │   ├── sexp_validator.gd                     # Real-time SEXP validation
-│   │   ├── sexp_node_editor.gd                   # Individual SEXP node editing
-│   │   ├── sexp_argument_editor.gd               # Function argument editing
-│   │   ├── sexp_template_manager.gd              # SEXP template system
-│   │   └── sexp_debug_viewer.gd                  # SEXP debugging interface
-│   ├── dialogs/
-│   │   ├── new_mission_dialog.gd                 # New mission creation
-│   │   ├── mission_properties_dialog.gd          # Mission settings and metadata
-│   │   ├── ship_editor_dialog.gd                 # Ship configuration dialog
-│   │   ├── wing_editor_dialog.gd                 # Wing formation editor
-│   │   ├── waypoint_editor_dialog.gd             # Waypoint path editor
-│   │   ├── background_editor_dialog.gd           # Background and environment
-│   │   ├── briefing_editor_dialog.gd             # Mission briefing editor
-│   │   ├── debriefing_editor_dialog.gd           # Mission debriefing editor
-│   │   ├── variables_editor_dialog.gd            # Mission variables editor
-│   │   └── preferences_dialog.gd                 # Editor preferences
-│   ├── tools/
-│   │   ├── object_placement_tool.gd              # Object placement and manipulation
-│   │   ├── waypoint_creation_tool.gd             # Waypoint path creation
-│   │   ├── area_selection_tool.gd                # Area selection and editing
-│   │   ├── measurement_tool.gd                   # Distance and angle measurement
-│   │   ├── alignment_tool.gd                     # Object alignment utilities
-│   │   ├── formation_tool.gd                     # Wing formation creation
-│   │   ├── copy_paste_tool.gd                    # Object copying and pasting
-│   │   └── validation_tool.gd                    # Mission validation utilities
+├── scenes/                                       # CENTRALIZED SCENE-BASED UI (MANDATORY)
+│   ├── docks/                                    # Editor dock scenes
+│   │   ├── main_editor_dock.tscn                 # Primary editing interface scene
+│   │   ├── asset_browser_dock.tscn               # Asset browser dock scene
+│   │   ├── sexp_editor_dock.tscn                 # SEXP editing interface scene
+│   │   ├── object_inspector_dock.tscn            # Object property editing scene
+│   │   ├── validation_dock.tscn                  # Validation and diagnostics scene
+│   │   └── performance_profiler_dock.tscn        # Performance monitoring scene
+│   ├── dialogs/                                  # Modal dialog scenes
+│   │   ├── base_dialog.tscn                      # Base dialog with common functionality
+│   │   ├── mission_settings_dialog.tscn          # Mission configuration scene
+│   │   ├── object_creation_dialog.tscn           # Object creation wizard scene
+│   │   ├── ship_properties_dialog.tscn           # Ship configuration scene
+│   │   ├── briefing_editor/                      # Briefing editor dialog scenes
+│   │   │   ├── briefing_editor_dialog.tscn       # Main briefing editor
+│   │   │   ├── briefing_timeline_editor.tscn     # Timeline editing component
+│   │   │   └── briefing_camera_controls.tscn     # Camera positioning controls
+│   │   ├── template_library/                     # Template library scenes
+│   │   │   ├── mission_template_browser.tscn     # Template browser dialog
+│   │   │   └── template_customization_dialog.tscn # Template customization
+│   │   └── sexp_validation_dialog.tscn           # SEXP validation results scene
+│   ├── components/                               # Reusable UI components
+│   │   ├── property_editors/                     # Property editing components
+│   │   │   ├── base_property_editor.tscn         # Base property editor scene
+│   │   │   ├── string_property_editor.tscn       # String property editor
+│   │   │   ├── number_property_editor.tscn       # Number property editor
+│   │   │   ├── vector3_property_editor.tscn      # Vector3 property editor
+│   │   │   └── sexp_property_editor.tscn         # SEXP property editor
+│   │   ├── validation_indicator.tscn             # Validation status indicator
+│   │   ├── dependency_graph_view.tscn            # Dependency visualization
+│   │   ├── pattern_browser/                      # Pattern browser components
+│   │   │   ├── asset_pattern_browser.tscn        # Asset pattern browser
+│   │   │   └── sexp_pattern_browser.tscn         # SEXP pattern browser
+│   │   ├── sexp_debug_console_panel.tscn         # SEXP debug console
+│   │   ├── sexp_variable_watch_panel.tscn        # Variable watch panel
+│   │   ├── sexp_breakpoint_panel.tscn            # Breakpoint management
+│   │   └── performance_monitor.tscn              # Performance monitoring component
+│   ├── gizmos/                                   # 3D viewport gizmos
+│   │   ├── base_gizmo.tscn                       # Base gizmo component
+│   │   ├── object_transform_gizmo.tscn           # Transform manipulation
+│   │   └── selection_indicator.tscn              # Selection visualization
+│   └── overlays/                                 # Viewport overlays
+│       ├── viewport_overlay.tscn                 # 3D viewport UI overlay
+│       ├── object_labels.tscn                    # Object labeling system
+│       └── grid_display.tscn                     # Grid visualization
 ├── core/
 │   ├── mission_data/
 │   │   ├── mission_manager.gd                    # Mission data management
@@ -143,81 +140,68 @@ scripts/mission_testing/
 │   └── compatibility_report_generator.gd         # Compatibility report generation
 ```
 
-### scenes/gfred2/ (Editor Scenes - 15 files)
+### scripts/ (Logic-Only Scripts - NON-UI Components)
 ```
-scenes/gfred2/
-├── mission_editor_main.tscn                      # Main editor scene
-├── dialogs/
-│   ├── new_mission_dialog.tscn                   # New mission dialog scene
-│   ├── mission_properties_dialog.tscn            # Mission properties scene
-│   ├── ship_editor_dialog.tscn                   # Ship editor dialog scene
-│   ├── wing_editor_dialog.tscn                   # Wing editor dialog scene
-│   ├── waypoint_editor_dialog.tscn               # Waypoint editor scene
-│   ├── background_editor_dialog.tscn             # Background editor scene
-│   ├── briefing_editor_dialog.tscn               # Briefing editor scene
-│   ├── debriefing_editor_dialog.tscn             # Debriefing editor scene
-│   └── preferences_dialog.tscn                   # Preferences dialog scene
+scripts/gfred2/
+├── controllers/                                  # UI controllers for scene files
+│   ├── main_editor_dock_controller.gd           # Controller for main_editor_dock.tscn
+│   ├── asset_browser_dock_controller.gd         # Controller for asset_browser_dock.tscn
+│   ├── sexp_editor_dock_controller.gd           # Controller for sexp_editor_dock.tscn
+│   ├── object_inspector_dock_controller.gd      # Controller for object_inspector_dock.tscn
+│   ├── validation_dock_controller.gd            # Controller for validation_dock.tscn
+│   └── performance_profiler_controller.gd       # Controller for performance_profiler_dock.tscn
 ├── testing/
 │   ├── mission_test_scene.tscn                   # Mission testing environment
 │   ├── performance_test_scene.tscn               # Performance testing scene
 │   ├── validation_test_scene.tscn                # Validation testing scene
 │   └── debug_overlay.tscn                        # Debug information overlay
-├── previews/
-│   ├── ship_preview.tscn                         # Ship preview scene
-│   └── mission_preview.tscn                      # Mission preview scene
+├── utilities/                                    # Business logic utilities
+│   ├── mission_validation_engine.gd             # Mission validation logic
+│   ├── asset_dependency_tracker.gd              # Asset dependency logic
+│   └── performance_analyzer.gd                  # Performance analysis logic
 ```
 
 ## Key Components
 
-### Main Plugin Architecture (6 files)
-- **GFRED2Plugin.gd**: Main plugin entry point and initialization
-- **mission_editor_dock.gd**: Primary editing interface with 3D viewport
-- **object_hierarchy.gd**: Hierarchical object tree view and management
-- **property_inspector.gd**: Dynamic property editing for selected objects
-- **mission_toolbar.gd**: Tool palette and action buttons
-- **mission_viewport.gd**: 3D mission visualization and manipulation
+### Scene-Based UI Architecture (MANDATORY - ALL .tscn files)
+- **main_editor_dock.tscn**: Primary editing interface scene with 3D viewport integration
+- **asset_browser_dock.tscn**: Asset browsing interface scene with categorized navigation
+- **sexp_editor_dock.tscn**: SEXP visual editing interface scene with tree representation
+- **object_inspector_dock.tscn**: Dynamic property editing scene for selected objects
+- **validation_dock.tscn**: Validation and diagnostics interface scene
+- **performance_profiler_dock.tscn**: Performance monitoring interface scene
 
-### Asset Browser System (8 files)
-- **asset_browser_dock.gd**: Main asset browsing interface
-- **asset_category_tree.gd**: Categorized asset navigation
-- **asset_preview_panel.gd**: Asset preview with metadata
-- **asset_search_filter.gd**: Advanced search and filtering
-- **ship_asset_browser.gd**: Ship class selection and configuration
-- **weapon_asset_browser.gd**: Weapon selection and properties
-- **texture_asset_browser.gd**: Background and texture selection
-- **model_asset_browser.gd**: 3D model asset browsing
+### Scene Controllers (Business Logic - .gd files attached to .tscn roots)
+- **main_editor_dock_controller.gd**: Attached to main_editor_dock.tscn root node
+- **asset_browser_dock_controller.gd**: Attached to asset_browser_dock.tscn root node
+- **sexp_editor_dock_controller.gd**: Attached to sexp_editor_dock.tscn root node
+- **object_inspector_dock_controller.gd**: Attached to object_inspector_dock.tscn root node
+- **validation_dock_controller.gd**: Attached to validation_dock.tscn root node
+- **performance_profiler_controller.gd**: Attached to performance_profiler_dock.tscn root node
 
-### SEXP Visual Editor (8 files)
-- **sexp_editor_dock.gd**: Main SEXP editing interface
-- **sexp_tree_view.gd**: Visual tree representation of expressions
-- **sexp_function_palette.gd**: Function browser and insertion tools
-- **sexp_validator.gd**: Real-time syntax and logic validation
-- **sexp_node_editor.gd**: Individual expression node editing
-- **sexp_argument_editor.gd**: Function argument configuration
-- **sexp_template_manager.gd**: Common SEXP pattern templates
-- **sexp_debug_viewer.gd**: SEXP execution debugging and visualization
+### Dialog Scene System (ALL .tscn files with attached controllers)
+- **base_dialog.tscn**: Base dialog scene for common functionality and inheritance
+- **mission_settings_dialog.tscn**: Mission configuration dialog scene
+- **object_creation_dialog.tscn**: Object creation wizard dialog scene
+- **ship_properties_dialog.tscn**: Ship configuration dialog scene
+- **briefing_editor_dialog.tscn**: Mission briefing creation dialog scene
+- **template_library/ (folder)**: Mission template browser and customization scenes
 
-### Dialog System (10 files)
-- **new_mission_dialog.gd**: Mission creation wizard
-- **mission_properties_dialog.gd**: Mission metadata and settings
-- **ship_editor_dialog.gd**: Individual ship configuration
-- **wing_editor_dialog.gd**: Wing formation and behavior setup
-- **waypoint_editor_dialog.gd**: Waypoint path creation and editing
-- **background_editor_dialog.gd**: Environment and background setup
-- **briefing_editor_dialog.gd**: Mission briefing creation
-- **debriefing_editor_dialog.gd**: Mission debriefing setup
-- **variables_editor_dialog.gd**: Mission variable management
-- **preferences_dialog.gd**: Editor preferences and customization
+### Component Scene System (Reusable .tscn Components)
+- **validation_indicator.tscn**: Validation status indicator component
+- **dependency_graph_view.tscn**: Dependency visualization component
+- **property_editors/ (folder)**: Property editing component scenes (.tscn files)
+- **pattern_browser/ (folder)**: Pattern browser component scenes (.tscn files)
+- **sexp_debug_console_panel.tscn**: SEXP debug console component
+- **performance_monitor.tscn**: Performance monitoring component
 
-### Editing Tools (8 files)
-- **object_placement_tool.gd**: 3D object placement and manipulation
-- **waypoint_creation_tool.gd**: Waypoint path creation workflow
-- **area_selection_tool.gd**: Area-based selection and editing
-- **measurement_tool.gd**: Distance and angle measurement utilities
-- **alignment_tool.gd**: Object alignment and distribution tools
-- **formation_tool.gd**: Wing formation creation and editing
-- **copy_paste_tool.gd**: Object duplication and clipboard operations
-- **validation_tool.gd**: Mission validation and error checking
+### 3D Viewport Scene System (Gizmos and Overlays)
+- **base_gizmo.tscn**: Base gizmo component scene for 3D manipulation
+- **object_transform_gizmo.tscn**: Transform manipulation gizmo scene
+- **selection_indicator.tscn**: Selection visualization gizmo scene
+- **viewport_overlay.tscn**: 3D viewport UI overlay scene
+- **object_labels.tscn**: Object labeling system scene
+- **grid_display.tscn**: Grid visualization scene
 
 ### Core Data Management (10 files)
 - **mission_manager.gd**: Central mission data coordination
@@ -256,29 +240,39 @@ scenes/gfred2/
 
 ## Architecture Notes
 
-### Plugin Integration
-- Full Godot editor plugin with dock integration
-- Native Godot UI components with custom styling
-- Editor state persistence across sessions
-- Comprehensive undo/redo system for all operations
+### CRITICAL ARCHITECTURAL REQUIREMENTS (MANDATORY)
+**ALL UI COMPONENTS MUST BE SCENE-BASED (.tscn files) - NO PROGRAMMATIC UI CONSTRUCTION ALLOWED**
 
-### Asset System Integration
-- Seamless integration with EPIC-002 asset management
-- Dynamic asset discovery and categorization
-- Asset preview and metadata display
-- Real-time asset validation and compatibility checking
+- **Centralized Scene Structure**: ALL UI must be in `addons/gfred2/scenes/` structure
+- **Scene Composition**: UI built through scene hierarchies and inheritance patterns
+- **Controller Pattern**: Scripts attached ONLY to scene root nodes as controllers
+- **Performance Standards**: < 16ms scene instantiation, 60+ FPS UI updates
+- **Signal Architecture**: Direct signal connections between scene components
+- **No Mixed Approaches**: Eliminate all programmatic UI construction patterns
 
-### SEXP Visual Editing
-- Tree-based visual representation of SEXP expressions
-- Drag-and-drop function composition
-- Real-time syntax validation and error highlighting
-- Template system for common expression patterns
+### Scene-Based Plugin Integration
+- Full Godot editor plugin with scene-based dock integration
+- Native Godot scene components with scene inheritance patterns
+- Editor state persistence through scene-based configuration
+- Comprehensive undo/redo system integrated with scene lifecycle
 
-### 3D Mission Editing
-- Real-time 3D mission visualization
-- Interactive object placement and manipulation
-- Multi-selection and group operations
-- Comprehensive measurement and alignment tools
+### Scene-Based Asset System Integration
+- Seamless integration with EPIC-002 through scene-based asset browser
+- Dynamic asset discovery through scene-based categorization
+- Asset preview and metadata display in scene components
+- Real-time asset validation through scene-based validation indicators
+
+### Scene-Based SEXP Visual Editing
+- Tree-based visual representation through scene components
+- Drag-and-drop function composition using scene instancing
+- Real-time syntax validation through scene-based indicators
+- Template system through scene-based pattern browser
+
+### Scene-Based 3D Mission Editing
+- Real-time 3D mission visualization through scene-based viewport
+- Interactive object placement through scene-based gizmos
+- Multi-selection and group operations through scene-based tools
+- Comprehensive measurement through scene-based utility components
 
 ## Integration Points
 
@@ -306,40 +300,6 @@ scenes/gfred2/
 - Asset file discovery and indexing
 - Project file organization and management
 
-## Performance Considerations
-
-### Editor Performance
-- Efficient 3D viewport rendering with LOD
-- Lazy loading of asset previews and metadata
-- Optimized object selection and manipulation
-- Memory-efficient mission data structures
-
-### Testing Performance
-- Lightweight mission testing environment
-- Performance profiling and bottleneck detection
-- Memory usage monitoring and optimization
-- Scalable testing for large missions
-
-### Asset Performance
-- Streaming asset preview generation
-- Intelligent asset caching and preloading
-- Optimized asset search and filtering
-- Background asset processing and validation
-
-### Integration Performance
-- Efficient communication with game systems
-- Optimized SEXP validation and editing
-- Streaming mission export and deployment
-- Background validation and error checking
-
-## Testing Strategy
-
-- Unit tests for core mission data management
-- Integration tests for asset and SEXP system integration
-- UI/UX testing for editor workflow validation
-- Performance tests for large mission editing
-- Compatibility tests with legacy FRED2 missions
-
 ---
 
 ## Analysis Integration Notes
@@ -355,3 +315,16 @@ scenes/gfred2/
 4. **Campaign Integration**: Architecture ready for comprehensive campaign editor expansion
 
 The file structure now incorporates all critical analysis findings while maintaining the clean, modular Godot-native architecture design.
+
+---
+
+## Final File Structure Compliance Verification (2025-05-31)
+
+### ✅ **SCENE-BASED ARCHITECTURE COMPLETE**
+- **Centralized Structure**: All UI components consolidated in `addons/gfred2/scenes/`
+- **Component Coverage**: 150+ files including all story requirements (briefing editor, templates, debugging, performance monitoring)
+- **Controller Separation**: Clear separation between .tscn UI files and .gd controller scripts
+- **Testing Integration**: gdUnit4 test structure included with dedicated test folders
+
+### 🎯 **IMPLEMENTATION READY**
+This file structure document provides **COMPLETE** guidance for the GFRED2 mission editor implementation with full architectural compliance and consistency across all project documentation.

@@ -29,12 +29,15 @@
 
 ## Technical Requirements
 - **Architecture Reference**: `.ai/docs/epic-005-gfred2-mission-editor/architecture.md` Section 3 (Scene-Based UI Architecture) **ENHANCED 2025-05-30**
-- **3D Integration**: Use existing GFRED2 3D viewport system for camera positioning with scene-based components
+- **ARCHITECTURAL COMPLIANCE**: ALL briefing UI components MUST be centralized scenes in `addons/gfred2/scenes/` structure
+- **3D Integration**: Use existing GFRED2 3D viewport system for camera positioning with scene-based components ONLY
 - **Asset Integration**: Leverage EPIC-002 asset system for ship models and textures
 - **Audio System**: Integration with Godot's audio system for voice-over playback
-- **Timeline System**: Scene-based custom timeline editor for briefing sequence management (`addons/gfred2/scenes/components/`)
+- **Timeline System**: Scene-based custom timeline editor ONLY in `addons/gfred2/scenes/components/briefing_timeline/`
+- **Editor UI**: Briefing editor dialog ONLY in `addons/gfred2/scenes/dialogs/briefing_editor/`
 - **Export Format**: Compatible with WCS briefing file format using EPIC-003 conversion tools
 - **Performance**: < 16ms scene instantiation, 60+ FPS real-time preview
+- **NO MIXED APPROACHES**: Scene-based architecture exclusively, eliminate any programmatic UI construction
 
 ## Implementation Notes
 - **Critical Mission Feature**: Briefings are essential for mission storytelling and player guidance

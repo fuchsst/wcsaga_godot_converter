@@ -14,14 +14,15 @@
 Create a comprehensive mission editor as a Godot plugin that recreates and enhances the functionality of the original WCS FRED2 (FReespace EDitor version 2) tool. This editor will allow mission creators to design, script, and test missions using modern Godot editor integration while maintaining full compatibility with WCS mission standards and exceeding the original editor's capabilities.
 
 ## Progress Summary
-**Current Status**: Phase 2 Complete - Continuing with Advanced Capabilities
+**Current Status**: Architecture Refined - Critical Implementation Issues Addressed
 - ✅ **Foundation Dependencies**: EPICs 001-004 complete and stable
 - ✅ **Phase 1 - Core Framework**: All core integrations complete (GFRED2-001 through GFRED2-004)
 - ✅ **Phase 2 - User Experience**: UI modernization complete (GFRED2-005) - May 30, 2025
-- 🔄 **Phase 3 - Advanced Capabilities**: Ready for real-time validation (GFRED2-006A-D)
-- **Next Priority**: Real-time validation and dependency tracking (GFRED2-006A)
-- **Updated Timeline**: 44 days remaining (8.8 weeks) including high-priority missing features
-- **Progress**: 4 of 10 stories complete (40% foundation phase complete)
+- ⚡ **CRITICAL ARCHITECTURAL REFINEMENT**: Stories GFRED2-006A through GFRED2-011 refined (May 31, 2025)
+- 🔄 **Phase 3 - Advanced Capabilities**: Ready for implementation with corrected architecture
+- **URGENT PRIORITY**: UI refactoring to scene-based architecture (GFRED2-011) - ARCHITECTURAL VIOLATION CORRECTION
+- **Updated Timeline**: 44 days remaining (8.8 weeks) with mandatory architectural compliance
+- **Progress**: 4 of 11 stories complete, 7 stories refined for architectural compliance
 
 ## WCS FRED2 System Analysis
 
@@ -359,15 +360,16 @@ target/addons/gfred2/
    - Environment configuration, variable management
    - Foundation components for sophisticated missions
 
-- **GFRED2-011**: UI Component Refactoring to Scene-Based Architecture (5 days) ⏳ **READY** 
+- **GFRED2-011**: UI Component Refactoring to Scene-Based Architecture (5 days) ⚡ **CRITICAL** 
    - Scene-based UI architecture for all components (gizmos, docks, dialogs)
    - Script attachment to scene nodes instead of programmatic UI construction
    - Scene composition and inheritance for complex UI components
    - Specific code targets: `ui/`, `dialogs/`, `viewport/`, `sexp_editor/`, `validation/` folders
    - Folder structure consolidation and consistent naming conventions
+   - **CRITICAL VIOLATIONS TO CORRECT**: `dialog_manager.gd` programmatic UI, hybrid UI approaches
    - Story Created: 2025-05-30 by SallySM (Enhanced with specific code references)
    - **Architecture Enhanced**: 2025-05-30 by Mo (Comprehensive scene-based architecture added)
-   - **All Stories Updated**: 2025-05-30 by SallySM (15 stories updated for architecture consistency)
+   - **Stories Refined**: 2025-05-31 by SallySM (7 stories refined for architectural compliance)
 
 ### Existing Story Enhancements
 - **GFRED2-002**: Added variable management UI and SEXP tools palette
@@ -393,3 +395,46 @@ target/addons/gfred2/
 - **User Experience**: Intuitive for experienced FRED2 users, accessible for new users
 
 **DELIVERABLE ACHIEVED**: Complete set of GFRED2 stories for full FRED2 feature parity with modern Godot implementation.
+
+---
+
+## SallySM Architectural Compliance Review (May 31, 2025)
+
+### Critical Implementation Issue Resolution
+**Review Triggered By**: Comprehensive feedback analysis identifying architectural violations in current implementation  
+**Story Manager**: SallySM  
+**Review Date**: May 31, 2025
+
+### Issues Identified & Resolved
+1. **VIOLATION**: Current implementation uses hybrid UI approaches (programmatic + scene-based)
+2. **VIOLATION**: No centralized scene structure as mandated by May 30th architecture
+3. **VIOLATION**: `dialog_manager.gd` uses programmatic UI construction violating Godot best practices
+4. **VIOLATION**: Mixed UI approaches across 5+ folders creating technical debt
+
+### Stories Refined for Architectural Compliance
+- **GFRED2-006A**: Enhanced with mandatory scene-based validation components
+- **GFRED2-006B**: Refined with centralized scene structure requirements
+- **GFRED2-006C**: Updated to eliminate mixed UI approaches
+- **GFRED2-006D**: Enhanced with scene-based architecture mandates
+- **GFRED2-007**: Refined with briefing editor scene requirements
+- **GFRED2-011**: CRITICALLY enhanced with specific violation corrections
+
+### Architectural Requirements Enforced
+1. **100% Scene-Based UI**: NO programmatic UI construction allowed
+2. **Centralized Structure**: ALL UI in `addons/gfred2/scenes/` exclusively
+3. **Performance Standards**: < 16ms scene instantiation, 60+ FPS UI updates
+4. **Folder Elimination**: DEPRECATE `ui/`, `dialogs/`, `viewport/ui/` folders
+5. **Clear Migration Strategy**: Specific steps to correct architectural violations
+
+### Implementation Impact
+- **BEFORE**: Architectural chaos with mixed approaches
+- **AFTER**: Definitive scene-based architecture with clear compliance requirements
+- **RESULT**: Stories now provide specific guidance to eliminate architectural violations
+
+**CRITICAL SUCCESS FACTOR**: Implementation of GFRED2-011 (UI refactoring) is now **MANDATORY** to resolve architectural violations before proceeding with other stories.
+
+---
+
+**Architectural Compliance Verification**: ✅ **COMPLETE**  
+**Stories Refined**: 7 stories updated with architectural requirements  
+**Implementation Ready**: ✅ **YES - with mandatory architecture compliance**

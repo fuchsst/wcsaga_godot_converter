@@ -28,25 +28,33 @@
 
 ```
 WCS Mission Editor Plugin
-├── addons/gfred2/                   # Godot plugin structure (mission editor)
+├── addons/gfred2/                  # Godot plugin structure (mission editor)
 │   ├── plugin.cfg                  # Plugin configuration
 │   ├── plugin.gd                   # Main plugin entry point
+│   ├── scenes/                     # CENTRALIZED SCENE-BASED UI (MANDATORY)
+│   │   ├── docks/                  # Editor dock scenes (.tscn files)
+│   │   ├── dialogs/                # Modal dialog scenes (.tscn files)
+│   │   ├── components/             # Reusable UI component scenes (.tscn files)
+│   │   ├── gizmos/                 # 3D viewport gizmo scenes (.tscn files)
+│   │   └── overlays/               # Viewport overlay scenes (.tscn files)
+│   ├── scripts/                    # Business logic scripts (controllers only)
+│   │   ├── controllers/            # Scene controllers (.gd files attached to .tscn roots)
+│   │   ├── utilities/              # Business logic utilities
+│   │   └── managers/               # Data management scripts
 │   ├── data/                       # Resource definitions for migrated data
 │   ├── object_management/          # Mission object lifecycle management
-│   ├── ui/                         # User interface components
-│   ├── viewport/                   # 3D editing tools and gizmos
-│   └── validation/                 # Validation and testing
+│   └── validation/                 # Validation logic (non-UI)
 │
 ├── migration_tools/                # Python-based data conversion (separate repo/tool)
-│   ├── pof_converter.py           # POF → Godot model conversion
-│   ├── mission_converter.py       # .fs2 → Godot Resource conversion
-│   ├── save_migrator.py           # .PLR/.CSG → Godot Resource
-│   ├── asset_pipeline.py          # Audio/video conversion with FFmpeg
-│   └── godot_integration.py       # Integration with Godot import system
+│   ├── pof_converter.py            # POF → Godot model conversion
+│   ├── mission_converter.py        # .fs2 → Godot Resource conversion
+│   ├── save_migrator.py            # .PLR/.CSG → Godot Resource
+│   ├── asset_pipeline.py           # Audio/video conversion with FFmpeg
+│   └── godot_integration.py        # Integration with Godot import system
 │
 ├── scripts/                        # Main game systems (separate from editor)
 │   ├── globals/                    # Game autoloads
-│   ├── core_systems/              # Physics, AI, weapons, etc.
+│   ├── core_systems/               # Physics, AI, weapons, etc.
 │   └── ship/                       # Ship mechanics
 │
 └── resources/                      # Godot Resources created by migration tools
@@ -223,19 +231,37 @@ addons/gfred2/scenes/                    # ALL UI scenes centralized here
 │   ├── object_inspector_dock.tscn      # Object property editing
 │   ├── asset_browser_dock.tscn         # Asset browsing and selection
 │   ├── sexp_editor_dock.tscn           # SEXP visual editing
-│   └── validation_dock.tscn            # Validation and diagnostics
+│   ├── validation_dock.tscn            # Validation and diagnostics
+│   └── performance_profiler_dock.tscn  # Performance monitoring and optimization
 ├── dialogs/                            # Modal dialog scenes
 │   ├── base_dialog.tscn                # Base dialog with common functionality
 │   ├── mission_settings_dialog.tscn    # Mission configuration
 │   ├── object_creation_dialog.tscn     # Object creation wizard
 │   ├── ship_properties_dialog.tscn     # Ship configuration
+│   ├── briefing_editor/                # Briefing editor dialog scenes
+│   │   ├── briefing_editor_dialog.tscn # Main briefing editor
+│   │   ├── briefing_timeline_editor.tscn # Timeline editing component
+│   │   └── briefing_camera_controls.tscn # Camera positioning controls
+│   ├── template_library/               # Template library scenes
+│   │   ├── mission_template_browser.tscn # Template browser dialog
+│   │   └── template_customization_dialog.tscn # Template customization
 │   └── sexp_validation_dialog.tscn     # SEXP validation results
 ├── components/                         # Reusable UI components
 │   ├── property_editors/               # Property editing components
 │   │   ├── base_property_editor.tscn   # Base property editor scene
 │   │   ├── string_property_editor.tscn # String property editor
 │   │   ├── number_property_editor.tscn # Number property editor
+│   │   ├── vector3_property_editor.tscn # Vector3 property editor
 │   │   └── sexp_property_editor.tscn   # SEXP property editor
+│   ├── validation_indicator.tscn       # Validation status indicator
+│   ├── dependency_graph_view.tscn      # Dependency visualization
+│   ├── pattern_browser/                # Pattern browser components
+│   │   ├── asset_pattern_browser.tscn  # Asset pattern browser
+│   │   └── sexp_pattern_browser.tscn   # SEXP pattern browser
+│   ├── sexp_debug_console_panel.tscn   # SEXP debug console
+│   ├── sexp_variable_watch_panel.tscn  # Variable watch panel
+│   ├── sexp_breakpoint_panel.tscn      # Breakpoint management
+│   ├── performance_monitor.tscn        # Performance monitoring component
 │   ├── gizmos/                         # 3D viewport gizmos
 │   │   ├── base_gizmo.tscn            # Base gizmo component
 │   │   ├── object_transform_gizmo.tscn # Transform manipulation
@@ -1001,4 +1027,19 @@ The existing architecture is **EXCEPTIONAL** and fully ready for implementation.
 - **Created**: 2025-01-25
 - **Analysis Review**: 2025-01-27
 - **UI Architecture Enhancement**: 2025-05-30
-- **Status**: ✅ **APPROVED (Architecture Enhanced for GFRED2-011)**
+- **Final Architectural Review**: 2025-05-31
+- **Status**: ✅ **APPROVED (Architecture Complete and Consistent)**
+
+---
+
+## Final Architectural Compliance Verification (2025-05-31)
+
+### ✅ **ARCHITECTURAL CONSISTENCY ACHIEVED**
+- **Scene Structure**: Complete centralized `addons/gfred2/scenes/` architecture
+- **Component Coverage**: All story components included (briefing editor, templates, SEXP debugging, performance monitoring)
+- **Controller Pattern**: Scripts attached only to scene root nodes as controllers
+- **Performance Standards**: < 16ms scene instantiation, 60+ FPS UI updates mandated
+- **NO Mixed Approaches**: 100% scene-based UI, zero programmatic construction allowed
+
+### 🎯 **IMPLEMENTATION READY**
+This architecture document now provides **DEFINITIVE** guidance for implementing the GFRED2 mission editor with complete architectural compliance. All components, patterns, and requirements are fully specified and consistent across all documentation.

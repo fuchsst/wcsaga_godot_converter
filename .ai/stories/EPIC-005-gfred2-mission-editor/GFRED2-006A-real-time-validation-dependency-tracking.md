@@ -24,9 +24,11 @@
 
 ## Technical Requirements
 - **Architecture Reference**: `.ai/docs/epic-005-gfred2-mission-editor/architecture.md` Section 3 (Scene-Based UI Architecture) **ENHANCED 2025-05-30**
+- **ARCHITECTURAL COMPLIANCE**: ALL UI components MUST use centralized scene-based architecture (`addons/gfred2/scenes/`)
 - **Integration**: Leverage `SexpValidator`, `AssetValidationManager`, and core foundation validation
 - **Performance**: Incremental validation using dependency graphs and change tracking (< 100ms validation, < 16ms UI updates)
-- **UI Integration**: Scene-based validation indicators in property editors and object hierarchy (`addons/gfred2/scenes/components/`)
+- **UI Integration**: Scene-based validation indicators ONLY in `addons/gfred2/scenes/components/` (NO ui/ folder usage)
+- **Migration Strategy**: Integrate with scene-based components while eliminating programmatic UI patterns
 - **Caching**: Efficient validation result caching with intelligent invalidation
 
 ## Implementation Notes

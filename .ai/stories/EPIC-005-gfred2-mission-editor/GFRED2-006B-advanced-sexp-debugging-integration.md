@@ -22,10 +22,11 @@
 
 ## Technical Requirements
 - **Architecture Reference**: `.ai/docs/epic-005-gfred2-mission-editor/architecture.md` Section 3 (Scene-Based UI Architecture) **ENHANCED 2025-05-30**
-- **EPIC-004 Integration**: Full utilization of `SexpDebugEvaluator`, `SexpVariableWatchSystem`
-- **UI Integration**: Scene-based debug panels integrated into mission editor layout (`addons/gfred2/scenes/components/`)
-- **Performance**: Debug features available without impacting editor performance (< 16ms scene instantiation)
-- **Session Management**: Persistent debug configurations per mission
+- **MANDATORY SCENE-BASED UI**: ALL debug UI components MUST be scenes in `addons/gfred2/scenes/components/` (NO programmatic UI)
+- **EPIC-004 Integration**: Full utilization of `SexpDebugEvaluator`, `SexpVariableWatchSystem` with scene-based controllers
+- **UI Integration**: Scene-based debug panels ONLY in centralized `addons/gfred2/scenes/` structure
+- **Performance**: Debug features available without impacting editor performance (< 16ms scene instantiation, 60 FPS UI)
+- **Session Management**: Persistent debug configurations per mission with scene-based configuration UI
 
 ## Implementation Notes
 - **Professional Debugging**: Brings IDE-level debugging to mission scripting
