@@ -219,3 +219,4 @@ secrets.json
 .secrets
 
 CLAUDE.local.md
+.util-scripts/
