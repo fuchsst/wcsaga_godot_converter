@@ -27,39 +27,40 @@
 ## System Architecture Overview
 
 ```
-Game Flow & State Management
-├── Core State Machine                 # Central game state control
-│   ├── GameStateManager              # Main state machine coordination
-│   ├── StateDefinitions              # State enumeration and validation
-│   ├── TransitionManager             # State transition logic and rules
-│   └── StateValidator                # State consistency checking
-├── Session Management                 # Game session lifecycle
-│   ├── GameSession                   # Current session data and control
-│   ├── SessionPersistence            # Session save/load operations
-│   ├── CrashRecovery                 # Recovery from unexpected shutdowns
-│   └── AutoSaveManager               # Automatic save coordination
-├── Campaign System                    # Campaign progression and branching
-│   ├── CampaignManager               # Campaign state and progression
-│   ├── CampaignParser                # Campaign file parsing and validation
-│   ├── MissionUnlocking              # Mission availability logic
-│   ├── BranchingLogic                # Story branching and choice handling
-│   └── CampaignVariables             # Campaign-wide variable management
-├── Player Data System                 # Pilot and player management
-│   ├── PilotManager                  # Pilot creation and management
-│   ├── PilotStatistics               # Statistics tracking and calculation
-│   ├── PilotPersistence              # Pilot file save/load operations
-│   ├── ProgressionTracker            # Skill and career progression
-│   └── MedalSystem                   # Medal and achievement management
-├── Save System                        # Data persistence framework
-│   ├── SaveGameManager               # Save game creation and loading
-│   ├── DataSerialization             # Data format and versioning
-│   ├── BackupManager                 # Backup creation and management
-│   └── IntegrityChecker              # Save file validation and repair
-└── Performance & Monitoring           # System monitoring and optimization
-    ├── StatePerformanceMonitor       # State operation performance tracking
-    ├── MemoryManager                 # Memory usage optimization
-    ├── ErrorReporter                 # Comprehensive error reporting
-    └── AnalyticsCollector            # Usage analytics and metrics
+Game Flow & State Management (IMPLEMENTED)
+├── Core State Machine (COMPLETE)      # Central game state control
+│   ├── GameStateManager              # Enhanced with new states (FLOW-001)
+│   ├── StateValidator                # State validation (FLOW-002) 
+│   ├── EnhancedTransitionManager     # Advanced transition logic (FLOW-002)
+│   └── SessionFlowCoordinator        # Session management (FLOW-003)
+├── Campaign System (COMPLETE)         # Campaign progression and branching
+│   ├── CampaignProgressionManager    # Campaign coordination (FLOW-004)
+│   ├── MissionUnlocking              # Mission availability logic (FLOW-004)
+│   ├── ProgressionAnalytics          # Performance tracking (FLOW-004)
+│   ├── CampaignVariables             # Variable management (FLOW-005)
+│   ├── VariableValidator             # Variable validation (FLOW-005)
+│   └── SexpVariableInterface         # SEXP integration (FLOW-005)
+├── Mission Context (COMPLETE)         # Mission flow integration
+│   ├── MissionContext                # Mission state data (FLOW-006)
+│   ├── MissionContextManager         # Flow coordinator (FLOW-006)
+│   ├── MissionResourceCoordinator    # Resource management (FLOW-006)
+│   └── MissionStateHandler           # State transitions (FLOW-006)
+├── Player Data System (COMPLETE)      # Pilot and player management
+│   ├── PilotDataCoordinator          # Central pilot hub (FLOW-007)
+│   ├── AchievementManager            # Achievement system (FLOW-007)
+│   ├── PilotPerformanceTracker       # Performance analysis (FLOW-007)
+│   ├── SaveFlowCoordinator           # Save coordination (FLOW-008)
+│   └── BackupFlowCoordinator         # Backup automation (FLOW-009)
+├── Scoring System (COMPLETE)          # Mission scoring and analytics
+│   ├── MissionScoring                # Real-time scoring (FLOW-010)
+│   ├── PerformanceTracker            # Combat effectiveness (FLOW-010)
+│   ├── StatisticsAggregator          # Career statistics (FLOW-010)
+│   └── ScoringConfiguration          # Scoring parameters (FLOW-010)
+└── Foundation Integration (COMPLETE)  # Existing system leverage
+    ├── GameStateManager (Enhanced)    # Extended with game flow states
+    ├── SaveGameManager (Leveraged)    # Used for all persistence
+    ├── PlayerProfile (Extended)       # Enhanced with performance data
+    └── CampaignState (Leveraged)      # Used for campaign progression
 ```
 
 ## State Machine Architecture
@@ -468,8 +469,173 @@ func get_performance_report() -> Dictionary:
 - EPIC-002: Asset Structures (pilot and campaign data)
 - All Game Systems: State-aware initialization and cleanup
 
-**Next Steps:**
-1. State transition diagram and validation rules
-2. Save file format specification and versioning
-3. Campaign progression testing framework
-4. Performance benchmarking and optimization
+## Mission Scoring System Architecture (FLOW-010)
+
+```gdscript
+# Mission Scoring Engine - Real-time performance evaluation
+class_name MissionScoring extends RefCounted
+
+# Core scoring components
+var _scoring_config: ScoringConfiguration
+var _current_mission_score: MissionScore
+var _performance_tracker: PerformanceTracker
+
+# Real-time scoring events
+func record_kill(target_type: String, target_class: String, weapon_used: String, kill_method: String) -> void
+func record_objective_completion(objective_id: String, objective_name: String, completion_type: String, bonus_achieved: bool) -> void
+func record_damage_event(damage_type: String, damage_amount: float, source: String) -> void
+func record_weapon_fire(weapon_type: String, hit: bool, damage_dealt: float) -> void
+
+# Mission completion scoring
+func finalize_mission_score(mission_success: bool, completion_time: float) -> MissionScore
+
+# Scoring signals
+signal mission_scoring_initialized(mission_id: String, difficulty: int)
+signal kill_scored(kill_data: KillData, total_kill_score: int)
+signal objective_completed(objective_data: ObjectiveCompletion, total_objective_score: int)
+signal mission_score_finalized(mission_score: MissionScore)
+
+# Performance Tracker - Combat effectiveness analysis
+class_name PerformanceTracker extends RefCounted
+
+# Performance metrics tracking
+func record_weapon_fire(weapon_type: String, hit: bool, damage_dealt: float) -> void
+func record_kill(kill_data: KillData) -> void
+func record_damage(damage_event: DamageEvent) -> void
+func record_tactical_event(event_type: String, event_data: Dictionary) -> void
+
+# Analysis generation
+func generate_analysis() -> PerformanceAnalysis:
+    var analysis = PerformanceAnalysis.new()
+    analysis.accuracy_percentage = _calculate_accuracy_percentage()
+    analysis.kill_efficiency = _calculate_kill_efficiency()
+    analysis.damage_efficiency = _calculate_damage_efficiency()
+    analysis.weapon_proficiency = _calculate_weapon_proficiency()
+    analysis.improvement_areas = _identify_improvement_areas()
+    analysis.strengths = _identify_strengths()
+    return analysis
+
+# Statistics Aggregator - Career progression
+class_name StatisticsAggregator extends RefCounted
+
+# Career statistics accumulation
+func aggregate_mission_statistics(mission_score: MissionScore, pilot_profile: PlayerProfile) -> void:
+    # Update mission counts, scores, kills, weapon stats, survival data
+    # Track weapon proficiency history, objective success rates
+    # Calculate career averages and performance records
+    
+# Career summary generation
+func get_career_statistics_summary(pilot_stats: PilotStatistics) -> Dictionary:
+    return {
+        "basic_stats": {...},
+        "efficiency_metrics": {...},
+        "performance_records": {...},
+        "specialized_stats": {...}
+    }
+
+# Scoring Configuration - Flexible parameters
+class_name ScoringConfiguration extends Resource
+
+# Configurable scoring parameters
+@export var difficulty_multiplier: float = 1.0
+@export var max_survival_score: int = 1000
+@export var max_efficiency_score: int = 500
+@export var perfect_mission_bonus: int = 500
+
+# Scoring tables for different targets and weapons
+var _target_base_scores: Dictionary = {
+    "fighter": {"light": 40, "heavy": 70, "ace": 100},
+    "bomber": {"light": 60, "heavy": 120, "strategic": 150},
+    "capital": {"corvette": 300, "frigate": 500, "destroyer": 1200}
+}
+
+var _weapon_multipliers: Dictionary = {
+    "primary_laser": 1.0,
+    "secondary_missile": 1.5,
+    "secondary_torpedo": 2.0
+}
+```
+
+## Integration with Existing Systems
+
+### Foundation System Leverage (Critical Design Decision)
+
+All EPIC-007 implementations extend existing foundation systems rather than replacing them:
+
+**GameStateManager Enhancement (FLOW-001)**:
+```gdscript
+# Extended existing autoload with new game flow states
+enum GameState {
+    MAIN_MENU = 0,
+    PILOT_SELECTION = 1,    # NEW
+    SHIP_SELECTION = 2,     # NEW  
+    MISSION_COMPLETE = 3,   # NEW
+    CAMPAIGN_COMPLETE = 4,  # NEW
+    STATISTICS_REVIEW = 5,  # NEW
+    SAVE_GAME_MENU = 6     # NEW
+}
+```
+
+**SaveGameManager Integration (FLOW-008, FLOW-009)**:
+```gdscript
+# All persistence uses existing SaveGameManager API
+SaveGameManager.save_player_profile(pilot_profile, save_slot)
+SaveGameManager.load_player_profile(save_slot)
+SaveGameManager.create_save_backup(save_slot)
+SaveGameManager.enumerate_save_slots()
+```
+
+**PlayerProfile/PilotStatistics Extension (FLOW-007, FLOW-010)**:
+```gdscript
+# Enhanced existing resources with new calculation methods
+pilot_stats.complete_mission(mission_score, flight_duration)
+pilot_stats.add_kill(ship_class, true)
+pilot_stats.record_weapon_fire(true, shots_fired, shots_hit, friendly_hits)
+pilot_stats._update_calculated_stats()
+
+# Added metadata tracking for advanced analytics
+pilot_stats.set_meta("weapon_proficiency_history", weapon_stats)
+pilot_stats.set_meta("achievement_progress", achievements)
+```
+
+## File Structure Implementation
+
+```
+target/scripts/core/game_flow/
+├── state_management/                  # FLOW-001, FLOW-002, FLOW-003
+│   ├── state_validator.gd            # State transition validation
+│   └── enhanced_transition_manager.gd # Advanced transition handling
+├── campaign_system/                   # FLOW-004, FLOW-005
+│   ├── campaign_progression_manager.gd # Campaign coordination
+│   ├── mission_unlocking.gd           # Mission availability logic
+│   ├── progression_analytics.gd       # Performance tracking
+│   ├── campaign_variables.gd          # Variable management
+│   ├── variable_validator.gd          # Variable validation
+│   └── sexp_variable_interface.gd     # SEXP integration
+├── mission_context/                   # FLOW-006
+│   ├── mission_context.gd             # Mission state data
+│   ├── mission_context_manager.gd     # Flow coordinator
+│   ├── mission_resource_coordinator.gd # Resource management
+│   └── mission_state_handler.gd       # State transitions
+├── player_data/                       # FLOW-007, FLOW-008, FLOW-009
+│   ├── pilot_data_coordinator.gd      # Central pilot hub
+│   ├── achievement_manager.gd         # Achievement system
+│   └── pilot_performance_tracker.gd   # Performance analysis
+├── scoring_system/                    # FLOW-010
+│   ├── mission_scoring.gd             # Real-time scoring
+│   ├── performance_tracker.gd         # Combat effectiveness
+│   ├── statistics_aggregator.gd       # Career statistics
+│   ├── scoring_configuration.gd       # Scoring parameters
+│   └── mission_score.gd               # Score data structure
+├── save_flow_coordinator.gd           # FLOW-008
+├── backup_flow_coordinator.gd         # FLOW-009
+├── session_flow_coordinator.gd        # FLOW-003
+├── crash_recovery_manager.gd          # FLOW-003
+└── CLAUDE.md                          # Package documentation
+```
+
+**Implementation Status: COMPLETE**
+- **FLOW-001 through FLOW-010**: All stories implemented and validated
+- **Total Files**: 25+ implementation files, 15+ test suites
+- **Integration**: Seamless integration with existing foundation systems
+- **Quality**: All implementations validated with Godot syntax checking
