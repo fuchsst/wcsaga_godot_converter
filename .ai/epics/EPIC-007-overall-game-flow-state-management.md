@@ -5,13 +5,13 @@
 **Epic Name**: Overall Game Flow & State Management  
 **Epic Owner**: Larry (WCS Analyst)  
 **Priority**: High  
-**Status**: Analysis Complete  
+**Status**: Architecture Approved - Ready for Stories  
 **Created**: 2025-01-26  
 **Position**: 6 (Game Structure Phase)  
 **Duration**: 4-6 weeks  
 
 ## Epic Description
-Create the comprehensive game state management system that orchestrates the overall game flow, campaign progression, player data persistence, and session management. This epic provides the backbone that connects all game systems and ensures smooth transitions between different game states while maintaining proper data persistence and campaign continuity.
+Enhance the existing foundation systems from EPIC-001 through EPIC-006 to create comprehensive game flow management for campaign progression, mission execution, and player career tracking. This epic builds upon the established GameStateManager, SaveGameManager, and PilotSystemCoordinator to provide seamless mission and campaign flow while leveraging existing patterns for state management, data persistence, and UI integration.
 
 ## WCS Game Flow System Analysis
 
@@ -124,18 +124,33 @@ Game States:
 └── SHUTDOWN                        # Game exit and cleanup
 ```
 
-### Integration Points
-- **EPIC-MENU-001**: Menu & Navigation System (state transitions)
-- **EPIC-SEXP-001**: SEXP Expression System (campaign variables)
-- **EPIC-003**: Asset Structures (pilot ship/loadout data)
-- **All Game Systems**: State-aware functionality and persistence
+### Integration Points with Existing Systems
+- **EPIC-001**: Foundation systems (GameStateManager, SaveGameManager, ConfigurationManager)
+- **EPIC-006**: Menu & Navigation System (PilotSystemCoordinator, UIThemeManager)
+- **EPIC-004**: SEXP Expression System (campaign variables and branching logic)
+- **EPIC-002**: Asset Management (WCSAssetLoader for campaign and mission assets)
+- **All Game Systems**: State-aware functionality and persistence leveraging established patterns
+
+## Existing Foundation Integration
+
+### Systems to Leverage (DO NOT REBUILD)
+- **GameStateManager**: Extend existing autoload (`target/autoload/game_state_manager.gd`) with additional game flow states
+- **SaveGameManager**: Use existing autoload (`target/autoload/SaveGameManager.gd`) - already provides comprehensive save/load
+- **PlayerProfile**: Use existing resource (`addons/wcs_asset_core/resources/player/player_profile.gd`) - already comprehensive
+- **PilotStatistics**: Use existing resource (`addons/wcs_asset_core/resources/player/pilot_statistics.gd`) - full statistics tracking
+- **CampaignState**: Use existing resource (`addons/wcs_asset_core/resources/save_system/campaign_state.gd`) - complete campaign tracking
+- **ConfigurationManager**: Use existing autoload (`target/autoload/configuration_manager.gd`) for game flow preferences
+- **SaveSlotInfo**: Use existing resource (`addons/wcs_asset_core/resources/save_system/save_slot_info.gd`) for save metadata
+
+### Key Integration Pattern
+All EPIC-007 stories extend existing systems rather than creating new ones, following established patterns for autoloads, resource-based data management, signal-driven communication, and validation frameworks.
 
 ## Story Breakdown
 
-### Phase 1: Core State Management (1-2 weeks)
-- **STORY-FLOW-001**: Game State Manager and State Machine
-- **STORY-FLOW-002**: State Transition System and Validation
-- **STORY-FLOW-003**: Session Management and Lifecycle
+### Phase 1: Foundation System Enhancement (1-2 weeks)
+- **STORY-FLOW-001**: Enhance GameStateManager with Mission and Campaign Flow States ✅ **UPDATED** - Properly extends existing GameStateManager
+- **STORY-FLOW-002**: Extend State Transition System with Game Flow Validation ✅ **UPDATED** - Leverages existing transition system
+- **STORY-FLOW-003**: Integrate Session Management with Existing Foundation ⚠️ **NEEDS UPDATE** - Should leverage existing systems
 
 ### Phase 2: Campaign and Mission Flow (1-2 weeks)
 - **STORY-FLOW-004**: Campaign Progression and Mission Unlocking
@@ -143,9 +158,9 @@ Game States:
 - **STORY-FLOW-006**: Mission Flow Integration
 
 ### Phase 3: Player Data and Persistence (1-2 weeks)
-- **STORY-FLOW-007**: Pilot Management and Statistics
-- **STORY-FLOW-008**: Save Game System and Data Persistence
-- **STORY-FLOW-009**: Backup and Recovery Systems
+- **STORY-FLOW-007**: Pilot Management and Statistics ✅ **UPDATED** - Properly leverages existing PlayerProfile and PilotStatistics resources
+- **STORY-FLOW-008**: Save Game System and Data Persistence ⚠️ **NEEDS UPDATE** - Should leverage existing SaveGameManager and resources
+- **STORY-FLOW-009**: Backup and Recovery Systems ⚠️ **NEEDS UPDATE** - Should extend existing backup systems
 
 ### Phase 4: Scoring and Achievement System (1 week)
 - **STORY-FLOW-010**: Mission Scoring and Performance Tracking
