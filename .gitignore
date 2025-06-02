@@ -220,3 +220,4 @@ secrets.json
 
 CLAUDE.local.md
 .util-scripts/
+.claude/settings.local.json
