@@ -106,37 +106,21 @@ func set_render_quality(quality: RenderQuality) -> void:
 
 ## Material System Architecture
 
-### WCS Material Conversion
+### MaterialData Integration with EPIC-002 Addon System
 
-**MaterialSystem**
+**WCSMaterialSystem**
 ```gdscript
-class_name MaterialSystem
+class_name WCSMaterialSystem
 extends Node
 
-## Manages conversion and runtime handling of WCS materials
+## Manages MaterialData assets from EPIC-002 addon system and creates Godot materials
 
 var material_cache: Dictionary = {}
-var wcs_material_database: WCSMaterialDatabase
 var material_conversion_rules: Dictionary = {}
+var texture_streamer: WCSTextureStreamer
 
-class WCSMaterial:
-    var name: String
-    var diffuse_texture: String
-    var normal_texture: String
-    var specular_texture: String
-    var glow_texture: String
-    var reflectance: float = 0.0
-    var shininess: float = 1.0
-    var alpha_test: float = 0.0
-    var blend_mode: String = "OPAQUE"
-    var double_sided: bool = false
-    var wcs_flags: int = 0
-
-func load_wcs_material_database() -> void:
-    wcs_material_database = WCSMaterialDatabase.new()
-    wcs_material_database.load_from_resources()
-    
-    # Set up conversion rules for different material types
+func _ready() -> void:
+    # Set up conversion rules for different material categories
     material_conversion_rules = {
         "hull": _create_hull_material_rule(),
         "cockpit": _create_cockpit_material_rule(),
@@ -147,78 +131,98 @@ func load_wcs_material_database() -> void:
         "space": _create_space_material_rule()
     }
 
-func convert_wcs_material(wcs_mat: WCSMaterial) -> StandardMaterial3D:
-    var godot_material = StandardMaterial3D.new()
+func load_material_from_asset(material_path: String) -> StandardMaterial3D:
+    # Check cache first
+    if material_path in material_cache:
+        return material_cache[material_path]
     
-    # Basic properties
-    godot_material.resource_name = wcs_mat.name
-    godot_material.albedo_color = Color.WHITE
+    # Load MaterialData through EPIC-002 asset system
+    var material_data: MaterialData = WCSAssetLoader.load_asset(material_path)
+    if not material_data:
+        push_error("Failed to load MaterialData: " + material_path)
+        return _get_fallback_material()
     
-    # Texture assignment
-    if not wcs_mat.diffuse_texture.is_empty():
-        var diffuse_tex = texture_streamer.load_texture(wcs_mat.diffuse_texture)
-        godot_material.albedo_texture = diffuse_tex
+    # Create Godot material using MaterialData.create_standard_material()
+    var godot_material: StandardMaterial3D = material_data.create_standard_material()
+    if not godot_material:
+        push_error("Failed to create StandardMaterial3D from MaterialData: " + material_path)
+        return _get_fallback_material()
     
-    if not wcs_mat.normal_texture.is_empty():
-        var normal_tex = texture_streamer.load_texture(wcs_mat.normal_texture)
-        godot_material.normal_texture = normal_tex
-        godot_material.normal_enabled = true
+    # Apply WCS-specific enhancements based on material category
+    _apply_wcs_material_enhancements(godot_material, material_data)
     
-    # Material properties conversion
-    godot_material.metallic = _convert_wcs_reflectance(wcs_mat.reflectance)
-    godot_material.roughness = _convert_wcs_shininess(wcs_mat.shininess)
-    
-    # Alpha handling
-    if wcs_mat.alpha_test > 0.0:
-        godot_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
-        godot_material.alpha_scissor_threshold = wcs_mat.alpha_test
-    elif wcs_mat.blend_mode == "ALPHA":
-        godot_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-    
-    # Glow effects
-    if not wcs_mat.glow_texture.is_empty():
-        var glow_tex = texture_streamer.load_texture(wcs_mat.glow_texture)
-        godot_material.emission_texture = glow_tex
-        godot_material.emission_enabled = true
-        godot_material.emission_energy = 1.0
-    
-    # Special WCS flags handling
-    _apply_wcs_flags(godot_material, wcs_mat.wcs_flags)
-    
-    # Cache the converted material
-    material_cache[wcs_mat.name] = godot_material
+    # Cache the material
+    material_cache[material_path] = godot_material
     
     return godot_material
 
-func _convert_wcs_reflectance(wcs_reflectance: float) -> float:
-    # Convert WCS reflectance (0-1) to Godot metallic (0-1)
-    # WCS uses different reflection model, adjust accordingly
-    return clamp(wcs_reflectance * 0.8, 0.0, 1.0)
+func create_material_for_ship_component(ship_class: String, component_type: String) -> StandardMaterial3D:
+    # Construct material path based on ship class and component
+    var material_path: String = "ships/%s/materials/%s_material.tres" % [ship_class, component_type]
+    return load_material_from_asset(material_path)
 
-func _convert_wcs_shininess(wcs_shininess: float) -> float:
-    # Convert WCS shininess to Godot roughness (inverted relationship)
-    return clamp(1.0 - (wcs_shininess / 128.0), 0.0, 1.0)
+func _apply_wcs_material_enhancements(material: StandardMaterial3D, material_data: MaterialData) -> void:
+    # Apply WCS-specific rendering properties based on material category
+    var material_category: String = material_data.get_material_category()
+    var enhancement_rule = material_conversion_rules.get(material_category)
+    
+    if enhancement_rule:
+        enhancement_rule.call(material, material_data)
+    
+    # Apply space-appropriate material settings
+    if material_category in ["hull", "weapon", "engine"]:
+        # Enable rim lighting for space objects
+        material.rim_enabled = true
+        material.rim_tint = 0.3
+        material.rim = 0.8
+        
+        # Enhance metallic surfaces for space environment
+        if material_data.metallic > 0.5:
+            material.clearcoat_enabled = true
+            material.clearcoat = 0.2
 
-func _apply_wcs_flags(material: StandardMaterial3D, flags: int) -> void:
-    # WCS material flags interpretation
-    const FLAG_ADDITIVE = 1 << 0
-    const FLAG_NO_LIGHTING = 1 << 1
-    const FLAG_FULLBRIGHT = 1 << 2
-    const FLAG_ANIMATED = 1 << 3
-    
-    if flags & FLAG_ADDITIVE:
-        material.blend_mode = BaseMaterial3D.BLEND_ADD
-    
-    if flags & FLAG_NO_LIGHTING:
-        material.flags_unshaded = true
-    
-    if flags & FLAG_FULLBRIGHT:
+func _create_hull_material_rule() -> Callable:
+    return func(material: StandardMaterial3D, material_data: MaterialData):
+        # Hull materials need enhanced metal reflection
+        material.metallic = clamp(material_data.metallic * 1.2, 0.0, 1.0)
+        material.roughness = clamp(material_data.roughness * 0.8, 0.1, 1.0)
+        
+        # Enable subsurface scattering for realistic hull appearance
+        if material_data.has_property("subsurface_strength"):
+            material.subsurf_scatter_strength = material_data.get_property("subsurface_strength", 0.1)
+
+func _create_engine_material_rule() -> Callable:
+    return func(material: StandardMaterial3D, material_data: MaterialData):
+        # Engine materials emit light and heat
         material.emission_enabled = true
-        material.emission_energy = 1.0
+        material.emission_energy = material_data.emission_energy * 2.0
+        
+        # Add heat distortion effect
+        material.features_transparent = true
+        material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+
+func _get_fallback_material() -> StandardMaterial3D:
+    # Return a basic purple material to indicate missing asset
+    var fallback: StandardMaterial3D = StandardMaterial3D.new()
+    fallback.resource_name = "fallback_material"
+    fallback.albedo_color = Color.MAGENTA
+    fallback.roughness = 0.8
+    fallback.metallic = 0.0
+    return fallback
+
+func clear_material_cache() -> void:
+    # Clear cache to free memory and allow material reloading
+    material_cache.clear()
+
+func get_cached_material_count() -> int:
+    return material_cache.size()
+
+func preload_ship_materials(ship_class: String) -> void:
+    # Preload all materials for a specific ship class
+    var ship_material_paths: Array[String] = WCSAssetRegistry.discover_ship_materials(ship_class)
     
-    if flags & FLAG_ANIMATED:
-        # Set up animated texture support
-        _setup_animated_material(material)
+    for material_path in ship_material_paths:
+        load_material_from_asset(material_path)
 ```
 
 ## Shader Management System
@@ -891,18 +895,22 @@ func request_quality_reduction() -> void:
 
 **Rendering Pipeline Tests**
 ```gdscript
-func test_material_conversion():
-    var wcs_material = WCSMaterial.new()
-    wcs_material.name = "test_hull"
-    wcs_material.diffuse_texture = "res://textures/test_hull_diffuse.png"
-    wcs_material.reflectance = 0.5
-    wcs_material.shininess = 64.0
+func test_material_loading():
+    # Test MaterialData integration with EPIC-002 asset system
+    var material_path: String = "ships/fighter/materials/hull_material.tres"
+    var material: StandardMaterial3D = material_system.load_material_from_asset(material_path)
     
-    var converted = material_system.convert_wcs_material(wcs_material)
+    assert(material != null, "Material loading should succeed")
+    assert(material.resource_name == "hull_material", "Material name should be preserved")
+    assert(material.metallic >= 0.0, "Material should have valid metallic value")
+    assert(material.roughness >= 0.0, "Material should have valid roughness value")
+
+func test_material_fallback():
+    # Test fallback behavior for missing materials
+    var invalid_material: StandardMaterial3D = material_system.load_material_from_asset("invalid/path.tres")
     
-    assert(converted != null, "Material conversion should succeed")
-    assert(converted.resource_name == "test_hull", "Material name should be preserved")
-    assert(converted.metallic > 0.0, "Reflectance should convert to metallic")
+    assert(invalid_material != null, "Should return fallback material for missing assets")
+    assert(invalid_material.albedo_color == Color.MAGENTA, "Fallback material should be magenta")
 
 func test_shader_compilation():
     var laser_shader = shader_manager.get_shader("laser_beam")
@@ -958,7 +966,7 @@ func test_explosion_effects():
 ## Implementation Phases
 
 ### Phase 1: Core Rendering Systems (2 weeks)
-- Material system and WCS material conversion
+- Material system with MaterialData integration from EPIC-002
 - Basic shader management and custom shaders
 - Texture streaming infrastructure
 - Performance monitoring foundation
@@ -996,11 +1004,34 @@ func test_explosion_effects():
 
 ## Integration Notes
 
-**Dependency on EPIC-003**: Converted models and textures from migration tools
-**Dependency on EPIC-002**: Asset management system for resource loading
+**Dependency on EPIC-002**: Asset Structures & Management (MaterialData, WCSAssetLoader, asset discovery)
+**Dependency on EPIC-003**: Data Migration & Conversion (converted models and textures from migration tools)
 **Integration with EPIC-009**: Object system for effect attachment and lifecycle
 **Integration with EPIC-011**: Ship and combat systems for visual feedback
 **Integration with EPIC-012**: HUD system for rendering overlays and interface
 **Integration with EPIC-007**: Game state management for quality settings persistence
 
 This architecture provides a comprehensive graphics and rendering system that delivers authentic WCS visuals while leveraging Godot 4's modern rendering capabilities and performance optimization features.
+
+## Key Integration Points
+
+### EPIC-002 Asset System Integration
+The graphics engine seamlessly integrates with the EPIC-002 asset management system:
+- **MaterialData Assets**: All materials loaded through MaterialData.create_standard_material() workflow
+- **Asset Discovery**: Automatic material discovery through WCSAssetRegistry for ship components
+- **Asset Validation**: Proper error handling and fallback for missing or corrupted materials
+- **Hot Reload**: Development support for real-time material updates
+
+### EPIC-003 Data Conversion Integration
+The rendering system works with converted assets from EPIC-003:
+- **GLB Models**: Rendered through Godot's native 3D pipeline with WCS-specific enhancements
+- **Converted Textures**: Efficient loading through texture streaming system
+- **Material Mapping**: Automatic mapping of converted WCS materials to Godot StandardMaterial3D
+- **LOD Support**: Integration with converted LOD meshes for performance optimization
+
+### Performance and Quality Management
+The system provides adaptive quality scaling:
+- **Hardware-Based Settings**: Automatic quality detection and configuration
+- **Dynamic Adjustment**: Real-time quality scaling based on performance metrics
+- **Memory Management**: Intelligent texture and effect caching with LRU eviction
+- **Optimization**: Advanced culling, batching, and rendering pipeline optimization
