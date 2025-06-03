@@ -13,6 +13,8 @@ target/
 │       │   └── graphics_settings.gd              # Graphics configuration and options
 │       ├── materials/
 │       │   ├── wcs_material_system.gd            # MaterialData integration from EPIC-002 addon system
+│       │   │                                     # Uses: MaterialData.create_standard_material() from /target/addons/wcs_asset_core/structures/material_data.gd
+│       │   │                                     # Loads: WCSAssetLoader.load_asset() for MaterialData retrieval
 │       │   ├── material_cache.gd                 # Material caching and optimization
 │       │   ├── material_quality_manager.gd       # Quality scaling and LOD for materials
 │       │   └── material_enhancement_rules.gd     # WCS-specific material enhancements over MaterialData
@@ -139,23 +141,23 @@ target/
 │           ├── nebula_texture.png                # Nebula cloud texture
 │           └── space_dust_texture.png            # Space dust particle texture
 ├── materials/
-│   ├── ships/
+│   ├── ships/                                # MaterialData assets from EPIC-002 addon system
 │   │   ├── fighter/
-│   │   │   ├── hull_material.tres            # Fighter hull MaterialData
-│   │   │   ├── cockpit_material.tres         # Fighter cockpit MaterialData
-│   │   │   └── engine_material.tres          # Fighter engine MaterialData
+│   │   │   ├── hull_material.tres            # Fighter hull MaterialData (extends BaseAssetData)
+│   │   │   ├── cockpit_material.tres         # Fighter cockpit MaterialData (extends BaseAssetData)
+│   │   │   └── engine_material.tres          # Fighter engine MaterialData (extends BaseAssetData)
 │   │   ├── bomber/
 │   │   │   └── [bomber MaterialData assets]
 │   │   └── capital/
 │   │       └── [capital ship MaterialData assets]
 │   ├── weapons/
-│   │   ├── laser_materials.tres              # Laser weapon MaterialData
-│   │   ├── plasma_materials.tres             # Plasma weapon MaterialData
-│   │   └── missile_materials.tres            # Missile MaterialData
+│   │   ├── laser_materials.tres              # Laser weapon MaterialData (loaded via WCSAssetLoader)
+│   │   ├── plasma_materials.tres             # Plasma weapon MaterialData (loaded via WCSAssetLoader)
+│   │   └── missile_materials.tres            # Missile MaterialData (loaded via WCSAssetLoader)
 │   ├── effects/
-│   │   ├── explosion_materials.tres          # Explosion effect MaterialData
-│   │   ├── shield_materials.tres             # Shield effect MaterialData
-│   │   └── engine_materials.tres             # Engine effect MaterialData
+│   │   ├── explosion_materials.tres          # Explosion effect MaterialData (converted via create_standard_material())
+│   │   ├── shield_materials.tres             # Shield effect MaterialData (converted via create_standard_material())
+│   │   └── engine_materials.tres             # Engine effect MaterialData (converted via create_standard_material())
 │   └── shader_materials/
 │       ├── weapon_effect_materials.tres          # Weapon visual effect ShaderMaterials
 │       ├── explosion_materials.tres              # Explosion effect ShaderMaterials
@@ -182,9 +184,11 @@ target/
 - **graphics_settings.gd**: User graphics preferences and hardware adaptation
 
 ### Material System (EPIC-002 Integration)
-- **wcs_material_system.gd**: Integration with EPIC-002 MaterialData (`addons/wcs_asset_core/structures/material_data.gd`) and WCS enhancement system
+- **wcs_material_system.gd**: Integration with EPIC-002 MaterialData (`/target/addons/wcs_asset_core/structures/material_data.gd`) and WCS enhancement system
+  - **Key Dependencies**: MaterialData.create_standard_material(), WCSAssetLoader.load_asset(), BaseAssetData from EPIC-002
+  - **Integration Workflow**: MaterialData → create_standard_material() → StandardMaterial3D → WCS enhancements
 - **material_cache.gd**: Efficient material caching and memory management for StandardMaterial3D instances created via MaterialData.create_standard_material()
-- **material_quality_manager.gd**: Dynamic quality scaling and LOD for materials coordinated with WCSAssetRegistry
+- **material_quality_manager.gd**: Dynamic quality scaling and LOD for materials coordinated with WCSAssetRegistry from `/target/addons/wcs_asset_core/utilities/wcs_asset_registry.gd`
 - **material_enhancement_rules.gd**: WCS-specific material enhancement logic applied over MaterialData base properties
 
 ### Shader System

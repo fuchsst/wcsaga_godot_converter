@@ -30,7 +30,9 @@
   - Texture assignment and UV mapping
   - Alpha blending and transparency modes
   - Material flags and rendering states
-  - Integration with MaterialData.create_standard_material() workflow
+  - **EPIC-002 Integration**: MaterialData.create_standard_material() workflow from `/target/addons/wcs_asset_core/structures/material_data.gd`
+  - **Asset Loading**: WCSAssetLoader.load_asset() for MaterialData retrieval
+  - **Conversion Pipeline**: MaterialData → StandardMaterial3D via create_standard_material()
 
 #### Texture Management (Texture2D, ImageTexture)
 - **Purpose**: Texture loading, compression, and memory management
@@ -149,6 +151,9 @@
   - Custom resource types
   - Resource streaming and preloading
   - Memory usage optimization
+  - **EPIC-002 Integration**: BaseAssetData and MaterialData resource types from `/target/addons/wcs_asset_core/structures/`
+  - **Asset Discovery**: WCSAssetRegistry for asset enumeration and validation
+  - **Loader System**: WCSAssetLoader for unified asset loading interface
 
 #### File System (FileAccess, DirAccess)
 - **Purpose**: File operations and asset discovery

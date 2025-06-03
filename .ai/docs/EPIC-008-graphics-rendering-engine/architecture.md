@@ -639,31 +639,38 @@ func create_shield_hit_effect(impact_point: Vector3, shield_node: Node3D) -> voi
 
 ## Texture Streaming System
 
-### Dynamic Texture Loading
+### Dynamic Texture Loading with EPIC-002 Integration
 
-**TextureStreamer**
+The texture streaming system leverages the MaterialData system from EPIC-002 addon for seamless texture management.
+
+**WCSTextureStreamer**
 ```gdscript
-class_name TextureStreamer
+class_name WCSTextureStreamer
 extends Node
 
-## Manages efficient loading and streaming of textures
+## Manages efficient loading and streaming of textures with MaterialData integration
 
 var texture_cache: Dictionary = {}
 var loading_queue: Array[String] = []
 var cache_size_limit: int = 512 * 1024 * 1024  # 512 MB
 var current_cache_size: int = 0
+var texture_quality_manager: TextureQualityManager
 
 var texture_quality_settings: Dictionary = {
-    RenderingManager.RenderQuality.LOW: 0.5,
-    RenderingManager.RenderQuality.MEDIUM: 0.75,
-    RenderingManager.RenderQuality.HIGH: 1.0,
-    RenderingManager.RenderQuality.ULTRA: 1.0
+    TextureQualityManager.QualityPreset.LOW: 0.5,
+    TextureQualityManager.QualityPreset.MEDIUM: 0.75,
+    TextureQualityManager.QualityPreset.HIGH: 1.0,
+    TextureQualityManager.QualityPreset.ULTRA: 1.0
 }
 
 func load_texture(texture_path: String, priority: int = 0) -> Texture2D:
     # Check cache first
     if texture_path in texture_cache:
         return texture_cache[texture_path]
+    
+    # Try loading through MaterialData if path suggests material texture
+    if texture_path.get_extension() == "tres" or "materials/" in texture_path:
+        return load_texture_from_material_data(texture_path)
     
     # Add to loading queue if not cached
     if texture_path not in loading_queue:
@@ -677,19 +684,52 @@ func load_texture(texture_path: String, priority: int = 0) -> Texture2D:
     # Return placeholder while loading
     return get_placeholder_texture()
 
+func load_texture_from_material_data(material_path: String) -> Texture2D:
+    # Load MaterialData from EPIC-002 addon system
+    var material_data: MaterialData = WCSAssetLoader.load_asset(material_path)
+    if not material_data:
+        return get_placeholder_texture()
+    
+    # Extract primary texture from MaterialData
+    var texture: Texture2D = null
+    if material_data.diffuse_texture_path and not material_data.diffuse_texture_path.is_empty():
+        texture = load(material_data.diffuse_texture_path) as Texture2D
+    
+    if texture:
+        # Apply quality optimization through TextureQualityManager
+        var texture_type: String = _determine_texture_category(material_path)
+        texture = texture_quality_manager.optimize_texture(texture, texture_type)
+        add_to_cache(material_path, texture)
+    
+    return texture if texture else get_placeholder_texture()
+
 func load_texture_immediate(texture_path: String) -> Texture2D:
     var texture = load(texture_path) as Texture2D
     
     if texture:
-        # Apply quality scaling
-        var quality_scale = texture_quality_settings[RenderingManager.render_quality]
-        if quality_scale < 1.0:
-            texture = scale_texture(texture, quality_scale)
+        # Apply quality scaling through TextureQualityManager
+        var texture_type: String = _determine_texture_category(texture_path)
+        texture = texture_quality_manager.optimize_texture(texture, texture_type)
         
         # Add to cache
         add_to_cache(texture_path, texture)
     
     return texture
+
+func _determine_texture_category(texture_path: String) -> String:
+    # Categorize texture based on path for quality optimization
+    if "ships/" in texture_path or "hull" in texture_path:
+        return "ship_hull"
+    elif "weapons/" in texture_path:
+        return "weapon_effect"
+    elif "engines/" in texture_path:
+        return "engine_effect"
+    elif "ui/" in texture_path:
+        return "ui_element"
+    elif "environment/" in texture_path or "nebula/" in texture_path:
+        return "environment"
+    else:
+        return "background"
 
 func _process(_delta: float) -> void:
     # Process loading queue
