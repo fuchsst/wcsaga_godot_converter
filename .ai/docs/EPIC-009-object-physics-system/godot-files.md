@@ -47,31 +47,37 @@ Universal object management and physics simulation system providing the foundati
 - Object pooling implemented in `res://autoload/object_manager.gd`
 - Component lifecycle managed through Godot's scene tree
 
-## Object Type System
+## Object Type System (EPIC-002 Asset Core Integration)
 
-### Object Data Structures
+### CRITICAL: Asset Definitions in wcs_asset_core Addon
 
-#### Data Resource Definitions (WCS Asset Core)
-- `res://addons/wcs_asset_core/resources/object/`: 3D model metadata and object definitions
-- Object type definitions and configuration resources
-- Physics parameter and behavior specifications
+**ALL object type definitions MUST reside in the wcs_asset_core addon for proper architecture**:
 
-### Type Definitions
-- `res://systems/objects/types/object_types.gd`: Object type enumeration and classification
-- `res://systems/objects/types/physics_profiles.gd`: Physics behavior profile definitions
-- `res://systems/objects/types/collision_categories.gd`: Collision layer and mask definitions
-- `res://systems/objects/types/update_frequencies.gd`: LOD and update frequency definitions
+#### Core Asset Constants (wcs_asset_core addon)
+- `res://addons/wcs_asset_core/constants/object_types.gd`: **NEW** - WCS object type enumerations and classifications
+- `res://addons/wcs_asset_core/constants/collision_layers.gd`: **NEW** - Physics collision layer definitions
+- `res://addons/wcs_asset_core/constants/update_frequencies.gd`: **NEW** - LOD and performance optimization constants
 
-### Enhanced Object Implementations (Building on Existing - EPIC-001)
-- `res://scripts/object/asteroid.gd`: ✅ **PARTIALLY IMPLEMENTED** - Asteroid object behavior (needs enhancement)
-- `res://scripts/object/debris.gd`: ✅ **STUB IMPLEMENTED** - Space debris simulation (needs completion)
-- `res://scripts/object/weapon_base.gd`: ✅ **STUB IMPLEMENTED** - Base weapon object class (needs completion)
+#### Asset Resource Definitions (wcs_asset_core addon)
+- `res://addons/wcs_asset_core/resources/object/physics_profile.gd`: **MOVE FROM scripts/core/** - Physics behavior profiles
+- `res://addons/wcs_asset_core/resources/object/model_metadata.gd`: ✅ **ALREADY EXISTS** - 3D model metadata
+- `res://addons/wcs_asset_core/structures/object_type_data.gd`: **NEW** - Object metadata and classification data
 
-### New Object Type Framework
-- `res://scripts/core/objects/types/object_types.gd`: Object type enumeration and classification
-- `res://scripts/core/objects/types/physics_profiles.gd`: Physics behavior profile definitions
-- `res://scripts/core/objects/types/collision_categories.gd`: Collision layer and mask definitions
-- `res://scripts/core/objects/types/update_frequencies.gd`: LOD and update frequency definitions
+#### Asset Validation and Management (wcs_asset_core addon)
+- `res://addons/wcs_asset_core/loaders/object_type_loader.gd`: **NEW** - Object type loading and validation
+- Integration with existing `res://addons/wcs_asset_core/loaders/asset_loader.gd`
+- Integration with existing `res://addons/wcs_asset_core/loaders/registry_manager.gd`
+
+### Game Implementation (Main Scripts)
+
+#### Enhanced Object Implementations (Building on Existing - EPIC-001)
+- `res://scripts/object/asteroid.gd`: ✅ **PARTIALLY IMPLEMENTED** - Enhanced with wcs_asset_core integration
+- `res://scripts/object/debris.gd`: ✅ **STUB IMPLEMENTED** - Enhanced with physics profiles from addon
+- `res://scripts/object/weapon_base.gd`: ✅ **STUB IMPLEMENTED** - Enhanced with weapon type definitions from addon
+
+#### Game-Specific Object Framework (Main Scripts)
+- `res://scripts/core/objects/base_space_object.gd`: **NEW** - Enhanced space object using addon constants
+- `res://scripts/core/objects/space_object_factory.gd`: **NEW** - Factory using addon asset definitions
 
 ### Specialized Object Types (Enhanced)
 - `res://scripts/core/objects/types/ship_types.gd`: Ship classification and properties

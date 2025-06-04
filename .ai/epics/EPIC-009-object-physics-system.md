@@ -5,7 +5,7 @@
 **Epic Name**: Object & Physics System  
 **Epic Owner**: Larry (WCS Analyst)  
 **Priority**: Critical  
-**Status**: Stories Created - Ready for Implementation  
+**Status**: Stories Updated for EPIC-002 Integration - Ready for Implementation  
 **Created**: 2025-01-26  
 **Position**: 8 (Visual Foundation Phase)  
 **Duration**: 6-8 weeks  
@@ -69,40 +69,47 @@ Create the comprehensive object management and physics system that serves as the
 
 ## Technical Architecture
 
-### Object System Structure
+### EPIC-002 Asset Core Integration (MANDATORY)
+
+**ASSET DEFINITIONS CENTRALIZED IN wcs_asset_core ADDON**:
+```
+addons/wcs_asset_core/                  # Shared asset definitions (EPIC-002)
+├── constants/
+│   ├── object_types.gd                # WCS object type enumerations
+│   ├── collision_layers.gd            # Physics collision definitions  
+│   └── update_frequencies.gd          # Performance optimization constants
+├── resources/object/
+│   ├── physics_profile.gd             # Physics behavior profiles
+│   └── model_metadata.gd              # 3D model integration data
+├── structures/
+│   └── object_type_data.gd            # Object classification metadata
+└── loaders/
+    └── object_type_loader.gd          # Object type validation and loading
+```
+
+### Game Implementation Structure (Uses Asset Core)
 ```
 target/scripts/core/objects/
-├── foundation/                     # Core object framework
-│   ├── game_object.gd             # Base game object class
-│   ├── object_manager.gd          # Central object management
-│   ├── object_factory.gd          # Object creation and instantiation
-│   └── object_registry.gd         # Object type registration and lookup
-├── physics/                        # Physics simulation
-│   ├── physics_manager.gd         # Central physics coordination
-│   ├── rigid_body_physics.gd      # Physics body management
-│   ├── force_application.gd       # Force and momentum systems
-│   └── physics_integration.gd     # Physics step integration
-├── collision/                      # Collision detection
-│   ├── collision_manager.gd       # Collision system coordination
-│   ├── collision_shapes.gd        # Collision shape management
-│   ├── collision_response.gd      # Collision response handling
-│   └── spatial_partitioning.gd    # Performance optimization
-├── models/                         # 3D model integration
-│   ├── model_loader.gd            # 3D model loading system
-│   ├── lod_manager.gd             # Level-of-detail management
-│   ├── subsystem_manager.gd       # Model subsystem handling
-│   └── animation_controller.gd    # Model animation system
-├── types/                          # Specific object types
-│   ├── ship_object.gd             # Ship game objects
-│   ├── weapon_object.gd           # Weapon projectiles
-│   ├── debris_object.gd           # Debris and asteroids
-│   ├── waypoint_object.gd         # Navigation waypoints
-│   └── effect_object.gd           # Visual effect objects
-└── utilities/                      # Object utilities
-    ├── object_serialization.gd    # Save/load object state
-    ├── object_debugging.gd        # Debug visualization
-    ├── performance_monitor.gd     # Performance tracking
-    └── object_validation.gd       # Object state validation
+├── base_space_object.gd               # Core space object (uses wcs_asset_core)
+├── space_object_factory.gd           # Factory (uses asset definitions)
+└── object_pool_manager.gd            # Pooling system integration
+
+target/scripts/object/                 # Enhanced existing objects
+├── asteroid.gd                       # Enhanced with asset core integration
+├── debris.gd                         # Enhanced with physics profiles  
+└── weapon_base.gd                    # Enhanced with weapon type definitions
+```
+
+### Integration Points
+```
+EPIC-002 Asset Foundation:
+wcs_asset_core addon ←─── All type definitions and constants
+         ↓
+EPIC-001 Foundation:     
+ObjectManager/PhysicsManager ←─── Enhanced with asset core types
+         ↓
+EPIC-009 Implementation:
+BaseSpaceObject ←─── Uses both foundations for complete system
 ```
 
 ### Godot Integration Architecture
@@ -262,25 +269,52 @@ WCS Object → Godot Node Translation:
 ## Related Artifacts
 - **WCS Object System Analysis**: ✅ Complete analysis of original object architecture
 - **Physics Behavior Reference**: ✅ Documentation of WCS physics characteristics  
-- **Architecture Design**: ✅ Complete - Mo (Godot Architect)
-- **Architecture Documents**: ✅ architecture.md, godot-files.md, godot-dependencies.md
-- **Story Definitions**: ✅ Complete - SallySM (Story Manager)
-- **Implementation**: Ready for Dev
+- **Architecture Design**: ✅ Updated with EPIC-002 Integration - Mo (Godot Architect)
+- **Architecture Documents**: ✅ Updated - architecture.md, godot-files.md, godot-dependencies.md
+- **Story Definitions**: ✅ Updated for EPIC-002 Integration - SallySM (Story Manager)
+- **Implementation**: Ready for Dev (Prerequisite OBJ-000 must be completed first)
 
 ## Story Creation Summary
-**Stories Created**: 16 user stories across 4 implementation phases  
+**Stories Created**: 17 user stories across 4 implementation phases + 1 prerequisite  
 **Story Creation Date**: 2025-01-26  
+**Story Update Date**: 2025-01-26 (EPIC-002 Integration by SallySM)
+**Integration Review Date**: 2025-01-04 (Cross-Epic Integration Analysis by SallySM)
 **Story Manager**: SallySM  
 
-### Created Stories:
+### Updated Stories for EPIC-002 Integration:
+#### Phase 0: EPIC-002 Asset Core Prerequisites (CRITICAL - MUST BE FIRST)
+- ✅ **OBJ-000**: Asset Core Integration Prerequisites (NEW - MANDATORY FIRST)
+
 #### Phase 1: Core Object Framework (2 weeks)
-- ✅ **OBJ-001**: Base Game Object System and Node Integration
-- ✅ **OBJ-002**: Object Manager and Lifecycle Management Enhancement  
-- ✅ **OBJ-003**: Object Factory and Type Registration System
+- ✅ **OBJ-001**: Base Game Object System and Node Integration (UPDATED for EPIC-002)
+- ✅ **OBJ-002**: Object Manager and Lifecycle Management Enhancement (UPDATED - EPIC-004 SEXP integration added)
+- ✅ **OBJ-003**: Object Factory and Type Registration System (UPDATED - EPIC-004 SEXP integration added)
 - ✅ **OBJ-004**: Object Serialization and Persistence System
 
+### Cross-Epic Integration Review (2025-01-04):
+#### EPIC-001 Foundation Dependencies Validated
+- ✅ **ObjectManager**: Enhanced with space object registry and SEXP interface
+- ✅ **PhysicsManager**: Enhanced with physics profiles and SEXP queries
+- ✅ **WCSObject Foundation**: Extended for space physics and object lifecycle
+
+#### EPIC-002 Asset Core Integration Requirements Added
+- ✅ **ALL STORIES**: Mandatory wcs_asset_core addon usage enforced
+- ✅ **Object Type Constants**: NO local definitions allowed - addon only
+- ✅ **Physics Profiles**: MUST use addon resources exclusively
+- ✅ **Asset Definitions**: Centralized in wcs_asset_core for FRED2 compatibility
+
+#### EPIC-004 SEXP System Integration Added
+- ✅ **Object Queries**: Integration with SEXP object query functions (`get-ship`, `wing-status`)
+- ✅ **Physics State**: SEXP access to physics properties (`ship-speed`, `is-moving`)
+- ✅ **Dynamic Creation**: SEXP-driven object creation and modification
+
+#### EPIC-008 Graphics Engine Integration Requirements Added
+- ✅ **3D Model Loading**: MANDATORY use of EPIC-008 Graphics Rendering Engine (COMPLETE ✅)
+- ✅ **LOD System**: Integration with EPIC-008 LODManager and PerformanceMonitor
+- ✅ **Visual Effects**: Model subsystems through EPIC-008 shader system
+
 #### Phase 2: Physics Integration (2 weeks)  
-- ✅ **OBJ-005**: Physics Manager and Godot Integration Enhancement
+- ✅ **OBJ-005**: Physics Manager and Godot Integration Enhancement (UPDATED - EPIC-002/004 integration added)
 - ✅ **OBJ-006**: Force Application and Momentum Systems
 - ✅ **OBJ-007**: Physics Step Integration and Performance Optimization
 - ✅ **OBJ-008**: Physics State Synchronization and Consistency
@@ -292,16 +326,57 @@ WCS Object → Godot Node Translation:
 - ✅ **OBJ-012**: Collision Layer and Filtering System
 
 #### Phase 4: Model Integration and Polish (2 weeks)
-- ✅ **OBJ-013**: 3D Model Loading and LOD System Integration
+- ✅ **OBJ-013**: 3D Model Loading and LOD System Integration (UPDATED - EPIC-008/002/004 integration added)
 - ✅ **OBJ-014**: Subsystem and Animation Integration
 - ✅ **OBJ-015**: Performance Optimization and Monitoring System
 - ✅ **OBJ-016**: Debug Tools and Validation System
 
-## Next Steps
-1. **Story Approval**: Review and approve individual stories before implementation
-2. **Implementation Planning**: Dev to plan implementation sequence and dependencies
-3. **Quality Gate Setup**: Prepare testing and validation frameworks
-4. **Implementation Start**: Begin with Phase 1 stories (OBJ-001 through OBJ-004)
+## MANDATORY Implementation Sequence
+
+### CRITICAL: EPIC-002 Integration Must Come First
+1. **OBJ-000**: Asset Core Integration Prerequisites (MANDATORY FIRST - Creates wcs_asset_core constants)
+2. **Validation**: Verify all wcs_asset_core object constants are accessible before proceeding
+
+### Phase 1: Core Object Framework (After OBJ-000 completion)
+3. **OBJ-001**: Base Game Object System and Node Integration (Uses wcs_asset_core constants)
+4. **OBJ-002**: Object Manager and Lifecycle Management Enhancement  
+5. **OBJ-003**: Object Factory and Type Registration System
+6. **OBJ-004**: Object Serialization and Persistence System
+
+### Subsequent Phases: Physics, Collision, Model Integration
+7. **OBJ-005 through OBJ-016**: Proceed with remaining stories as planned
+
+## Quality Gate Requirements
+- **Pre-Implementation**: Run `.bmad/checklists/story-readiness-checklist.md` for OBJ-000
+- **EPIC-002 Validation**: Verify wcs_asset_core integration before main implementation
+- **Phase Boundaries**: Complete validation at each phase transition
+- **Cross-Epic Integration**: Validate integration points with EPIC-001, EPIC-004, and EPIC-008
+
+## Cross-Epic Integration Validation Checklist
+
+### EPIC-001 Foundation Integration
+- [ ] **ObjectManager Enhancement**: Space object registry properly extends existing autoload
+- [ ] **PhysicsManager Enhancement**: Physics profiles integrate with existing physics system
+- [ ] **WCSObject Foundation**: BaseSpaceObject properly extends WCSObject base class
+- [ ] **Foundation Dependencies**: All EPIC-001 CF-013, CF-014, CF-015 remediation stories complete
+
+### EPIC-002 Asset Core Integration
+- [ ] **wcs_asset_core Addon**: All object constants accessible from addon
+- [ ] **Type Definitions**: NO local object type definitions - addon only
+- [ ] **Physics Profiles**: Physics profiles moved to addon resources
+- [ ] **FRED2 Compatibility**: Asset definitions accessible from mission editor
+
+### EPIC-004 SEXP System Integration  
+- [ ] **Object Queries**: SEXP functions can access object properties (`get-ship`, `wing-status`)
+- [ ] **Physics Queries**: SEXP can query physics state (`ship-speed`, `is-moving`)
+- [ ] **Dynamic Creation**: SEXP can create and modify objects at runtime
+- [ ] **Mission Integration**: Object system responds to SEXP mission logic
+
+### EPIC-008 Graphics Engine Integration
+- [ ] **Graphics Rendering**: Objects integrate with existing Graphics Rendering Engine
+- [ ] **3D Model Loading**: Model loading uses EPIC-008 GraphicsManager and LODManager
+- [ ] **Texture Integration**: Object textures managed by EPIC-008 TextureManager
+- [ ] **Performance Monitoring**: Object rendering monitored by EPIC-008 PerformanceMonitor
 
 ---
 

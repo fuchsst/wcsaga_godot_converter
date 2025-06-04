@@ -13,6 +13,17 @@ The Object & Physics System provides the foundation for all dynamic entities in 
 
 ## Core Architecture
 
+### EPIC-002 Asset Core Integration (CRITICAL)
+
+**ASSET DEFINITIONS MUST GO IN THE ADDON - NO EXCEPTIONS**:
+The existing approach of defining object types in main scripts is ARCHITECTURALLY UNSOUND. All shared constants, enumerations, and resource definitions belong in `wcs_asset_core` addon for proper separation of concerns and reusability.
+
+**Correct Asset Structure**:
+- `addons/wcs_asset_core/constants/object_types.gd` - WCS object type enumerations
+- `addons/wcs_asset_core/constants/collision_layers.gd` - Physics collision definitions
+- `addons/wcs_asset_core/resources/object/physics_profile.gd` - Physics behavior profiles
+- `addons/wcs_asset_core/structures/object_type_data.gd` - Object metadata structures
+
 ### Integration with Existing Foundation (EPIC-001)
 
 **Existing Autoload Foundation**:
@@ -24,36 +35,52 @@ The Object & Physics System provides the foundation for all dynamic entities in 
 ### Enhanced Object Management Hierarchy
 
 ```
-ObjectManager (Existing AutoLoad) - EPIC-001 Implementation
+EPIC-002 Asset Addon Foundation:
+wcs_asset_core addon
+├── Object Type Constants & Enums
+├── Physics Profile Resources
+├── Collision Layer Definitions
+└── Object Metadata Structures
+
+EPIC-001 Foundation Integration:
+ObjectManager (Existing AutoLoad)
 ├── Enhanced with Space Object Registry
 ├── Enhanced Object Pooling (existing pools + space objects)
-├── CollisionManager (New Component)
+├── References wcs_asset_core object types
 └── Physics Integration (Enhanced PhysicsManager coordination)
 ```
 
 ### Base Object System
 
-**Building on Existing WCSObject Foundation**
+**Correct Godot Architecture Using Composition**
 
-The object system extends the existing `WCSObject` class from EPIC-001:
+The object system uses COMPOSITION, not inheritance, building on EPIC-001 foundation while properly integrating EPIC-002 asset definitions:
+
 ```gdscript
-# Building on: target/scripts/core/wcs_object.gd (EPIC-001)
-# BaseSpaceObject extends WCSObject + RigidBody3D capabilities
-
+# PROPER ARCHITECTURE: Uses composition with RigidBody3D
 class_name BaseSpaceObject
-extends WCSObject  # Existing foundation from EPIC-001
+extends WCSObject  # Foundation from EPIC-001
 
 ## Enhanced space object with physics integration
-## Builds on WCSObject foundation while adding physics capabilities
+## Uses composition pattern with RigidBody3D for optimal Godot performance
+
+# Import asset definitions from EPIC-002 addon
+const ObjectTypes = preload("res://addons/wcs_asset_core/constants/object_types.gd")
+const CollisionLayers = preload("res://addons/wcs_asset_core/constants/collision_layers.gd")
+const PhysicsProfile = preload("res://addons/wcs_asset_core/resources/object/physics_profile.gd")
 
 signal object_destroyed(object: BaseSpaceObject)
 signal collision_detected(other: BaseSpaceObject, collision_info: Dictionary)
 signal physics_state_changed()
 
-# Physics integration (builds on existing CustomPhysicsBody)
-var physics_body: CustomPhysicsBody  # From target/scripts/core/custom_physics_body.gd
-var object_type_enum: ObjectType  # From addons/wcs_asset_core/constants/
-var physics_profile: PhysicsProfile  # New resource type
+# COMPOSITION PATTERN - Physics components as child nodes
+var physics_body: RigidBody3D  # Child node for physics simulation
+var collision_shape: CollisionShape3D  # Child of physics_body
+var mesh_instance: MeshInstance3D  # Child of physics_body for visuals
+
+# Asset integration
+var object_type_enum: ObjectTypes.Type  # From wcs_asset_core addon
+var physics_profile: PhysicsProfile  # Resource from wcs_asset_core addon
 
 # Leverages existing ObjectManager integration
 # object_id, object_type, update_frequency inherited from WCSObject
