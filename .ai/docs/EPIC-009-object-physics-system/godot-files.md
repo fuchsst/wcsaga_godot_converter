@@ -5,18 +5,22 @@ Universal object management and physics simulation system providing the foundati
 
 ## Core Object Management
 
-### Central Management (Autoload Systems)
-- `res://autoload/object_manager.gd`: Universal object lifecycle and coordination
-- `res://autoload/physics_manager.gd`: Physics simulation management
+### Central Management (Existing Autoload Systems - EPIC-001)
+- `res://autoload/object_manager.gd`: ✅ **ALREADY IMPLEMENTED** - Universal object lifecycle and coordination
+- `res://autoload/physics_manager.gd`: ✅ **ALREADY IMPLEMENTED** - Physics simulation management
 
-### Base Object Framework
-- `res://scripts/core/wcs_object.gd`: Foundation class for all WCS game objects
-- `res://scripts/core/custom_physics_body.gd`: Enhanced physics integration with Godot
-- `res://scripts/core/manager_coordinator.gd`: Manager system coordination
+### Base Object Framework (Existing Foundation - EPIC-001)
+- `res://scripts/core/wcs_object.gd`: ✅ **ALREADY IMPLEMENTED** - Foundation class for all WCS game objects
+- `res://scripts/core/custom_physics_body.gd`: ✅ **ALREADY IMPLEMENTED** - Enhanced physics integration with Godot
+- `res://scripts/core/manager_coordinator.gd`: ✅ **ALREADY IMPLEMENTED** - Manager system coordination
 
-### Object Scene Templates
-- `res://scenes/core/WCSObject.tscn`: Base object scene template
-- `res://scenes/core/PhysicsBody.tscn`: Physics-enabled object template
+### Enhanced Object Framework (New for EPIC-009)
+- `res://scripts/core/objects/base_space_object.gd`: Enhanced space object extending WCSObject
+- `res://scripts/core/objects/space_object_factory.gd`: Factory for creating space objects
+
+### Object Scene Templates (New)
+- `res://scenes/core/objects/BaseSpaceObject.tscn`: Base space object scene template
+- `res://scenes/core/objects/PhysicsSpaceObject.tscn`: Physics-enabled space object template
 
 ## Physics Integration
 
@@ -58,11 +62,22 @@ Universal object management and physics simulation system providing the foundati
 - `res://systems/objects/types/collision_categories.gd`: Collision layer and mask definitions
 - `res://systems/objects/types/update_frequencies.gd`: LOD and update frequency definitions
 
-### Specialized Object Types
-- `res://systems/objects/types/ship_types.gd`: Ship classification and properties
-- `res://systems/objects/types/weapon_types.gd`: Weapon and projectile classifications
-- `res://systems/objects/types/debris_types.gd`: Debris and destruction object types
-- `res://systems/objects/types/environmental_types.gd`: Environmental object classifications
+### Enhanced Object Implementations (Building on Existing - EPIC-001)
+- `res://scripts/object/asteroid.gd`: ✅ **PARTIALLY IMPLEMENTED** - Asteroid object behavior (needs enhancement)
+- `res://scripts/object/debris.gd`: ✅ **STUB IMPLEMENTED** - Space debris simulation (needs completion)
+- `res://scripts/object/weapon_base.gd`: ✅ **STUB IMPLEMENTED** - Base weapon object class (needs completion)
+
+### New Object Type Framework
+- `res://scripts/core/objects/types/object_types.gd`: Object type enumeration and classification
+- `res://scripts/core/objects/types/physics_profiles.gd`: Physics behavior profile definitions
+- `res://scripts/core/objects/types/collision_categories.gd`: Collision layer and mask definitions
+- `res://scripts/core/objects/types/update_frequencies.gd`: LOD and update frequency definitions
+
+### Specialized Object Types (Enhanced)
+- `res://scripts/core/objects/types/ship_types.gd`: Ship classification and properties
+- `res://scripts/core/objects/types/weapon_types.gd`: Weapon and projectile classifications
+- `res://scripts/core/objects/types/debris_types.gd`: Debris and destruction object types
+- `res://scripts/core/objects/types/environmental_types.gd`: Environmental object classifications
 
 ## Collision System
 
@@ -118,16 +133,17 @@ Universal object management and physics simulation system providing the foundati
 
 ## Integration Systems
 
-### Asset Integration
-- `res://systems/objects/integration/asset_loader.gd`: Asset loading for object creation
-- `res://systems/objects/integration/model_loader.gd`: 3D model loading and setup
-- `res://systems/objects/integration/texture_manager.gd`: Object texture management
+### Asset Integration (Building on EPIC-002)
+- ✅ **USE EXISTING**: `res://addons/wcs_asset_core/loaders/asset_loader.gd` - Asset loading infrastructure
+- ✅ **USE EXISTING**: `res://addons/wcs_asset_core/loaders/registry_manager.gd` - Asset registry management
+- `res://scripts/core/objects/integration/asset_bridge.gd`: Bridge to wcs_asset_core for object creation
+- `res://scripts/core/objects/integration/model_bridge.gd`: 3D model integration with EPIC-008 graphics system
 
 ### System Bridges
-- `res://systems/objects/integration/rendering_bridge.gd`: Rendering system integration
-- `res://systems/objects/integration/ai_bridge.gd`: AI system object interface
-- `res://systems/objects/integration/combat_bridge.gd`: Combat system integration
-- `res://systems/objects/integration/sexp_bridge.gd`: SEXP system object queries
+- `res://scripts/core/objects/integration/rendering_bridge.gd`: EPIC-008 Graphics system integration
+- `res://scripts/core/objects/integration/ai_bridge.gd`: Future EPIC-010 AI system interface
+- `res://scripts/core/objects/integration/combat_bridge.gd`: Future EPIC-011 Combat system integration
+- `res://scripts/core/objects/integration/sexp_bridge.gd`: EPIC-004 SEXP system object queries
 
 ## Configuration
 

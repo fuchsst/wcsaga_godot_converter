@@ -13,37 +13,50 @@ The Object & Physics System provides the foundation for all dynamic entities in 
 
 ## Core Architecture
 
-### Object Management Hierarchy
+### Integration with Existing Foundation (EPIC-001)
+
+**Existing Autoload Foundation**:
+- `ObjectManager` (target/autoload/object_manager.gd) - Already implemented
+- `PhysicsManager` (target/autoload/physics_manager.gd) - Already implemented
+- `WCSObject` (target/scripts/core/wcs_object.gd) - Base object class
+- `CustomPhysicsBody` (target/scripts/core/custom_physics_body.gd) - Physics integration
+
+### Enhanced Object Management Hierarchy
 
 ```
-ObjectManager (AutoLoad Singleton)
-├── SpaceObjectRegistry (Resource)
-├── ObjectPool (Node)
-├── CollisionManager (Node)
-└── PhysicsOverride (Node)
+ObjectManager (Existing AutoLoad) - EPIC-001 Implementation
+├── Enhanced with Space Object Registry
+├── Enhanced Object Pooling (existing pools + space objects)
+├── CollisionManager (New Component)
+└── Physics Integration (Enhanced PhysicsManager coordination)
 ```
 
 ### Base Object System
 
-**BaseSpaceObject** (Abstract Class)
-```gdscript
-class_name BaseSpaceObject
-extends RigidBody3D
+**Building on Existing WCSObject Foundation**
 
-## Foundation for all space-based game objects
-## Provides common physics, collision, and lifecycle management
+The object system extends the existing `WCSObject` class from EPIC-001:
+```gdscript
+# Building on: target/scripts/core/wcs_object.gd (EPIC-001)
+# BaseSpaceObject extends WCSObject + RigidBody3D capabilities
+
+class_name BaseSpaceObject
+extends WCSObject  # Existing foundation from EPIC-001
+
+## Enhanced space object with physics integration
+## Builds on WCSObject foundation while adding physics capabilities
 
 signal object_destroyed(object: BaseSpaceObject)
 signal collision_detected(other: BaseSpaceObject, collision_info: Dictionary)
+signal physics_state_changed()
 
-@export var object_type: ObjectType
-@export var mass_override: float = -1.0
-@export var physics_profile: PhysicsProfile
+# Physics integration (builds on existing CustomPhysicsBody)
+var physics_body: CustomPhysicsBody  # From target/scripts/core/custom_physics_body.gd
+var object_type_enum: ObjectType  # From addons/wcs_asset_core/constants/
+var physics_profile: PhysicsProfile  # New resource type
 
-var object_id: int
-var creation_time: float
-var last_update_time: float
-var is_networked: bool = false
+# Leverages existing ObjectManager integration
+# object_id, object_type, update_frequency inherited from WCSObject
 ```
 
 ### Physics Integration
@@ -283,20 +296,26 @@ weapon_physics.collision_mask = PhysicsLayers.SHIPS | PhysicsLayers.OBSTACLES
 
 ### Asset Structure Dependencies
 
-**Required from EPIC-002:**
-- `ObjectTypeDefinition` resources
-- `PhysicsProfile` resources
-- `CollisionShape` resources
-- `ObjectTemplate` resources
+**Building on EPIC-002 (wcs_asset_core):**
+- Existing: `ShipData` (addons/wcs_asset_core/structures/ship_data.gd)
+- Existing: `WeaponData` (addons/wcs_asset_core/structures/weapon_data.gd)
+- Existing: `ArmorData` (addons/wcs_asset_core/structures/armor_data.gd)
+- Existing: `MaterialData` (addons/wcs_asset_core/structures/material_data.gd)
+- Existing: `BaseAssetData` (addons/wcs_asset_core/structures/base_asset_data.gd)
+- New: `ObjectTypeDefinition` resources (extends BaseAssetData)
+- New: `PhysicsProfile` resources
 
 **Integration Points:**
 ```gdscript
-# Load object templates from asset addon
-var object_template: ObjectTemplate = AssetManager.get_object_template(template_name)
-var space_object = create_object_from_template(object_template)
+# Use existing asset loader from EPIC-002
+const AssetLoader = preload("res://addons/wcs_asset_core/loaders/asset_loader.gd")
 
-# Physics profile from asset definition
-var physics_profile: PhysicsProfile = object_template.physics_profile
+# Load ship data for space objects
+var ship_data: ShipData = AssetLoader.load_ship_data(ship_name)
+var space_object = create_ship_object(ship_data)
+
+# Convert existing data to physics profiles
+var physics_profile: PhysicsProfile = PhysicsProfile.create_from_ship_data(ship_data)
 apply_physics_profile(space_object, physics_profile)
 ```
 
