@@ -1,0 +1,1 @@
+Create a story as defined in @/.claude/commands/validate_epic_completion.md

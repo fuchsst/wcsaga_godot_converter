@@ -14,15 +14,16 @@
 Create a comprehensive mission editor as a Godot plugin that recreates and enhances the functionality of the original WCS FRED2 (FReespace EDitor version 2) tool. This editor will allow mission creators to design, script, and test missions using modern Godot editor integration while maintaining full compatibility with WCS mission standards and exceeding the original editor's capabilities.
 
 ## Progress Summary
-**Current Status**: Architecture Refined - Critical Implementation Issues Addressed
-- ✅ **Foundation Dependencies**: EPICs 001-004 complete and stable
-- ✅ **Phase 1 - Core Framework**: All core integrations complete (GFRED2-001 through GFRED2-004)
-- ✅ **Phase 2 - User Experience**: UI modernization complete (GFRED2-005) - May 30, 2025
-- ⚡ **CRITICAL ARCHITECTURAL REFINEMENT**: Stories GFRED2-006A through GFRED2-011 refined (May 31, 2025)
-- 🔄 **Phase 3 - Advanced Capabilities**: Ready for implementation with corrected architecture
-- ✅ **CRITICAL ARCHITECTURAL COMPLIANCE**: UI refactoring to scene-based architecture (GFRED2-011) **COMPLETED**
-- **Updated Timeline**: 44 days remaining (8.8 weeks) with mandatory architectural compliance
-- **Progress**: 5 of 11 stories complete, 6 stories refined for architectural compliance
+**Current Status**: Analysis Complete, Stories Updated, Ready for Prioritized Implementation
+- ✅ **Foundation Dependencies**: EPICs 001-004 assumed stable for planning (actual status varies per EPIC).
+- ⚠️ **Phase 1 - Core Framework**: Core integrations (GFRED2-001 through GFRED2-004) require further work based on analysis. Statuses updated in story files.
+- ⚠️ **Phase 2 - User Experience**: UI modernization (GFRED2-005) requires further work on docking system. Status updated in story file.
+- ⚡ **CRITICAL ARCHITECTURAL REFINEMENT**: Stories GFRED2-006A through GFRED2-011 refined (May 31, 2025) - these are generally in good shape.
+- 🔄 **Phase 3 - Advanced Capabilities**: Ready for implementation with corrected architecture.
+- ✅ **CRITICAL ARCHITECTURAL COMPLIANCE**: UI refactoring to scene-based architecture (GFRED2-011) **COMPLETED**. This provides a solid foundation.
+- 🆕 **New Critical Stories Added**: GFRED2-012, GFRED2-013, GFRED2-014, GFRED2-015, GFRED2-016 created to address critical gaps and P1 refactoring tasks.
+- **Updated Timeline**: To be re-evaluated based on the updated story list and their statuses. Original estimate of 48 days needs review.
+- **Progress**: Original 11 stories + 5 new stories = 16 total stories. GFRED2-011 is COMPLETED. Several others (003, 002, 005, 004) are now "Implementation Incomplete" or "Ready" after updates.
 
 ## WCS FRED2 System Analysis
 
@@ -145,35 +146,44 @@ target/addons/gfred2/
 
 ## Integration Story Breakdown (REFINED BY BMAD TEAM)
 
-### Phase 1: Foundation Integration (2 weeks) - IN PROGRESS ⚡
-- **GFRED2-004**: Core Infrastructure Integration with EPIC-001 (2 days) ⏳ **READY**
+### Phase 1: Foundation Integration & Critical Fixes (P0 & P1 tasks)
+- **GFRED2-003**: Mission Resource Loading and Saving (1-2 days) ⚠️ **IMPLEMENTATION INCOMPLETE** (Was Mission File Conversion)
+- **GFRED2-004**: Core Infrastructure Integration with EPIC-001 (2 days) ⚠️ **IMPLEMENTATION INCOMPLETE** (Now includes input system refactor)
 - **GFRED2-001**: Asset System Integration with EPIC-002 (3 days) ⏳ **READY**
-- **GFRED2-003**: Mission File Conversion Integration with EPIC-003 (3 days) ✅ **COMPLETED** (Review: [GFRED2-003-review.md](.ai/reviews/EPIC-005-gfred2-mission-editor/GFRED2-003-review.md))
-- **GFRED2-002**: SEXP System Integration with EPIC-004 (5 days) ✅ **COMPLETED** (Review: [GFRED2-002-review.md](.ai/reviews/EPIC-005-gfred2-mission-editor/GFRED2-002-review.md))
+- **GFRED2-002**: SEXP System Integration with EPIC-004 (5 days) ⚠️ **IMPLEMENTATION INCOMPLETE** (Requires core logic implementation)
+- **GFRED2-012**: Implement Mission Object Duplication (1 day) ⏳ **NEW CRITICAL**
+- **GFRED2-013**: Consolidate Selection Logic into MissionObjectManager (2 days) ⏳ **NEW CRITICAL**
+- **GFRED2-014**: Standardize MissionObject and MissionObjectData Naming (1 day) ⏳ **NEW HIGH-PRIORITY**
+- **GFRED2-015**: Refactor editor_main.gd to Reduce Complexity (3-5 days) ⏳ **NEW HIGH-PRIORITY**
 
-### Phase 2: User Experience Enhancement (1 week) - READY
-- **GFRED2-005**: UI Modernization and Polish (4 days) ✅ **COMPLETED** (Date: May 30, 2025)
+### Phase 2: User Experience Enhancement (P0 & P1 tasks)
+- **GFRED2-005**: UI Modernization and Polish (4 days) ⚠️ **IMPLEMENTATION INCOMPLETE** (Docking system needs fix)
+- **GFRED2-011**: UI Component Refactoring to Scene-Based Architecture (5 days) ✅ **COMPLETED** (Date: May 31, 2025)
 
-### Phase 3: Advanced Capabilities (2.5 weeks) - IN PROGRESS
+### Phase 3: Advanced Capabilities (P2 tasks)
 - **GFRED2-006A**: Real-time Validation and Dependency Tracking (3 days) ✅ **COMPLETED** (Date: May 31, 2025)
 - **GFRED2-006B**: Advanced SEXP Debugging Integration (3 days) ✅ **COMPLETED** (Date: May 31, 2025)
 - **GFRED2-006C**: Mission Templates and Pattern Library (4 days) ⏳ **READY**
 - **GFRED2-006D**: Performance Profiling and Optimization Tools (3 days) ⏳ **READY**
+- **GFRED2-016**: Implement Custom Object Templates in ObjectFactory (2-3 days) ⏳ **NEW MEDIUM-PRIORITY**
 
-### Phase 4: Critical Feature Parity (3.6 weeks) - NEW HIGH-PRIORITY ⚡
+### Phase 4: Critical Feature Parity (High-priority new features)
 - **GFRED2-007**: Briefing Editor System (5 days) ⏳ **NEW CRITICAL**
 - **GFRED2-008**: Campaign Editor Integration (4 days) ⏳ **NEW CRITICAL**
 - **GFRED2-009**: Advanced Ship Configuration (4 days) ⏳ **NEW CRITICAL**
 - **GFRED2-010**: Mission Component Editors (5 days) ⏳ **NEW CRITICAL**
 
-**FEATURE PARITY ANALYSIS**: Larry's analysis identified critical gaps preventing complete FRED2 functionality. Phase 4 addresses these gaps to achieve 95%+ feature parity.
+**FEATURE PARITY ANALYSIS**: Larry's analysis identified critical gaps preventing complete FRED2 functionality. Phase 4 addresses these gaps to achieve 95%+ feature parity. The new stories GFRED2-012 to GFRED2-016 address foundational issues and P1/P2 items from recent analysis.
 
-### Legacy Implementation Status (To Be Refactored)
-- ✅ **Basic Framework**: Mission data, 3D viewport, object management 
-- ✅ **Property System**: Object property inspector
-- 🔄 **Asset System**: Custom implementation → Will be replaced by EPIC-002 integration
-- 🔄 **SEXP System**: Basic implementation → Will be replaced by EPIC-004 integration
-- 🔄 **File System**: Custom parser → Will be replaced by EPIC-003 integration
+### Legacy Implementation Status (To Be Refactored / Verified)
+- ✅ **Basic Framework**: Mission data, 3D viewport, object management - *Needs verification after refactors*
+- ✅ **Property System**: Object property inspector - *Needs verification*
+- 🔄 **Asset System**: Custom implementation → GFRED2-001 aims to replace with EPIC-002 integration.
+- 🔄 **SEXP System**: Basic implementation → GFRED2-002 aims to replace with EPIC-004 integration.
+- 🔄 **File System**: Custom parser → GFRED2-003 has refactored to resource loading, legacy parser removed.
+- 🔄 **Input System**: Dual system → GFRED2-004 aims to standardize.
+- 🔄 **Selection System**: Missing file → GFRED2-013 aims to consolidate into MissionObjectManager.
+- 🔄 **Docking System**: Incomplete → GFRED2-005 aims to complete.
 
 ## Acceptance Criteria
 

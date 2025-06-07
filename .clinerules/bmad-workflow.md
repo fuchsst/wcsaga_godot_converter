@@ -1,0 +1,1 @@
+Read and follow @/.claude/rules/bmad-workflow-rules.md and @/.claude/rules/workflow-enforcement-config.md

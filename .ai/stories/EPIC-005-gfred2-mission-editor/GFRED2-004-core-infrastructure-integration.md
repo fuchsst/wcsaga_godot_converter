@@ -20,6 +20,7 @@
 - [ ] **AC6**: Performance optimizations leverage core utilities (threading, profiling, optimization hints)
 - [ ] **AC7**: All custom utility functions removed or migrated to core foundation
 - [ ] **AC8**: Integration tests validate performance and functionality parity
+- [ ] **AC9**: The legacy `input_manager.gd` is removed, and all input handling is standardized on `GFRED2ShortcutManager`.
 
 ## Technical Requirements
 **Architecture Reference**: .ai/docs/epic-005-gfred2-mission-editor/architecture.md Section 3 (Scene-Based UI Architecture) **ENHANCED 2025-05-30**
@@ -70,6 +71,7 @@
 - [ ] **Task 6**: Apply core resource management patterns to mission data handling
 - [ ] **Task 7**: Remove duplicate utility functions and update all references
 - [ ] **Task 8**: Create performance benchmarks and validate integration maintains performance
+- [ ] **Task 9**: Deprecate and remove `input_manager.gd`, refactoring all its usages in `editor_main.gd` and other UI components to use `GFRED2ShortcutManager`.
 
 ## Testing Strategy
 - **Unit Tests**: Test integration with core utilities

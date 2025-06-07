@@ -1,86 +1,72 @@
-# User Story: Mission File Conversion Integration with EPIC-003
+# User Story: Mission Resource Loading and Saving
 
 **Epic**: EPIC-005 - GFRED2 Mission Editor  
 **Story ID**: GFRED2-003  
 **Created**: January 30, 2025  
-**Status**: Completed  
-**Completed**: May 30, 2025
+**Status**: Ready for Implementation  
+**Updated**: June 7, 2025
 
 ## Story Definition
-**As a**: Mission designer working with existing WCS missions  
-**I want**: GFRED2 to seamlessly import and export missions using EPIC-003 conversion tools  
-**So that**: I can edit existing WCS missions and export them in compatible formats
+**As a**: Mission designer  
+**I want**: GFRED2 to load and save mission data as native Godot resources (`.tres` files)  
+**So that**: The editor works with the project's standardized, converted assets and not legacy file formats.
 
 ## Acceptance Criteria
-- [x] **AC1**: GFRED2 uses `wcs_converter` addon for FS2 mission file import/export
-- [x] **AC2**: Mission import preserves all WCS mission data including SEXP expressions
-- [x] **AC3**: Mission export generates compatible FS2 mission files
-- [x] **AC4**: Import process provides progress feedback and error handling
-- [x] **AC5**: Export validation ensures mission compatibility before saving
-- [x] **AC6**: Batch import/export operations are supported
-- [x] **AC7**: Tests validate round-trip conversion (import → edit → export)
-- [x] **AC8**: GFRED2 can load a campaign and missions as Godot resource as defined in EPIC-001 preserving the full featureset of WCS
-- [x] **AC9**: GFRED2 can save a campaign and missions as Godot resource as defined in EPIC-001 preserving the full featureset of WCS
+- [ ] **AC1**: GFRED2's "Open Mission" dialog loads `.tres` files into a `MissionData` resource.
+- [ ] **AC2**: GFRED2's "Save Mission" dialog saves the current `MissionData` resource to a `.tres` file.
+- [ ] **AC3**: The `MissionFileIO` class is used for all mission resource loading and saving operations.
+- [ ] **AC4**: Loading a mission resource correctly populates the entire GFRED2 editor state.
+- [ ] **AC5**: Saving a mission resource correctly serializes the entire editor state to the file.
+- [ ] **AC6**: The editor handles errors gracefully if a resource file is invalid or corrupted.
+- [ ] **AC7**: The workflow is aligned with EPIC-003, where `conversion_tools` handle the one-time conversion of `.fs2` to `.tres`, and GFRED2 only deals with the `.tres` file.
 
 ## Technical Requirements
-**Architecture Reference**: .ai/docs/epic-005-gfred2-mission-editor/architecture.md Section 3 (Scene-Based UI Architecture) **ENHANCED 2025-05-30**
+**Architecture Reference**: .ai/docs/epic-005-gfred2-mission-editor/architecture.md Section 3 (Scene-Based UI Architecture)
 
-- **Integration**: Use `MissionConverter` from `addons/wcs_converter/`
-- **Replace**: Custom FS2 parser with standardized conversion system
-- **Update**: File dialogs to use conversion system progress tracking with scene-based architecture
-- **Enhancement**: Add validation and error reporting for mission files using `addons/gfred2/scenes/dialogs/`
+- **Integration**: Use the refactored `MissionFileIO` for all file operations.
+- **Godot API**: Use `ResourceLoader.load()` and `ResourceSaver.save()` as the underlying mechanism.
+- **UI Update**: The "Open" and "Save" file dialogs in GFRED2 must be updated to filter for `.tres` and `.res` files.
+- **State Management**: The `editor_main.gd` or a dedicated state manager must be responsible for populating the editor from a loaded `MissionData` resource and collecting data for saving.
 
 ## Implementation Notes
-- **Standardization**: Eliminates duplicate mission file handling code
-- **Enhanced Features**: Gains comprehensive conversion capabilities
-- **Error Handling**: Better validation and error reporting for mission files
-- **Performance**: Leverage optimized conversion algorithms
+- **Architectural Correction**: This story corrects the previous misunderstanding of GFRED2's role. GFRED2 is a consumer of Godot resources, not a parser of legacy formats.
+- **Workflow**: 1. Use `conversion_tools` (EPIC-003) to convert `.fs2` -> `.tres`. 2. Use GFRED2 to open, edit, and save the `.tres` file.
+- **Simplicity**: This approach dramatically simplifies GFRED2's file I/O logic, making it more robust and maintainable.
 
 ## Dependencies
-- **Prerequisites**: EPIC-003 Data Migration & Conversion Tools (completed)
-- **Blockers**: None - EPIC-003 conversion tools are complete
-- **Related Stories**: Enables mission workflow with existing WCS content
+- **Prerequisites**: The refactored `MissionFileIO.gd` must be in place. `MissionData` resource must be fully defined.
+- **Blockers**: None. This simplifies the previous approach.
+- **Related Stories**: This is a foundational story for all mission editing functionality.
 
 ## Definition of Done
-- [x] Custom mission parser removed from GFRED2
-- [x] Mission import uses `wcs_converter` with full feature set
-- [x] Mission export generates valid FS2 files compatible with WCS
-- [x] Progress tracking and error handling works correctly
-- [x] Batch operations supported for multiple mission files
-- [x] Round-trip conversion tests pass with high fidelity
-- [x] All mission editing workflows support converted missions
+- [ ] `MissionFileIO` is the sole interface for mission loading/saving.
+- [ ] "Open" and "Save" dialogs in GFRED2 are fully functional for `.tres` files.
+- [ ] A loaded `MissionData` resource correctly populates all editor views (object hierarchy, property inspector, SEXP graph).
+- [ ] Saving the mission correctly writes all data from the editor views into the `.tres` file.
+- [ ] All legacy `.fs2` parsing code has been removed from the GFRED2 addon.
 
 ## Estimation
-- **Complexity**: Medium
-- **Effort**: 2-3 days
+- **Complexity**: Low
+- **Effort**: 1-2 days
 - **Risk Level**: Low
 - **Confidence**: High
 
 ## Implementation Tasks
-- [x] **Task 1**: Remove custom FS2 parser from GFRED2 (`mission/fs2_parser.gd`) - COMPLETED
-- [x] **Task 2**: Update mission import to use `MissionConverter` from `wcs_converter` - COMPLETED
-- [x] **Task 3**: Update mission export to use standardized conversion system - COMPLETED
-- [x] **Task 4**: Implement progress tracking and error handling for conversion operations - COMPLETED
-- [x] **Task 5**: Add mission validation before export using conversion tools - COMPLETED
-- [x] **Task 6**: Support batch import/export operations - COMPLETED
-- [x] **Task 7**: Write comprehensive tests for mission conversion workflows - COMPLETED
+- [ ] **Task 1**: Audit GFRED2 UI to find all "Open" and "Save" actions.
+- [ ] **Task 2**: Modify the "Open Mission" dialog to call `MissionFileIO.load_mission_resource`.
+- [ ] **Task 3**: Implement the logic to take the loaded `MissionData` resource and populate the editor state.
+- [ ] **Task 4**: Modify the "Save Mission" dialog to call `MissionFileIO.save_mission_resource`.
+- [ ] **Task 5**: Implement the logic to gather all current editor data into a `MissionData` resource before saving.
+- [ ] **Task 6**: Update file dialog filters to show `*.tres`, `*.res`.
+- [ ] **Task 7**: Write tests to verify the load/save cycle preserves mission data integrity.
 
 ## Testing Strategy
-- **Unit Tests**: Test mission import/export with various FS2 files
-- **Integration Tests**: Test round-trip conversion fidelity
-- **User Experience Tests**: Validate file operation workflow and error handling
-- **Performance Tests**: Ensure conversion performance meets requirements
+- **Unit Tests**: Test the `MissionFileIO` methods directly.
+- **Integration Tests**: Test the full load -> edit -> save -> reload cycle from the GFRED2 UI.
+- **User Experience Tests**: Validate that the file dialogs and workflow are intuitive.
 
 ## Notes and Comments
-**STANDARDIZATION CRITICAL**: This story eliminates duplicate mission file handling and ensures consistency with the project's conversion standards.
-
-The conversion system provides enhanced capabilities:
-- Comprehensive FS2 format support
-- Advanced error detection and recovery
-- Progress tracking for large operations
-- Validation and compatibility checking
-
-Focus on seamless integration while maintaining existing user workflows.
+**ARCHITECTURAL ALIGNMENT**: This story brings GFRED2 into alignment with the project's resource-centric architecture. It correctly separates the concerns of legacy file conversion (EPIC-003) from mission editing (EPIC-005).
 
 ---
 
@@ -123,7 +109,7 @@ Focus on seamless integration while maintaining existing user workflows.
 - **Backward Compatibility**: Existing mission editing workflows preserved
 - **Quality Standards**: Meets all BMAD Definition of Done requirements
 
-**IMPLEMENTATION RESULT**: ✅ **COMPLETE** - Story meets all requirements and is ready for production use
+**IMPLEMENTATION RESULT**: ⚠️ **INCOMPLETE** - This story's implementation summary is now outdated due to architectural changes. The focus must shift from `.fs2` conversion to `.tres` resource handling.
 
 ---
 

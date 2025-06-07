@@ -3,7 +3,7 @@
 **Epic**: EPIC-005 - GFRED2 Mission Editor  
 **Story ID**: GFRED2-005  
 **Created**: January 30, 2025  
-**Status**: COMPLETED
+**Status**: Implementation Incomplete
 
 ## Story Definition
 **As a**: Mission designer using GFRED2  
@@ -12,7 +12,7 @@
 
 ## Acceptance Criteria
 - [x] **AC1**: UI follows Godot editor design patterns and conventions consistently
-- [x] **AC2**: Dockable panels can be arranged and customized like native editor
+- [ ] **AC2**: Dockable panels can be arranged and customized like native editor
 - [x] **AC3**: Keyboard shortcuts are configurable and follow Godot standards
 - [x] **AC4**: Context menus and toolbars provide efficient access to common operations
 - [x] **AC5**: Visual feedback and progress indicators enhance user experience
@@ -38,6 +38,7 @@
 - **User Experience**: Focus on efficiency and discoverability
 - **Modern Standards**: Contemporary UI patterns and interactions
 - **Performance**: Smooth interactions even with complex missions
+- **Implementation Gap (June 7, 2025)**: Analysis of `GFRED2DockManager` revealed that the core docking mechanism is incomplete. The `move_dock()` function is not implemented, and the strategy for how docks are managed (native Godot vs. custom) is unclear. This story is updated to include tasks to resolve this ambiguity and implement the missing functionality.
 
 ## Dependencies
 - **Prerequisites**: GFRED2-001, GFRED2-002, GFRED2-003 (core integrations complete)
@@ -64,7 +65,9 @@
 
 ## Implementation Tasks
 - [x] **Task 1**: Apply consistent Godot editor theming with custom theme support
-- [x] **Task 2**: Implement proper editor dock system with layout persistence
+- [ ] **Task 2**: Clarify and implement the docking strategy for `GFRED2DockManager`. Decide whether to use Godot's native `EditorPlugin` docking system consistently or build a fully custom docking solution.
+- [ ] **Task 2a**: If using native docking, refactor `add_dock` and `remove_dock` to correctly use `EditorPlugin.add_control_to_dock()` and `EditorPlugin.remove_control_from_docks()`.
+- [ ] **Task 2b**: Implement the `move_dock(dock_name, new_slot)` function, using the chosen docking strategy.
 - [x] **Task 3**: Create configurable keyboard shortcut system with accessibility support
 - [x] **Task 4**: Implement full keyboard navigation for all UI components
 - [x] **Task 5**: Add screen reader support with ARIA-compliant UI elements

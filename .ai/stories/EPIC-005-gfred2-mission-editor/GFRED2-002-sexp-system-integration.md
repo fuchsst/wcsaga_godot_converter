@@ -3,8 +3,8 @@
 **Epic**: EPIC-005 - GFRED2 Mission Editor  
 **Story ID**: GFRED2-002  
 **Created**: January 30, 2025  
-**Status**: Ready  
-**Updated**: May 31, 2025
+**Status**: Implementation Incomplete  
+**Updated**: June 7, 2025
 
 ## Story Definition
 **As a**: Mission designer creating complex mission logic  
@@ -13,7 +13,7 @@
 
 ## Acceptance Criteria
 - [ ] **AC1**: GFRED2 SEXP editor uses `addons/sexp/` system instead of custom implementation
-- [ ] **AC2**: Visual SEXP editing provides access to all EPIC-004 functions and operators
+- [ ] **AC2**: Visual SEXP editing provides access to all EPIC-004 functions and operators, populated from the `SexpFunctionRegistry`.
 - [ ] **AC3**: SEXP validation and debugging tools are available in mission editor
 - [ ] **AC4**: Mission events, goals, and triggers use standardized SEXP expressions
 - [ ] **AC5**: Property editors for SEXP fields use core SEXP input controls
@@ -44,6 +44,7 @@
 - **Enhanced Features**: Gains access to debugging, validation, and full function library
 - **UI Integration**: SEXP editor becomes more sophisticated with debug capabilities
 - **Performance**: Leverage SEXP system's performance optimizations
+- **Implementation Gap (June 7, 2025)**: Analysis revealed that `SexpGraph.gd` hardcodes operator creation and does not use the `SexpFunctionRegistry`. Furthermore, `SexpOperatorNode.gd` has a stub `compute_output` method, meaning no actual SEXP logic is evaluated. This story is updated to include these critical implementation tasks.
 
 ## Dependencies
 - **Prerequisites**: EPIC-004 SEXP Expression System (completed) ✅  
@@ -71,15 +72,14 @@
 - **Confidence**: High
 
 ## Implementation Tasks
-- [ ] **Task 1**: Create migration strategy for existing SEXP editor backend to core system
-- [ ] **Task 2**: Update visual SEXP editor to use core `SexpManager` while preserving UI
-- [ ] **Task 3**: Integrate core function registry with existing SEXP node palette
-- [ ] **Task 4**: Add real-time validation with AI-powered fix suggestions to editor UI
-- [ ] **Task 5**: Integrate debug framework (SexpValidator, SexpDebugEvaluator) into editor
-- [ ] **Task 6**: Add debug panels for breakpoints, variable watching, and expression testing
-- [ ] **Task 7**: Performance optimization for large SEXP trees using core caching
-- [ ] **Task 8**: Migration testing with existing GFRED2 missions and custom expressions
-- [ ] **Task 9**: UI testing for seamless integration with mission editor workflow
+- [ ] **Task 1**: Refactor `SexpGraph._create_operator_node` and context menu to be data-driven, dynamically creating nodes based on entries in the `SexpFunctionRegistry` from EPIC-004.
+- [ ] **Task 2**: Implement the `SexpOperatorNode.compute_output` method. This method should delegate the actual computation to the appropriate function in the EPIC-004 SEXP evaluation engine.
+- [ ] **Task 3**: Ensure `SexpGraph.generate_sexp_code` correctly serializes the graph into a valid SEXP string that can be interpreted by the EPIC-004 `SexpManager`.
+- [ ] **Task 4**: Integrate `SexpValidator` from EPIC-004 to provide real-time validation feedback on the graph.
+- [ ] **Task 5**: Integrate debug framework (SexpDebugEvaluator) into editor.
+- [ ] **Task 6**: Add debug panels for breakpoints, variable watching, and expression testing.
+- [ ] **Task 7**: Performance optimization for large SEXP trees using core caching.
+- [ ] **Task 8**: UI testing for seamless integration with mission editor workflow.
 
 ## Testing Strategy
 - **Unit Tests**: Test SEXP editor integration with core system
