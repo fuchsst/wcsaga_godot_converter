@@ -3,7 +3,7 @@
 **Epic**: EPIC-010: AI & Behavior Systems  
 **Story ID**: AI-011  
 **Created**: 2025-06-07  
-**Status**: Draft
+**Status**: Completed
 
 ## Story Definition
 **As a**: AI pilot under attack or in dangerous situations  
@@ -11,12 +11,12 @@
 **So that**: AI ships survive longer in combat through intelligent defensive behaviors that create realistic and challenging combat scenarios
 
 ## Acceptance Criteria
-- [ ] **AC1**: Evasive maneuvers respond appropriately to incoming threats (missiles, torpedoes, enemy fire)
-- [ ] **AC2**: Defensive tactics include energy management, shield positioning, and damage avoidance strategies
-- [ ] **AC3**: Threat-specific evasion patterns optimize for different weapon types and attack vectors
-- [ ] **AC4**: Emergency behaviors trigger appropriate responses to critical damage, system failures, or overwhelming odds
-- [ ] **AC5**: Defensive coordination with wingmen includes mutual support and coordinated defensive maneuvers
-- [ ] **AC6**: Retreat behaviors execute tactical withdrawals when appropriate based on damage, odds, or mission parameters
+- [x] **AC1**: Evasive maneuvers respond appropriately to incoming threats (missiles, torpedoes, enemy fire)
+- [x] **AC2**: Defensive tactics include energy management, shield positioning, and damage avoidance strategies
+- [x] **AC3**: Threat-specific evasion patterns optimize for different weapon types and attack vectors
+- [x] **AC4**: Emergency behaviors trigger appropriate responses to critical damage, system failures, or overwhelming odds
+- [x] **AC5**: Defensive coordination with wingmen includes mutual support and coordinated defensive maneuvers
+- [x] **AC6**: Retreat behaviors execute tactical withdrawals when appropriate based on damage, odds, or mission parameters
 
 ## Technical Requirements
 - **Architecture Reference**: [Architecture.md Section: Combat AI Behavior](../docs/EPIC-010-ai-behavior-systems/architecture.md#combat-ai-behavior)
