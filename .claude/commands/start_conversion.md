@@ -4,15 +4,15 @@ You are starting a new WCS-Godot conversion project for the system: $ARGUMENTS
 
 Follow these steps:
 
-1. **Load BMAD Orchestrator**: First, load the `.bmad/ide-orchestrator.md` file to access the BMAD agent system.
+1. **Load BMAD Orchestrator**: First, load the `bmad-workflow/ide-orchestrator.md` file to access the BMAD agent system.
 
-2. **Workflow Enforcement**: Before proceeding, run the workflow enforcement checklist from `.bmad/checklists/workflow-enforcement.md` to ensure we're starting with a clean slate.
+2. **Workflow Enforcement**: Before proceeding, run the workflow enforcement checklist from `bmad-workflow/checklists/workflow-enforcement.md` to ensure we're starting with a clean slate.
 
 3. **System Analysis Phase**: 
    - Become Larry (WCS Analyst) using the orchestrator
    - Execute the "Analyze WCS System" task for the specified system
    - Focus on understanding the C++ implementation in the `source/` submodule
-   - Create a comprehensive analysis document in `.ai/docs/[system-name]-analysis.md`
+   - Create a comprehensive analysis document in `bmad-artifacts/docs/[system-name]-analysis.md`
 
 4. **Initial Planning**:
    - Identify the scope and complexity of the conversion
@@ -28,7 +28,7 @@ Follow these steps:
 **Critical Reminders**:
 - ALWAYS follow the BMAD workflow: PRD → Architecture → Stories → Implementation
 - NO shortcuts or skipping phases allowed
-- Document everything in the appropriate `.ai/` directories
+- Document everything in the appropriate `bmad-artifacts/` directories
 - Use static typing for ALL GDScript code
 - Design for Godot, don't just port C++ patterns
 

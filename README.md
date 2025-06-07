@@ -13,12 +13,12 @@ Faithfully recreate WCS gameplay and feel in Godot while leveraging modern game 
 
 ```
 wcsaga_godot_converter/
-├── .ai/                    # BMAD project artifacts
+├── bmad-artifacts/                    # BMAD project artifacts
 │   ├── docs/              # PRDs, Architecture documents
 │   ├── stories/           # User stories and tasks
 │   ├── epics/             # High-level feature groupings
 │   └── reviews/           # Approval artifacts
-├── .bmad/                 # BMAD framework (local implementation)
+├── bmad-workflow/                 # BMAD framework (local implementation)
 │   ├── personas/          # AI agent personalities
 │   ├── tasks/             # Task definitions
 │   ├── templates/         # Document templates
@@ -71,7 +71,7 @@ wcsaga_godot_converter/
    ```
 
 3. Load the BMAD orchestrator in your AI assistant:
-   - Use `.bmad/ide-orchestrator.md` as your active agent
+   - Use `bmad-workflow/ide-orchestrator.md` as your active agent
    - Reference `CLAUDE.md` for comprehensive project context
 
 ### Starting a Conversion
@@ -82,7 +82,7 @@ wcsaga_godot_converter/
    ```
 
 2. **Follow the BMAD Process**:
-   - Load the orchestrator: `.bmad/ide-orchestrator.md`
+   - Load the orchestrator: `bmad-workflow/ide-orchestrator.md`
    - Become Larry (Analyst) for C++ analysis
    - Switch to appropriate personas for each phase
    - Follow workflow enforcement rules strictly
@@ -90,7 +90,7 @@ wcsaga_godot_converter/
 3. **Quality Gates**:
    - Run workflow enforcement checklist before each phase
    - Ensure all prerequisites are met before proceeding
-   - Document everything in appropriate `.ai/` directories
+   - Document everything in appropriate `bmad-artifacts/` directories
 
 ## Development Standards
 
@@ -144,13 +144,13 @@ func take_damage(damage: float) -> void:
 ### Quality Checklists
 The project includes comprehensive quality checklists for each phase:
 
-- **`.bmad/checklists/workflow-enforcement.md`**: Overall BMAD workflow compliance
-- **`.bmad/checklists/conversion-prd-quality-checklist.md`**: PRD quality validation (Curly)
-- **`.bmad/checklists/godot-architecture-checklist.md`**: Architecture quality validation (Mo)
-- **`.bmad/checklists/godot-ui-architecture-checklist.md`**: UI architecture validation (Mo)
-- **`.bmad/checklists/story-readiness-checklist.md`**: Story readiness validation (SallySM)
-- **`.bmad/checklists/story-definition-of-done-checklist.md`**: Implementation completion (Dev/QA)
-- **`.bmad/checklists/change-management-checklist.md`**: Change impact management (All personas)
+- **`bmad-workflow/checklists/workflow-enforcement.md`**: Overall BMAD workflow compliance
+- **`bmad-workflow/checklists/conversion-prd-quality-checklist.md`**: PRD quality validation (Curly)
+- **`bmad-workflow/checklists/godot-architecture-checklist.md`**: Architecture quality validation (Mo)
+- **`bmad-workflow/checklists/godot-ui-architecture-checklist.md`**: UI architecture validation (Mo)
+- **`bmad-workflow/checklists/story-readiness-checklist.md`**: Story readiness validation (SallySM)
+- **`bmad-workflow/checklists/story-definition-of-done-checklist.md`**: Implementation completion (Dev/QA)
+- **`bmad-workflow/checklists/change-management-checklist.md`**: Change impact management (All personas)
 
 **Quality Gate Requirements:**
 - **Before Architecture**: PRD completed + run conversion PRD quality checklist
@@ -166,17 +166,17 @@ The project includes comprehensive quality checklists for each phase:
 ### Commit Schedule (MANDATORY)
 Commit changes after each major BMAD workflow step:
 
-1. **After Analysis Phase**: Commit analysis documents in `.ai/docs/`
-2. **After PRD Creation**: Commit PRD documents in `.ai/docs/`
-3. **After Architecture Design**: Commit architecture documents in `.ai/docs/`
-4. **After Story Creation**: Commit user stories in `.ai/stories/`
+1. **After Analysis Phase**: Commit analysis documents in `bmad-artifacts/docs/`
+2. **After PRD Creation**: Commit PRD documents in `bmad-artifacts/docs/`
+3. **After Architecture Design**: Commit architecture documents in `bmad-artifacts/docs/`
+4. **After Story Creation**: Commit user stories in `bmad-artifacts/stories/`
 5. **After Implementation**: Commit GDScript code in `target/` submodule + package docs
-6. **After Validation**: Commit review documents in `.ai/reviews/`
+6. **After Validation**: Commit review documents in `bmad-artifacts/reviews/`
 
 ### Git Commands for BMAD Workflow
 ```bash
-# Commit main repository artifacts (.ai/ directory changes)
-git add .ai/
+# Commit main repository artifacts (bmad-artifacts/ directory changes)
+git add bmad-artifacts/
 git commit -m "feat: [phase] - [system-name] [brief description]"
 
 # Commit target submodule (Godot project changes)
@@ -232,10 +232,10 @@ godot --path target/ -s addons/gut/gut_cmdln.gd
 
 The project includes comprehensive templates for consistent documentation:
 
-- **`.bmad/templates/conversion-prd-template.md`**: Product Requirements Documents (Curly)
-- **`.bmad/templates/wcs-conversion-brief-template.md`**: High-level project briefs (Larry/Curly)
-- **`.bmad/templates/godot-architecture-template.md`**: Technical architecture specifications (Mo)
-- **`.bmad/templates/wcs-story-template.md`**: User story creation (SallySM)
+- **`bmad-workflow/templates/conversion-prd-template.md`**: Product Requirements Documents (Curly)
+- **`bmad-workflow/templates/wcs-conversion-brief-template.md`**: High-level project briefs (Larry/Curly)
+- **`bmad-workflow/templates/godot-architecture-template.md`**: Technical architecture specifications (Mo)
+- **`bmad-workflow/templates/wcs-story-template.md`**: User story creation (SallySM)
 
 ### Package Documentation Standard
 For each significant code package/module in `target/`, create a `CLAUDE.md` file containing:
@@ -251,14 +251,14 @@ For each significant code package/module in `target/`, create a `CLAUDE.md` file
 
 ### Analysis Phase
 - **Input**: C++ source code in `source/` submodule
-- **Output**: Analysis documents in `.ai/docs/[system]-analysis.md`
-- **Templates**: Use `.bmad/templates/wcs-conversion-brief-template.md`
+- **Output**: Analysis documents in `bmad-artifacts/docs/[system]-analysis.md`
+- **Templates**: Use `bmad-workflow/templates/wcs-conversion-brief-template.md`
 - **Focus**: Understanding WCS systems and their functionality
 
 ### Architecture Phase
 - **Input**: Analysis documents and requirements
-- **Output**: Architecture documents in `.ai/docs/[system]-architecture.md`
-- **Templates**: Use `.bmad/templates/godot-architecture-template.md`
+- **Output**: Architecture documents in `bmad-artifacts/docs/[system]-architecture.md`
+- **Templates**: Use `bmad-workflow/templates/godot-architecture-template.md`
 - **Focus**: Godot-native system design and technical specifications
 
 ### Implementation Phase

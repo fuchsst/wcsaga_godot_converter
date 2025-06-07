@@ -5,14 +5,14 @@ You are initiating story creation for the epic: $ARGUMENTS
 ## Story Creation Process
 
 ### 1. Load BMAD Framework
-- Load the Story Manager persona (SallySM) from `.bmad/personas/story-manager.md`
-- Reference the story creation task from `.bmad/tasks/create-wcs-story.md`
-- Use the story template from `.bmad/templates/wcs-story-template.md`
+- Load the Story Manager persona (SallySM) from `bmad-workflow/personas/story-manager.md`
+- Reference the story creation task from `bmad-workflow/tasks/create-wcs-story.md`
+- Use the story template from `bmad-workflow/templates/wcs-story-template.md`
 
 ### 2. Prerequisites Check (CRITICAL - MUST FOLLOW)
 Before creating ANY stories, verify:
-- [ ] PRD exists and is approved in `.ai/docs/[system-name]-prd.md`
-- [ ] Architecture document exists and is approved in `.ai/docs/[system-name]-architecture.md`
+- [ ] PRD exists and is approved in `bmad-artifacts/docs/[system-name]-prd.md`
+- [ ] Architecture document exists and is approved in `bmad-artifacts/docs/[system-name]-architecture.md`
 - [ ] Epic definition and scope are established
 - [ ] Only ONE epic is currently in progress (BMAD Rule #3)
 
@@ -67,8 +67,8 @@ Run the story draft checklist:
 
 ### 6. Output Requirements
 Create well-defined user stories:
-- **Location**: `.ai/stories/[story-name].md`
-- **Template**: Use `.bmad/templates/wcs-story-template.md`
+- **Location**: `bmad-artifacts/stories/[story-name].md`
+- **Template**: Use `bmad-workflow/templates/wcs-story-template.md`
 - **Content**: Complete story with all required elements
 - **Approval**: Stories must be approved before implementation
 
@@ -83,7 +83,7 @@ Create well-defined user stories:
 - **Prerequisites**: PRD and Architecture must be approved
 - **Approval Required**: Story must be approved before implementation
 - **Quality Gates**: All checklist items must be satisfied
-- **Documentation**: Store completed story in `.ai/stories/` directory
+- **Documentation**: Store completed story in `bmad-artifacts/stories/` directory
 - **Next Phase**: Implementation cannot begin without approved story
 - **Single Epic Rule**: Ensure only one epic is in progress at a time
 

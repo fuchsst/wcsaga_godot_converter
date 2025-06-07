@@ -8,20 +8,20 @@ You are initiating the Epic creation process for: $ARGUMENTS (e.g., "Player Ship
 ## Epic Creation Process
 
 ### 1. Load BMAD Framework
-- Load the Conversion Manager persona (Curly) from `.bmad/personas/conversion-manager.md`.
-- Reference the epic definition task from `.bmad/tasks/define-wcs-epic.md`.
-- Note the epic output structure and location as defined in the task (`.ai/epics/[epic-name].md`, e.g., `.ai/epics/EPIC-001-player-ship-core-system-conversion`).
+- Load the Conversion Manager persona (Curly) from `bmad-workflow/personas/conversion-manager.md`.
+- Reference the epic definition task from `bmad-workflow/tasks/define-wcs-epic.md`.
+- Note the epic output structure and location as defined in the task (`bmad-artifacts/epics/[epic-name].md`, e.g., `bmad-artifacts/epics/EPIC-001-player-ship-core-system-conversion`).
 
 ### 2. Prerequisites Check (CRITICAL)
 Before starting Epic creation, Curly must verify:
-- [ ] An approved Conversion PRD exists for the relevant WCS system(s) or the overall project. (e.g., in `.ai/docs/`)
+- [ ] An approved Conversion PRD exists for the relevant WCS system(s) or the overall project. (e.g., in `bmad-artifacts/docs/`)
 - [ ] Overall conversion goals and strategic priorities are understood.
 - [ ] Input from WCS Analyst (Larry) regarding system complexity and scope is available or can be obtained.
 - [ ] Input from Godot Architect (Mo) regarding high-level technical feasibility is available or can be obtained.
 
 **VIOLATION CHECK**: If any prerequisite is missing, Curly must ensure these are addressed before proceeding.
 
-### 3. Epic Development Steps (as per `.bmad/tasks/define-wcs-epic.md`)
+### 3. Epic Development Steps (as per `bmad-workflow/tasks/define-wcs-epic.md`)
 Curly will lead the following process, interacting with the user and other personas as needed:
 
 1.  **Epic Identification**:
@@ -57,9 +57,9 @@ Curly ensures the defined epic meets criteria such as:
 
 ### 6. Output Requirements
 Create the epic definition document:
-- **Location**: `.ai/epics/`
+- **Location**: `bmad-artifacts/epics/`
 - **Filename**: `[EpicID]-[epic-name-slugified].md` (e.g., `EPIC-001-player-ship-core-systems-conversion.md`)
-- **Structure**: Follow the template provided in `.bmad/tasks/define-wcs-epic.md`.
+- **Structure**: Follow the template provided in `bmad-workflow/tasks/define-wcs-epic.md`.
 - **Approval**: The epic should be considered for approval by relevant stakeholders.
 
 ## Critical Reminders for Curly (Conversion Manager)
@@ -72,7 +72,7 @@ Create the epic definition document:
 ## BMAD Workflow Compliance
 - **Input**: Approved PRD, strategic goals, user feedback.
 - **Process**: Led by Conversion Manager (Curly), with input from WCS Analyst (Larry) & Godot Architect (Mo).
-- **Output**: Defined epic document in `.ai/epics/`.
+- **Output**: Defined epic document in `bmad-artifacts/epics/`.
 - **Next Steps**: Prioritized epics are handed to Story Manager (SallySM) for breakdown.
 - **Rule**: Epic definition occurs after PRD definition.
 

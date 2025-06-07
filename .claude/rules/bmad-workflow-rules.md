@@ -9,42 +9,42 @@ These rules ensure that Claude AI assistant strictly follows the BMAD methodolog
 **REQUIREMENT**: Must follow PRD → Epic Definition → Architecture → Stories → Implementation → Code Review → Validation
 
 #### Before Epic Definition
-- [ ] **STOP**: Verify PRD exists in `.ai/docs/[system]-prd.md` (or an overall project PRD).
+- [ ] **STOP**: Verify PRD exists in `bmad-artifacts/docs/[system]-prd.md` (or an overall project PRD).
 - [ ] **STOP**: Verify PRD has been approved.
-- [ ] **STOP**: Run `.bmad/checklists/conversion-prd-quality-checklist.md` (as applicable to the PRD).
+- [ ] **STOP**: Run `bmad-workflow/checklists/conversion-prd-quality-checklist.md` (as applicable to the PRD).
 - [ ] **VIOLATION**: If any check fails, REFUSE to proceed with Epic definition.
 - [ ] **NOTE**: Epic definition involves using `define-epics-list.md` (interactive with user, Larry, Mo) and then `create-epic.md` for individual epics.
 
 #### Before Architecture Design (for an Epic's scope)
-- [ ] **STOP**: Verify the parent Epic is defined in `.ai/epics/[epic-name].md` and is approved/active.
+- [ ] **STOP**: Verify the parent Epic is defined in `bmad-artifacts/epics/[epic-name].md` and is approved/active.
 - [ ] **STOP**: Verify PRD (that the Epic aligns with) exists and is approved.
 - [ ] **VIOLATION**: If any check fails, REFUSE to proceed with architecture for that Epic's scope.
 
 #### Before Story Creation (for an Epic)
 - [ ] **STOP**: Verify the parent Epic is defined, approved, and "In Progress".
-- [ ] **STOP**: Verify architecture for the Epic's scope exists in `.ai/docs/[epic-scope]-architecture.md` and is approved.
-- [ ] **STOP**: Run `.bmad/checklists/godot-architecture-checklist.md` for the relevant architecture.
+- [ ] **STOP**: Verify architecture for the Epic's scope exists in `bmad-artifacts/docs/[epic-scope]-architecture.md` and is approved.
+- [ ] **STOP**: Run `bmad-workflow/checklists/godot-architecture-checklist.md` for the relevant architecture.
 - [ ] **VIOLATION**: If any check fails, REFUSE to proceed with stories for that Epic.
 
 #### Before Implementation
-- [ ] **STOP**: Verify stories exist in `.ai/stories/`
+- [ ] **STOP**: Verify stories exist in `bmad-artifacts/stories/`
 - [ ] **STOP**: Verify stories have clear acceptance criteria
-- [ ] **STOP**: Run `.bmad/checklists/story-readiness-checklist.md`
+- [ ] **STOP**: Run `bmad-workflow/checklists/story-readiness-checklist.md`
 - [ ] **VIOLATION**: If any check fails, REFUSE to proceed with implementation
 
 #### Before Feature Completion
 - [ ] **STOP**: Verify all acceptance criteria met
-- [ ] **STOP**: Run `.bmad/checklists/story-definition-of-done-checklist.md`
+- [ ] **STOP**: Run `bmad-workflow/checklists/story-definition-of-done-checklist.md`
 - [ ] **VIOLATION**: If any check fails, REFUSE to mark feature complete
 
 #### Before Code Review
 - [ ] **STOP**: Verify implementation is complete for the story.
-- [ ] **STOP**: Verify the story has passed its Definition of Done checklist (`.bmad/checklists/story-definition-of-done-checklist.md`), signed off by Dev.
+- [ ] **STOP**: Verify the story has passed its Definition of Done checklist (`bmad-workflow/checklists/story-definition-of-done-checklist.md`), signed off by Dev.
 - [ ] **VIOLATION**: If any check fails, REFUSE to proceed with Code Review. Implementation needs to be finalized first.
 
 #### Before Validation
 - [ ] **STOP**: Verify a code review has been conducted by QA and Godot Architect for the implemented story.
-- [ ] **STOP**: Check for the existence of a corresponding review document in `.ai/reviews/[epic-name]/[story-id]-review.md`.
+- [ ] **STOP**: Check for the existence of a corresponding review document in `bmad-artifacts/reviews/[epic-name]/[story-id]-review.md`.
 - [ ] **STOP**: Verify all critical/major issues identified in the code review document have either been addressed or have new user stories/tasks created and prioritized for them.
 - [ ] **VIOLATION**: If any check fails, REFUSE to proceed with final feature validation until code review feedback is appropriately handled.
 
@@ -52,11 +52,11 @@ These rules ensure that Claude AI assistant strictly follows the BMAD methodolog
 **REQUIREMENT**: All artifacts must be committed after each phase
 
 #### Git Workflow Enforcement
-- [ ] **STOP**: After analysis, verify `.ai/docs/[system]-analysis.md` is committed.
-- [ ] **STOP**: After PRD, verify `.ai/docs/[system]-prd.md` is committed.
-- [ ] **STOP**: After Epic Definition (both list and individual epics), verify `.ai/epics/` files are committed.
-- [ ] **STOP**: After architecture, verify `.ai/docs/[system]-architecture.md` (or `[epic-scope]-architecture.md`) is committed.
-- [ ] **STOP**: After stories, verify `.ai/stories/` files are committed.
+- [ ] **STOP**: After analysis, verify `bmad-artifacts/docs/[system]-analysis.md` is committed.
+- [ ] **STOP**: After PRD, verify `bmad-artifacts/docs/[system]-prd.md` is committed.
+- [ ] **STOP**: After Epic Definition (both list and individual epics), verify `bmad-artifacts/epics/` files are committed.
+- [ ] **STOP**: After architecture, verify `bmad-artifacts/docs/[system]-architecture.md` (or `[epic-scope]-architecture.md`) is committed.
+- [ ] **STOP**: After stories, verify `bmad-artifacts/stories/` files are committed.
 - [ ] **STOP**: After implementation, verify `target/` submodule is committed.
 - [ ] **VIOLATION**: If artifacts not committed, REFUSE to proceed to next phase.
 
@@ -64,24 +64,24 @@ These rules ensure that Claude AI assistant strictly follows the BMAD methodolog
 **REQUIREMENT**: All documents must use specified templates
 
 #### Template Enforcement
-- [ ] **PRD Creation**: MUST use `.bmad/templates/conversion-prd-template.md`.
-- [ ] **Epic Definition**: MUST use `.bmad/templates/wcs-epic-template.md`.
-- [ ] **Architecture Design**: MUST use `.bmad/templates/godot-architecture-template.md`.
-- [ ] **Story Creation**: MUST use `.bmad/templates/wcs-story-template.md`.
-- [ ] **Project Briefs**: MUST use `.bmad/templates/wcs-conversion-brief-template.md`.
+- [ ] **PRD Creation**: MUST use `bmad-workflow/templates/conversion-prd-template.md`.
+- [ ] **Epic Definition**: MUST use `bmad-workflow/templates/wcs-epic-template.md`.
+- [ ] **Architecture Design**: MUST use `bmad-workflow/templates/godot-architecture-template.md`.
+- [ ] **Story Creation**: MUST use `bmad-workflow/templates/wcs-story-template.md`.
+- [ ] **Project Briefs**: MUST use `bmad-workflow/templates/wcs-conversion-brief-template.md`.
 - [ ] **VIOLATION**: If wrong template used, REFUSE to proceed.
 
 ### Rule 4: Quality Gate Compliance (MANDATORY)
 **REQUIREMENT**: All quality checklists must be completed
 
 #### Checklist Enforcement
-- [ ] **Before Epic Definition**: Run `.bmad/checklists/conversion-prd-quality-checklist.md` (for the PRD).
-- [ ] **After Epic Definition (Before Approval/Architecture)**: Run `.bmad/checklists/epic-quality-checklist.md`.
+- [ ] **Before Epic Definition**: Run `bmad-workflow/checklists/conversion-prd-quality-checklist.md` (for the PRD).
+- [ ] **After Epic Definition (Before Approval/Architecture)**: Run `bmad-workflow/checklists/epic-quality-checklist.md`.
 - [ ] **Before Architecture Design (for an Epic's scope)**: Ensure parent Epic passed its quality checklist.
-- [ ] **Before Story Creation**: Run `.bmad/checklists/godot-architecture-checklist.md` (for the relevant architecture).
-- [ ] **Before Implementation**: Run `.bmad/checklists/story-readiness-checklist.md`.
-- [ ] **Before Completion (Story)**: Run `.bmad/checklists/story-definition-of-done-checklist.md`.
-- [ ] **For Changes**: Run `.bmad/checklists/change-management-checklist.md`.
+- [ ] **Before Story Creation**: Run `bmad-workflow/checklists/godot-architecture-checklist.md` (for the relevant architecture).
+- [ ] **Before Implementation**: Run `bmad-workflow/checklists/story-readiness-checklist.md`.
+- [ ] **Before Completion (Story)**: Run `bmad-workflow/checklists/story-definition-of-done-checklist.md`.
+- [ ] **For Changes**: Run `bmad-workflow/checklists/change-management-checklist.md`.
 - [ ] **VIOLATION**: If checklist not completed or failed, REFUSE to proceed.
 
 ### Rule 5: Single Epic Focus (MANDATORY)
@@ -138,33 +138,33 @@ Development HALTED until explicit approval to resume.
 
 ### Larry (WCS Analyst)
 - MUST reference specific files in `source/` submodule
-- MUST create analysis documents in `.ai/docs/`
-- MUST use `.bmad/templates/wcs-conversion-brief-template.md`
+- MUST create analysis documents in `bmad-artifacts/docs/`
+- MUST use `bmad-workflow/templates/wcs-conversion-brief-template.md`
 
 ### Curly (Conversion Manager)
-- MUST use `.bmad/templates/conversion-prd-template.md` for PRDs.
-- MUST use `.bmad/templates/wcs-epic-template.md` for Epics.
-- MUST run `.bmad/checklists/conversion-prd-quality-checklist.md` for PRDs.
-- MUST run `.bmad/checklists/epic-quality-checklist.md` for Epics.
+- MUST use `bmad-workflow/templates/conversion-prd-template.md` for PRDs.
+- MUST use `bmad-workflow/templates/wcs-epic-template.md` for Epics.
+- MUST run `bmad-workflow/checklists/conversion-prd-quality-checklist.md` for PRDs.
+- MUST run `bmad-workflow/checklists/epic-quality-checklist.md` for Epics.
 - MUST lead Epic definition using `define-epics-list` and `create-epic` commands.
 - MUST ensure single epic focus for "In Progress" development.
 
 ### Mo (Godot Architect)
-- MUST use `.bmad/templates/godot-architecture-template.md`.
-- MUST run `.bmad/checklists/godot-architecture-checklist.md`.
+- MUST use `bmad-workflow/templates/godot-architecture-template.md`.
+- MUST run `bmad-workflow/checklists/godot-architecture-checklist.md`.
 - MUST enforce Godot-native design patterns.
 - MUST collaborate on Epic definition by providing high-level feasibility.
 
 ### SallySM (Story Manager)
-- MUST use `.bmad/templates/wcs-story-template.md`.
-- MUST run `.bmad/checklists/story-readiness-checklist.md`.
+- MUST use `bmad-workflow/templates/wcs-story-template.md`.
+- MUST run `bmad-workflow/checklists/story-readiness-checklist.md`.
 - MUST ensure stories are derived from an approved and active Epic.
 - MUST enforce workflow compliance regarding Epic-to-Story flow.
 
 ### Dev (GDScript Developer)
 - MUST enforce 100% static typing
 - MUST create brief `CLAUDE.md` for code packages
-- MUST run `.bmad/checklists/story-definition-of-done-checklist.md`
+- MUST run `bmad-workflow/checklists/story-definition-of-done-checklist.md`
 
 ### QA (Quality Assurance)
 - MUST validate all quality checklists

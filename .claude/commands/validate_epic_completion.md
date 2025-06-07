@@ -5,8 +5,8 @@ You are initiating QA validation for the Epic: $ARGUMENTS
 ## Validation Process
 
 ### 1. Load BMAD Framework
-- Load the QA Specialist persona (QA) from `.bmad/personas/qa-specialist.md`.
-- Reference the completed Epic definition (`.ai/epics/[epic-name].md`).
+- Load the QA Specialist persona (QA) from `bmad-workflow/personas/qa-specialist.md`.
+- Reference the completed Epic definition (`bmad-artifacts/epics/[epic-name].md`).
 - Review all constituent story files and their `[story-id]-review.md` documents.
 - Review the original WCS system analysis and architecture documents relevant to the Epic.
 
@@ -14,7 +14,7 @@ You are initiating QA validation for the Epic: $ARGUMENTS
 Before starting Epic validation, verify:
 - [ ] The Epic (identified by $ARGUMENTS) is defined and marked as "Implementation Complete" or "Ready for Epic Validation".
 - [ ] All user stories within this Epic are marked as "Complete" (implemented and passed individual code reviews).
-- [ ] For each story in the Epic, a `[story-id]-review.md` document exists in `.ai/reviews/[epic-name]/`.
+- [ ] For each story in the Epic, a `[story-id]-review.md` document exists in `bmad-artifacts/reviews/[epic-name]/`.
 - [ ] All critical and major issues identified in these story-level review documents have been addressed, or have new user stories/tasks created and prioritized.
 - [ ] The Epic's high-level acceptance criteria are clearly defined in its definition file.
 
@@ -47,7 +47,7 @@ Follow QA's comprehensive testing approach:
 ### 4. Testing Procedures
 
 #### Epic Validation Process
-1.  **Review Epic Definition**: Understand the Epic's scope, value proposition, and high-level acceptance criteria from `.ai/epics/[epic-name].md`.
+1.  **Review Epic Definition**: Understand the Epic's scope, value proposition, and high-level acceptance criteria from `bmad-artifacts/epics/[epic-name].md`.
 2.  **Confirm Story Completion & Review Resolution**:
     *   Verify all associated user stories are complete.
     *   Review all `[story-id]-review.md` documents for the Epic's stories.
@@ -130,7 +130,7 @@ Follow QA's comprehensive testing approach:
 ### 7. Output Requirements
 Generate a comprehensive Epic validation report:
 - **Filename**: `[epic-id]-validation.md` (e.g., `EPIC-001-core-systems-validation.md`).
-- **Location**: `.ai/reviews/epics/` (or a similar dedicated directory for Epic-level reviews).
+- **Location**: `bmad-artifacts/reviews/epics/` (or a similar dedicated directory for Epic-level reviews).
 - **Content**: Detailed test results for Epic-level validation, performance metrics, overall quality assessment of the Epic.
 - **Decision**: EPIC APPROVED / EPIC NEEDS REVISION / EPIC REJECTED with specific reasons.
 - **Recommendations**: Specific improvements if not approved, or suggestions for future related Epics.
@@ -159,7 +159,7 @@ Generate a comprehensive Epic validation report:
 - **Status**: EPIC APPROVED / EPIC NEEDS REVISION / EPIC REJECTED
 
 ## 1. Epic Overview
-- **Epic Definition**: [Link to `.ai/epics/[epic-name].md`]
+- **Epic Definition**: [Link to `bmad-artifacts/epics/[epic-name].md`]
 - **Summary of Scope**: [Briefly reiterate the Epic's main goals and deliverables.]
 
 ## 2. Story Completion & Review Confirmation

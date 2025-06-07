@@ -5,7 +5,7 @@ You are performing a comprehensive BMAD workflow compliance check for the WCS-Go
 ## Workflow Compliance Verification
 
 ### 1. Load Workflow Enforcement Checklist
-First, reference the workflow enforcement checklist from `.bmad/checklists/workflow-enforcement.md` to understand all critical rules and requirements.
+First, reference the workflow enforcement checklist from `bmad-workflow/checklists/workflow-enforcement.md` to understand all critical rules and requirements.
 
 ### 2. Check Sequential Phase Progression
 Verify that the project is following the required sequence: PRD → Architecture → Stories → Implementation → Validation
@@ -18,7 +18,7 @@ Verify that the project is following the required sequence: PRD → Architecture
 
 ### 3. Validate Single Epic Focus Rule
 Ensure only one epic is in progress at a time:
-- Check `.ai/epics/` directory for multiple "in-progress" epics
+- Check `bmad-artifacts/epics/` directory for multiple "in-progress" epics
 - Verify current epic status and scope
 - Flag any violations of the single epic rule
 
@@ -32,9 +32,9 @@ Check that all quality gates are being properly executed:
 
 ### 5. Verify Documentation Standards
 Ensure all BMAD artifacts are properly documented:
-- Check `.ai/docs/` for required PRD and architecture documents
-- Verify `.ai/stories/` contains properly formatted user stories
-- Confirm `.ai/reviews/` has approval documentation
+- Check `bmad-artifacts/docs/` for required PRD and architecture documents
+- Verify `bmad-artifacts/stories/` contains properly formatted user stories
+- Confirm `bmad-artifacts/reviews/` has approval documentation
 - Validate that all documents follow established templates
 
 ### 6. Check Code Quality Standards

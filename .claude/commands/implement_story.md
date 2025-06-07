@@ -5,13 +5,13 @@ You are initiating implementation for the story: $ARGUMENTS
 ## Implementation Process
 
 ### 1. Load BMAD Framework
-- Load the GDScript Developer persona (Dev) from `.bmad/personas/gdscript-developer.md`
-- Reference the story file from `.ai/stories/[story-name].md`
+- Load the GDScript Developer persona (Dev) from `bmad-workflow/personas/gdscript-developer.md`
+- Reference the story file from `bmad-artifacts/stories/[story-name].md`
 - Review the architecture document for technical specifications
 
 ### 2. Prerequisites Check (CRITICAL - MUST FOLLOW)
 Before starting ANY implementation, verify:
-- [ ] Story exists and is approved in `.ai/stories/[story-name].md`
+- [ ] Story exists and is approved in `bmad-artifacts/stories/[story-name].md`
 - [ ] Architecture document exists and is approved
 - [ ] All story dependencies are completed
 - [ ] Story has clear, testable acceptance criteria

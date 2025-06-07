@@ -8,8 +8,8 @@ You are initiating WCS code analysis for the system: $ARGUMENTS (e.g., "Player S
 ## Analysis Process
 
 ### 1. Load BMAD Framework
-- Load the WCS Analyst persona (Larry) from `.bmad/personas/wcs-analyst.md`.
-- Reference the WCS system analysis task from `.bmad/tasks/analyze-wcs-system.md`.
+- Load the WCS Analyst persona (Larry) from `bmad-workflow/personas/wcs-analyst.md`.
+- Reference the WCS system analysis task from `bmad-workflow/tasks/analyze-wcs-system.md`.
 
 ### 2. Prerequisites Check
 Before starting analysis, Larry must verify:
@@ -18,7 +18,7 @@ Before starting analysis, Larry must verify:
 - [ ] **Scope Definition** (clear boundaries of what aspects to focus on) has been provided or can be clarified with the user/Conversion Manager.
 - [ ] **Analysis Depth** (overview, detailed, or deep-dive) has been specified or can be clarified.
 
-### 3. Analysis Steps (as per `.bmad/tasks/analyze-wcs-system.md`)
+### 3. Analysis Steps (as per `bmad-workflow/tasks/analyze-wcs-system.md`)
 Larry will follow the structured approach outlined in the task, including:
 
 1.  **System Identification**:
@@ -39,14 +39,14 @@ Larry will follow the structured approach outlined in the task, including:
     *   Employ Bash commands (as detailed in Larry's persona) for efficient code exploration, pattern matching, and dependency tracing within the `source/` C++ codebase.
 
 ### 4. Quality Validation
-Larry must ensure the analysis meets the criteria in the **WCS System Analysis Quality Checklist** (`.bmad/checklists/wcs-analysis-quality-checklist.md`). This includes verifying:
+Larry must ensure the analysis meets the criteria in the **WCS System Analysis Quality Checklist** (`bmad-workflow/checklists/wcs-analysis-quality-checklist.md`). This includes verifying:
 - [ ] Completeness and accuracy of the main analysis document (`[system-name]-analysis.md`).
 - [ ] Completeness and accuracy of the supplementary `[system-name]-source-files.md`.
 - [ ] Thoroughness and accuracy of the supplementary `[system-name]-source-dependencies.md`.
 - [ ] All sections of the checklist are satisfactorily addressed.
 
 ### 5. Output Requirements
-Produce three documents in the `.ai/docs/` directory:
+Produce three documents in the `bmad-artifacts/docs/` directory:
 1.  **Main Analysis Document**: `[system-name]-analysis.md` (following the structure in the task).
 2.  **Source Files List**: `[system-name]-source-files.md` (listing relevant .cpp and .h files with brief descriptions).
 3.  **Source Dependencies Map**: `[system-name]-source-dependencies.md` (mapping how key files are included/used by others).
@@ -62,7 +62,7 @@ Produce three documents in the `.ai/docs/` directory:
 ## BMAD Workflow Compliance
 - **Input**: System Name, Scope Definition, and Analysis Depth from user or Conversion Manager.
 - **Process**: Deep C++ code analysis of the specified WCS system within the `source/` submodule.
-- **Output**: Three analysis documents (`[system-name]-analysis.md`, `[system-name]-source-files.md`, `[system-name]-source-dependencies.md`) in `.ai/docs/`.
+- **Output**: Three analysis documents (`[system-name]-analysis.md`, `[system-name]-source-files.md`, `[system-name]-source-dependencies.md`) in `bmad-artifacts/docs/`.
 - **Next Steps**: The completed analysis package feeds into the Godot Architect (Mo) for system design and the Conversion Manager (Curly) for PRD creation.
 
 Begin WCS code analysis for system: $ARGUMENTS

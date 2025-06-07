@@ -8,8 +8,8 @@ This project converts Wing Commander Saga (WCS) from C++ to Godot Engine using G
 ## BMAD Agent System Integration
 
 ### Orchestrator Access
-- **Main Orchestrator**: `.bmad/ide-orchestrator.md`
-- **Configuration**: `.bmad/orchestrator-config.md`
+- **Main Orchestrator**: `bmad-workflow/ide-orchestrator.md`
+- **Configuration**: `bmad-workflow/orchestrator-config.md`
 - **Usage**: Load the orchestrator to access specialized personas for different development phases
 
 ### Available Personas
@@ -36,7 +36,7 @@ This project converts Wing Commander Saga (WCS) from C++ to Godot Engine using G
 ### Directory Organization
 ```
 wcsaga_godot_converter/
-├── .ai/                    # BMAD project artifacts
+├── bmad-artifacts/                    # BMAD project artifacts
 │   ├── docs/              # PRDs, Architecture documents (organized by epic)
 │   │   ├── epic-001-core-foundation-infrastructure/
 │   │   ├── epic-002-asset-structures-management/
@@ -50,7 +50,7 @@ wcsaga_godot_converter/
 │       ├── epic-001-core-foundation-infrastructure/
 │       ├── epic-002-asset-structures-management/
 │       └── [epic-name]/   # Review documents per epic
-├── .bmad/                 # BMAD framework (local copy)
+├── bmad-workflow/                 # BMAD framework (local copy)
 │   ├── personas/          # Agent personalities
 │   ├── tasks/             # Task definitions
 │   ├── templates/         # Document templates
@@ -69,12 +69,12 @@ wcsaga_godot_converter/
 ### Folder Structure Rules
 All BMAD artifacts MUST be organized by epic to maintain project clarity and enable effective tracking:
 
-- **Analysis Documents**: `.ai/docs/[epic-name]/analysis.md`
-- **PRD Documents**: `.ai/docs/[epic-name]/prd.md` 
-- **Architecture Documents**: `.ai/docs/[epic-name]/architecture.md`
-- **User Stories**: `.ai/stories/[epic-name]/[STORY-ID]-[story-name].md`
-- **Review Documents**: `.ai/reviews/[epic-name]/[review-type].md`
-- **Epic Definitions**: `.ai/epics/[epic-name].md`
+- **Analysis Documents**: `bmad-artifacts/docs/[epic-name]/analysis.md`
+- **PRD Documents**: `bmad-artifacts/docs/[epic-name]/prd.md` 
+- **Architecture Documents**: `bmad-artifacts/docs/[epic-name]/architecture.md`
+- **User Stories**: `bmad-artifacts/stories/[epic-name]/[STORY-ID]-[story-name].md`
+- **Review Documents**: `bmad-artifacts/reviews/[epic-name]/[review-type].md`
+- **Epic Definitions**: `bmad-artifacts/epics/[epic-name].md`
 
 ### Epic Naming Convention
 Epic folders follow the pattern: `epic-XXX-{main-component}-{sub-system}-{category}`
@@ -92,7 +92,7 @@ Each BMAD agent MUST:
 4. **Maintain epic boundaries** - don't mix work across different epics
 
 ### Epic Lifecycle Tracking
-The epic document (`.ai/epics/[epic-name].md`) serves as the central hub for:
+The epic document (`bmad-artifacts/epics/[epic-name].md`) serves as the central hub for:
 - Epic status and progress tracking
 - Links to all related artifacts
 - Summary of key findings and decisions
@@ -169,7 +169,7 @@ Godot_v4.4.1-stable_win64 --path target/ --check-only --headless --script-editor
 ```
 
 ### BMAD Workflow Commands
-- Load `.bmad/ide-orchestrator.md` as your active agent
+- Load `bmad-workflow/ide-orchestrator.md` as your active agent
 - Use `/analyst` to become Larry for C++ analysis
 - Use `/architect` to become Mo for Godot design
 - Use `/dev` to become Dev for GDScript implementation
@@ -187,7 +187,7 @@ Godot_v4.4.1-stable_win64 --path target/ --check-only --headless --script-editor
 - Focus on gameplay-critical systems first
 - Document data flow and system interactions
 - Identify performance-critical sections
-- Create detailed analysis reports in `.ai/docs/`
+- Create detailed analysis reports in `bmad-artifacts/docs/`
 
 ### Architecture Phase (Mo)
 - Design Godot-native solutions, not direct C++ ports
@@ -217,7 +217,7 @@ Godot_v4.4.1-stable_win64 --path target/ --check-only --headless --script-editor
 - **Location**: `source/` submodule contains WCS C++ code
 - **Focus Areas**: `source/code/` directory structure
 - **Key Systems**: Ship movement, weapons, AI, UI, missions
-- **Analysis Output**: Store in `.ai/docs/[epic-name]/[system]-analysis.md`
+- **Analysis Output**: Store in `bmad-artifacts/docs/[epic-name]/[system]-analysis.md`
 
 ### Godot Implementation
 - **Location**: `target/` submodule contains Godot project
@@ -226,40 +226,40 @@ Godot_v4.4.1-stable_win64 --path target/ --check-only --headless --script-editor
 - **Asset Management**: Efficient resource loading patterns
 
 ### BMAD Artifacts (Epic-Based Organization)
-- **PRDs**: Product requirements in `.ai/docs/[epic-name]/`
-- **Architecture**: Technical specifications in `.ai/docs/[epic-name]/`
-- **Stories**: Implementation tasks in `.ai/stories/[epic-name]/`
-- **Reviews**: Approval documentation in `.ai/reviews/[epic-name]/`
-- **Epic Tracking**: Epic definitions and status in `.ai/epics/[epic-name].md`
+- **PRDs**: Product requirements in `bmad-artifacts/docs/[epic-name]/`
+- **Architecture**: Technical specifications in `bmad-artifacts/docs/[epic-name]/`
+- **Stories**: Implementation tasks in `bmad-artifacts/stories/[epic-name]/`
+- **Reviews**: Approval documentation in `bmad-artifacts/reviews/[epic-name]/`
+- **Epic Tracking**: Epic definitions and status in `bmad-artifacts/epics/[epic-name].md`
 
 ## Quality Gates & Checklists
 
 ### Available Quality Checklists
-- **`.bmad/checklists/workflow-enforcement.md`**: Overall BMAD workflow compliance
-- **`.bmad/checklists/conversion-prd-quality-checklist.md`**: PRD quality validation (Curly)
-- **`.bmad/checklists/godot-architecture-checklist.md`**: Architecture quality validation (Mo)
-- **`.bmad/checklists/godot-ui-architecture-checklist.md`**: UI architecture validation (Mo)
-- **`.bmad/checklists/story-readiness-checklist.md`**: Story readiness validation (SallySM)
-- **`.bmad/checklists/story-definition-of-done-checklist.md`**: Implementation completion (Dev/QA)
-- **`.bmad/checklists/change-management-checklist.md`**: Change impact management (Curly/SallySM)
+- **`bmad-workflow/checklists/workflow-enforcement.md`**: Overall BMAD workflow compliance
+- **`bmad-workflow/checklists/conversion-prd-quality-checklist.md`**: PRD quality validation (Curly)
+- **`bmad-workflow/checklists/godot-architecture-checklist.md`**: Architecture quality validation (Mo)
+- **`bmad-workflow/checklists/godot-ui-architecture-checklist.md`**: UI architecture validation (Mo)
+- **`bmad-workflow/checklists/story-readiness-checklist.md`**: Story readiness validation (SallySM)
+- **`bmad-workflow/checklists/story-definition-of-done-checklist.md`**: Implementation completion (Dev/QA)
+- **`bmad-workflow/checklists/change-management-checklist.md`**: Change impact management (Curly/SallySM)
 
 ### Before Architecture Design
 - [ ] WCS system analysis completed and approved
 - [ ] System requirements clearly defined
 - [ ] Dependencies identified and documented
-- [ ] Run `.bmad/checklists/conversion-prd-quality-checklist.md`
+- [ ] Run `bmad-workflow/checklists/conversion-prd-quality-checklist.md`
 
 ### Before Story Creation
 - [ ] Architecture document completed and approved
 - [ ] Technical specifications are detailed and actionable
 - [ ] Integration points clearly defined
-- [ ] Run `.bmad/checklists/godot-architecture-checklist.md`
+- [ ] Run `bmad-workflow/checklists/godot-architecture-checklist.md`
 
 ### Before Implementation
 - [ ] User stories have clear acceptance criteria
 - [ ] Architecture specifications are complete
 - [ ] Dependencies are resolved or planned
-- [ ] Run `.bmad/checklists/story-readiness-checklist.md`
+- [ ] Run `bmad-workflow/checklists/story-readiness-checklist.md`
 
 ### Before Feature Completion
 - [ ] All acceptance criteria met
@@ -267,7 +267,7 @@ Godot_v4.4.1-stable_win64 --path target/ --check-only --headless --script-editor
 - [ ] Code review completed
 - [ ] Documentation updated
 - [ ] Performance validated
-- [ ] Run `.bmad/checklists/story-definition-of-done-checklist.md`
+- [ ] Run `bmad-workflow/checklists/story-definition-of-done-checklist.md`
 
 ## Critical Rules (ENFORCED BY BMAD)
 
@@ -287,17 +287,17 @@ Godot_v4.4.1-stable_win64 --path target/ --check-only --headless --script-editor
 **CRITICAL**: All generated artifacts and code must be committed after each major BMAD workflow step to maintain project integrity and track progress.
 
 ### Commit Schedule
-- **After Analysis**: Commit `.ai/docs/[system]-analysis.md` and related documents
-- **After PRD Creation**: Commit `.ai/docs/[system]-prd.md` and project briefs
-- **After Architecture**: Commit `.ai/docs/[system]-architecture.md` and specifications
-- **After Story Creation**: Commit `.ai/stories/[story-files].md` and epic updates
+- **After Analysis**: Commit `bmad-artifacts/docs/[system]-analysis.md` and related documents
+- **After PRD Creation**: Commit `bmad-artifacts/docs/[system]-prd.md` and project briefs
+- **After Architecture**: Commit `bmad-artifacts/docs/[system]-architecture.md` and specifications
+- **After Story Creation**: Commit `bmad-artifacts/stories/[story-files].md` and epic updates
 - **After Implementation**: Commit `target/` submodule code + `CLAUDE.md` package docs
-- **After Validation**: Commit `.ai/reviews/[validation-reports].md` and approvals
+- **After Validation**: Commit `bmad-artifacts/reviews/[validation-reports].md` and approvals
 
 ### Git Commands for Each Phase
 ```bash
 # Main repository (BMAD artifacts)
-git add .ai/
+git add bmad-artifacts/
 git commit -m "[phase]: [system-name] - [description]"
 
 # Target submodule (Godot project)

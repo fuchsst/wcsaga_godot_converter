@@ -8,11 +8,11 @@ You are initiating the process to define the list of Epics for: $ARGUMENTS (e.g.
 ## Epic List Definition Process
 
 ### 1. Load BMAD Framework
-- Load the Conversion Manager persona (Curly) from `.bmad/personas/conversion-manager.md`.
+- Load the Conversion Manager persona (Curly) from `bmad-workflow/personas/conversion-manager.md`.
 - Curly will also need to interact with:
-    - WCS Analyst (Larry) from `.bmad/personas/wcs-analyst.md`
-    - Godot Architect (Mo) from `.bmad/personas/godot-architect.md`
-- Reference the epic definition task from `.bmad/tasks/define-wcs-epic.md` for understanding what an epic entails.
+    - WCS Analyst (Larry) from `bmad-workflow/personas/wcs-analyst.md`
+    - Godot Architect (Mo) from `bmad-workflow/personas/godot-architect.md`
+- Reference the epic definition task from `bmad-workflow/tasks/define-wcs-epic.md` for understanding what an epic entails.
 
 ### 2. Prerequisites Check (CRITICAL)
 Before starting, Curly must verify:
@@ -61,7 +61,7 @@ Curly will lead the following collaborative process:
     ```
 
 2.  **Creation of Placeholder Epic Files**:
-    *   For each identified epic in the final list, Curly will instruct the system to create a placeholder markdown file in the `.ai/epics/` directory.
+    *   For each identified epic in the final list, Curly will instruct the system to create a placeholder markdown file in the `bmad-artifacts/epics/` directory.
     *   **Filename**: `[EpicID]-[epic-name-slugified].md` (e.g., `EPIC-001-player-ship-core-systems-conversion.md`).
     *   **Content of Placeholder File**: Minimal content, just enough to establish the epic.
         ```markdown
@@ -76,7 +76,7 @@ Curly will lead the following collaborative process:
     *   Curly will confirm with the user once these placeholder files have been (notionally) created.
 
 ### 5. Next Steps
-- After this command, individual epics from the list can be fully defined using the `create-epic` command (which uses `.bmad/tasks/define-wcs-epic.md`).
+- After this command, individual epics from the list can be fully defined using the `create-epic` command (which uses `bmad-workflow/tasks/define-wcs-epic.md`).
 - The user can then prioritize which epic to detail first.
 
 ## Critical Reminders for Curly (Conversion Manager)

@@ -46,12 +46,12 @@ This configuration file defines how Claude should enforce BMAD workflow rules an
 
 | Phase | Required Template | Checklist | Output Location |
 |-------|------------------|-----------|-----------------|
-| Analysis | `wcs-conversion-brief-template.md` | N/A | `.ai/docs/[system]-analysis.md` |
-| PRD | `conversion-prd-template.md` | `conversion-prd-quality-checklist.md` | `.ai/docs/[system]-prd.md` |
-| Architecture | `godot-architecture-template.md` | `godot-architecture-checklist.md` | `.ai/docs/[system]-architecture.md` |
-| Stories | `wcs-story-template.md` | `story-readiness-checklist.md` | `.ai/stories/[story-name].md` |
+| Analysis | `wcs-conversion-brief-template.md` | N/A | `bmad-artifacts/docs/[system]-analysis.md` |
+| PRD | `conversion-prd-template.md` | `conversion-prd-quality-checklist.md` | `bmad-artifacts/docs/[system]-prd.md` |
+| Architecture | `godot-architecture-template.md` | `godot-architecture-checklist.md` | `bmad-artifacts/docs/[system]-architecture.md` |
+| Stories | `wcs-story-template.md` | `story-readiness-checklist.md` | `bmad-artifacts/stories/[story-name].md` |
 | Implementation | Package docs | `story-definition-of-done-checklist.md` | `target/` + `CLAUDE.md` |
-| Validation | Review reports | All applicable checklists | `.ai/reviews/[feature]-validation.md` |
+| Validation | Review reports | All applicable checklists | `bmad-artifacts/reviews/[feature]-validation.md` |
 
 ## Persona Enforcement Rules
 
@@ -61,7 +61,7 @@ required_inputs:
   - source_code: "source/" submodule
   - system_focus: Specific WCS system to analyze
 mandatory_outputs:
-  - analysis_document: ".ai/docs/[system]-analysis.md"
+  - analysis_document: "bmad-artifacts/docs/[system]-analysis.md"
   - conversion_brief: Uses "wcs-conversion-brief-template.md"
 quality_gates:
   - technical_accuracy: Must reference actual source code
@@ -75,7 +75,7 @@ required_inputs:
   - analysis_document: From Larry
   - business_requirements: Stakeholder input
 mandatory_outputs:
-  - prd_document: ".ai/docs/[system]-prd.md"
+  - prd_document: "bmad-artifacts/docs/[system]-prd.md"
   - project_brief: Uses "wcs-conversion-brief-template.md"
 quality_gates:
   - checklist: "conversion-prd-quality-checklist.md"
@@ -89,7 +89,7 @@ required_inputs:
   - prd_document: From Curly (approved)
   - technical_constraints: Godot capabilities and limitations
 mandatory_outputs:
-  - architecture_document: ".ai/docs/[system]-architecture.md"
+  - architecture_document: "bmad-artifacts/docs/[system]-architecture.md"
   - technical_specifications: Detailed implementation guidance
 quality_gates:
   - checklist: "godot-architecture-checklist.md"
@@ -103,7 +103,7 @@ required_inputs:
   - architecture_document: From Mo (approved)
   - epic_definition: High-level feature grouping
 mandatory_outputs:
-  - user_stories: ".ai/stories/[story-name].md"
+  - user_stories: "bmad-artifacts/stories/[story-name].md"
   - epic_breakdown: Complete story mapping
 quality_gates:
   - checklist: "story-readiness-checklist.md"
@@ -132,7 +132,7 @@ required_inputs:
   - implemented_features: From Dev
   - acceptance_criteria: From user stories
 mandatory_outputs:
-  - validation_reports: ".ai/reviews/[feature]-validation.md"
+  - validation_reports: "bmad-artifacts/reviews/[feature]-validation.md"
   - approval_documentation: Quality gate completion
 quality_gates:
   - feature_parity: Matches WCS original behavior
@@ -188,13 +188,13 @@ git_workflow_violation:
 ### File System Monitoring
 ```yaml
 watch_directories:
-  - ".ai/docs/": "PRD and architecture documents"
-  - ".ai/stories/": "User stories and epic definitions"
-  - ".ai/reviews/": "Validation and approval documents"
+  - "bmad-artifacts/docs/": "PRD and architecture documents"
+  - "bmad-artifacts/stories/": "User stories and epic definitions"
+  - "bmad-artifacts/reviews/": "Validation and approval documents"
   - "target/": "Godot project implementation"
 
 required_files:
-  - ".bmad/checklists/workflow-enforcement.md": "Master workflow checklist"
+  - "bmad-workflow/checklists/workflow-enforcement.md": "Master workflow checklist"
   - ".claude/rules/bmad-workflow-rules.md": "Claude enforcement rules"
   - "CLAUDE.md": "Project context and standards"
   - "README.md": "Project documentation"
@@ -205,7 +205,7 @@ required_files:
 checklist_execution:
   trigger: "Before phase transition"
   validation: "All items must be checked"
-  documentation: "Results logged in .ai/reviews/"
+  documentation: "Results logged in bmad-artifacts/reviews/"
   
 template_validation:
   trigger: "Document creation"
@@ -242,7 +242,7 @@ git_workflow_compliance:
 ### Violation Tracking
 ```yaml
 violation_log:
-  location: ".ai/reviews/violations.log"
+  location: "bmad-artifacts/reviews/violations.log"
   format: "timestamp | severity | type | description | resolution"
   retention: "Project lifetime"
   

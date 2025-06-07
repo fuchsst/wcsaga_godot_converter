@@ -5,13 +5,13 @@ You are initiating PRD creation for the WCS system: $ARGUMENTS
 ## PRD Creation Process
 
 ### 1. Load BMAD Framework
-- Load the Conversion Manager persona (Curly) from `.bmad/personas/conversion-manager.md`
-- Reference the PRD template from `.bmad/templates/conversion-prd-template.md`
-- Review the PRD creation task from `.bmad/tasks/create-conversion-prd.md`
+- Load the Conversion Manager persona (Curly) from `bmad-workflow/personas/conversion-manager.md`
+- Reference the PRD template from `bmad-workflow/templates/conversion-prd-template.md`
+- Review the PRD creation task from `bmad-workflow/tasks/create-conversion-prd.md`
 
 ### 2. Prerequisites Check
 Before starting PRD creation, verify:
-- [ ] WCS system analysis exists in `.ai/docs/[system-name]-analysis.md`
+- [ ] WCS system analysis exists in `bmad-artifacts/docs/[system-name]-analysis.md`
 - [ ] System scope and boundaries are understood
 - [ ] Stakeholder requirements have been gathered
 - [ ] Conversion goals are clearly defined
@@ -55,8 +55,8 @@ Use the PM checklist to ensure:
 
 ### 5. Output Requirements
 Create comprehensive PRD document:
-- **Location**: `.ai/docs/[system-name]-prd.md`
-- **Template**: Use `.bmad/templates/conversion-prd-template.md`
+- **Location**: `bmad-artifacts/docs/[system-name]-prd.md`
+- **Template**: Use `bmad-workflow/templates/conversion-prd-template.md`
 - **Content**: Complete all sections with WCS-specific details
 - **Approval**: Document must be approved before architecture phase
 

@@ -5,14 +5,14 @@ You are initiating architecture design for the WCS system: $ARGUMENTS
 ## Architecture Design Process
 
 ### 1. Load BMAD Framework
-- Load the Godot Architect persona (Mo) from `.bmad/personas/godot-architect.md`
-- Reference the architecture design task from `.bmad/tasks/design-godot-architecture.md`
-- Use the Godot architecture template from `.bmad/templates/godot-architecture-template.md`
+- Load the Godot Architect persona (Mo) from `bmad-workflow/personas/godot-architect.md`
+- Reference the architecture design task from `bmad-workflow/tasks/design-godot-architecture.md`
+- Use the Godot architecture template from `bmad-workflow/templates/godot-architecture-template.md`
 
 ### 2. Prerequisites Check
 Before starting architecture design, verify:
-- [ ] PRD exists and is approved in `.ai/docs/[system-name]-prd.md`
-- [ ] WCS system analysis is complete in `.ai/docs/[system-name]-analysis.md`
+- [ ] PRD exists and is approved in `bmad-artifacts/docs/[system-name]-prd.md`
+- [ ] WCS system analysis is complete in `bmad-artifacts/docs/[system-name]-analysis.md`
 - [ ] System requirements are clearly defined
 - [ ] Technical constraints are understood
 
@@ -55,7 +55,7 @@ Follow Mo's opinionated approach:
 - **Resource Efficiency**: Optimal loading and instantiation
 
 ### 5. Quality Validation
-Run the Godot Architecture Checklist from `.bmad/checklists/godot-architecture-checklist.md`:
+Run the Godot Architecture Checklist from `bmad-workflow/checklists/godot-architecture-checklist.md`:
 - [ ] Architecture leverages Godot's strengths optimally
 - [ ] All WCS functionality requirements addressed
 - [ ] Performance requirements can be met
@@ -64,11 +64,11 @@ Run the Godot Architecture Checklist from `.bmad/checklists/godot-architecture-c
 - [ ] Error handling and edge cases considered
 - [ ] Static typing and best practices enforced
 - [ ] Resource management strategy defined
-- [ ] UI systems use `.bmad/checklists/godot-ui-architecture-checklist.md` if applicable
+- [ ] UI systems use `bmad-workflow/checklists/godot-ui-architecture-checklist.md` if applicable
 
 ### 6. Output Requirements
 Create detailed architecture document:
-- **Location**: `.ai/docs/[system-name]-architecture.md`
+- **Location**: `bmad-artifacts/docs/[system-name]-architecture.md`
 - **Content**: Complete technical specification with node hierarchies, signal flows, and implementation guidance
 - **Approval**: Document must be approved before story creation
 
