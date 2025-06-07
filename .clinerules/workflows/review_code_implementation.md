@@ -1,1 +1,1 @@
-Create a story as defined in @/.claude/commands/review_code_implementation.md
+Review the Godot implementation against the architecture documeents and story as defined in @/.claude/commands/review_code_implementation.md
