@@ -36,7 +36,9 @@
       "Bash(/mnt/d/Godot/Godot_v4.4.1-stable_win64_console.exe:*)",
       "Bash(sed:*)",
       "Bash(mkdir:*)",
-      "Bash(timeout:*)"
+      "Bash(timeout:*)",
+      "Bash(/home/fuchsst/.nvm/versions/node/v24.1.0/lib/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/x64-linux/rg -A 15 -B 5 \"collision_group|group.*collision\" object/objcollide.cpp)",
+      "Bash(/home/fuchsst/.nvm/versions/node/v24.1.0/lib/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/x64-linux/rg -A 10 -B 5 \"reject.*collision|filter.*collision|collision.*reject\" object/objcollide.cpp)"
     ],
     "deny": []
   },
