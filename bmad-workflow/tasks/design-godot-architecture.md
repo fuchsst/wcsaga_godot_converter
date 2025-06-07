@@ -70,9 +70,9 @@ Design an optimal Godot engine architecture for a WCS system based on analysis f
 
 ## Output Format
 
-Create a detailed architecture document (`architecture.md`) and two supplementary documents in `bmad-artifacts/docs/[epic-name]/`.
+Create a detailed architecture document (`architecture.md`) and two supplementary documents (`godot-files.md` and `godot-dependencies.md`) in `bmad-artifacts/docs/[epic-name]/`.
 
-The main architecture document should follow this structure:
+The main architecture document should follow the structure defined in `bmad-workflow/templates/godot-architecture-template.md`.
 
 ```markdown
 # Godot Architecture: [System Name]
@@ -188,20 +188,14 @@ MainSystem (Node3D)
 ```
 
 ## Quality Checklist
-- [ ] Architecture leverages Godot's strengths optimally
-- [ ] All WCS functionality requirements addressed
-- [ ] Performance requirements can be met
-- [ ] Integration points clearly defined
-- [ ] Implementation is maintainable and scalable
-- [ ] Error handling and edge cases considered
-- [ ] Static typing and best practices enforced
-- [ ] Resource management strategy defined
-- [ ] Proposed Godot file structure clearly documented in `[system-name]-godot-files.md`.
-- [ ] Proposed Godot file dependencies and interactions (scenes, scripts, signals) documented in `[system-name]-godot-dependencies.md`.
+- [ ] The architecture must pass all criteria in the `bmad-workflow/checklists/godot-architecture-checklist.md`.
+- [ ] If the system has a significant UI component, it must also pass the `bmad-workflow/checklists/godot-ui-architecture-checklist.md`.
+- [ ] All output documents (`architecture.md`, `godot-files.md`, `godot-dependencies.md`) are complete and stored in the correct epic folder.
+- [ ] The architecture is actionable and provides a clear blueprint for developers.
 
-### Supplementary Document 1: [System Name] - Godot Files
+### Supplementary Document 1: Godot Files
 
-A markdown file named `[system-name]-godot-files.md` listing all key proposed Godot script files (`.gd`) and scene files (`.tscn`) for the system.
+A markdown file named `godot-files.md` listing all key proposed Godot script files (`.gd`) and scene files (`.tscn`) for the system.
 
 **Format:**
 ```markdown
@@ -222,9 +216,9 @@ A markdown file named `[system-name]-godot-files.md` listing all key proposed Go
 - ...
 ```
 
-### Supplementary Document 2: [System Name] - Godot Dependencies
+### Supplementary Document 2: Godot Dependencies
 
-A markdown file named `[system-name]-godot-dependencies.md` detailing the proposed interactions and dependencies between the Godot files.
+A markdown file named `godot-dependencies.md` detailing the proposed interactions and dependencies between the Godot files.
 
 **Format:**
 ```markdown
@@ -254,7 +248,7 @@ A markdown file named `[system-name]-godot-dependencies.md` detailing the propos
 
 ## Workflow Integration
 - **Input**: WCS system analysis from Larry (WCS Analyst)
-- **Output**: Detailed architecture document (`architecture.md`), proposed Godot file list (`godot-files.md`), and Godot dependency map (`godot-dependencies.md`) in `bmad-artifacts/docs/[epic-name]/`
+- **Output**: Detailed architecture documents (`architecture.md`, `godot-files.md`, `godot-dependencies.md`) in `bmad-artifacts/docs/[epic-name]/`.
 - **Next Steps**: Architecture feeds into GDScript Developer for implementation
 - **Dependencies**: May require coordination with other system architectures
 - **Epic Update**: After completing architecture, update the parent epic document in `bmad-artifacts/epics/[epic-name].md` with architecture status and key design decisions

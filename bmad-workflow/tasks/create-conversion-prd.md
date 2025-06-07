@@ -42,7 +42,7 @@ Create a comprehensive Product Requirements Document (PRD) for converting a spec
 
 ## PRD Document Structure
 
-Use the template from `bmad-workflow/templates/conversion-prd-template.md` and populate with:
+Use the template from `bmad-workflow/templates/conversion-prd-template.md` to create the PRD document in `bmad-artifacts/docs/[epic-name]/prd.md`. Populate it with:
 
 ### Executive Summary
 - Brief overview of the conversion project
@@ -75,17 +75,15 @@ Use the template from `bmad-workflow/templates/conversion-prd-template.md` and p
 - Performance benchmarks and targets
 
 ## Quality Checklist
-- [ ] All functional requirements clearly defined with acceptance criteria
-- [ ] Technical requirements are specific and measurable
-- [ ] Success criteria are objective and testable
-- [ ] Scope boundaries are clearly established
-- [ ] Dependencies and constraints are identified
-- [ ] Stakeholder requirements are captured and prioritized
-- [ ] Implementation approach is realistic and achievable
+- [ ] The PRD must pass all criteria in the `bmad-workflow/checklists/conversion-prd-quality-checklist.md`.
+- [ ] All functional requirements are clearly defined with acceptance criteria.
+- [ ] Technical requirements are specific and measurable.
+- [ ] Scope boundaries are clearly established.
+- [ ] Dependencies and constraints are identified.
 
 ## Workflow Integration
 - **Input**: WCS system analysis from Larry (WCS Analyst)
-- **Output**: Comprehensive PRD document in `bmad-artifacts/docs/[epic-name]/prd.md`
+- **Output**: A comprehensive PRD document named `prd.md` in `bmad-artifacts/docs/[epic-name]/`.
 - **Next Steps**: PRD approval before architecture design phase
 - **Dependencies**: Must have completed system analysis
 - **Epic Update**: After completing PRD, update the parent epic document in `bmad-artifacts/epics/[epic-name].md` with PRD status and key requirements

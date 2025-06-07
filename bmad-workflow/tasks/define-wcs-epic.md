@@ -45,60 +45,14 @@ Define a high-level Epic `bmad-artifacts/docs/epic-structure-definition.md` for 
 
 ## Output Format
 
-Create an epic definition document in `bmad-artifacts/epics/` using the `wcs-epic-template.md` from `bmad-workflow/templates/wcs-epic-template.md`. The filename should be, for example, `bmad-artifacts/epics/EPIC-001-player-ship-core-system-conversion.md`.
-
-The template includes sections for:
-```markdown
-# Epic: [EPIC-ID]: [Epic Name]
-
-## 1. Description
-[Brief overview of the epic, its purpose, and the problem it solves or value it delivers.]
-
-## 2. Strategic Alignment
-[How this epic aligns with the overall WCS-Godot conversion goals and PRD.]
-
-## 3. Scope
-### In Scope:
-- [List of major features/functionalities included]
-### Out of Scope:
-- [List of related features/functionalities explicitly excluded]
-
-## 4. Value Proposition
-[Primary benefits and value delivered by completing this epic.]
-
-## 5. High-Level Requirements / User Outcomes
-- [Outcome 1]
-- [Outcome 2]
-- [...]
-
-## 6. Key Stakeholders
-- [List of stakeholders interested in this epic]
-
-## 7. Dependencies
-- [Other epics, systems, or prerequisites]
-
-## 8. Potential Risks
-- [High-level risks identified]
-
-## 9. Acceptance Criteria (High-Level)
-[Broad conditions that will indicate the epic's objectives have been met. These are not story-level ACs.]
-- [Criterion 1]
-- [Criterion 2]
-
-## 10. Estimated Size/Complexity (Optional)
-[T-shirt size (S, M, L, XL) or rough estimate if useful at this stage.]
-```
+Create an epic definition document in `bmad-artifacts/epics/` using the `bmad-workflow/templates/wcs-epic-template.md`. The filename should follow the convention `EPIC-XXX-epic-name.md`.
 
 ## Quality Checklist
-- [ ] Epic has a clear, descriptive name and unique ID.
-- [ ] Scope is well-defined (inclusions and exclusions).
-- [ ] Value proposition is clearly articulated.
-- [ ] High-level requirements are captured.
-- [ ] Major dependencies and risks are identified.
-- [ ] Epic is aligned with the PRD and strategic goals.
-- [ ] Stakeholders have been consulted/informed.
-- [ ] Epic is large enough to be significant but not too large to be unmanageable.
-- [ ] **Quality Check**: The defined Epic passes the criteria in `bmad-workflow/checklists/epic-quality-checklist.md`.
+- [ ] The epic must pass all criteria in the `bmad-workflow/checklists/epic-quality-checklist.md`.
+- [ ] The epic has a clear, descriptive name and unique ID.
+- [ ] The scope is well-defined with clear inclusions and exclusions.
+- [ ] The value proposition is clearly articulated.
+- [ ] The epic is aligned with the project's strategic goals and PRDs.
 
 ## Workflow Integration
 - **Input**: Approved PRD, strategic goals, user feedback.

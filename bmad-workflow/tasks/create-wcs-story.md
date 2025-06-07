@@ -43,51 +43,7 @@ Create a well-defined, implementable user story for WCS-Godot conversion with cl
 
 ## Story Structure Template
 
-```markdown
-# User Story: [Clear, Descriptive Title]
-
-## Story Definition
-**As a**: [User type - player, developer, system]
-**I want**: [Specific functionality or capability]
-**So that**: [Business value or benefit]
-
-## Acceptance Criteria
-- [ ] **AC1**: [Specific, testable criterion]
-- [ ] **AC2**: [Specific, testable criterion]
-- [ ] **AC3**: [Specific, testable criterion]
-- [ ] **AC4**: [Specific, testable criterion]
-
-## Technical Requirements
-- **Architecture Reference**: [Link to architecture document section]
-- **Godot Components**: [Specific nodes, scenes, scripts required]
-- **Performance Targets**: [Frame rate, memory, loading time requirements]
-- **Integration Points**: [How this connects with other systems]
-
-## Implementation Notes
-- **WCS Reference**: [Original C++ code or system being converted]
-- **Godot Approach**: [Specific Godot patterns and techniques to use]
-- **Key Challenges**: [Potential implementation difficulties]
-- **Success Metrics**: [How to measure successful implementation]
-
-## Dependencies
-- **Prerequisites**: [Stories that must be completed first]
-- **Blockers**: [External dependencies or constraints]
-- **Related Stories**: [Other stories that interact with this one]
-
-## Definition of Done
-- [ ] All acceptance criteria met and verified
-- [ ] Code follows GDScript standards (static typing, documentation)
-- [ ] Unit tests written and passing
-- [ ] Performance targets achieved
-- [ ] Integration testing completed
-- [ ] Code reviewed and approved
-- [ ] Documentation updated
-
-## Estimation
-- **Complexity**: [Simple/Medium/Complex]
-- **Effort**: [1-3 days recommended for optimal story size]
-- **Risk Level**: [Low/Medium/High]
-```
+Use the template from `bmad-workflow/templates/wcs-story-template.md` to create the story file.
 
 ## Story Quality Standards
 
@@ -110,14 +66,12 @@ Create a well-defined, implementable user story for WCS-Godot conversion with cl
 - **Integration Aware**: Considers connections with other systems
 
 ## Quality Checklist
-- [ ] Story follows proper template structure
-- [ ] All acceptance criteria are specific and testable
-- [ ] Technical requirements reference approved architecture
-- [ ] Dependencies are identified and documented
-- [ ] Story size is appropriate (1-3 days maximum)
-- [ ] Definition of Done is complete and realistic
-- [ ] WCS reference material is identified
-- [ ] Godot implementation approach is specified
+- [ ] The story must pass all criteria in the `bmad-workflow/checklists/story-readiness-checklist.md`.
+- [ ] The story's Definition of Done must align with the `bmad-workflow/checklists/story-definition-of-done-checklist.md`.
+- [ ] All acceptance criteria are specific and testable.
+- [ ] Technical requirements reference an approved architecture document.
+- [ ] Dependencies are clearly identified.
+- [ ] The story is appropriately sized (1-3 days of work).
 
 ## Workflow Integration
 - **Input**: Approved PRD and architecture documents

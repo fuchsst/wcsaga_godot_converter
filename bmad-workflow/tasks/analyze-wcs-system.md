@@ -52,9 +52,9 @@ Read existing `...-analysis.md` in `.ai\docs\` related to the requested work pac
 
 ## Output Format
 
-Create a comprehensive analysis document and two supplementary documents in `bmad-artifacts/docs/[epic-name]/` where `[epic-name]` matches the epic this system belongs to (e.g., `EPIC-001-core-foundation-infrastructure`).
+Create a comprehensive analysis document and two supplementary documents in `bmad-artifacts/docs/[epic-name]/`. The filenames should be `analysis.md`, `source-files.md`, and `source-dependencies.md`.
 
-The main analysis document, `[system-name]-analysis.md`, should follow this structure:
+The main analysis document, `analysis.md`, should follow this structure:
 
 ```markdown
 # WCS System Analysis: [System Name]
@@ -115,19 +115,13 @@ The main analysis document, `[system-name]-analysis.md`, should follow this stru
 ```
 
 ## Quality Checklist
-- [ ] All relevant source files identified and examined.
-- [ ] Key classes and functions documented with file locations.
-- [ ] Data flow and system interactions clearly described.
-- [ ] Performance characteristics and constraints identified.
-- [ ] Godot conversion considerations addressed.
-- [ ] Specific code examples and function signatures included.
-- [ ] Analysis is actionable for architecture and implementation phases.
-- [ ] All relevant source files listed in `[system-name]-source-files.md`.
-- [ ] Key file dependencies (used by) documented in `[system-name]-source-dependencies.md`.
+- [ ] The analysis passes all criteria in the `bmad-workflow/checklists/wcs-analysis-quality-checklist.md`.
+- [ ] All output documents (`analysis.md`, `source-files.md`, `source-dependencies.md`) have been created in the correct epic folder.
+- [ ] The analysis is actionable for the PRD and Architecture phases.
 
-### Supplementary Document 1: [System Name] - Source Files
+### Supplementary Document 1: Source Files
 
-A markdown file named `[system-name]-source-files.md` listing all identified source code files relevant to the analyzed system.
+A markdown file named `source-files.md` listing all identified source code files relevant to the analyzed system.
 
 **Format:**
 ```markdown
@@ -140,9 +134,9 @@ A markdown file named `[system-name]-source-files.md` listing all identified sou
 - ...
 ```
 
-### Supplementary Document 2: [System Name] - Source Dependencies
+### Supplementary Document 2: Source Dependencies
 
-A markdown file named `[system-name]-source-dependencies.md` detailing the usage relationships between files. For each key file in the system, list the other files that include or call functions/classes from it.
+A markdown file named `source-dependencies.md` detailing the usage relationships between files. For each key file in the system, list the other files that include or call functions/classes from it.
 
 ```markdown
 # WCS System: [System Name] - Source Dependencies (Used By)
@@ -159,7 +153,7 @@ A markdown file named `[system-name]-source-dependencies.md` detailing the usage
 
 ## Workflow Integration
 - **Input**: System identification and scope from user or Conversion Manager
-- **Output**: Detailed analysis document (`[system-name]-analysis.md`), source file list (`[system-name]-source-files.md`), and dependency map (`[system-name]-source-dependencies.md`) in `bmad-artifacts/docs/[epic-name]/`
+- **Output**: Detailed analysis documents (`analysis.md`, `source-files.md`, `source-dependencies.md`) in `bmad-artifacts/docs/[epic-name]/`
 - **Next Steps**: Analysis feeds into Godot Architect for system design
 - **Dependencies**: May require additional analysis of related systems
 - **Epic Update**: After completing analysis, update the parent epic document in `bmad-artifacts/epics/[epic-name].md` with analysis status and key findings
