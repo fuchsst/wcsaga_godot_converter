@@ -5,25 +5,25 @@
 **Epic Name**: GFRED2 Mission Editor  
 **Epic Owner**: Larry (WCS Analyst)  
 **Priority**: High  
-**Status**: Phase 3 Architecture Complete - Ready for Advanced Features  
-**Created**: 2025-01-25 (Original), Updated: 2025-01-26  
+**Status**: Analysis Complete, Stories Updated - Ready for Prioritized Implementation  
+**Created**: 2025-01-25 (Original), Updated: June 7, 2025  
 **Position**: 4 (Development Tools Phase)  
-**Duration**: 9.6 weeks (48 days) - Updated with Additional High-Priority Features  
+**Duration**: To be re-evaluated (Previously 9.6 weeks / 48 days)
 
 ## Epic Description
 Create a comprehensive mission editor as a Godot plugin that recreates and enhances the functionality of the original WCS FRED2 (FReespace EDitor version 2) tool. This editor will allow mission creators to design, script, and test missions using modern Godot editor integration while maintaining full compatibility with WCS mission standards and exceeding the original editor's capabilities.
 
 ## Progress Summary
-**Current Status**: Analysis Complete, Stories Updated, Ready for Prioritized Implementation
-- ✅ **Foundation Dependencies**: EPICs 001-004 assumed stable for planning (actual status varies per EPIC).
-- ⚠️ **Phase 1 - Core Framework**: Core integrations (GFRED2-001 through GFRED2-004) require further work based on analysis. Statuses updated in story files.
-- ⚠️ **Phase 2 - User Experience**: UI modernization (GFRED2-005) requires further work on docking system. Status updated in story file.
+**Current Status**: Analysis Complete, Stories Updated, Ready for Prioritized Implementation (June 7, 2025)
+- ✅ **Foundation Dependencies**: EPICs 001-004 assumed stable for planning (actual status varies per EPIC and needs verification before starting dependent GFRED2 stories).
+- ⚠️ **Phase 1 - Core Framework**: Core integrations (GFRED2-001, GFRED2-002, GFRED2-003, GFRED2-004) require further work based on recent analysis. Statuses updated in individual story files.
+- ⚠️ **Phase 2 - User Experience**: UI modernization (GFRED2-005) requires further work on the docking system. Status updated in story file.
 - ⚡ **CRITICAL ARCHITECTURAL REFINEMENT**: Stories GFRED2-006A through GFRED2-011 refined (May 31, 2025) - these are generally in good shape.
 - 🔄 **Phase 3 - Advanced Capabilities**: Ready for implementation with corrected architecture.
 - ✅ **CRITICAL ARCHITECTURAL COMPLIANCE**: UI refactoring to scene-based architecture (GFRED2-011) **COMPLETED**. This provides a solid foundation.
-- 🆕 **New Critical Stories Added**: GFRED2-012, GFRED2-013, GFRED2-014, GFRED2-015, GFRED2-016 created to address critical gaps and P1 refactoring tasks.
-- **Updated Timeline**: To be re-evaluated based on the updated story list and their statuses. Original estimate of 48 days needs review.
-- **Progress**: Original 11 stories + 5 new stories = 16 total stories. GFRED2-011 is COMPLETED. Several others (003, 002, 005, 004) are now "Implementation Incomplete" or "Ready" after updates.
+- 🆕 **New Critical Stories Added**: GFRED2-012 (Object Duplication), GFRED2-013 (Selection Logic), GFRED2-014 (Object Naming), GFRED2-015 (Refactor editor_main), GFRED2-016 (Custom Templates) created to address critical gaps and P1/P2 refactoring tasks identified in June 7 analysis.
+- **Updated Timeline**: To be re-evaluated based on the updated story list (now 16 stories) and their statuses.
+- **Progress**: 1 of 16 stories (GFRED2-011) is fully COMPLETED. Several others (GFRED2-001, GFRED2-002, GFRED2-003, GFRED2-004, GFRED2-005) are now "Implementation Incomplete" or "Ready" after updates based on June 7 analysis. GFRED2-006A and GFRED2-006B remain COMPLETED.
 
 ## WCS FRED2 System Analysis
 
@@ -68,8 +68,8 @@ Create a comprehensive mission editor as a Godot plugin that recreates and enhan
 ### Primary Goals
 1. **Modern Mission Editing**: Intuitive, powerful mission creation within Godot editor
 2. **Enhanced Workflow**: Improved UX over original FRED2 with modern UI patterns
-3. **Asset Integration**: Seamless integration with EPIC-003 asset management system
-4. **SEXP Visual Editing**: Advanced visual scripting using EPIC-SEXP-001 system
+3. **Asset Integration**: Seamless integration with EPIC-002 asset management system (WCS Asset Core)
+4. **SEXP Visual Editing**: Advanced visual scripting using EPIC-004 SEXP system
 5. **Real-time Testing**: Immediate mission testing and validation within editor
 
 ### Success Metrics
@@ -82,78 +82,48 @@ Create a comprehensive mission editor as a Godot plugin that recreates and enhan
 ## Technical Architecture
 
 ### GFRED2 Plugin Structure
+(Structure as previously defined, emphasizing `addons/gfred2/scenes/` for UI components)
 ```
 target/addons/gfred2/
 ├── plugin.cfg                       # Plugin configuration
 ├── GFRED2Plugin.gd                  # Main plugin class
-├── ui/                              # User interface components
-│   ├── main_dock/                   # Main editor dock
-│   │   ├── mission_editor_dock.gd   # Primary editing interface
-│   │   ├── object_hierarchy.gd      # Object tree view
-│   │   ├── property_inspector.gd    # Object property editing
-│   │   └── mission_toolbar.gd       # Tool buttons and actions
-│   ├── asset_browser/               # Asset browsing and selection
-│   │   ├── asset_browser_dock.gd    # Asset browser dock
-│   │   ├── asset_category_tree.gd   # Categorized asset tree
-│   │   ├── asset_preview_panel.gd   # Asset preview and info
-│   │   └── asset_search_filter.gd   # Search and filtering
-│   ├── sexp_editor/                 # SEXP visual editing
-│   │   ├── sexp_editor_dock.gd      # SEXP editing interface
-│   │   ├── sexp_tree_view.gd        # Visual expression tree
-│   │   ├── sexp_function_palette.gd # Function browser and insertion
-│   │   └── sexp_validator.gd        # Real-time SEXP validation
-│   ├── mission_settings/            # Mission configuration
-│   │   ├── mission_settings_dock.gd # Mission properties panel
-│   │   ├── background_editor.gd     # Environment and background
-│   │   ├── briefing_editor.gd       # Mission briefing creation
-│   │   └── campaign_integration.gd  # Campaign linking and progression
-│   └── dialogs/                     # Modal dialogs and wizards
-│       ├── object_creation_dialog.gd # Object creation wizard
-│       ├── wing_formation_dialog.gd # Wing setup and formation
-│       ├── event_creation_dialog.gd # Event and trigger creation
-│       └── mission_validation_dialog.gd # Mission validation results
-├── core/                            # Core editing functionality
-│   ├── mission_document.gd          # Mission data model
-│   ├── editor_state_manager.gd      # Editor state and undo/redo
-│   ├── object_manager.gd            # Object creation and manipulation
-│   ├── selection_manager.gd         # Object selection and grouping
-│   ├── camera_controller.gd         # 3D viewport camera control
-│   └── grid_manager.gd              # Grid display and snapping
-├── tools/                           # Editing tools and utilities
-│   ├── placement_tools.gd           # Object placement and positioning
-│   ├── transformation_tools.gd      # Move, rotate, scale operations
-│   ├── measurement_tools.gd         # Distance and angle measurement
-│   ├── alignment_tools.gd           # Object alignment and distribution
-│   └── validation_tools.gd          # Mission validation and checking
-├── integration/                     # System integration
-│   ├── asset_integration.gd         # EPIC-003 asset system integration
-│   ├── sexp_integration.gd          # EPIC-SEXP-001 integration
-│   ├── migration_integration.gd     # EPIC-MIG-001 conversion support
-│   └── game_testing_integration.gd  # Real-time mission testing
-└── data/                            # Editor data and configuration
-    ├── editor_settings.gd           # Editor configuration and preferences
-    ├── template_missions.gd         # Mission templates and examples
-    ├── keyboard_shortcuts.gd        # Customizable keyboard shortcuts
-    └── user_preferences.gd          # User customization and workflow
+├── scenes/                          # ALL UI SCENES AND THEIR SCRIPTS
+│   ├── components/
+│   ├── dialogs/
+│   ├── docks/
+│   ├── gizmos/
+│   └── main_editor/                 # e.g., editor_main.tscn
+├── core/                            # Core non-UI editing functionality (e.g., mission_document.gd)
+│   ├── editor_state_manager.gd
+│   └── ...
+├── object_management/               # (e.g., mission_object_manager.gd, object_factory.gd)
+├── mission/                         # (e.g., mission_data.gd, mission_object.gd)
+├── io/                              # (e.g., mission_file_io.gd for .tres handling)
+├── sexp_editor/                     # Non-UI logic for SEXP editor, UI in scenes/
+├── managers/                        # Non-UI managers (e.g., grid_manager.gd)
+├── data/                            # Editor-specific data resources (templates, settings)
+├── tools/                           # Editing tools logic
+├── integration/                     # Integration logic with other EPICs
+└── tests/                           # Unit and integration tests
 ```
 
 ### Integration Points
-- **EPIC-003**: Asset Structures and Management Addon (asset browsing and integration)
-- **EPIC-MIG-001**: Data Migration Tools (import existing missions)
-- **EPIC-SEXP-001**: SEXP Expression System (visual scripting and validation)
-- **Godot Editor**: Native integration with Godot's editor plugin system
-- **Main Game**: Real-time mission testing and validation
+- **EPIC-001 (Core Foundation)**: Utilities, math, validation, configuration.
+- **EPIC-002 (Asset Structures)**: `wcs_asset_core` for all asset definitions and browsing.
+- **EPIC-003 (Data Migration)**: `conversion_tools` for one-time `.fs2` to `.tres` conversion. GFRED2 uses the `.tres`.
+- **EPIC-004 (SEXP System)**: `SexpManager`, `SexpFunctionRegistry`, `SexpValidator` for SEXP editing and evaluation.
+- **Godot Editor**: Native integration via `EditorPlugin`.
 
-## Integration Story Breakdown (REFINED BY BMAD TEAM)
+## Integration Story Breakdown (REFINED June 7, 2025)
 
 ### Phase 1: Foundation Integration & Critical Fixes (P0 & P1 tasks)
-- **GFRED2-003**: Mission Resource Loading and Saving (1-2 days) ⚠️ **IMPLEMENTATION INCOMPLETE** (Was Mission File Conversion)
-- **GFRED2-004**: Core Infrastructure Integration with EPIC-001 (2 days) ⚠️ **IMPLEMENTATION INCOMPLETE** (Now includes input system refactor)
+- **GFRED2-003**: Mission Resource Loading and Saving (1-2 days) ⚠️ **IMPLEMENTATION INCOMPLETE** (Focus on `.tres` files)
+- **GFRED2-004**: Core Infrastructure Integration with EPIC-001 (2 days) ⚠️ **IMPLEMENTATION INCOMPLETE** (Includes input system refactor)
 - **GFRED2-001**: Asset System Integration with EPIC-002 (3 days) ⏳ **READY**
 - **GFRED2-002**: SEXP System Integration with EPIC-004 (5 days) ⚠️ **IMPLEMENTATION INCOMPLETE** (Requires core logic implementation)
 - **GFRED2-012**: Implement Mission Object Duplication (1 day) ⏳ **NEW CRITICAL**
 - **GFRED2-013**: Consolidate Selection Logic into MissionObjectManager (2 days) ⏳ **NEW CRITICAL**
-- **GFRED2-014**: Standardize MissionObject and MissionObjectData Naming (1 day) ⏳ **NEW HIGH-PRIORITY**
+- **GFRED2-014**: Standardize MissionObject Naming (1 day) ⏳ **NEW HIGH-PRIORITY**
 - **GFRED2-015**: Refactor editor_main.gd to Reduce Complexity (3-5 days) ⏳ **NEW HIGH-PRIORITY**
 
 ### Phase 2: User Experience Enhancement (P0 & P1 tasks)
@@ -188,12 +158,12 @@ target/addons/gfred2/
 ## Acceptance Criteria
 
 ### Epic-Level Acceptance Criteria
-1. **Complete Mission Editing**: Create and edit all types of WCS missions
-2. **Asset Integration**: Seamless browsing and integration of all game assets
-3. **SEXP Visual Editing**: Comprehensive visual scripting without text editing
-4. **Real-time Validation**: Immediate feedback on mission errors and issues
-5. **Workflow Efficiency**: Faster mission creation than original FRED2
-6. **Godot Integration**: Native feel and behavior within Godot editor
+1. **Complete Mission Editing**: Create and edit all types of WCS missions using Godot resources.
+2. **Asset Integration**: Seamless browsing and integration of all game assets from `wcs_asset_core`.
+3. **SEXP Visual Editing**: Comprehensive visual scripting using EPIC-004, with correct operator logic and registry use.
+4. **Real-time Validation**: Immediate feedback on mission errors and issues.
+5. **Workflow Efficiency**: Faster mission creation than original FRED2.
+6. **Godot Integration**: Native feel and behavior within Godot editor, adhering to scene-based UI architecture.
 
 ### Quality Gates
 - Workflow design review by Mo (Godot Architect)
@@ -204,72 +174,74 @@ target/addons/gfred2/
 
 ## Dependencies
 
-### Completed Dependencies ✅
+### Completed Dependencies ✅ (Assumed for planning, verify actual status)
 - **EPIC-001**: Core Foundation Infrastructure (utilities, math, validation)
-- **EPIC-002**: Asset Structures and Management Addon (asset browsing and integration)
-- **EPIC-003**: Data Migration & Conversion Tools (mission import/export)
-- **EPIC-004**: SEXP Expression System (visual scripting and validation)
+- **EPIC-002**: Asset Structures and Management Addon (`wcs_asset_core`)
+- **EPIC-003**: Data Migration & Conversion Tools (for `.fs2` to `.tres` conversion)
+- **EPIC-004**: SEXP Expression System (core SEXP engine)
 - **Godot Editor Plugin System**: Core plugin development framework
 
 ### Integration Opportunities
-- **Enhanced Asset Management**: Leverage EPIC-002's comprehensive asset system
-- **Advanced SEXP Editing**: Use EPIC-004's debugging and validation features
-- **Robust File Handling**: Utilize EPIC-003's conversion and validation tools
-- **Consistent Infrastructure**: Apply EPIC-001's utilities and patterns
+- **Enhanced Asset Management**: Leverage EPIC-002's comprehensive asset system.
+- **Advanced SEXP Editing**: Use EPIC-004's debugging and validation features.
+- **Robust File Handling**: Utilize `MissionFileIO` for `.tres` files, relying on EPIC-003 for initial conversion.
+- **Consistent Infrastructure**: Apply EPIC-001's utilities and patterns.
 
 ### Downstream Dependencies (Enables)
-- **Mission Creation**: Professional mission development workflow
-- **Campaign Development**: Campaign creation and testing tools
-- **Community Content**: User-generated mission support with full validation
-- **Quality Assurance**: Comprehensive mission testing and validation tools
+- **Mission Creation**: Professional mission development workflow.
+- **Campaign Development**: Campaign creation and testing tools.
+- **Community Content**: User-generated mission support with full validation.
+- **Quality Assurance**: Comprehensive mission testing and validation tools.
 
 ### Integration Benefits
-- **Reduced Code Duplication**: Eliminate custom implementations
-- **Enhanced Features**: Gain advanced capabilities from integrated systems
-- **Improved Quality**: Leverage tested and validated foundation systems
-- **Faster Development**: Build on proven infrastructure
+- **Reduced Code Duplication**: Eliminate custom implementations.
+- **Enhanced Features**: Gain advanced capabilities from integrated systems.
+- **Improved Quality**: Leverage tested and validated foundation systems.
+- **Faster Development**: Build on proven infrastructure.
 
 ## Risks and Mitigation
 
 ### Technical Risks
-1. **Godot Plugin Limitations**: Editor plugin system may have constraints
-   - *Mitigation*: Early prototyping, work within Godot's plugin framework
-2. **Performance with Complex Missions**: Large missions may impact editor performance
-   - *Mitigation*: Efficient data structures, LOD for preview, background processing
-3. **SEXP Integration Complexity**: Visual SEXP editing is inherently complex
-   - *Mitigation*: Incremental development, extensive user testing
+1. **Godot Plugin Limitations**: Editor plugin system may have constraints.
+   - *Mitigation*: Early prototyping, work within Godot's plugin framework.
+2. **Performance with Complex Missions**: Large missions may impact editor performance.
+   - *Mitigation*: Efficient data structures, LOD for preview, background processing.
+3. **SEXP Integration Complexity**: Visual SEXP editing is inherently complex.
+   - *Mitigation*: Incremental development, extensive user testing, ensure EPIC-004 is robust.
+4. **Dependency Stability**: GFRED2 relies on other EPICs being complete and stable.
+   - *Mitigation*: Clear communication with teams for EPICs 001-004. Phased implementation for GFRED2 features based on dependency availability.
 
 ### Project Risks
-1. **Feature Creep**: Tendency to add features beyond original FRED2
-   - *Mitigation*: Focus on core functionality first, defer enhancements
-2. **User Experience Complexity**: FRED2 is inherently complex
-   - *Mitigation*: User-centered design, workflow optimization, modern UX patterns
+1. **Feature Creep**: Tendency to add features beyond original FRED2.
+   - *Mitigation*: Focus on core functionality first, defer enhancements.
+2. **User Experience Complexity**: FRED2 is inherently complex.
+   - *Mitigation*: User-centered design, workflow optimization, modern UX patterns.
 
 ### User Adoption Risks
-1. **Learning Curve**: New interface may confuse existing FRED2 users
-   - *Mitigation*: Familiar workflow patterns, comprehensive documentation, tutorials
-2. **Compatibility Issues**: Missions created may not work in original WCS
-   - *Mitigation*: Strict compatibility mode, validation against WCS standards
+1. **Learning Curve**: New interface may confuse existing FRED2 users.
+   - *Mitigation*: Familiar workflow patterns, comprehensive documentation, tutorials.
+2. **Compatibility Issues**: Missions created may not work in original WCS.
+   - *Mitigation*: This is less of a concern if GFRED2 works with `.tres` files. The EPIC-003 tools would handle WCS compatibility if needed for export back to `.fs2`.
 
 ## Success Validation
 
 ### Functional Validation
-- Create representative WCS missions successfully
-- Import and edit existing WCS missions without data loss
-- Validate SEXP expressions and mission logic correctly
-- Export missions compatible with game runtime
+- Create representative WCS missions successfully using the `.tres` workflow.
+- Load, edit, and save `MissionData` resources without data loss.
+- Validate SEXP expressions and mission logic correctly using EPIC-004.
+- Export missions (if applicable, via EPIC-003 tools) compatible with game runtime.
 
 ### User Experience Validation
-- Mission creators can complete tasks faster than original FRED2
-- New users can learn mission creation efficiently
-- Complex missions can be created and maintained
-- Error recovery and debugging is intuitive
+- Mission creators can complete tasks faster than original FRED2.
+- New users can learn mission creation efficiently.
+- Complex missions can be created and maintained.
+- Error recovery and debugging is intuitive.
 
 ### Integration Validation
-- Seamless integration with asset management system
-- Proper integration with SEXP expression system
-- Real-time testing works correctly with game runtime
-- Mission files export in correct format for game use
+- Seamless integration with `wcs_asset_core` (EPIC-002).
+- Proper integration with SEXP expression system (EPIC-004).
+- Real-time testing works correctly with game runtime.
+- Mission files (`.tres`) are correctly handled.
 
 ## Timeline Estimate
 - **Phase 1**: Core Editor Framework (4 weeks)
@@ -277,36 +249,37 @@ target/addons/gfred2/
 - **Phase 3**: Asset Integration and Browsing (3 weeks)
 - **Phase 4**: SEXP and Mission Logic (3 weeks)
 - **Phase 5**: Advanced Features and Polish (3-4 weeks)
-- **Total**: 12-16 weeks with comprehensive testing and polish
+- **Total**: Original estimate of 12-16 weeks needs re-evaluation based on the 16 stories and their current statuses.
 
 ## User Experience Goals
 
 ### Modern Editor Experience
-- **Familiar Workflow**: Maintain FRED2 concepts while improving usability
-- **Contextual Help**: Integrated help and documentation system
-- **Customizable Interface**: Dockable panels, customizable layouts
-- **Keyboard Shortcuts**: Comprehensive and customizable shortcuts
+- **Familiar Workflow**: Maintain FRED2 concepts while improving usability.
+- **Contextual Help**: Integrated help and documentation system.
+- **Customizable Interface**: Dockable panels, customizable layouts (scene-based).
+- **Keyboard Shortcuts**: Comprehensive and customizable shortcuts via `GFRED2ShortcutManager`.
 
 ### Enhanced Productivity
-- **Smart Defaults**: Intelligent defaults for common operations
-- **Batch Operations**: Efficient multi-object editing capabilities
-- **Template System**: Mission templates and common patterns
-- **Real-time Feedback**: Immediate validation and error reporting
+- **Smart Defaults**: Intelligent defaults for common operations.
+- **Batch Operations**: Efficient multi-object editing capabilities.
+- **Template System**: Mission templates and common patterns (GFRED2-006C, GFRED2-016).
+- **Real-time Feedback**: Immediate validation and error reporting.
 
 ### Community Features
-- **Sharing Support**: Easy mission export and sharing
-- **Version Control**: Integration with version control systems
-- **Collaboration**: Multi-user editing support (future)
-- **Asset Repository**: Community asset sharing (future)
+- **Sharing Support**: Easy mission export and sharing (of `.tres` files or packages).
+- **Version Control**: Integration with version control systems.
+- **Collaboration**: Multi-user editing support (future).
+- **Asset Repository**: Community asset sharing (future).
 
 ## Related Artifacts
-- **WCS FRED2 Analysis**: Complete analysis of original editor functionality
-- **Architecture Design**: To be created by Mo
-- **Story Definitions**: To be created by SallySM
-- **Implementation**: To be handled by Dev
-- **Validation**: To be performed by QA
+- **WCS FRED2 Analysis**: Complete analysis of original editor functionality.
+- **Architecture Design**: `.ai/docs/EPIC-005-gfred2-mission-editor/architecture.md`
+- **Story Definitions**: `.ai/stories/EPIC-005-gfred2-mission-editor/`
+- **Implementation**: `target/addons/gfred2/`
+- **Validation**: QA plans and test cases.
 
 ## BMAD Team Refinement Summary (May 30, 2025)
+(This section remains largely relevant but the story list and progress have been updated above based on June 7 analysis)
 
 ### Collaborative Analysis Completed
 **BMAD Team**: Larry (WCS Analyst), Mo (Godot Architect), SallySM (Story Manager)  
@@ -323,7 +296,7 @@ target/addons/gfred2/
 
 ### Timeline Accuracy
 - **Original Estimate**: 12-16 weeks (unrealistic based on integration complexity)
-- **Refined Estimate**: 6 weeks / 30 days (based on detailed story analysis)
+- **Refined Estimate**: 6 weeks / 30 days (based on detailed story analysis) - *This needs re-evaluation now.*
 - **Implementation Sequence**: Optimized for dependency management and risk reduction
 
 ### Quality Standards Enhanced
@@ -336,13 +309,15 @@ target/addons/gfred2/
 
 **Original Analysis By**: Larry (WCS Analyst) - January 26, 2025  
 **Story Refinement By**: BMAD Team (Larry, Mo, SallySM) - May 30, 2025  
-**Current Status**: Ready for Implementation  
-**Dependencies**: All EPICs 001-004 complete and stable  
-**BMAD Workflow Status**: Analysis → Stories → **READY FOR IMPLEMENTATION**
+**Further Story Updates & Analysis By**: Cline (AI Software Engineer) - June 7, 2025  
+**Current Status**: Stories Updated, Ready for Prioritized Implementation  
+**Dependencies**: All EPICs 001-004 completion status needs to be tracked.  
+**BMAD Workflow Status**: Analysis → Stories → **READY FOR IMPLEMENTATION** (with updated priorities)
 
 ---
 
 ## SallySM Story Integration Summary (May 30, 2025)
+(This section details previous story creation and enhancements. The "Integration Story Breakdown" above reflects the most current list.)
 
 ### Critical Gap Analysis & Story Creation
 **Analysis Source**: Larry (WCS Analyst) findings - GFRED2 coverage only 60-65% of FRED2 capabilities  
@@ -350,25 +325,7 @@ target/addons/gfred2/
 **Integration Date**: May 30, 2025
 
 ### New High-Priority Stories Created
-1. **GFRED2-007: Briefing Editor System** (5 days) - CRITICAL GAP ⚡
-   - Complete absence of briefing creation capabilities
-   - Multi-stage briefing, camera positioning, voice integration
-   - Essential for mission storytelling and player orientation
-
-2. **GFRED2-008: Campaign Editor Integration** (4 days) - CRITICAL GAP ⚡
-   - Complete absence of campaign creation capabilities
-   - Mission flow, branching logic, campaign-wide variables
-   - Essential for multi-mission campaign development
-
-3. **GFRED2-009: Advanced Ship Configuration** (4 days) - HIGH PRIORITY ⚡
-   - Missing sophisticated ship configuration options
-   - Advanced AI, damage systems, texture replacement
-   - Required for complex mission scenarios
-
-4. **GFRED2-010: Mission Component Editors** (5 days) - HIGH PRIORITY ⚡
-   - Missing reinforcements, goals, messages, waypoints editors
-   - Environment configuration, variable management
-   - Foundation components for sophisticated missions
+(GFRED2-007 to GFRED2-010 are listed in the breakdown above)
 
 - **GFRED2-011**: UI Component Refactoring to Scene-Based Architecture (5 days) ✅ **COMPLETED** (Date: May 31, 2025)
    - Scene-based UI architecture for all components (gizmos, docks, dialogs)
@@ -390,7 +347,7 @@ target/addons/gfred2/
 
 ### Timeline Impact
 - **Original Estimate**: 30 days (6 weeks)
-- **Updated Estimate**: 48 days (9.6 weeks)
+- **Updated Estimate**: 48 days (9.6 weeks) - *This needs re-evaluation based on the 16 stories.*
 - **Additional Development**: 18 days for critical feature parity
 - **Feature Parity**: Achieves 95%+ FRED2 functionality vs previous 60-65%
 
@@ -411,6 +368,7 @@ target/addons/gfred2/
 ---
 
 ## SallySM Architectural Compliance Review (May 31, 2025)
+(This section remains relevant as GFRED2-011 is the foundation for UI work.)
 
 ### Critical Implementation Issue Resolution
 **Review Triggered By**: Comprehensive feedback analysis identifying architectural violations in current implementation  
@@ -435,7 +393,7 @@ target/addons/gfred2/
 1. **100% Scene-Based UI**: NO programmatic UI construction allowed
 2. **Centralized Structure**: ALL UI in `addons/gfred2/scenes/` exclusively
 3. **Performance Standards**: < 16ms scene instantiation, 60+ FPS UI updates
-4. **Folder Elimination**: DEPRECATE `ui/`, `dialogs/`, `viewport/ui/` folders
+4. **Folder Elimination**: DEPRECATE `ui/`, `dialogs/`, `viewport/ui/` folders (except where they contain only scripts for scenes in `addons/gfred2/scenes/`)
 5. **Clear Migration Strategy**: Specific steps to correct architectural violations
 
 ### Implementation Impact
@@ -454,6 +412,7 @@ target/addons/gfred2/
 ---
 
 ## SallySM Story Completion Update (May 31, 2025)
+(This section for GFRED2-011 remains relevant.)
 
 ### GFRED2-011 UI Refactoring - COMPLETED ✅
 
