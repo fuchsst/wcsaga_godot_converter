@@ -138,7 +138,7 @@ Ship & Combat Integration:
 ### Phase 1: Core Ship Framework (3 weeks) 🔄 IN PROGRESS
 - **STORY-SHIP-001**: Ship Controller and Base Ship Systems ✅ COMPLETED
 - **STORY-SHIP-002**: Subsystem Management and Configuration ✅ COMPLETED
-- **STORY-SHIP-003**: Ship Class Definitions and Factory System ⏳ PENDING
+- **STORY-SHIP-003**: Ship Class Definitions and Factory System ✅ COMPLETED
 - **STORY-SHIP-004**: Ship Lifecycle and State Management ⏳ PENDING
 
 ### Phase 2: Weapon Systems (3 weeks) ✅ COMPLETED
