@@ -48,7 +48,9 @@
 
 ### 5. Testability & Unit Tests
 - [ ] Code is structured in a way that facilitates unit testing (e.g., dependencies injectable or mockable).
-- [ ] Unit tests (GUT or similar framework) are present for key logic and cover acceptance criteria.
+- [ ] Unit tests (gdUnit4) are present for key logic and cover acceptance criteria.
+- [ ] Project compiles and all tests pass
+- [ ] Test scripts follow the same folder structure in the `target/tests/` folder as the the tested script (e.g. the test script for `target/scripts/ships/core/base_ship.gd` is placed in `target/tests/ships/core/base_ship.gd`)
 - [ ] Unit tests are passing and provide meaningful assertions.
 - [ ] Test coverage is adequate for the complexity and criticality of the code.
 - [ ] Tests are easy to understand and maintain.

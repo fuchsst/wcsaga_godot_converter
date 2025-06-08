@@ -3,7 +3,7 @@
 **Epic**: EPIC-011: Ship & Combat Systems  
 **Story ID**: SHIP-005  
 **Created**: 2025-06-08  
-**Status**: Ready
+**Status**: ✅ COMPLETED
 
 ## Story Definition
 **As a**: Game developer implementing the WCS-Godot conversion  
