@@ -217,6 +217,7 @@ logs/
 config.ini
 secrets.json
 .secrets
+source_assets/
 
 CLAUDE.local.md
 .util-scripts/

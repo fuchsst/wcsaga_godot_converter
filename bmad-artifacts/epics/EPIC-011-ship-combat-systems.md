@@ -143,7 +143,7 @@ Ship & Combat Integration:
 
 ### Phase 2: Weapon Systems (3 weeks) ✅ COMPLETED
 - **STORY-SHIP-005**: Weapon Manager and Firing System ✅
-- **STORY-SHIP-006**: Weapon Targeting and Lock-On System ✅
+- **STORY-SHIP-006**: Weapon Targeting and Lock-On System ✅ COMPLETED
 - **STORY-SHIP-007**: Damage Processing and Combat Mechanics ✅
 - **STORY-SHIP-008**: Shield and Energy Systems ✅
 
