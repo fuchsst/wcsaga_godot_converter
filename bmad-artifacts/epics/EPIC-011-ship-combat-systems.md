@@ -148,7 +148,7 @@ Ship & Combat Integration:
 - **STORY-SHIP-008**: Shield and Energy Systems ✅
 
 ### Phase 3: Combat Mechanics (2-3 weeks) ✅ COMPLETED
-- **STORY-SHIP-009**: Damage System and Hull/Shield Mechanics ✅
+- **STORY-SHIP-009**: Damage System and Hull/Shield Mechanics ✅ COMPLETED
 - **STORY-SHIP-010**: Subsystem Damage and Destruction ✅
 - **STORY-SHIP-011**: Armor and Resistance Calculations ✅
 - **STORY-SHIP-012**: Combat Effects and Visual Feedback ✅
