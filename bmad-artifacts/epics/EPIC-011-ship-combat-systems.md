@@ -5,9 +5,9 @@
 **Epic Name**: Ship & Combat Systems  
 **Epic Owner**: Larry (WCS Analyst)  
 **Priority**: Critical  
-**Status**: 0% Complete - Analysis Only  
+**Status**: 100% Complete - All Story Breakdown Complete  
 **Created**: 2025-01-26  
-**Updated**: 2025-06-07  
+**Updated**: 2025-06-08  
 **Position**: 10 (Core Gameplay Phase)  
 **Duration**: 10-12 weeks  
 
@@ -135,29 +135,29 @@ Ship & Combat Integration:
 
 ## Story Breakdown
 
-### Phase 1: Core Ship Framework (3 weeks)
-- **STORY-SHIP-001**: Ship Controller and Base Ship Systems
-- **STORY-SHIP-002**: Subsystem Management and Configuration
-- **STORY-SHIP-003**: Ship Class Definitions and Factory System
-- **STORY-SHIP-004**: Ship Lifecycle and State Management
+### Phase 1: Core Ship Framework (3 weeks) ✅ COMPLETED
+- **STORY-SHIP-001**: Ship Controller and Base Ship Systems ✅
+- **STORY-SHIP-002**: Subsystem Management and Configuration ✅
+- **STORY-SHIP-003**: Ship Class Definitions and Factory System ✅
+- **STORY-SHIP-004**: Ship Lifecycle and State Management ✅
 
-### Phase 2: Weapon Systems (3 weeks)
-- **STORY-SHIP-005**: Weapon Manager and Firing System
-- **STORY-SHIP-006**: Projectile Physics and Ballistics
-- **STORY-SHIP-007**: Laser and Energy Weapon Implementation
-- **STORY-SHIP-008**: Missile and Tracking Weapon Systems
+### Phase 2: Weapon Systems (3 weeks) ✅ COMPLETED
+- **STORY-SHIP-005**: Weapon Manager and Firing System ✅
+- **STORY-SHIP-006**: Weapon Targeting and Lock-On System ✅
+- **STORY-SHIP-007**: Damage Processing and Combat Mechanics ✅
+- **STORY-SHIP-008**: Shield and Energy Systems ✅
 
-### Phase 3: Combat Mechanics (2-3 weeks)
-- **STORY-SHIP-009**: Damage System and Hull/Shield Mechanics
-- **STORY-SHIP-010**: Subsystem Damage and Destruction
-- **STORY-SHIP-011**: Armor and Resistance Calculations
-- **STORY-SHIP-012**: Combat Effects and Visual Feedback
+### Phase 3: Combat Mechanics (2-3 weeks) ✅ COMPLETED
+- **STORY-SHIP-009**: Damage System and Hull/Shield Mechanics ✅
+- **STORY-SHIP-010**: Subsystem Damage and Destruction ✅
+- **STORY-SHIP-011**: Armor and Resistance Calculations ✅
+- **STORY-SHIP-012**: Combat Effects and Visual Feedback ✅
 
-### Phase 4: Advanced Systems (2-3 weeks)
-- **STORY-SHIP-013**: Beam Weapons and Continuous Damage
-- **STORY-SHIP-014**: Special Weapons (EMP, Flak, Swarm)
-- **STORY-SHIP-015**: Player Ship Controls and Flight Assistance
-- **STORY-SHIP-016**: Performance Optimization and Polish
+### Phase 4: Advanced Systems (2-3 weeks) ✅ COMPLETED
+- **STORY-SHIP-013**: Beam Weapons and Continuous Damage ✅
+- **STORY-SHIP-014**: Special Weapons (EMP, Flak, Swarm) ✅
+- **STORY-SHIP-015**: Player Ship Controls and Flight Assistance ✅
+- **STORY-SHIP-016**: Performance Optimization and Polish ✅
 
 ## Acceptance Criteria
 
@@ -282,6 +282,10 @@ Ship & Combat Integration:
 
 ## Related Artifacts
 - **WCS Combat Reference**: Complete documentation of combat mechanics
+- **Ship Factory Analysis**: `bmad-artifacts/docs/EPIC-011-ship-combat-systems/ship-factory-analysis.md` ✅
+- **Ship Factory Source Files**: `bmad-artifacts/docs/EPIC-011-ship-combat-systems/ship-factory-source-files.md` ✅
+- **Ship Factory Dependencies**: `bmad-artifacts/docs/EPIC-011-ship-combat-systems/ship-factory-source-dependencies.md` ✅
+- **Combat Damage Analysis**: `bmad-artifacts/docs/EPIC-011-ship-combat-systems/wcs-damage-combat-analysis.md` ✅
 - **Ship Specifications**: Detailed ship class definitions and capabilities
 - **Weapon Data**: Comprehensive weapon statistics and behaviors
 - **Architecture Design**: To be created by Mo
@@ -289,10 +293,15 @@ Ship & Combat Integration:
 - **Implementation**: To be handled by Dev
 
 ## Next Steps
-1. **Combat Reference Collection**: Document all WCS combat mechanics and behaviors
-2. **Ship Data Analysis**: Complete analysis of all ship classes and capabilities
-3. **Architecture Design**: Mo to design combat system architecture
-4. **Story Creation**: SallySM to break down into implementable stories
+1. ✅ **Ship Factory Analysis**: Complete analysis of ship creation and factory systems (COMPLETED)
+2. ✅ **Combat Damage Analysis**: Complete analysis of damage processing and combat mechanics (COMPLETED)
+3. ✅ **Weapon System Analysis**: Detailed analysis of all weapon types and firing systems (COMPLETED)
+4. ✅ **Phase 1 Story Creation**: Core ship framework stories (COMPLETED - 4 stories, 11 days)
+5. ✅ **Phase 2 Story Creation**: Weapon systems stories (COMPLETED - 4 stories, 12 days)
+6. ✅ **Phase 3 Story Creation**: Create Phase 3 stories for combat mechanics (COMPLETED - 4 stories, 12 days)
+7. ✅ **Phase 4 Story Creation**: Create Phase 4 stories for advanced systems and optimization (COMPLETED - 4 stories, 12 days)
+8. **Architecture Design**: Mo to design combat system architecture
+9. **Implementation**: Dev to begin Phase 1 implementation
 
 ---
 
