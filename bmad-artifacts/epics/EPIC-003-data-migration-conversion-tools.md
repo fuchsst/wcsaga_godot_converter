@@ -159,6 +159,11 @@ migration_tools/
 - **DM-011**: ✅ [Godot Import Plugin Integration](../bmad-artifacts/stories/EPIC-003-data-migration-conversion-tools/DM-011-godot-import-plugin-integration.md) - 2 days
 - **DM-012**: ✅ [Validation and Testing Framework](../bmad-artifacts/stories/EPIC-003-data-migration-conversion-tools/DM-012-validation-testing-framework.md) - 3 days (COMPLEX)
 
+### Phase 6: Hermes Campaign Conversion (1 week) - READY FOR IMPLEMENTATION 📋
+- **DM-013**: ✅ [Automated Asset Mapping from Table Data](../bmad-artifacts/stories/EPIC-003-data-migration-conversion-tools/DM-013-automated-asset-mapping.md) - 3 days (COMPLEX)
+- **DM-014**: ✅ [Duplicate Asset Detection and Handling](../bmad-artifacts/stories/EPIC-003-data-migration-conversion-tools/DM-014-duplicate-asset-detection.md) - 2 days (MEDIUM)
+- **DM-015**: ✅ [Convert Hermes Campaign Assets via Automated Mapping](../bmad-artifacts/stories/EPIC-003-data-migration-conversion-tools/DM-015-hermes-campaign-conversion.md) - 2 days (MEDIUM)
+
 ## Acceptance Criteria
 
 ### Epic-Level Acceptance Criteria
@@ -282,8 +287,8 @@ migration_tools/
 ---
 
 **Epic Completion Status**: Stories Created - Ready for Implementation  
-**Story Count**: 12 stories across 5 phases  
-**Total Estimated Duration**: 31 development days (6 weeks)  
+**Story Count**: 15 stories across 6 phases  
+**Total Estimated Duration**: 38 development days (7-8 weeks)  
 **Dependencies**: EPIC-001 and EPIC-002 foundation systems must be available  
 **BMAD Workflow Status**: Analysis → PRD → Architecture → Stories ✅ → **Implementation (Ready)**
 
