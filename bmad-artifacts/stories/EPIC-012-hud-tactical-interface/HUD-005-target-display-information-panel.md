@@ -94,8 +94,8 @@ This story implements the target monitor and information panel that displays det
 ### Task 1: Core Target Information Display (1.0 points)
 ```
 Files:
-- target/scripts/ui/hud/targeting/target_display.gd
-- target/scripts/ui/hud/targeting/target_info_panel.gd
+- target/scripts/hud/targeting/target_display.gd
+- target/scripts/hud/targeting/target_info_panel.gd
 - Basic target information panel with name, class, status
 - Hull and shield percentage calculations and display
 - Distance and range information processing
@@ -105,8 +105,8 @@ Files:
 ### Task 2: Visual Status Representation (1.0 points)
 ```
 Files:
-- target/scripts/ui/hud/targeting/target_status_visualizer.gd
-- target/scripts/ui/hud/targeting/subsystem_display.gd
+- target/scripts/hud/targeting/target_status_visualizer.gd
+- target/scripts/hud/targeting/subsystem_display.gd
 - Graphical hull and shield integrity visualization
 - Subsystem health display and targeting interface
 - Color-coded status indicators and damage representation
@@ -116,8 +116,8 @@ Files:
 ### Task 3: Tactical Assessment System (0.75 points)
 ```
 Files:
-- target/scripts/ui/hud/targeting/tactical_analyzer.gd
-- target/scripts/ui/hud/targeting/engagement_calculator.gd
+- target/scripts/hud/targeting/tactical_analyzer.gd
+- target/scripts/hud/targeting/engagement_calculator.gd
 - Weapon capability and threat assessment
 - Optimal engagement range calculations
 - Target maneuverability and evasion analysis
@@ -127,8 +127,8 @@ Files:
 ### Task 4: Data Integration and Optimization (0.25 points)
 ```
 Files:
-- target/scripts/ui/hud/targeting/target_data_processor.gd
-- target/scripts/ui/hud/targeting/target_tracking_optimizer.gd
+- target/scripts/hud/targeting/target_data_processor.gd
+- target/scripts/hud/targeting/target_tracking_optimizer.gd
 - Integration with HUD data provider system
 - Target switching optimization and smooth transitions
 - Error handling for target loss and invalid data
@@ -232,7 +232,7 @@ func evaluate_target_maneuverability(target: Node) -> float
 
 ## Testing Requirements
 
-### Unit Tests (`tests/scripts/ui/hud/test_hud_005_target_display.gd`)
+### Unit Tests (`tests/scripts/hud/test_hud_005_target_display.gd`)
 ```gdscript
 extends GdUnitTestSuite
 
@@ -314,35 +314,35 @@ func test_ui_responsiveness()
 ### Components Implemented
 
 1. **TargetDisplay (Primary Controller)**
-   - `target/scripts/ui/hud/targeting/target_display.gd`
+   - `target/scripts/hud/targeting/target_display.gd`
    - Central target display management with component coordination
    - Target switching with smooth transitions and optimization
    - Real-time target data updates and validation
    - Integration with HUD-002 data provider system
 
 2. **TargetInfoPanel (Basic Information)**
-   - `target/scripts/ui/hud/targeting/target_info_panel.gd`
+   - `target/scripts/hud/targeting/target_info_panel.gd`
    - Target name, class, type identification display
    - Hull and shield percentage with color-coded status indicators
    - Distance formatting with multiple unit support (m/km/AU)
    - Hostility status with visual indicators
 
 3. **TargetStatusVisualizer (Visual Status)**
-   - `target/scripts/ui/hud/targeting/target_status_visualizer.gd`
+   - `target/scripts/hud/targeting/target_status_visualizer.gd`
    - Graphical hull and shield integrity visualization
    - Shield quadrant display with individual quadrant tracking
    - Color-coded status indicators for quick assessment
    - Critical damage detection with flash warnings
 
 4. **SubsystemDisplay (Subsystem Targeting)**
-   - `target/scripts/ui/hud/targeting/subsystem_display.gd`
+   - `target/scripts/hud/targeting/subsystem_display.gd`
    - Individual subsystem health display for 8 standard WCS subsystems
    - Subsystem targeting interface with visual cursor
    - Health bars with color-coded status indicators
    - Critical subsystem damage detection and highlighting
 
 5. **TacticalAnalyzer (Threat Assessment)**
-   - `target/scripts/ui/hud/targeting/tactical_analyzer.gd`
+   - `target/scripts/hud/targeting/tactical_analyzer.gd`
    - Comprehensive threat level analysis (5 threat levels)
    - Target classification system (9 target classes)
    - Weapon capability assessment with threat ratings
@@ -350,21 +350,21 @@ func test_ui_responsiveness()
    - Vulnerability analysis and recommended engagement approaches
 
 6. **EngagementCalculator (Combat Calculations)**
-   - `target/scripts/ui/hud/targeting/engagement_calculator.gd`
+   - `target/scripts/hud/targeting/engagement_calculator.gd`
    - Lead angle calculations for weapon targeting
    - Intercept course calculations with success probability
    - Weapon firing solutions with hit probability assessment
    - Engagement parameter optimization
 
 7. **TargetDataProcessor (Data Management)**
-   - `target/scripts/ui/hud/targeting/target_data_processor.gd`
+   - `target/scripts/hud/targeting/target_data_processor.gd`
    - Multi-source data collection and merging
    - Data validation with comprehensive rule checking
    - Performance-optimized caching system
    - Enhanced data with calculated fields and predictions
 
 8. **TargetTrackingOptimizer (Performance)**
-   - `target/scripts/ui/hud/targeting/target_tracking_optimizer.gd`
+   - `target/scripts/hud/targeting/target_tracking_optimizer.gd`
    - Adaptive update frequency based on distance and importance
    - Target switching optimization with pre-caching
    - LOD (Level of Detail) system for performance scaling
@@ -373,7 +373,7 @@ func test_ui_responsiveness()
 ### Testing and Validation
 
 1. **Unit Tests**
-   - `target/tests/scripts/ui/hud/test_hud_005_target_display.gd`
+   - `target/tests/scripts/hud/test_hud_005_target_display.gd`
    - Comprehensive test suite covering all 8 components
    - Mock objects for isolated testing (mock_target.gd, mock_player.gd)
    - 45+ individual test functions covering core functionality

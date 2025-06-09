@@ -94,8 +94,8 @@ This story implements the configuration management system that allows players to
 ### Task 1: Configuration Data Management (0.5 points)
 ```
 Files:
-- target/scripts/ui/hud/config/hud_config_manager.gd
-- target/scripts/ui/hud/config/hud_layout_presets.gd
+- target/scripts/hud/config/hud_config_manager.gd
+- target/scripts/hud/config/hud_layout_presets.gd
 - Enhanced HUDConfig resource integration
 - Layout preset definitions and management
 - Configuration validation and migration system
@@ -105,8 +105,8 @@ Files:
 ### Task 2: Visibility and Layout Control (0.75 points)
 ```
 Files:
-- target/scripts/ui/hud/config/element_visibility_manager.gd
-- target/scripts/ui/hud/config/layout_positioning_system.gd
+- target/scripts/hud/config/element_visibility_manager.gd
+- target/scripts/hud/config/layout_positioning_system.gd
 - Real-time element visibility management
 - Position and anchor calculation system
 - Layout preset application and validation
@@ -116,8 +116,8 @@ Files:
 ### Task 3: Visual Customization System (0.5 points)
 ```
 Files:
-- target/scripts/ui/hud/config/color_scheme_manager.gd
-- target/scripts/ui/hud/config/visual_theme_controller.gd
+- target/scripts/hud/config/color_scheme_manager.gd
+- target/scripts/hud/config/visual_theme_controller.gd
 - Color scheme presets and custom colors
 - Visual theme consistency management
 - Text scaling and readability options
@@ -127,8 +127,8 @@ Files:
 ### Task 4: Configuration UI and Integration (0.25 points)
 ```
 Files:
-- target/scripts/ui/hud/config/hud_config_ui.gd
-- target/scripts/ui/hud/config/config_preview_system.gd
+- target/scripts/hud/config/hud_config_ui.gd
+- target/scripts/hud/config/config_preview_system.gd
 - In-game configuration interface
 - Real-time preview system
 - Integration with game menus and keybindings
@@ -238,7 +238,7 @@ func migrate_config(config: HUDConfig, from_version: String) -> HUDConfig
 
 ## Testing Requirements
 
-### Unit Tests (`tests/scripts/ui/hud/test_hud_004_configuration.gd`)
+### Unit Tests (`tests/scripts/hud/test_hud_004_configuration.gd`)
 ```gdscript
 extends GdUnitTestSuite
 

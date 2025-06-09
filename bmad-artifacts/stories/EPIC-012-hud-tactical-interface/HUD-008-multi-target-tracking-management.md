@@ -101,8 +101,8 @@ This story implements the multi-target tracking system that allows pilots to mai
 ### Task 1: Core Multi-target Tracking (1.25 points)
 ```
 Files:
-- target/scripts/ui/hud/targeting/multi_target_tracker.gd
-- target/scripts/ui/hud/targeting/target_list_manager.gd
+- target/scripts/hud/targeting/multi_target_tracker.gd
+- target/scripts/hud/targeting/target_list_manager.gd
 - Multi-target tracking system with automatic target acquisition
 - Target list management with add/remove functionality
 - Real-time status updates for all tracked targets
@@ -112,8 +112,8 @@ Files:
 ### Task 2: Target Priority and Selection System (1.0 points)
 ```
 Files:
-- target/scripts/ui/hud/targeting/target_priority_manager.gd
-- target/scripts/ui/hud/targeting/target_selector.gd
+- target/scripts/hud/targeting/target_priority_manager.gd
+- target/scripts/hud/targeting/target_selector.gd
 - Automatic and manual target priority assignment
 - Target switching and selection interface
 - Priority visualization and management systems
@@ -123,8 +123,8 @@ Files:
 ### Task 3: Multi-target Display Interface (0.5 points)
 ```
 Files:
-- target/scripts/ui/hud/targeting/multi_target_display.gd
-- target/scripts/ui/hud/targeting/target_status_list.gd
+- target/scripts/hud/targeting/multi_target_display.gd
+- target/scripts/hud/targeting/target_status_list.gd
 - Compact multi-target list display with essential information
 - Target status indicators and visual representation
 - Active target highlighting and selection indication
@@ -134,8 +134,8 @@ Files:
 ### Task 4: Advanced Features and Coordination (0.25 points)
 ```
 Files:
-- target/scripts/ui/hud/targeting/wingman_coordinator.gd
-- target/scripts/ui/hud/targeting/advanced_multi_targeting.gd
+- target/scripts/hud/targeting/wingman_coordinator.gd
+- target/scripts/hud/targeting/advanced_multi_targeting.gd
 - Wingman target assignment and coordination systems
 - Advanced multi-target features and weapon integration
 - Performance optimization and memory management
@@ -236,7 +236,7 @@ func refresh_priority_indicators() -> void
 
 ## Testing Requirements
 
-### Unit Tests (`tests/scripts/ui/hud/test_hud_008_multi_target_tracking.gd`)
+### Unit Tests (`tests/scripts/hud/test_hud_008_multi_target_tracking.gd`)
 ```gdscript
 extends GdUnitTestSuite
 

@@ -93,7 +93,7 @@ This story implements comprehensive performance optimization for the HUD system,
 
 ### Task 1: Frame Budget and Monitoring System (0.5 points)
 ```
-File: target/scripts/ui/hud/core/hud_performance_monitor.gd
+File: target/scripts/hud/core/hud_performance_monitor.gd
 - Real-time frame time measurement and budget tracking
 - Per-element performance monitoring and allocation
 - Warning system for budget exceeded scenarios
@@ -104,8 +104,8 @@ File: target/scripts/ui/hud/core/hud_performance_monitor.gd
 ### Task 2: LOD and Update Optimization (0.75 points)
 ```
 Files:
-- target/scripts/ui/hud/optimization/hud_lod_manager.gd
-- target/scripts/ui/hud/optimization/update_scheduler.gd
+- target/scripts/hud/optimization/hud_lod_manager.gd
+- target/scripts/hud/optimization/update_scheduler.gd
 - Distance and priority-based LOD system
 - Intelligent update frequency management
 - Dirty state tracking and change detection
@@ -115,8 +115,8 @@ Files:
 ### Task 3: Render and Memory Optimization (0.5 points)
 ```
 Files:
-- target/scripts/ui/hud/optimization/render_optimizer.gd
-- target/scripts/ui/hud/optimization/memory_manager.gd
+- target/scripts/hud/optimization/render_optimizer.gd
+- target/scripts/hud/optimization/memory_manager.gd
 - Element culling and render batching
 - Memory usage monitoring and cleanup
 - Object pooling for HUD elements
@@ -126,8 +126,8 @@ Files:
 ### Task 4: Automatic Scaling and Debug Tools (0.25 points)
 ```
 Files:
-- target/scripts/ui/hud/optimization/performance_scaler.gd
-- target/scripts/ui/hud/debug/performance_profiler.gd
+- target/scripts/hud/optimization/performance_scaler.gd
+- target/scripts/hud/debug/performance_profiler.gd
 - Automatic quality scaling based on performance
 - Performance profiling and analysis tools
 - Debug overlay and visualization systems
@@ -218,7 +218,7 @@ func apply_performance_profile(profile: PerformanceProfile) -> void
 
 ## Testing Requirements
 
-### Unit Tests (`tests/scripts/ui/hud/test_hud_003_performance.gd`)
+### Unit Tests (`tests/scripts/hud/test_hud_003_performance.gd`)
 ```gdscript
 extends GdUnitTestSuite
 

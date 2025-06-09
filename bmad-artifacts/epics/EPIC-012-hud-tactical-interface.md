@@ -72,7 +72,7 @@ Create the comprehensive heads-up display and tactical interface that provides p
 
 ### HUD System Structure
 ```
-target/scripts/ui/hud/
+target/scripts/hud/
 ├── core/                           # Core HUD framework
 │   ├── hud_manager.gd             # Central HUD coordination
 │   ├── hud_element_base.gd        # Base class for HUD elements

@@ -94,8 +94,8 @@ This story implements the dynamic targeting reticle system that provides visual 
 ### Task 1: Core Reticle System (1.0 points)
 ```
 Files:
-- target/scripts/ui/hud/targeting/targeting_reticle.gd
-- target/scripts/ui/hud/targeting/reticle_renderer.gd
+- target/scripts/hud/targeting/targeting_reticle.gd
+- target/scripts/hud/targeting/reticle_renderer.gd
 - Central targeting reticle with weapon-specific designs
 - Real-time reticle positioning and 3D-to-2D projection
 - Reticle color coding and status visualization
@@ -105,8 +105,8 @@ Files:
 ### Task 2: Lead Calculation and Indicators (1.25 points)
 ```
 Files:
-- target/scripts/ui/hud/targeting/lead_calculator.gd
-- target/scripts/ui/hud/targeting/lead_indicator.gd
+- target/scripts/hud/targeting/lead_calculator.gd
+- target/scripts/hud/targeting/lead_indicator.gd
 - Lead prediction algorithm based on target velocity and weapon ballistics
 - Visual lead marker positioning and dynamic adjustment
 - Lead accuracy validation and real-time correction
@@ -116,8 +116,8 @@ Files:
 ### Task 3: Weapon Convergence and Firing Solution (0.5 points)
 ```
 Files:
-- target/scripts/ui/hud/targeting/convergence_display.gd
-- target/scripts/ui/hud/targeting/firing_solution_calculator.gd
+- target/scripts/hud/targeting/convergence_display.gd
+- target/scripts/hud/targeting/firing_solution_calculator.gd
 - Weapon convergence point calculation and visualization
 - Multi-weapon convergence handling and optimization
 - Firing solution calculation with ballistics integration
@@ -127,8 +127,8 @@ Files:
 ### Task 4: Multi-Target and Advanced Features (0.25 points)
 ```
 Files:
-- target/scripts/ui/hud/targeting/multi_target_reticle.gd
-- target/scripts/ui/hud/targeting/advanced_targeting.gd
+- target/scripts/hud/targeting/multi_target_reticle.gd
+- target/scripts/hud/targeting/advanced_targeting.gd
 - Multi-weapon reticle display and coordination
 - Subsystem targeting and precision targeting modes
 - Missile lock-on and beam weapon targeting integration
@@ -235,7 +235,7 @@ func render_convergence_display(convergence_point: Vector2, range: float) -> voi
 
 ## Testing Requirements
 
-### Unit Tests (`tests/scripts/ui/hud/test_hud_006_targeting_reticle.gd`)
+### Unit Tests (`tests/scripts/hud/test_hud_006_targeting_reticle.gd`)
 ```gdscript
 extends GdUnitTestSuite
 
@@ -328,56 +328,56 @@ func test_target_switching_responsiveness()
 ### Components Implemented
 
 1. **TargetingReticle (Primary Controller)**
-   - `target/scripts/ui/hud/targeting/targeting_reticle.gd`
+   - `target/scripts/hud/targeting/targeting_reticle.gd`
    - Dynamic targeting reticle system with weapon-specific designs
    - Real-time reticle positioning and 3D-to-2D projection
    - Weapon status color coding and smooth reticle movement
    - Integration with HUD-002 data provider and performance optimization
 
 2. **ReticleRenderer (Visual Display)**
-   - `target/scripts/ui/hud/targeting/reticle_renderer.gd`
+   - `target/scripts/hud/targeting/reticle_renderer.gd`
    - Procedural reticle texture generation for different weapon types
    - Color-coded status indicators (ready, charging, out of range)
    - LOD system with performance-based quality adjustment
    - Visual effects including pulsing, flashing, and fade animations
 
 3. **LeadCalculator (Ballistics Engine)**
-   - `target/scripts/ui/hud/targeting/lead_calculator.gd`
+   - `target/scripts/hud/targeting/lead_calculator.gd`
    - Advanced lead point calculation with iterative convergence
    - Ballistics correction for gravity, drag, and weapon characteristics
    - Hit probability calculation based on multiple factors
    - Evasive target prediction with pattern recognition
 
 4. **LeadIndicator (Visual Lead Display)**
-   - `target/scripts/ui/hud/targeting/lead_indicator.gd`
+   - `target/scripts/hud/targeting/lead_indicator.gd`
    - Dynamic lead marker with confidence-based visibility
    - Smooth interpolation and trail visualization
    - Weapon-type specific marker designs and colors
    - Trajectory line display from shooter to predicted intercept
 
 5. **ConvergenceDisplay (Weapon Convergence)**
-   - `target/scripts/ui/hud/targeting/convergence_display.gd`
+   - `target/scripts/hud/targeting/convergence_display.gd`
    - Multi-weapon convergence point calculation
    - Optimal firing zone visualization with range indicators
    - Weapon cone displays showing effective firing areas
    - Multiple convergence calculation methods (average, weighted, closest)
 
 6. **FiringSolutionCalculator (Combat Mathematics)**
-   - `target/scripts/ui/hud/targeting/firing_solution_calculator.gd`
+   - `target/scripts/hud/targeting/firing_solution_calculator.gd`
    - Comprehensive firing solution calculation
    - Weapon effectiveness analysis based on range, angle, and timing
    - Firing window detection for optimal shot opportunities
    - Multi-weapon solution comparison and recommendation system
 
 7. **MultiTargetReticle (Target Management)**
-   - `target/scripts/ui/hud/targeting/multi_target_reticle.gd`
+   - `target/scripts/hud/targeting/multi_target_reticle.gd`
    - Simultaneous reticle display for multiple targets
    - Primary and secondary target priority system
    - Target switching with smooth transitions
    - Performance monitoring and adaptive LOD management
 
 8. **AdvancedTargeting (Enhanced Features)**
-   - `target/scripts/ui/hud/targeting/advanced_targeting.gd`
+   - `target/scripts/hud/targeting/advanced_targeting.gd`
    - Subsystem targeting with health and difficulty analysis
    - Missile lock-on acquisition and tracking system
    - Beam weapon continuous targeting and stability monitoring
@@ -386,7 +386,7 @@ func test_target_switching_responsiveness()
 ### Testing and Validation
 
 1. **Comprehensive Test Suite**
-   - `target/tests/scripts/ui/hud/test_hud_006_targeting_reticle.gd`
+   - `target/tests/scripts/hud/test_hud_006_targeting_reticle.gd`
    - 40+ individual test functions covering all components
    - Integration tests for component coordination
    - Performance tests for real-time combat scenarios

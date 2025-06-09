@@ -93,7 +93,7 @@ This story establishes the foundational HUD architecture that will support all s
 
 ### Task 1: Core HUD Manager (0.5 points)
 ```
-File: target/scripts/ui/hud/core/hud_manager.gd
+File: target/scripts/hud/core/hud_manager.gd
 - Singleton HUD manager class with autoload configuration
 - HUD element collection and lifecycle management
 - Scene-independent HUD display coordination
@@ -103,7 +103,7 @@ File: target/scripts/ui/hud/core/hud_manager.gd
 
 ### Task 2: Base HUD Element Framework (1.0 points)
 ```
-File: target/scripts/ui/hud/core/hud_element_base.gd
+File: target/scripts/hud/core/hud_element_base.gd
 - Abstract base class for all HUD elements
 - Standard interface for element lifecycle and updates
 - Position, scale, and visibility management
@@ -113,7 +113,7 @@ File: target/scripts/ui/hud/core/hud_element_base.gd
 
 ### Task 3: HUD Data Provider System (1.0 points)
 ```
-File: target/scripts/ui/hud/core/hud_data_provider.gd
+File: target/scripts/hud/core/hud_data_provider.gd
 - Centralized data access from ship and game systems
 - Real-time data collection and caching
 - Signal-based update propagation
@@ -124,8 +124,8 @@ File: target/scripts/ui/hud/core/hud_data_provider.gd
 ### Task 4: Performance and Layout Systems (0.5 points)
 ```
 Files: 
-- target/scripts/ui/hud/core/hud_performance_monitor.gd
-- target/scripts/ui/hud/core/hud_layout_manager.gd
+- target/scripts/hud/core/hud_performance_monitor.gd
+- target/scripts/hud/core/hud_layout_manager.gd
 - Performance monitoring and frame rate impact measurement
 - Screen layout management with safe areas
 - Element positioning and scaling systems
@@ -231,7 +231,7 @@ Main Scene (3D)
 
 ## Testing Requirements
 
-### Unit Tests (`tests/scripts/ui/hud/test_hud_001_framework.gd`)
+### Unit Tests (`tests/scripts/hud/test_hud_001_framework.gd`)
 ```gdscript
 extends GdUnitTestSuite
 
@@ -279,35 +279,35 @@ func test_memory_usage_optimization()
 **Total Implementation**: 4 core classes with comprehensive test coverage
 
 ### Implemented Components
-1. **HUDManager** (`scripts/ui/hud/core/hud_manager.gd`)
+1. **HUDManager** (`scripts/hud/core/hud_manager.gd`)
    - Singleton pattern with global element management
    - Element registration, lifecycle, and priority ordering
    - Performance monitoring integration
    - Screen size adaptation and safe area management
    - Signal-based communication system
 
-2. **HUDElementBase** (`scripts/ui/hud/core/hud_element_base.gd`)
+2. **HUDElementBase** (`scripts/hud/core/hud_element_base.gd`)
    - Abstract base class for all HUD elements
    - Data binding with dirty tracking optimization
    - Position/scale management with anchor system
    - Performance tracking with frame skipping
    - Flash effects and visual state management
 
-3. **HUDDataProvider** (`scripts/ui/hud/core/hud_data_provider.gd`)
+3. **HUDDataProvider** (`scripts/hud/core/hud_data_provider.gd`)
    - Centralized data collection from ship systems
    - Multi-tier caching with TTL management
    - Real-time updates at configurable frequencies
    - Signal-based data propagation
    - Error handling and graceful degradation
 
-4. **HUDPerformanceMonitor** (`scripts/ui/hud/core/hud_performance_monitor.gd`)
+4. **HUDPerformanceMonitor** (`scripts/hud/core/hud_performance_monitor.gd`)
    - Frame-by-frame performance tracking
    - Element-specific performance monitoring
    - Automatic optimization recommendations
    - Memory usage tracking
    - Profiling session capabilities
 
-5. **HUDLayoutManager** (`scripts/ui/hud/core/hud_layout_manager.gd`)
+5. **HUDLayoutManager** (`scripts/hud/core/hud_layout_manager.gd`)
    - Multi-resolution screen adaptation
    - Anchor-based positioning system
    - Layout presets (default, compact, widescreen)

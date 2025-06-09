@@ -101,8 +101,8 @@ This story implements the navigation system that provides pilots with waypoint g
 ### Task 1: Core Waypoint Management System (1.25 points)
 ```
 Files:
-- target/scripts/ui/hud/navigation/waypoint_manager.gd
-- target/scripts/ui/hud/navigation/navigation_waypoint.gd
+- target/scripts/hud/navigation/waypoint_manager.gd
+- target/scripts/hud/navigation/navigation_waypoint.gd
 - Dynamic waypoint creation and lifecycle management
 - Real-time waypoint position tracking and updates
 - Multiple waypoint support with priority and ordering
@@ -112,8 +112,8 @@ Files:
 ### Task 2: Waypoint Visualization and Mission Integration (1.0 points)
 ```
 Files:
-- target/scripts/ui/hud/navigation/waypoint_renderer.gd
-- target/scripts/ui/hud/navigation/mission_objective_tracker.gd
+- target/scripts/hud/navigation/waypoint_renderer.gd
+- target/scripts/hud/navigation/mission_objective_tracker.gd
 - 3D waypoint marker visualization and HUD display
 - Distance and bearing calculation and display systems
 - Mission objective integration and automatic waypoint creation
@@ -123,8 +123,8 @@ Files:
 ### Task 3: Flight Path and Navigation Aids (0.5 points)
 ```
 Files:
-- target/scripts/ui/hud/navigation/flight_path_planner.gd
-- target/scripts/ui/hud/navigation/spatial_orientation_aids.gd
+- target/scripts/hud/navigation/flight_path_planner.gd
+- target/scripts/hud/navigation/spatial_orientation_aids.gd
 - Flight path visualization and route planning systems
 - 3D compass and spatial orientation indicators
 - Course correction and navigation guidance systems
@@ -134,8 +134,8 @@ Files:
 ### Task 4: Advanced Features and Integration (0.25 points)
 ```
 Files:
-- target/scripts/ui/hud/navigation/advanced_navigation.gd
-- target/scripts/ui/hud/navigation/navigation_integration.gd
+- target/scripts/hud/navigation/advanced_navigation.gd
+- target/scripts/hud/navigation/navigation_integration.gd
 - Formation waypoints and autopilot integration
 - Navigation information display and status systems
 - Performance optimization and error handling
@@ -292,7 +292,7 @@ func render_coordinate_grid(center: Vector3, grid_size: float) -> void
 
 ## Testing Requirements
 
-### Unit Tests (`tests/scripts/ui/hud/test_hud_011_navigation_waypoint.gd`)
+### Unit Tests (`tests/scripts/hud/test_hud_011_navigation_waypoint.gd`)
 ```gdscript
 extends GdUnitTestSuite
 

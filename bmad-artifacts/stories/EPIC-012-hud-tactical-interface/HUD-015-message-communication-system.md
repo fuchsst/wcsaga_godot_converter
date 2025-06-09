@@ -101,8 +101,8 @@ This story implements the communication interface that handles mission messages,
 ### Task 1: Core Message Display and Mission Integration (1.25 points)
 ```
 Files:
-- target/scripts/ui/hud/communication/message_display.gd
-- target/scripts/ui/hud/communication/mission_communication_handler.gd
+- target/scripts/hud/communication/message_display.gd
+- target/scripts/hud/communication/mission_communication_handler.gd
 - Scrolling message display with categorization and speaker identification
 - Mission-scripted message delivery and dynamic content system
 - Message timing and persistence with scrollback capability
@@ -112,8 +112,8 @@ Files:
 ### Task 2: Wingman and Interactive Communication (1.0 points)
 ```
 Files:
-- target/scripts/ui/hud/communication/wingman_communicator.gd
-- target/scripts/ui/hud/communication/interactive_communication.gd
+- target/scripts/hud/communication/wingman_communicator.gd
+- target/scripts/hud/communication/interactive_communication.gd
 - Real-time wingman and squadron communication system
 - Interactive communication interface with player response options
 - Communication menu and quick command shortcuts
@@ -123,8 +123,8 @@ Files:
 ### Task 3: Objective Tracking and Communication Management (0.5 points)
 ```
 Files:
-- target/scripts/ui/hud/communication/objective_tracker.gd
-- target/scripts/ui/hud/communication/communication_manager.gd
+- target/scripts/hud/communication/objective_tracker.gd
+- target/scripts/hud/communication/communication_manager.gd
 - Mission objective display and completion tracking
 - Communication history and message archiving system
 - Message priority and filtering management
@@ -134,8 +134,8 @@ Files:
 ### Task 4: Advanced Features and System Integration (0.25 points)
 ```
 Files:
-- target/scripts/ui/hud/communication/advanced_communication.gd
-- target/scripts/ui/hud/communication/communication_integration.gd
+- target/scripts/hud/communication/advanced_communication.gd
+- target/scripts/hud/communication/communication_integration.gd
 - Voice communication integration and accessibility features
 - Multi-language support and communication encryption
 - Emergency broadcast and relay systems
@@ -304,7 +304,7 @@ func handle_emergency_communication(sender: String, emergency_type: String) -> v
 
 ## Testing Requirements
 
-### Unit Tests (`tests/scripts/ui/hud/test_hud_015_message_communication.gd`)
+### Unit Tests (`tests/scripts/hud/test_hud_015_message_communication.gd`)
 ```gdscript
 extends GdUnitTestSuite
 

@@ -101,8 +101,8 @@ This story implements the radar contact management system that handles the detec
 ### Task 1: Core Contact Management Framework (1.25 points)
 ```
 Files:
-- target/scripts/ui/hud/radar/radar_contact_manager.gd
-- target/scripts/ui/hud/radar/contact_lifecycle_handler.gd
+- target/scripts/hud/radar/radar_contact_manager.gd
+- target/scripts/hud/radar/contact_lifecycle_handler.gd
 - Contact detection and automatic addition system
 - Real-time contact tracking and position updates
 - Contact removal and cleanup management
@@ -112,8 +112,8 @@ Files:
 ### Task 2: Classification and Identification System (1.0 points)
 ```
 Files:
-- target/scripts/ui/hud/radar/object_classifier.gd
-- target/scripts/ui/hud/radar/signature_analyzer.gd
+- target/scripts/hud/radar/object_classifier.gd
+- target/scripts/hud/radar/signature_analyzer.gd
 - Automatic object type classification system
 - Ship class and weapon identification algorithms
 - Radar signature analysis and processing
@@ -123,8 +123,8 @@ Files:
 ### Task 3: Signal Processing and Sensor Integration (0.5 points)
 ```
 Files:
-- target/scripts/ui/hud/radar/signal_processor.gd
-- target/scripts/ui/hud/radar/sensor_integrator.gd
+- target/scripts/hud/radar/signal_processor.gd
+- target/scripts/hud/radar/sensor_integrator.gd
 - Radar signature analysis and signal strength calculation
 - Electronic warfare and stealth effects processing
 - Sensor capability modeling and range limitations
@@ -134,8 +134,8 @@ Files:
 ### Task 4: Contact Organization and Advanced Features (0.25 points)
 ```
 Files:
-- target/scripts/ui/hud/radar/contact_organizer.gd
-- target/scripts/ui/hud/radar/advanced_contact_features.gd
+- target/scripts/hud/radar/contact_organizer.gd
+- target/scripts/hud/radar/advanced_contact_features.gd
 - Contact filtering and priority management systems
 - Formation recognition and group contact handling
 - Contact sharing and sensor network integration
@@ -279,7 +279,7 @@ func filter_noise_and_false_contacts(contacts: Array[RadarContact]) -> Array[Rad
 
 ## Testing Requirements
 
-### Unit Tests (`tests/scripts/ui/hud/test_hud_010_radar_contact_management.gd`)
+### Unit Tests (`tests/scripts/hud/test_hud_010_radar_contact_management.gd`)
 ```gdscript
 extends GdUnitTestSuite
 

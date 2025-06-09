@@ -101,8 +101,8 @@ This story implements the ship defensive status system that provides pilots with
 ### Task 1: Core Shield and Hull Display System (1.25 points)
 ```
 Files:
-- target/scripts/ui/hud/status/shield_status_display.gd
-- target/scripts/ui/hud/status/hull_integrity_monitor.gd
+- target/scripts/hud/status/shield_status_display.gd
+- target/scripts/hud/status/hull_integrity_monitor.gd
 - Four-quadrant shield display with real-time status updates
 - Hull integrity monitoring with percentage calculation and alerts
 - Shield regeneration tracking and hull damage assessment
@@ -112,8 +112,8 @@ Files:
 ### Task 2: Damage Visualization and Analysis (1.0 points)
 ```
 Files:
-- target/scripts/ui/hud/status/damage_visualizer.gd
-- target/scripts/ui/hud/status/ship_silhouette_display.gd
+- target/scripts/hud/status/damage_visualizer.gd
+- target/scripts/hud/status/ship_silhouette_display.gd
 - Ship damage visualization with silhouette and damage pattern display
 - Damage location tracking and severity color coding
 - Critical component damage highlighting and assessment
@@ -123,8 +123,8 @@ Files:
 ### Task 3: Shield Management and Defensive Integration (0.5 points)
 ```
 Files:
-- target/scripts/ui/hud/status/shield_manager.gd
-- target/scripts/ui/hud/status/defensive_status_integrator.gd
+- target/scripts/hud/status/shield_manager.gd
+- target/scripts/hud/status/defensive_status_integrator.gd
 - Shield distribution controls and regeneration management
 - Combined defensive status overview and survival assessment
 - Emergency protocols and automated defensive system coordination
@@ -134,8 +134,8 @@ Files:
 ### Task 4: Advanced Monitoring and System Integration (0.25 points)
 ```
 Files:
-- target/scripts/ui/hud/status/advanced_defensive_monitor.gd
-- target/scripts/ui/hud/status/defensive_system_integration.gd
+- target/scripts/hud/status/advanced_defensive_monitor.gd
+- target/scripts/hud/status/defensive_system_integration.gd
 - Advanced defensive monitoring with armor and mitigation analysis
 - Shield harmonics and electronic warfare resistance display
 - Performance optimization and comprehensive system integration
@@ -307,7 +307,7 @@ func animate_damage_progression(old_damage: Array, new_damage: Array) -> void
 
 ## Testing Requirements
 
-### Unit Tests (`tests/scripts/ui/hud/test_hud_013_shield_hull_status.gd`)
+### Unit Tests (`tests/scripts/hud/test_hud_013_shield_hull_status.gd`)
 ```gdscript
 extends GdUnitTestSuite
 

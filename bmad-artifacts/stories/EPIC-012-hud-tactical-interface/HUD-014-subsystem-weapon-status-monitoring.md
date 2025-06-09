@@ -101,8 +101,8 @@ This story implements the ship systems monitoring interface that provides pilots
 ### Task 1: Core Subsystem Monitoring System (1.25 points)
 ```
 Files:
-- target/scripts/ui/hud/status/subsystem_monitor.gd
-- target/scripts/ui/hud/status/subsystem_health_tracker.gd
+- target/scripts/hud/status/subsystem_monitor.gd
+- target/scripts/hud/status/subsystem_health_tracker.gd
 - Comprehensive subsystem health display and monitoring
 - Individual subsystem integrity and functionality assessment
 - Critical subsystem identification and priority management
@@ -112,8 +112,8 @@ Files:
 ### Task 2: Weapon and ETS Management (1.0 points)
 ```
 Files:
-- target/scripts/ui/hud/status/weapon_status_monitor.gd
-- target/scripts/ui/hud/status/ets_power_manager.gd
+- target/scripts/hud/status/weapon_status_monitor.gd
+- target/scripts/hud/status/ets_power_manager.gd
 - Weapon system status display and ammunition tracking
 - ETS power distribution interface with real-time control
 - Weapon overheating and malfunction monitoring
@@ -123,8 +123,8 @@ Files:
 ### Task 3: Energy and Performance Analysis (0.5 points)
 ```
 Files:
-- target/scripts/ui/hud/status/energy_resource_monitor.gd
-- target/scripts/ui/hud/status/system_performance_analyzer.gd
+- target/scripts/hud/status/energy_resource_monitor.gd
+- target/scripts/hud/status/system_performance_analyzer.gd
 - Energy and resource monitoring with consumption tracking
 - System performance analysis and efficiency optimization
 - Performance trend analysis and predictive maintenance
@@ -134,8 +134,8 @@ Files:
 ### Task 4: Advanced Integration and Alert Management (0.25 points)
 ```
 Files:
-- target/scripts/ui/hud/status/critical_alert_manager.gd
-- target/scripts/ui/hud/status/advanced_system_integration.gd
+- target/scripts/hud/status/critical_alert_manager.gd
+- target/scripts/hud/status/advanced_system_integration.gd
 - Critical alert and failure management systems
 - Cross-system dependency analysis and coordination
 - Advanced system integration and automation features
@@ -308,7 +308,7 @@ func indicate_weapon_overheating(weapon: WeaponSystem, heat_level: float) -> voi
 
 ## Testing Requirements
 
-### Unit Tests (`tests/scripts/ui/hud/test_hud_014_subsystem_weapon_status.gd`)
+### Unit Tests (`tests/scripts/hud/test_hud_014_subsystem_weapon_status.gd`)
 ```gdscript
 extends GdUnitTestSuite
 

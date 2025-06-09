@@ -101,8 +101,8 @@ This story implements the tactical overview system that synthesizes information 
 ### Task 1: Battlefield Analysis and Assessment (1.25 points)
 ```
 Files:
-- target/scripts/ui/hud/tactical/battlefield_analyzer.gd
-- target/scripts/ui/hud/tactical/threat_assessor.gd
+- target/scripts/hud/tactical/battlefield_analyzer.gd
+- target/scripts/hud/tactical/threat_assessor.gd
 - Real-time battlefield situation assessment and analysis
 - Comprehensive threat evaluation and capability assessment
 - Tactical zone analysis and force disposition evaluation
@@ -112,8 +112,8 @@ Files:
 ### Task 2: Situational Awareness Display (1.0 points)
 ```
 Files:
-- target/scripts/ui/hud/tactical/situational_display.gd
-- target/scripts/ui/hud/tactical/tactical_summary_panel.gd
+- target/scripts/hud/tactical/situational_display.gd
+- target/scripts/hud/tactical/tactical_summary_panel.gd
 - Tactical situation summary and key metrics display
 - Force ratio and capability advantage visualization
 - Engagement timeline and mission progress indicators
@@ -123,8 +123,8 @@ Files:
 ### Task 3: Strategic Coordination and Prediction (0.5 points)
 ```
 Files:
-- target/scripts/ui/hud/tactical/strategic_coordinator.gd
-- target/scripts/ui/hud/tactical/predictive_analyzer.gd
+- target/scripts/hud/tactical/strategic_coordinator.gd
+- target/scripts/hud/tactical/predictive_analyzer.gd
 - Allied force coordination and command interface
 - Tactical order system and formation management
 - Predictive analysis and tactical recommendation systems
@@ -134,8 +134,8 @@ Files:
 ### Task 4: Advanced Features and Integration (0.25 points)
 ```
 Files:
-- target/scripts/ui/hud/tactical/advanced_tactical_features.gd
-- target/scripts/ui/hud/tactical/tactical_integration_manager.gd
+- target/scripts/hud/tactical/advanced_tactical_features.gd
+- target/scripts/hud/tactical/tactical_integration_manager.gd
 - Electronic warfare and environmental factor display
 - Intelligence gathering and pattern recognition systems
 - Mission integration and alternative strategy analysis
@@ -291,7 +291,7 @@ func render_threat_assessment(threats: Array[ThreatAssessment]) -> void
 
 ## Testing Requirements
 
-### Unit Tests (`tests/scripts/ui/hud/test_hud_012_tactical_overview.gd`)
+### Unit Tests (`tests/scripts/hud/test_hud_012_tactical_overview.gd`)
 ```gdscript
 extends GdUnitTestSuite
 

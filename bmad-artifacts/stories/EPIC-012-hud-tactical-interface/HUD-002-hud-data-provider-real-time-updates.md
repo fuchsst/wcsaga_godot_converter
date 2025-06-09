@@ -95,7 +95,7 @@ This story establishes the data layer that feeds all HUD elements with real-time
 
 ### Task 1: Core Data Provider Foundation (1.0 points)
 ```
-File: target/scripts/ui/hud/core/hud_data_provider.gd
+File: target/scripts/hud/core/hud_data_provider.gd
 - Central data provider class with system integration
 - Data source discovery and connection management
 - Basic caching infrastructure with TTL support
@@ -106,8 +106,8 @@ File: target/scripts/ui/hud/core/hud_data_provider.gd
 ### Task 2: Ship Systems Data Integration (1.0 points)
 ```
 Files:
-- target/scripts/ui/hud/data/ship_data_collector.gd
-- target/scripts/ui/hud/data/targeting_data_collector.gd
+- target/scripts/hud/data/ship_data_collector.gd
+- target/scripts/hud/data/targeting_data_collector.gd
 - Integration with EPIC-011 BaseShip systems
 - Real-time ship status queries (hull, shields, energy)
 - Targeting data collection and processing
@@ -117,8 +117,8 @@ Files:
 ### Task 3: Mission and System Data Integration (0.5 points)
 ```
 Files:
-- target/scripts/ui/hud/data/mission_data_collector.gd
-- target/scripts/ui/hud/data/radar_data_collector.gd
+- target/scripts/hud/data/mission_data_collector.gd
+- target/scripts/hud/data/radar_data_collector.gd
 - Mission information and objective tracking
 - Radar contact enumeration and classification
 - Navigation and waypoint data collection
@@ -128,8 +128,8 @@ Files:
 ### Task 4: Performance and Cache Optimization (0.5 points)
 ```
 Files:
-- target/scripts/ui/hud/data/data_cache_manager.gd
-- target/scripts/ui/hud/data/update_scheduler.gd
+- target/scripts/hud/data/data_cache_manager.gd
+- target/scripts/hud/data/update_scheduler.gd
 - Intelligent caching with type-specific TTL
 - Update frequency optimization and scheduling
 - Performance monitoring and budget management
@@ -216,7 +216,7 @@ func get_targeting_data() -> Dictionary:
 
 ## Testing Requirements
 
-### Unit Tests (`tests/scripts/ui/hud/test_hud_002_data_provider.gd`)
+### Unit Tests (`tests/scripts/hud/test_hud_002_data_provider.gd`)
 ```gdscript
 extends GdUnitTestSuite
 
@@ -269,20 +269,20 @@ func test_signal_propagation()
 **Total Implementation**: Enhanced data provider with specialized collectors
 
 ### Implemented Components
-1. **Enhanced HUDDataProvider** (`scripts/ui/hud/core/hud_data_provider.gd`)
+1. **Enhanced HUDDataProvider** (`scripts/hud/core/hud_data_provider.gd`)
    - Integrated specialized data collectors
    - Signal-based collector integration
    - Enhanced performance tracking
    - Error handling with collector fallbacks
 
-2. **ShipDataCollector** (`scripts/ui/hud/data/ship_data_collector.gd`)
+2. **ShipDataCollector** (`scripts/hud/data/ship_data_collector.gd`)
    - Comprehensive ship status data collection (60 FPS)
    - Hull, shields, energy systems (ETS) integration
    - Subsystem health monitoring and analysis
    - Flight dynamics and autopilot status
    - Performance optimization with caching
 
-3. **TargetingDataCollector** (`scripts/ui/hud/data/targeting_data_collector.gd`)
+3. **TargetingDataCollector** (`scripts/hud/data/targeting_data_collector.gd`)
    - Real-time targeting information (60 FPS)
    - Multi-target tracking capabilities
    - Weapon lock status and firing solutions

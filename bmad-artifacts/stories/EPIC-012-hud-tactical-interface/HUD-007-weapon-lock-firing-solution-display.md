@@ -94,8 +94,8 @@ This story implements the weapon lock-on indicator system that displays weapon c
 ### Task 1: Core Lock Display System (1.0 points)
 ```
 Files:
-- target/scripts/ui/hud/targeting/weapon_lock_display.gd
-- target/scripts/ui/hud/targeting/lock_progress_indicator.gd
+- target/scripts/hud/targeting/weapon_lock_display.gd
+- target/scripts/hud/targeting/lock_progress_indicator.gd
 - Lock acquisition progress display with visual progress indicators
 - Lock strength and quality visualization systems
 - Weapon-specific lock displays for different weapon types
@@ -105,8 +105,8 @@ Files:
 ### Task 2: Weapon Charging and Readiness System (0.75 points)
 ```
 Files:
-- target/scripts/ui/hud/targeting/weapon_charge_display.gd
-- target/scripts/ui/hud/targeting/firing_readiness_indicator.gd
+- target/scripts/hud/targeting/weapon_charge_display.gd
+- target/scripts/hud/targeting/firing_readiness_indicator.gd
 - Weapon charge level display with visual charge bars
 - Firing readiness indicators and weapon cooldown timers
 - Weapon malfunction and overheating warning systems
@@ -116,8 +116,8 @@ Files:
 ### Task 3: Firing Solution Assessment (0.75 points)
 ```
 Files:
-- target/scripts/ui/hud/targeting/firing_solution_analyzer.gd
-- target/scripts/ui/hud/targeting/solution_quality_meter.gd
+- target/scripts/hud/targeting/firing_solution_analyzer.gd
+- target/scripts/hud/targeting/solution_quality_meter.gd
 - Firing solution quality assessment and optimization
 - Target tracking accuracy and lock maintenance indicators
 - Range and angle effectiveness analysis for optimal firing
@@ -127,8 +127,8 @@ Files:
 ### Task 4: Multi-weapon Coordination and Advanced Features (0.5 points)
 ```
 Files:
-- target/scripts/ui/hud/targeting/multi_weapon_coordinator.gd
-- target/scripts/ui/hud/targeting/advanced_lock_features.gd
+- target/scripts/hud/targeting/multi_weapon_coordinator.gd
+- target/scripts/hud/targeting/advanced_lock_features.gd
 - Multi-weapon lock coordination and synchronized displays
 - Advanced weapon-specific features (missiles, beams, projectiles)
 - Lock maintenance assistance and reacquisition systems
@@ -235,7 +235,7 @@ func assess_environmental_factors(weapon: Node, target: Node) -> Dictionary
 
 ## Testing Requirements
 
-### Unit Tests (`tests/scripts/ui/hud/test_hud_007_weapon_lock_display.gd`)
+### Unit Tests (`tests/scripts/hud/test_hud_007_weapon_lock_display.gd`)
 ```gdscript
 extends GdUnitTestSuite
 
@@ -423,7 +423,7 @@ func test_target_evasion_response()
 - `scripts/hud/weapon_lock/firing_opportunity_alert.gd` - Tactical alerts (893 lines)
 
 **Testing & Documentation** (3 files):
-- `tests/scripts/ui/hud/test_hud_007_weapon_lock_display.gd` - Comprehensive test suite (947 lines)
+- `tests/scripts/hud/test_hud_007_weapon_lock_display.gd` - Comprehensive test suite (947 lines)
 - `scripts/hud/weapon_lock/verify_hud_007_implementation.gd` - Verification script (567 lines)
 - `scripts/hud/weapon_lock/CLAUDE.md` - Package documentation
 
