@@ -1,1 +1,0 @@
-Implement the Godot (or Python) code for a story as defined in @/.claude/commands/implement_story.md

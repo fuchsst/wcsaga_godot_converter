@@ -1,1 +1,0 @@
-Create a story as defined in @/.claude/commands/create_story.md

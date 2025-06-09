@@ -1,1 +1,0 @@
-Validate the completnes and quality of the implementation of and epic as defined in @/.claude/commands/validate_epic_completion.md
