@@ -27,7 +27,8 @@
       "Bash(mkdir:*)",
       "Bash(timeout:*)",
       "Bash(target/venv/Scripts/python.exe:*)",
-      "Bash(/mnt/d/projects/wcsaga_godot_converter/target/venv/Scripts/python.exe)"
+      "Bash(/mnt/d/projects/wcsaga_godot_converter/target/venv/Scripts/python.exe)",
+      "Bash(/mnt/d/projects/wcsaga_godot_converter/target/venv/Scripts/python.exe -m pytest tests/:*)"
     ],
     "deny": []
   },
