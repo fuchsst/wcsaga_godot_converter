@@ -27,17 +27,25 @@ The Data Migration & Conversion Tools system provides comprehensive utilities fo
 
 ## Core Architecture
 
-### Conversion Pipeline Hierarchy (Simplified Based on Analysis)
+### Conversion Pipeline Hierarchy (Integrated Addon Architecture)
 
 ```
-ConversionManager (Python CLI)
-├── VPArchiveExtractor (Python)        # Self-contained, direct from WCS source
-├── ImageConverter (Python)            # Unified converter for 5 identical formats  
-├── POFModelConverter (Python)         # Complex but isolated parser
-├── TableDataConverter (Python)        # Simple text parsing to JSON/Resource
-├── MissionConverter (Python)          # Text-based mission files
-├── GodotImportPlugins (GDScript)      # Native Godot import integration
-└── ValidationSystem (Python)          # Lightweight validation
+WCS Data Migration & Conversion Tools Addon
+├── Python Conversion Backend
+│   ├── VPArchiveExtractor              # Self-contained VP archive processing
+│   ├── POFModelConverter              # Complete POF to GLB pipeline
+│   ├── MissionConverter               # FS2/FC2 to Godot scene conversion
+│   ├── TableDataConverter             # Configuration file migration
+│   ├── AssetCatalog                   # Asset organization and management
+│   └── ValidationSystem               # Quality assurance framework
+├── Godot Import Plugins
+│   ├── VPImportPlugin                 # Automatic VP archive import
+│   ├── POFImportPlugin                # Automatic POF model import
+│   └── MissionImportPlugin            # Automatic mission file import
+├── Editor UI Integration
+│   └── ConversionDock                 # Comprehensive conversion control UI
+└── CLI Interface
+    └── convert_wcs_assets.py          # Command-line batch processing
 ```
 
 **Architecture Benefits from Analysis**:
@@ -46,50 +54,129 @@ ConversionManager (Python CLI)
 - **Direct Implementation**: WCS source provides exact parsing algorithms
 - **No External Tools**: Eliminate Blender/ImageMagick dependencies
 
-### Python-Based Conversion Framework
+### SOLID Principles Refactoring (2025)
 
-**ConversionManager (Main CLI Tool)**
+The WCS Data Migration addon has been comprehensively refactored to follow SOLID principles, transforming from monolithic files into focused, maintainable components.
+
+**Refactoring Results**:
+- **Before**: 7 large files (500-2000+ lines) with mixed responsibilities
+- **After**: 15+ focused components (50-300 lines each) with single responsibilities
+- **Key Achievement**: `table_data_converter.py` (2,039 lines) split into focused converters
+
+**SOLID Principles Applied**:
+1. **Single Responsibility (SRP)**: Each converter handles one table type only
+2. **Open/Closed (OCP)**: New converters extend BaseTableConverter without modification
+3. **Liskov Substitution (LSP)**: All converters are interchangeable through common interface
+4. **Interface Segregation (ISP)**: Focused protocols for parsing, progress, and job management
+5. **Dependency Inversion (DIP)**: Orchestrator depends on abstractions, not implementations
+
+### Refactored Directory Structure
+
+```
+addons/wcs_data_migration/
+├── core/                           # Core functionality by concern
+│   ├── conversion/                 # Conversion orchestration
+│   │   ├── conversion_orchestrator.py  # Main workflow coordinator
+│   │   ├── job_manager.py          # Job lifecycle management
+│   │   └── progress_tracker.py     # Progress monitoring
+│   ├── catalog/                    # Asset cataloging
+│   │   └── asset_catalog.py        # Asset organization
+│   └── validation/                 # Quality assurance
+├── table_converters/               # Focused table parsers
+│   ├── base_table_converter.py     # Template Method pattern
+│   ├── ship_table_converter.py     # Ship definitions (comprehensive asset fields)
+│   ├── weapon_table_converter.py   # Weapon definitions (comprehensive asset fields)
+│   ├── armor_table_converter.py    # Armor definitions
+│   ├── sounds_table_converter.py   # Audio asset definitions
+│   ├── fireball_table_converter.py # Effect definitions
+│   └── ...                        # Other specialized converters
+├── resource_generators/            # .tres resource file generation
+│   ├── ship_class_generator.py     # ShipClass resources with actual asset paths
+│   ├── weapon_resource_generator.py # WeaponData resources with extracted paths
+│   └── asset_path_mapper.py        # WCS to Godot path mapping
+├── ui_components/                  # Focused UI components
+│   ├── base_conversion_panel.gd    # Common UI functionality
+│   ├── vp_extraction_panel.gd      # VP extraction UI
+│   ├── conversion_dock.gd          # Main UI coordinator
+│   └── ...                        # Other UI panels
+├── import_plugins/                 # Godot integration
+│   ├── vp_import_plugin.gd         # VP archive import
+│   ├── pof_import_plugin.gd        # POF model import
+│   └── mission_import_plugin.gd    # Mission file import
+└── ...                            # Other components
+```
+
+### Asset Path Mapping Revolution (2025)
+
+**Critical Architecture Improvement**: Resource generators now use **actual extracted asset paths** from WCS table data instead of generic constructed paths.
+
+**Before (Generic Paths)**:
+```python
+# Constructed/generic paths
+model_path = f"res://assets/models/ships/{faction}/{safe_name}.glb"
+firing_sound = f"res://assets/audio/weapons/{safe_name}_fire.ogg"
+```
+
+**After (Extracted Paths)**:
+```python
+# Use actual extracted asset paths from table data
+pof_file = weapon.get('model_file', weapon.get('pof_file', ''))
+launch_sound = weapon.get('firing_sound', weapon.get('launch_sound', ''))
+
+if pof_file:
+    model_path = f"res://assets/models/weapons/{pof_file}"
+if launch_sound:
+    firing_sound_path = f"res://assets/audio/weapons/{launch_sound}"
+```
+
+**Comprehensive Asset Field Extraction**:
+- **Weapon Tables**: 40+ asset fields including models, sounds, effects, textures
+- **Ship Tables**: 30+ asset fields including POF files, animations, UI assets
+- **Integration**: Proper mapping to existing WeaponData and ShipClass structures
+
+### SOLID-Compliant Python Conversion Framework
+
+**ConversionOrchestrator (Dependency Injection Architecture)**:
 ```python
 #!/usr/bin/env python3
 """
-WCS to Godot Asset Conversion Manager
-Orchestrates the conversion of all WCS assets to Godot-compatible formats
+SOLID-compliant WCS to Godot Asset Conversion System
+Orchestrates conversion through focused, single-responsibility components
 """
 
-import argparse
-import json
-import logging
-from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from abc import ABC, abstractmethod
+from typing import Dict, List, Optional, Protocol
 from dataclasses import dataclass
-from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
+from pathlib import Path
 
-@dataclass
-class ConversionJob:
-    """Represents a single conversion task"""
-    source_path: Path
-    target_path: Path
-    conversion_type: str
-    priority: int
-    dependencies: List[str]
-    status: str = "pending"
-    progress: float = 0.0
-    error_message: Optional[str] = None
+# Interface Segregation - Focused protocols
+class TableParser(Protocol):
+    def parse_table(self, file_path: Path) -> List[Dict[str, Any]]: ...
+    def validate_entry(self, entry: Dict[str, Any]) -> bool: ...
 
-class ConversionManager:
-    """Main conversion orchestrator"""
+class ProgressTracker(Protocol):
+    def update_progress(self, job_id: str, progress: float) -> None: ...
+    def report_completion(self, job_id: str, success: bool) -> None: ...
+
+class JobManager(Protocol):
+    def queue_job(self, job: ConversionJob) -> str: ...
+    def execute_jobs(self) -> List[ConversionResult]: ...
+
+# Dependency Inversion - High-level orchestrator depends on abstractions
+class ConversionOrchestrator:
+    """Main conversion coordinator using dependency injection"""
     
-    def __init__(self, wcs_source_dir: Path, godot_target_dir: Path):
-        self.wcs_source_dir = wcs_source_dir
-        self.godot_target_dir = godot_target_dir
-        self.conversion_queue: List[ConversionJob] = []
-        self.completed_jobs: List[ConversionJob] = []
-        self.failed_jobs: List[ConversionJob] = []
+    def __init__(self, 
+                 job_manager: JobManager,
+                 progress_tracker: ProgressTracker,
+                 table_converters: Dict[str, TableParser]):
+        self.job_manager = job_manager
+        self.progress_tracker = progress_tracker
+        self.table_converters = table_converters
         
-        # Initialize converters
+        # Focused, single-responsibility converters (injected)
         self.vp_extractor = VPArchiveExtractor()
         self.pof_converter = POFModelConverter()
-        self.mission_converter = MissionFileConverter()
         self.texture_converter = TextureConverter()
         self.audio_converter = AudioVideoConverter()
         self.integrator = GodotProjectIntegrator()
