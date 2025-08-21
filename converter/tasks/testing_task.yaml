@@ -1,0 +1,43 @@
+# Testing Task Configuration
+
+unit_test_generation_task:
+  name: "Unit Test Generation"
+  description: >
+    Generate comprehensive unit tests for the refactored GDScript code using the gdUnit4 framework.
+    Tests should cover all public methods and edge cases identified in the source code analysis.
+    
+    Focus on:
+    1. Creating tests for all public methods and functions
+    2. Including edge case testing for boundary conditions
+    3. Testing error conditions and exception handling
+    4. Verifying functional equivalence with the original C++ code
+    5. Following gdUnit4 best practices and conventions
+  expected_output: >
+    A complete test file in GDScript using the gdUnit4 framework that:
+    - Tests all public methods of the refactored class
+    - Includes edge case and error condition tests
+    - Verifies functional equivalence with source C++ code
+    - Follows gdUnit4 conventions and best practices
+    - Produces clear, actionable test output
+  agent: test_generator
+  context:
+    - code_refactoring_task
+
+integration_test_generation_task:
+  name: "Integration Test Generation"
+  description: >
+    Generate integration tests to verify that the refactored component works correctly with other system components.
+    Focus on:
+    1. Testing interactions between the refactored component and other system components
+    2. Verifying signal connections and data flow
+    3. Testing component composition and scene interactions
+    4. Ensuring proper error handling in component interactions
+  expected_output: >
+    Integration test files that:
+    - Test component interactions and data flow
+    - Verify signal connections work correctly
+    - Test scene composition and component integration
+    - Include error handling verification
+  agent: test_generator
+  context:
+    - unit_test_generation_task

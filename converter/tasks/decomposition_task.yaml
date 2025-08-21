@@ -1,0 +1,26 @@
+# Task Decomposition Task Configuration
+
+task_decomposition_task:
+  name: "Task Decomposition"
+  description: >
+    Break down the high-level migration plan into atomic, executable tasks.
+    Each task should represent a single, well-defined unit of work that can be completed by one of the specialist agents.
+    Tasks should follow the "Units of Work" approach, where each task is small enough to be completed in a single "bolt" cycle.
+    
+    Focus on:
+    1. Creating atomic tasks for each C++ class to be migrated
+    2. Identifying dependencies between tasks
+    3. Prioritizing tasks based on the migration plan
+    4. Ensuring tasks are self-contained and have clear success criteria
+  expected_output: >
+    A structured list of atomic tasks in JSON format, each containing:
+    - Unique task ID
+    - Clear description of the work to be done
+    - Expected output format
+    - Assigned agent
+    - Dependencies on other tasks
+    - Estimated complexity level
+    - Success criteria
+  agent: task_decomposition_specialist
+  context:
+    - migration_planning_task

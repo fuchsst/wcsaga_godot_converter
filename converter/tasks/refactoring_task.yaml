@@ -1,0 +1,43 @@
+# Code Refactoring Task Configuration
+
+code_refactoring_task:
+  name: "Code Refactoring"
+  description: >
+    Refactor a specific C++ class or module to GDScript following Godot best practices.
+    Use the architectural mapping guidelines to convert C++ patterns to idiomatic Godot equivalents.
+    
+    Focus on:
+    1. Converting inheritance hierarchies to composition-based scenes
+    2. Mapping C++ data structures to GDScript classes or Godot Resources
+    3. Converting function pointers and callbacks to Godot signals
+    4. Maintaining functional equivalence while improving idiomatic correctness
+    5. Following the STYLE_GUIDE.md and RULES.md documents
+  expected_output: >
+    A complete GDScript file that:
+    - Implements the equivalent functionality of the source C++ code
+    - Follows Godot's architectural patterns and best practices
+    - Adheres to the project's STYLE_GUIDE.md
+    - Includes proper documentation and comments
+    - Contains no hardcoded values (use constants)
+  agent: refactoring_specialist
+  context:
+    - task_decomposition_task
+
+code_optimization_task:
+  name: "Code Optimization"
+  description: >
+    Optimize the refactored GDScript code for performance and maintainability.
+    Focus on:
+    1. Improving code efficiency without changing functionality
+    2. Reducing memory usage where possible
+    3. Ensuring code follows Godot performance guidelines
+    4. Adding proper error handling and validation
+  expected_output: >
+    An optimized version of the GDScript file that:
+    - Maintains all original functionality
+    - Improves performance characteristics
+    - Includes proper error handling
+    - Follows Godot performance best practices
+  agent: refactoring_specialist
+  context:
+    - code_refactoring_task

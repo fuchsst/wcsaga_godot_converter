@@ -1,0 +1,23 @@
+# Migration Planning Task Configuration
+
+migration_planning_task:
+  name: "Migration Planning"
+  description: >
+    Decompose the overall migration into a high-level, phased project plan based on the codebase analysis.
+    Create a detailed migration strategy that prioritizes porting foundational systems before application-level game logic.
+    The plan should include:
+    1. Phase-by-phase breakdown of the migration process
+    2. Identification of critical path components
+    3. Risk assessment for each phase
+    4. Resource allocation recommendations
+    5. Timeline estimates for each phase
+  expected_output: >
+    A multi-phase project plan in Markdown format, outlining:
+    - Detailed phases with clear objectives
+    - Timeline estimates for each phase
+    - Resource requirements
+    - Risk mitigation strategies
+    - Success criteria for each phase
+  agent: migration_architect
+  context:
+    - codebase_analysis_task

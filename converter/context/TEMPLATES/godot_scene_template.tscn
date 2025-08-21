@@ -1,0 +1,10 @@
+[gd_scene load_steps={LOAD_STEPS} format=2]
+
+{EXTERNAL_RESOURCES}
+
+{SUB_RESOURCES}
+
+[node name="{ROOT_NODE_NAME}" type="{ROOT_NODE_TYPE}"]
+{ROOT_NODE_PROPERTIES}
+
+{CHILD_NODES}

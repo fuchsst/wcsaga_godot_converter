@@ -74,9 +74,44 @@ The system is designed with strategic human oversight:
 
 ## Getting Started
 
-1. Install dependencies: `pip install -r requirements.txt`
-2. Configure agents in `config/crewai_config.yaml`
-3. Run the migration: `python main.py`
+Please refer to the main project README.md at the root of the repository for detailed setup instructions.
+The main project uses modern Python tooling including `pyproject.toml`, `uv` for dependency management,
+and comprehensive development tools.
+
+To run the migration:
+
+```bash
+# From the project root directory
+./run.sh ../source ../target
+```
+
+Additional arguments can be passed to the migration script:
+
+```bash
+./run.sh ../source ../target --verbose --phase analysis
+```
+
+## Running Tests
+
+Tests can be run using the project's Makefile from the root directory:
+
+```bash
+# Run all tests
+make test
+
+# Run tests with coverage
+make test-coverage
+
+# List available test modules
+make help
+```
+
+Or directly with pytest:
+
+```bash
+# From the project root directory
+pytest converter/tests/
+```
 
 ## Governance
 
@@ -85,3 +120,6 @@ The system includes built-in governance mechanisms:
 - Circuit breaker pattern for intractable problems
 - Integrated security scanning
 - Comprehensive logging and monitoring
+
+For detailed information about the project structure, development tools, and setup instructions,
+please refer to the main README.md file at the root of the project.

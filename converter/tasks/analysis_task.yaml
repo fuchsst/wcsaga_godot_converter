@@ -1,0 +1,20 @@
+# Codebase Analysis Task Configuration
+
+codebase_analysis_task:
+  name: "Codebase Analysis"
+  description: >
+    Analyze the legacy C++ codebase at {source_path} to identify dependencies, modules, and architectural patterns.
+    Focus on:
+    1. Identifying all C++ classes and their relationships
+    2. Mapping data structures and their usage
+    3. Understanding inheritance hierarchies and design patterns
+    4. Identifying external dependencies and third-party libraries
+    5. Cataloging file types and their purposes (.cpp, .h, .tbl, .pof, etc.)
+  expected_output: >
+    A structured JSON report containing:
+    - Dependency graph of C++ classes and modules
+    - List of identified design patterns
+    - Catalog of file types and their purposes
+    - List of external dependencies
+    - Recommendations for migration priorities
+  agent: codebase_analyst

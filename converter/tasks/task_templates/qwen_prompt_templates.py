@@ -68,3 +68,74 @@ Implement the fix directly.
 <ERROR_MESSAGE>{error_message}</ERROR_MESSAGE>
 """
     return prompt
+
+def generate_qwen_test_prompt(target_class: str, target_file: str, class_content: str) -> str:
+    """
+    Generate a prompt for creating unit tests with qwen-code.
+    
+    Args:
+        target_class: Name of the class to test
+        target_file: Path to the file containing the class
+        class_content: Content of the class to test
+        
+    Returns:
+        Formatted prompt string
+    """
+    prompt = f"""
+You are an expert QA engineer. Your task is to generate unit tests for the provided GDScript class.
+Create comprehensive tests that cover all public methods and edge cases.
+Use the gdUnit4 framework for test implementation.
+
+<TARGET_CLASS>{target_class}</TARGET_CLASS>
+<TARGET_FILE>{target_file}</TARGET_FILE>
+<CLASS_CONTENT>{class_content}</CLASS_CONTENT>
+<TEST_FRAMEWORK>gdUnit4</TEST_FRAMEWORK>
+"""
+    return prompt
+
+def generate_qwen_optimize_prompt(file_path: str, optimization_goal: str, performance_metrics: str = "") -> str:
+    """
+    Generate a prompt for optimizing code with qwen-code.
+    
+    Args:
+        file_path: Path to the file to optimize
+        optimization_goal: Description of the optimization goal
+        performance_metrics: Current performance metrics (if available)
+        
+    Returns:
+        Formatted prompt string
+    """
+    prompt = f"""
+You are an expert performance optimizer. Your task is to optimize the provided GDScript code.
+Focus on the specific optimization goal while maintaining all existing functionality.
+
+<FILE_PATH>{file_path}</FILE_PATH>
+<OPTIMIZATION_GOAL>{optimization_goal}</OPTIMIZATION_GOAL>
+"""
+    
+    if performance_metrics:
+        prompt += f"<PERFORMANCE_METRICS>{performance_metrics}</PERFORMANCE_METRICS>"
+    
+    return prompt
+
+def generate_qwen_document_prompt(file_path: str, class_content: str) -> str:
+    """
+    Generate a prompt for adding documentation to code with qwen-code.
+    
+    Args:
+        file_path: Path to the file to document
+        class_content: Content of the class to document
+        
+    Returns:
+        Formatted prompt string
+    """
+    prompt = f"""
+You are an expert technical writer. Your task is to add comprehensive documentation to the provided GDScript code.
+Add docstrings to all public classes and methods, and inline comments for complex logic.
+Follow the documentation standards in STYLE_GUIDE.md.
+
+<FILE_PATH>{file_path}</FILE_PATH>
+<CLASS_CONTENT>{class_content}</CLASS_CONTENT>
+<DOCUMENTATION_STANDARDS>Follow Godot GDScript documentation standards</DOCUMENTATION_STANDARDS>
+"""
+    return prompt

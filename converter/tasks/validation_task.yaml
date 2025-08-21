@@ -1,0 +1,46 @@
+# Validation Task Configuration
+
+code_validation_task:
+  name: "Code Validation"
+  description: >
+    Validate the refactored GDScript code for syntax correctness, style compliance, and adherence to project guidelines.
+    Run static analysis and style checking tools to ensure code quality.
+    
+    Focus on:
+    1. Syntax validation using Godot's built-in checker
+    2. Style compliance with STYLE_GUIDE.md
+    3. Adherence to project rules in RULES.md
+    4. Security scanning for potential vulnerabilities
+  expected_output: >
+    A validation report that:
+    - Confirms syntax correctness
+    - Lists any style violations
+    - Identifies rule violations
+    - Flags potential security issues
+    - Provides actionable feedback for corrections
+  agent: validation_engineer
+  context:
+    - code_refactoring_task
+
+test_execution_task:
+  name: "Test Execution"
+  description: >
+    Execute the generated unit and integration tests in a headless Godot environment.
+    Capture test results, including pass/fail status, execution time, and error details.
+    
+    Focus on:
+    1. Running all generated tests in a controlled environment
+    2. Capturing detailed test results and error output
+    3. Identifying failing tests and their root causes
+    4. Generating structured test reports for further analysis
+  expected_output: >
+    A structured test execution report that:
+    - Lists all executed tests with pass/fail status
+    - Includes execution time for each test
+    - Provides detailed error information for failing tests
+    - Summarizes overall test suite results
+    - Identifies patterns in test failures
+  agent: validation_engineer
+  context:
+    - unit_test_generation_task
+    - integration_test_generation_task
