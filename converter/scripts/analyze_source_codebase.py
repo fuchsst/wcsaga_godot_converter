@@ -15,6 +15,10 @@ import sys
 from pathlib import Path
 from typing import Any, Dict, List, Set, Tuple
 
+# Import dependency graph for shared state storage
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+from graph_system.dependency_graph import DependencyGraph
+
 # Configure logging
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
@@ -25,16 +29,21 @@ logger = logging.getLogger(__name__)
 class SourceCodebaseAnalyzer:
     """Analyzer for the source C++ codebase."""
 
-    def __init__(self, source_path: str):
+    def __init__(self, source_path: str, graph_file: str = "dependency_graph.json"):
         """
         Initialize the analyzer.
 
         Args:
             source_path: Path to the source codebase
+            graph_file: Path to the dependency graph file for shared state storage
         """
         self.source_path = Path(source_path)
         if not self.source_path.exists():
             raise ValueError(f"Source path does not exist: {self.source_path}")
+
+        # Initialize dependency graph for shared state storage with migration
+        self.graph_file = graph_file
+        self.dependency_graph = DependencyGraph(self.graph_file)
 
         # File extensions to analyze
         self.cpp_extensions = {".h", ".hpp", ".cpp", ".cc", ".cxx"}
@@ -51,7 +60,27 @@ class SourceCodebaseAnalyzer:
         }
         self.config_extensions = {".cfg", ".ini", ".xml", ".json"}
 
-        # Analysis results
+        # Directories to exclude from analysis (third-party libs and low-level utilities)
+        self.excluded_dirs = {
+            "boost",           # C++ compatibility library
+            "libjpeg",         # JPEG library
+            "libpng",          # PNG library
+            "lua",             # Lua scripting library
+            "oggvorbis",       # Ogg Vorbis audio library
+            "openal",          # OpenAL audio library
+            "speech",          # Speech library
+            "zlib",            # Compression library
+            "tgautils",        # TGA file utilities
+            "pcxutils",        # PCX file utilities
+            "jpgutils",        # JPEG utilities
+            "pngutils",        # PNG utilities
+            "ddsutils",        # DDS utilities
+            "cfile",           # Low-level file I/O
+            "globalincs",      # Global includes (may contain low-level utils)
+            "windows_stub",    # Windows compatibility layer
+        }
+
+        # Analysis results (for backward compatibility)
         self.analysis_results = {
             "files": {},
             "dependencies": {},
@@ -86,12 +115,22 @@ class SourceCodebaseAnalyzer:
         return self.analysis_results
 
     def _find_files(self):
-        """Find all files in the source codebase."""
+        """Find all files in the source codebase, excluding specified directories."""
         logger.info("Finding files in codebase...")
 
         for root, dirs, files in os.walk(self.source_path):
             # Skip hidden directories
             dirs[:] = [d for d in dirs if not d.startswith(".")]
+            
+            # Check if current directory path contains any excluded directories
+            current_path = Path(root)
+            relative_current_path = current_path.relative_to(self.source_path)
+            
+            # Skip this directory if any part of the path is in excluded_dirs
+            if any(part in self.excluded_dirs for part in relative_current_path.parts):
+                # Remove all subdirectories to prevent further traversal
+                dirs[:] = []
+                continue
 
             for file in files:
                 file_path = Path(root) / file
@@ -132,9 +171,22 @@ class SourceCodebaseAnalyzer:
             full_path = self.source_path / file_path
             self._analyze_single_cpp_file(full_path, file_path)
 
+    def _add_file_to_graph(self, file_path: str, file_type: str, size: int, extension: str):
+        """Add a file entity to the dependency graph."""
+        entity_id = f"FILE-{file_path.replace('/', '_').replace('.', '_')}"
+        properties = {
+            "name": file_path,
+            "type": "file",
+            "file_type": file_type,
+            "size": size,
+            "extension": extension,
+        }
+        self.dependency_graph.add_entity(entity_id, "file", properties)
+        return entity_id
+
     def _analyze_single_cpp_file(self, full_path: Path, relative_path: str):
         """
-        Analyze a single C++ file.
+        Analyze a single C++ file and populate dependency graph.
 
         Args:
             full_path: Full path to the file
@@ -150,6 +202,22 @@ class SourceCodebaseAnalyzer:
         # Find includes
         includes = self._find_includes(content)
         self.analysis_results["dependencies"][relative_path] = includes
+
+        # Add current file to dependency graph
+        file_entity_id = self._add_file_to_graph(
+            str(relative_path),
+            "cpp",
+            full_path.stat().st_size,
+            full_path.suffix
+        )
+
+        # Add dependencies for each include
+        for included_file in includes:
+            # Create an entity for the included file if it doesn't exist
+            included_entity_id = f"FILE-{included_file.replace('/', '_').replace('.', '_')}"
+            self.dependency_graph.add_entity(included_entity_id, "file", {"name": included_file})
+            # Add dependency from current file to included file
+            self.dependency_graph.add_dependency(file_entity_id, included_entity_id, "includes")
 
         # Find classes
         classes = self._find_classes(content)
@@ -390,13 +458,21 @@ def main():
         default="json",
         help="Output format (default: json)",
     )
+    parser.add_argument(
+        "--graph-file",
+        default="dependency_graph.json",
+        help="Path to the dependency graph file for shared state storage (default: dependency_graph.json)",
+    )
 
     args = parser.parse_args()
 
     try:
         # Create analyzer and run analysis
-        analyzer = SourceCodebaseAnalyzer(args.source)
+        analyzer = SourceCodebaseAnalyzer(args.source, args.graph_file)
         results = analyzer.analyze()
+
+        # Save the dependency graph to ensure state is persisted
+        analyzer.dependency_graph.save_graph()
 
         # Print summary to console
         stats = results["statistics"]
@@ -405,6 +481,7 @@ def main():
         print(f"Classes: {stats['classes']}")
         print(f"Functions: {stats['functions']}")
         print(f"Assets: {stats['assets']}")
+        print(f"Dependency graph saved to: {args.graph_file}")
 
         # Export results if requested
         if args.output:

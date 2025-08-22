@@ -48,16 +48,18 @@ config_manager = get_config_manager()
 class MigrationOrchestrator:
     """Main orchestrator for the migration process using LangGraph."""
 
-    def __init__(self, source_path: str, target_path: str):
+    def __init__(self, source_path: str, target_path: str, graph_file: str = None):
         """
         Initialize the migration orchestrator.
 
         Args:
             source_path: Path to the source C++ codebase
             target_path: Path to the target Godot project
+            graph_file: Optional path to the dependency graph file
         """
         self.source_path = Path(source_path)
         self.target_path = Path(target_path)
+        self.graph_file = graph_file
         self.langgraph_orchestrator = None
 
         # Validate paths
@@ -74,9 +76,12 @@ class MigrationOrchestrator:
         """Initialize the LangGraph orchestrator."""
         logger.info("Initializing LangGraph orchestrator...")
 
-        # Get graph configuration
-        graph_config = config_manager.get_graph_config()
-        graph_file = graph_config.get("file", "dependency_graph.json")
+        # Use provided graph file or fall back to config
+        if self.graph_file:
+            graph_file = self.graph_file
+        else:
+            graph_config = config_manager.get_graph_config()
+            graph_file = graph_config.get("file", "dependency_graph.json")
 
         # Create LangGraph orchestrator
         self.langgraph_orchestrator = LangGraphOrchestrator(
@@ -85,7 +90,7 @@ class MigrationOrchestrator:
             graph_file=graph_file,
         )
 
-        logger.info("LangGraph orchestrator initialized successfully")
+        logger.info(f"LangGraph orchestrator initialized with graph file: {graph_file}")
 
     def run_migration(self, phase: str = "all") -> Dict[str, Any]:
         """
@@ -188,6 +193,10 @@ def main():
         default="all",
         help="Migration phase to run",
     )
+    parser.add_argument(
+        "--graph-file",
+        help="Path to the dependency graph file for shared state storage",
+    )
     parser.add_argument("--verbose", action="store_true", help="Enable verbose logging")
 
     args = parser.parse_args()
@@ -198,7 +207,7 @@ def main():
 
     try:
         # Create and run the orchestrator
-        orchestrator = MigrationOrchestrator(args.source, args.target)
+        orchestrator = MigrationOrchestrator(args.source, args.target, args.graph_file)
 
         # Print status
         status = orchestrator.get_status()

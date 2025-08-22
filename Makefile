@@ -84,12 +84,12 @@ setup-env:
 # Run codebase analysis
 .PHONY: analyze
 analyze:
-	cd $(CONVERTER_DIR)/scripts && $(UV) run python analyze_source_codebase.py --source ./source --output ./analysis.json
+	cd $(CONVERTER_DIR)/scripts && $(UV) run python analyze_source_codebase.py --source $(abspath source/code) --graph-file $(abspath dependency_graph.json) --output ./analysis.json
 
 # Run migration
 .PHONY: migrate
 migrate:
-	cd $(CONVERTER_DIR) && $(UV) run python orchestrator/main.py --source ./source --target ./target
+	cd $(CONVERTER_DIR) && $(UV) run python orchestrator/main.py --source $(abspath source/code) --target $(abspath target) --graph-file $(abspath dependency_graph.json)
 
 # Initialize virtual environment with uv
 .PHONY: init-env
