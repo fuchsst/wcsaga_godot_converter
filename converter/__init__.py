@@ -1,7 +1,7 @@
 """
 Wing Commander Saga to Godot Converter - Main Package
 
-This package provides an agentic migration system for converting 
+This package provides an agentic migration system for converting
 the Wing Commander Saga game engine from C++ to Godot/GDScript.
 """
 

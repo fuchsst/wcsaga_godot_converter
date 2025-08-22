@@ -2,7 +2,7 @@
 
 This directory contains the guidance artifacts and rulebooks for the AI agents.
 
-These artifacts are essential for ensuring high-quality, consistent output:
+These artifacts are essential for ensuring high-quality, consistent output in the LangGraph-based migration process:
 
 - `STYLE_GUIDE.md` - Architectural style guide for Godot/GDScript
 - `RULES.md` - Virtual constitution with strict principles for AI actions
@@ -13,7 +13,7 @@ These artifacts are essential for ensuring high-quality, consistent output:
 
 The context engineering system integrates with several systems:
 
-- **Prompt Engineering**: Provides guidance artifacts for prompt creation
+- **Prompt Engineering**: Provides guidance artifacts for prompt creation in LangGraph nodes
 - **Refactoring Specialist**: Ensures consistent output quality through style guides and templates
-- **Validation System**: Provides standards for quality assurance
-- **Orchestrator**: Ensures consistent application of rules throughout the migration process
+- **Validation System**: Provides standards for quality assurance and test validation
+- **Orchestrator**: Ensures consistent application of rules throughout the LangGraph migration process

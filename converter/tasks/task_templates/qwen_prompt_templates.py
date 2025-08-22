@@ -1,12 +1,14 @@
-def generate_qwen_generate_prompt(target_file_path: str, specification: str, context_code: str = "") -> str:
+def generate_qwen_generate_prompt(
+    target_file_path: str, specification: str, context_code: str = ""
+) -> str:
     """
     Generate a prompt for creating a new file with qwen-code.
-    
+
     Args:
         target_file_path: Path to the target file to create
         specification: Detailed specification for the new file
         context_code: Optional context code to reference
-        
+
     Returns:
         Formatted prompt string
     """
@@ -18,21 +20,24 @@ Do not include any explanatory text, markdown formatting, or conversational fill
 <TARGET_FILE_PATH>{target_file_path}</TARGET_FILE_PATH>
 <SPECIFICATION>{specification}</SPECIFICATION>
 """
-    
+
     if context_code:
         prompt += f"<CONTEXT_CODE>{context_code}</CONTEXT_CODE>"
-    
+
     return prompt
 
-def generate_qwen_refactor_prompt(file_path: str, task_description: str, constraints: str = "") -> str:
+
+def generate_qwen_refactor_prompt(
+    file_path: str, task_description: str, constraints: str = ""
+) -> str:
     """
     Generate a prompt for refactoring an existing function with qwen-code.
-    
+
     Args:
         file_path: Path to the file to refactor
         task_description: Description of the refactoring task
         constraints: Additional constraints for the task
-        
+
     Returns:
         Formatted prompt string
     """
@@ -46,15 +51,18 @@ Do not propose a plan; implement the change directly. Do not modify any other fi
 """
     return prompt
 
-def generate_qwen_bugfix_prompt(file_path: str, code_snippet: str, error_message: str) -> str:
+
+def generate_qwen_bugfix_prompt(
+    file_path: str, code_snippet: str, error_message: str
+) -> str:
     """
     Generate a prompt for fixing a bug with qwen-code.
-    
+
     Args:
         file_path: Path to the file with the bug
         code_snippet: Code snippet with the bug
         error_message: Error message describing the bug
-        
+
     Returns:
         Formatted prompt string
     """
@@ -69,15 +77,18 @@ Implement the fix directly.
 """
     return prompt
 
-def generate_qwen_test_prompt(target_class: str, target_file: str, class_content: str) -> str:
+
+def generate_qwen_test_prompt(
+    target_class: str, target_file: str, class_content: str
+) -> str:
     """
     Generate a prompt for creating unit tests with qwen-code.
-    
+
     Args:
         target_class: Name of the class to test
         target_file: Path to the file containing the class
         class_content: Content of the class to test
-        
+
     Returns:
         Formatted prompt string
     """
@@ -93,15 +104,18 @@ Use the gdUnit4 framework for test implementation.
 """
     return prompt
 
-def generate_qwen_optimize_prompt(file_path: str, optimization_goal: str, performance_metrics: str = "") -> str:
+
+def generate_qwen_optimize_prompt(
+    file_path: str, optimization_goal: str, performance_metrics: str = ""
+) -> str:
     """
     Generate a prompt for optimizing code with qwen-code.
-    
+
     Args:
         file_path: Path to the file to optimize
         optimization_goal: Description of the optimization goal
         performance_metrics: Current performance metrics (if available)
-        
+
     Returns:
         Formatted prompt string
     """
@@ -112,20 +126,21 @@ Focus on the specific optimization goal while maintaining all existing functiona
 <FILE_PATH>{file_path}</FILE_PATH>
 <OPTIMIZATION_GOAL>{optimization_goal}</OPTIMIZATION_GOAL>
 """
-    
+
     if performance_metrics:
         prompt += f"<PERFORMANCE_METRICS>{performance_metrics}</PERFORMANCE_METRICS>"
-    
+
     return prompt
+
 
 def generate_qwen_document_prompt(file_path: str, class_content: str) -> str:
     """
     Generate a prompt for adding documentation to code with qwen-code.
-    
+
     Args:
         file_path: Path to the file to document
         class_content: Content of the class to document
-        
+
     Returns:
         Formatted prompt string
     """

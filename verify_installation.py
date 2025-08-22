@@ -7,8 +7,8 @@ with modern Python development practices.
 """
 
 import os
-import sys
 import subprocess
+import sys
 from pathlib import Path
 
 
@@ -26,7 +26,9 @@ def run_command(command, description):
     """Run a command and print status."""
     try:
         print(f"🔍 {description}...")
-        result = subprocess.run(command, shell=True, capture_output=True, text=True, timeout=30)
+        result = subprocess.run(
+            command, shell=True, capture_output=True, text=True, timeout=30
+        )
         if result.returncode == 0:
             print(f"✅ {description} - SUCCESS")
             return True
@@ -46,7 +48,7 @@ def main():
     """Main verification function."""
     print("🚀 Wing Commander Saga to Godot Converter - Final Verification")
     print("=" * 70)
-    
+
     # Check project structure
     print("\n📂 Checking project structure...")
     required_files = [
@@ -56,14 +58,14 @@ def main():
         "Makefile",
         "requirements.txt",
         "converter/__init__.py",
-        "converter/README.md"
+        "converter/README.md",
     ]
-    
+
     all_good = True
     for filepath in required_files:
         if not check_file_exists(filepath):
             all_good = False
-    
+
     # Check virtual environment
     print("\n🔧 Checking virtual environment...")
     venv_activated = "VIRTUAL_ENV" in os.environ
@@ -71,38 +73,41 @@ def main():
         print(f"✅ Virtual environment activated: {os.environ['VIRTUAL_ENV']}")
     else:
         print("⚠️  Virtual environment not activated (this is OK for verification)")
-    
+
     # Run basic import test
     print("\n🧪 Running basic import test...")
     try:
         import converter
+
         print("✅ Converter package imported successfully")
     except ImportError as e:
         print(f"❌ Failed to import converter package: {str(e)}")
         all_good = False
-    
+
     # Check dependencies
     print("\n📦 Checking key dependencies...")
     try:
         import pydantic
+
         print("✅ Pydantic imported successfully")
-        
+
         import yaml
+
         print("✅ PyYAML imported successfully")
-        
+
     except ImportError as e:
         print(f"❌ Failed to import dependencies: {str(e)}")
         all_good = False
-    
+
     # Run a simple test
     print("\n🏁 Running simple functionality test...")
     test_result = run_command(
         f"{sys.executable} -m pytest converter/tests/test_example.py::test_example -v",
-        "Basic test execution"
+        "Basic test execution",
     )
     if not test_result:
         all_good = False
-    
+
     # Summary
     print("\n" + "=" * 70)
     if all_good:

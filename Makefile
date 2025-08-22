@@ -12,18 +12,18 @@ help:
 	@echo "WCSAGA Godot Converter - Development Commands"
 	@echo ""
 	@echo "Usage:"
-	@echo "  make install           Install dependencies"
-	@echo "  make install-dev       Install development dependencies"
-	@echo "  make test              Run all tests"
-	@echo "  make test-coverage     Run tests with coverage"
-	@echo "  make format            Format code with black and isort"
-	@echo "  make lint              Lint code with flake8"
-	@echo "  make typecheck         Run type checking with mypy"
-	@echo "  make quality           Run all quality checks"
+	@echo "  make install           Install dependencies using uv"
+	@echo "  make install-dev       Install development dependencies using uv"
+	@echo "  make test              Run all tests using uv"
+	@echo "  make test-coverage     Run tests with coverage using uv"
+	@echo "  make format            Format code with black and isort using uv"
+	@echo "  make lint              Lint code with flake8 using uv"
+	@echo "  make typecheck         Run type checking with mypy using uv"
+	@echo "  make quality           Run all quality checks using uv"
 	@echo "  make clean             Clean build artifacts"
-	@echo "  make setup-env         Run environment setup"
-	@echo "  make analyze           Run codebase analysis"
-	@echo "  make migrate           Run migration"
+	@echo "  make setup-env         Run environment setup using uv"
+	@echo "  make analyze           Run codebase analysis using uv"
+	@echo "  make migrate           Run migration using uv"
 	@echo "  make init-env          Initialize virtual environment with uv"
 	@echo "  make list-tests        List available test modules"
 
@@ -40,29 +40,29 @@ install-dev:
 # Run tests
 .PHONY: test
 test:
-	$(PYTHON) -m pytest $(CONVERTER_DIR)/tests/ -v
+	$(UV) run pytest $(CONVERTER_DIR)/tests/ -v
 
 # Run tests with coverage
 .PHONY: test-coverage
 test-coverage:
-	$(PYTHON) -m pytest $(CONVERTER_DIR)/tests/ --cov=$(CONVERTER_DIR) --cov-report=html --cov-report=term
+	$(UV) run pytest $(CONVERTER_DIR)/tests/ --cov=$(CONVERTER_DIR) --cov-report=html --cov-report=term
 
 # Format code
 .PHONY: format
 format:
-	$(PYTHON) -m black .
-	$(PYTHON) -m isort .
+	$(UV) run black converter
+	$(UV) run isort converter
 
 # Lint code
 .PHONY: lint
 lint:
-	$(PYTHON) -m flake8 .
+	$(UV) run flake8 converter
 
 # Type check
 .PHONY: typecheck
 typecheck:
-	$(PYTHON) -m mypy .
-
+	$(UV) run mypy converter
+	
 # Run all quality checks
 .PHONY: quality
 quality: format lint typecheck
@@ -79,17 +79,17 @@ clean:
 # Run environment setup
 .PHONY: setup-env
 setup-env:
-	cd $(CONVERTER_DIR)/scripts && $(PYTHON) setup_environment.py --full
+	cd $(CONVERTER_DIR)/scripts && $(UV) run python setup_environment.py --full
 
 # Run codebase analysis
 .PHONY: analyze
 analyze:
-	cd $(CONVERTER_DIR)/scripts && $(PYTHON) analyze_source_codebase.py --source ../source --output ../analysis.json
+	cd $(CONVERTER_DIR)/scripts && $(UV) run python analyze_source_codebase.py --source ../source --output ../analysis.json
 
 # Run migration
 .PHONY: migrate
 migrate:
-	cd $(CONVERTER_DIR) && $(PYTHON) orchestrator/main.py --source ../source --target ../target
+	cd $(CONVERTER_DIR) && $(UV) run python orchestrator/main.py --source ../source --target ../target
 
 # Initialize virtual environment with uv
 .PHONY: init-env
@@ -103,4 +103,4 @@ init-env:
 .PHONY: list-tests
 list-tests:
 	@echo "Available test modules:"
-	@cd $(CONVERTER_DIR)/tests && ls test_*.py | sed 's/test_//' | sed 's/\.py$$//' | sort
+	@cd $(CONVERTER_DIR)/tests && ls test_*.py | sed 's/test_//' | sed 's/\.py$//' | sort
