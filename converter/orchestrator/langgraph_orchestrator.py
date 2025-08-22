@@ -6,16 +6,25 @@ with a robust, stateful approach.
 """
 
 import asyncio
+import time
 from pathlib import Path
-from typing import Any, Dict, List, Optional, TypedDict, Union
+from typing import Any, Dict, List, Union
 
-from langgraph.checkpoint.memory import MemorySaver
+from langgraph.checkpoint.sqlite import SqliteSaver
 from langgraph.graph import END, StateGraph
-from langgraph.pregel import RetryPolicy
-from langgraph.types import Command, interrupt
+from langgraph.types import Command, RetryPolicy, interrupt
 
+from converter.agents.asset_conversion.asset_conversion_agent import \
+    AssetConversionAgent
+from converter.agents.code_reimplementation.code_reimplementation_agent import \
+    CodeReimplementationAgent
+from converter.agents.debugger.debugger_agent import DebuggerAgent
+from converter.agents.test_generation.test_generation_agent import \
+    TestGenerationAgent
+from converter.agents.validation.validation_agent import ValidationAgent
 from converter.analyst.codebase_analyst import CodebaseAnalyst
 from converter.graph_system.graph_manager import GraphManager
+from converter.graph_system.graph_state import CenturionGraphState, Task
 from converter.hitl.langgraph_hitl import LangGraphHITLIntegration
 from converter.refactoring.refactoring_specialist import RefactoringSpecialist
 from converter.test_generator.test_generator import TestGenerator
@@ -27,59 +36,64 @@ from converter.validation.validation_engineer import ValidationEngineer
 logger = setup_logging(__name__)
 
 
-class CenturionGraphState(TypedDict, total=False):
-    """
-    Master state schema for the LangGraph-based Centurion migration system.
-    This state serves as the "single source of truth" for the entire workflow.
-    """
-
-    # Task queue management
-    task_queue: List[
-        Dict[str, Any]
-    ]  # The full list of tasks, loaded from task_queue.yaml
-    active_task: Optional[
-        Dict[str, Any]
-    ]  # The task dictionary currently being processed
-
-    # Code analysis and content
-    source_code_content: Dict[str, str]  # Mapping of file paths to their string content
-    analysis_report: Optional[
-        Dict[str, Any]
-    ]  # Structured JSON output from Codebase Analyst
-
-    # Code generation
-    generated_gdscript: Optional[
-        str
-    ]  # GDScript code produced by Refactoring Specialist
-
-    # Validation and testing
-    validation_result: Optional[
-        Dict[str, Any]
-    ]  # Structured output from Validation toolchain
-    test_results: Optional[Dict[str, Any]]  # Test execution results
-
-    # Communication and messaging
-    messages: List[Dict[str, Any]]  # Conversational history for LLM-powered nodes
-
-    # Error handling and retry logic
-    retry_count: int  # Number of attempts for the active task
-    last_error: Optional[
-        str
-    ]  # Formatted error message from the last failed validation step
-
-    # Human-in-the-loop integration
-    human_intervention_request: Optional[
-        Dict[str, Any]
-    ]  # Data surfaced to a human for interrupt patterns
-
-    # Workflow tracking
-    target_files: List[str]  # Paths to target files for the current task
-    status: str  # Current status of the workflow
-    current_step: str  # Current step in the bolt cycle
-
-
 # Backward compatibility alias
 MigrationState = CenturionGraphState
+
+
+class CircuitBreaker:
+    """Circuit breaker pattern for handling persistent failures."""
+
+    def __init__(self, max_failures: int = 3, reset_timeout: int = 300):
+        """
+        Initialize the circuit breaker.
+
+        Args:
+            max_failures: Maximum number of failures before breaking
+            reset_timeout: Time in seconds before attempting to reset the circuit
+        """
+        self.max_failures = max_failures
+        self.reset_timeout = reset_timeout
+        self.failure_count = 0
+        self.last_failure_time = None
+        self.state = "closed"  # closed, open, half-open
+
+    def should_break(self) -> bool:
+        """Determine if the circuit should break."""
+        if self.state == "open":
+            # Check if enough time has passed to try resetting
+            if (
+                self.last_failure_time
+                and time.time() - self.last_failure_time > self.reset_timeout
+            ):
+                self.state = "half-open"
+                return False
+            return True
+
+        return self.failure_count >= self.max_failures
+
+    def record_failure(self):
+        """Record a failure and update circuit state."""
+        self.failure_count += 1
+        self.last_failure_time = time.time()
+
+        if self.failure_count >= self.max_failures:
+            self.state = "open"
+
+    def record_success(self):
+        """Record a success and reset the circuit."""
+        self.failure_count = 0
+        self.last_failure_time = None
+        self.state = "closed"
+
+    def get_state(self) -> Dict[str, Any]:
+        """Get the current circuit breaker state."""
+        return {
+            "state": self.state,
+            "failure_count": self.failure_count,
+            "last_failure_time": self.last_failure_time,
+            "max_failures": self.max_failures,
+            "reset_timeout": self.reset_timeout,
+        }
 
 
 class LangGraphOrchestrator:
@@ -102,18 +116,29 @@ class LangGraphOrchestrator:
         self.source_path = Path(source_path)
         self.target_path = Path(target_path)
 
+        # Validate paths
+        if not self.source_path.exists():
+            raise ValueError(f"Source path does not exist: {self.source_path}")
+
+        # Create target directory if it doesn't exist
+        self.target_path.mkdir(parents=True, exist_ok=True)
+
         # Initialize enhanced components
         self.graph_manager = GraphManager(graph_file, auto_save=True)
         self.quality_gate = TestQualityGate(min_coverage=85.0, min_test_count=5)
         self.hitl_integration = LangGraphHITLIntegration()
 
         # Configure checkpointer for state persistence
-        self.checkpointer = MemorySaver()
+        # Use SQLite for production-grade persistence instead of in-memory
+        self.checkpointer = SqliteSaver.from_conn_string("sqlite:///checkpoints.db")
 
         # Configure retry policy for error handling
         self.retry_policy = RetryPolicy(
             max_attempts=3, retry_on=(ValueError, RuntimeError, ConnectionError)
         )
+
+        # Initialize circuit breaker for persistent failure handling
+        self.circuit_breaker = CircuitBreaker(max_failures=5, reset_timeout=600)
 
         # Build the LangGraph workflow
         self.workflow = self._build_workflow()
@@ -124,6 +149,13 @@ class LangGraphOrchestrator:
         """Build the LangGraph workflow for migration following the Centurion blueprint."""
         builder = StateGraph(CenturionGraphState)
 
+        # Initialize specialist agents
+        self.code_reimplementation_agent = CodeReimplementationAgent()
+        self.test_generation_agent = TestGenerationAgent()
+        self.validation_agent = ValidationAgent()
+        self.debugger_agent = DebuggerAgent()
+        self.asset_conversion_agent = AssetConversionAgent()
+
         # Define nodes as per the architectural recommendation
         builder.add_node(
             "select_next_task", self._select_next_task
@@ -132,11 +164,14 @@ class LangGraphOrchestrator:
             "analyze_codebase", self._analyze_codebase
         )  # Codebase Analyst role
         builder.add_node(
-            "generate_code", self._generate_code
-        )  # Refactoring Specialist via Prompt Engineer
+            "generate_code", self.code_reimplementation_agent.execute
+        )  # CodeReimplementationAgent
         builder.add_node(
-            "validate_code", self._validate_code
-        )  # Quality Assurance Agent
+            "generate_tests", self.test_generation_agent.execute
+        )  # TestGenerationAgent
+        builder.add_node(
+            "validate_code", self.validation_agent.execute
+        )  # ValidationAgent
         builder.add_node(
             "handle_failure", self._handle_failure
         )  # Implicit Orchestrator
@@ -147,19 +182,24 @@ class LangGraphOrchestrator:
         builder.add_node(
             "escalate_to_human", self._escalate_to_human
         )  # Escalation node
+        builder.add_node(
+            "convert_assets", self.asset_conversion_agent.execute
+        )  # AssetConversionAgent
+        builder.add_node("debug_code", self.debugger_agent.execute)  # DebuggerAgent
 
         # Define edges
         builder.set_entry_point("select_next_task")
 
         builder.add_edge("select_next_task", "analyze_codebase")
         builder.add_edge("analyze_codebase", "generate_code")
-        builder.add_edge("generate_code", "validate_code")
+        builder.add_edge("generate_code", "generate_tests")
+        builder.add_edge("generate_tests", "validate_code")
 
         # Conditional edges for validation results
         builder.add_conditional_edges(
             "validate_code",
             self._check_validation_results,
-            {"success": "check_human_approval", "failure": "handle_failure"},
+            {"success": "check_human_approval", "failure": "debug_code"},
         )
 
         # Add the missing check_human_approval node
@@ -181,7 +221,7 @@ class LangGraphOrchestrator:
 
         # Failure handling with retry logic
         builder.add_conditional_edges(
-            "handle_failure",
+            "debug_code",
             self._should_retry_or_escalate,
             {"retry": "generate_code", "escalate": "escalate_to_human"},
         )
@@ -191,36 +231,37 @@ class LangGraphOrchestrator:
 
         return builder.compile(checkpointer=self.checkpointer)
 
-    async def _select_next_task(self, state: dict) -> dict:
+    async def _select_next_task(self, state: CenturionGraphState) -> CenturionGraphState:
         """Select the next pending task from the task queue (Orchestrator role)."""
         logger.info("Selecting next task from task queue")
-        state["current_step"] = "task_selection"
+        state.current_step = "task_selection"
 
         # For now, we'll use a simple approach to select the next task
         # In a real implementation, this would load from task_queue.yaml
-        if not state.get("task_queue"):
-            state["task_queue"] = [
-                {
-                    "task_id": "SHIP-GTC_FENRIS",
-                    "entity_name": "GTC Fenris",
-                    "source_files": [
+        if not state.task_queue:
+            state.task_queue = [
+                Task(
+                    task_id="SHIP-GTC_FENRIS",
+                    entity_name="GTC Fenris",
+                    source_files=[
                         "source/tables/ships.tbl",
                         "source/models/fenris.pof",
                     ],
-                    "status": "pending",
-                    "requires_human_approval": False,
-                }
+                    status="pending",
+                    requires_human_approval=False,
+                )
             ]
 
         # Find the next pending task
-        for task in state["task_queue"]:
-            if task.get("status") == "pending":
-                state["active_task"] = task
-                task["status"] = "in_progress"
+        for task in state.task_queue:
+            if task.status == "pending":
+                state.active_task = task
+                task.status = "in_progress"
+                task.started_at = datetime.now()
 
                 # Load source code content
                 source_code_content = {}
-                for file_path in task.get("source_files", []):
+                for file_path in task.source_files:
                     try:
                         if Path(file_path).exists():
                             with open(file_path, "r", encoding="utf-8") as f:
@@ -234,10 +275,10 @@ class LangGraphOrchestrator:
                             f"# Error reading file: {str(e)}"
                         )
 
-                state["source_code_content"] = source_code_content
+                state.source_code_content = source_code_content
                 break
 
-        state["status"] = "in_progress"
+        state.status = "in_progress"
         return state
 
     async def _analyze_codebase(
@@ -363,7 +404,6 @@ class LangGraphOrchestrator:
             # Validate the generated code and tests
             validation_results = validation_engineer.validate_tests(
                 state.active_task.get("entity_name", "unknown"),
-                state.generated_gdscript,
                 test_results,
             )
 
@@ -405,6 +445,10 @@ class LangGraphOrchestrator:
                     "completed_at": state.active_task["completed_at"],
                 },
             )
+
+        # Reset circuit breaker on successful completion
+        self.circuit_breaker.record_success()
+        state["circuit_breaker_state"] = self.circuit_breaker.get_state()
 
         return state
 
@@ -467,12 +511,18 @@ class LangGraphOrchestrator:
         return state
 
     async def _handle_failure(self, state: CenturionGraphState) -> CenturionGraphState:
-        """Increment retry count and log errors (Implicit Orchestrator)."""
-        logger.warning(
-            f"Handling failure for {state.get('active_task', {}).get('entity_name', 'unknown')}"
-        )
+        """Increment retry count, log errors, and update circuit breaker (Implicit Orchestrator)."""
+        entity_name = state.get("active_task", {}).get("entity_name", "unknown")
+        logger.warning(f"Handling failure for {entity_name}")
+
         state["current_step"] = "failure_handling"
         state["retry_count"] = state.get("retry_count", 0) + 1
+
+        # Record failure in circuit breaker
+        self.circuit_breaker.record_failure()
+
+        # Update state with circuit breaker information
+        state["circuit_breaker_state"] = self.circuit_breaker.get_state()
 
         return state
 
@@ -532,7 +582,7 @@ class LangGraphOrchestrator:
         return "rejected"
 
     def _should_retry_or_escalate(self, state: CenturionGraphState) -> str:
-        """Determine if we should retry or escalate based on retry count."""
+        """Determine if we should retry or escalate based on retry count and circuit breaker."""
         retry_count = state.get("retry_count", 0)
         max_retries = (
             state.get("active_task", {}).get("max_retries", 3)
@@ -540,8 +590,16 @@ class LangGraphOrchestrator:
             else 3
         )
 
+        # Check circuit breaker first
+        if self.circuit_breaker.should_break():
+            logger.warning("Circuit breaker tripped - escalating to human")
+            return "escalate"
+
         if retry_count < max_retries:
             return "retry"
+
+        # Record failure in circuit breaker when max retries reached
+        self.circuit_breaker.record_failure()
         return "escalate"
 
     async def execute_bolt(

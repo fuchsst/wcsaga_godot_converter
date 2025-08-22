@@ -143,3 +143,6 @@ The system operates in "bolts" - intense work cycles that follow this sequence:
 5. Run specific tests: `uv run pytest converter/tests/test_[module].py`
 6. Verify LangGraph workflows with integration tests
 7. Commit changes with descriptive messages
+
+ALWAYS use `uv`to run python scripts.
+You MUST use `uv`to run python scripts.

@@ -7,7 +7,9 @@ and comprehensive validation checks.
 
 import os
 import time
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
+# For JUnit XML parsing
+from xml.etree import ElementTree as ET
 
 from ..tools.qwen_code_execution_tool import QwenCodeExecutionTool
 from ..tools.qwen_code_wrapper import QwenCodeWrapper
@@ -158,18 +160,31 @@ class ValidationEngineer:
                 "error": "Either test_file or test_directory must be specified",
             }
 
-        # Run tests using Godot
-        # gdUnit4 typically runs with a specific scene or through the Godot editor
-        # For command line, we might need to use a test runner scene
-        command = f"{self.godot_command} --path . --quit-after 300 --headless -s {test_target}"
+        # Run tests using Godot with JUnit XML output
+        # gdUnit4 supports JUnit XML output for better test reporting
+        junit_output_file = f"{test_target}_junit_results.xml"
+        command = f"{self.godot_command} --path . --quit-after 300 --headless -s {test_target} --junit-xml {junit_output_file}"
 
         try:
             result = self.execution_tool._run(command, timeout_seconds=300)
 
-            # Parse test results (this would depend on gdUnit4 output format)
-            parsed_test_results = self._parse_test_output(
-                result.get("stdout", ""), result.get("stderr", "")
-            )
+            # Parse test results - try JUnit XML first, fallback to stdout parsing
+            parsed_test_results = {}
+
+            # Try to parse JUnit XML output
+            if os.path.exists(junit_output_file):
+                parsed_test_results = self._parse_junit_xml(junit_output_file)
+                # Clean up the XML file
+                try:
+                    os.remove(junit_output_file)
+                except:
+                    pass
+
+            # If JUnit parsing failed or no XML file, fallback to stdout parsing
+            if not parsed_test_results or "error" in parsed_test_results:
+                parsed_test_results = self._parse_test_output(
+                    result.get("stdout", ""), result.get("stderr", "")
+                )
 
             return {
                 "success": result.get("return_code") == 0,
@@ -255,6 +270,79 @@ class ValidationEngineer:
             results["test_cases"].append(match.strip())
 
         return results
+
+    def _parse_junit_xml(self, xml_file_path: str) -> Dict[str, Any]:
+        """
+        Parse a JUnit XML report to extract detailed test metrics.
+
+        Args:
+            xml_file_path: Path to the JUnit XML file
+
+        Returns:
+            Dictionary with parsed test metrics
+        """
+        try:
+            tree = ET.parse(xml_file_path)
+            root = tree.getroot()
+
+            # Extract test suite information
+            testsuite = root if root.tag == "testsuite" else root.find("testsuite")
+            if testsuite is None:
+                return {}
+
+            # Extract comprehensive test metrics
+            metrics = {
+                "total_tests": int(testsuite.get("tests", 0)),
+                "passed_tests": int(testsuite.get("tests", 0))
+                - int(testsuite.get("failures", 0))
+                - int(testsuite.get("errors", 0)),
+                "failed_tests": int(testsuite.get("failures", 0)),
+                "error_tests": int(testsuite.get("errors", 0)),
+                "skipped_tests": int(testsuite.get("skipped", 0)),
+                "duration": float(testsuite.get("time", 0.0)),
+                "test_cases": [],
+                "failures": [],
+                "errors": [],
+            }
+
+            # Extract individual test case details
+            for testcase in testsuite.findall(".//testcase"):
+                test_case = {
+                    "name": testcase.get("name"),
+                    "classname": testcase.get("classname"),
+                    "time": float(testcase.get("time", 0.0)),
+                    "status": "passed",
+                }
+
+                # Check for failures or errors
+                failure = testcase.find("failure")
+                error = testcase.find("error")
+
+                if failure is not None:
+                    test_case["status"] = "failed"
+                    test_case["failure"] = {
+                        "message": failure.get("message"),
+                        "type": failure.get("type"),
+                        "content": failure.text,
+                    }
+                    metrics["failures"].append(test_case)
+                elif error is not None:
+                    test_case["status"] = "error"
+                    test_case["error"] = {
+                        "message": error.get("message"),
+                        "type": error.get("type"),
+                        "content": error.text,
+                    }
+                    metrics["errors"].append(test_case)
+
+                metrics["test_cases"].append(test_case)
+
+            return metrics
+
+        except ET.ParseError as e:
+            return {"error": f"XML parsing failed: {str(e)}"}
+        except Exception as e:
+            return {"error": f"Processing failed: {str(e)}"}
 
     def _validate_code_coverage(self, test_results: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -453,14 +541,13 @@ class ValidationEngineer:
         return report
 
     def validate_tests(
-        self, entity_name: str, refactored_code: str, test_results: Dict[str, Any]
+        self, entity_name: str, test_results: Dict[str, Any]
     ) -> Dict[str, Any]:
         """
         Validate the generated tests for an entity.
 
         Args:
             entity_name: Name of the entity being validated
-            refactored_code: The refactored GDScript code
             test_results: Results from test generation
 
         Returns:
@@ -483,10 +570,8 @@ class ValidationEngineer:
 
 def main():
     """Main function for testing the ValidationEngineer."""
-    # Create validation engineer
-    validator = ValidationEngineer(min_coverage=85.0, min_test_count=5)
-
     # Example usage (commented out since we don't have actual files to validate)
+    # validator = ValidationEngineer(min_coverage=85.0, min_test_count=5)
     # result = validator.validate_gdscript_syntax("target/scripts/player/ship.gd")
     # print("Validation Result:")
     # print(json.dumps(result, indent=2))
