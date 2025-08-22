@@ -24,6 +24,8 @@ We are standardizing on a single, powerful CLI coding agent: **qwen-code**, whic
 - `analyst/` - Code Analyst agent implementation
 - `config/` - Configuration files
 - `context/` - Guidance artifacts (style guides, rules, templates, examples)
+- `graph_system/` - Dependency graph system for dynamic memory
+- `hitl/` - Human-in-the-loop integration
 - `orchestrator/` - Orchestrator agent implementation (DeepSeek V3.1)
 - `prompt_engineering/` - Prompt Engineering agent implementation
 - `refactoring/` - Refactoring Specialist agent implementation (qwen-code)
@@ -61,7 +63,7 @@ The system operates in "bolts" - intense work cycles that follow this sequence:
 2. **Analysis** - Code Analyst examines source files
 3. **Generation** - Refactoring Specialist creates Godot files using qwen-code
 4. **Testing** - Test Generator creates unit tests
-5. **Validation** - Validation Engineer runs tests
+5. **Validation** - Validation Engineer runs tests with quality gates
 6. **Review** - Successful tasks are packaged for human review
 
 ## Human-in-the-Loop
@@ -71,6 +73,7 @@ The system is designed with strategic human oversight:
 - Expert review of AI-generated pull requests
 - Edge case intervention for complex problems
 - Final authorization for merging changes
+- Proactive HITL patterns for critical decision points
 
 ## Getting Started
 
@@ -120,6 +123,8 @@ The system includes built-in governance mechanisms:
 - Circuit breaker pattern for intractable problems
 - Integrated security scanning
 - Comprehensive logging and monitoring
+- Test quality gates to ensure rigorous validation
+- Proactive HITL patterns for critical decision points
 
 For detailed information about the project structure, development tools, and setup instructions,
 please refer to the main README.md file at the root of the project.

@@ -15,10 +15,6 @@ def test_converter_package():
 
 def test_requirements_installed():
     """Test that required packages are installed."""
-    # Test that crewai can be imported
-    import crewai
-    assert crewai is not None
-    
     # Test that pydantic can be imported
     import pydantic
     assert pydantic is not None

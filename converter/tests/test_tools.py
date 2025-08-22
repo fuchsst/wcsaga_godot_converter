@@ -13,6 +13,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from tools.qwen_code_execution_tool import (
     QwenCodeExecutionTool, QwenCodeInteractiveTool
 )
+from converter.utils import CommandExecutor
 
 
 class TestQwenCodeExecutionTool:
@@ -29,14 +30,17 @@ class TestQwenCodeExecutionTool:
         assert self.tool.description is not None
         assert self.tool.args_schema is not None
     
-    @patch("tools.qwen_code_execution_tool.subprocess.Popen")
-    def test_successful_execution(self, mock_popen):
+    @patch("converter.utils.CommandExecutor.execute_command")
+    def test_successful_execution(self, mock_execute):
         """Test successful command execution."""
-        # Mock the subprocess
-        mock_process = MagicMock()
-        mock_process.communicate.return_value = ("output", "")
-        mock_process.returncode = 0
-        mock_popen.return_value = mock_process
+        # Mock the command execution
+        mock_execute.return_value = {
+            "command": "echo 'test'",
+            "return_code": 0,
+            "stdout": "output",
+            "stderr": "",
+            "execution_time": 1234567890.0
+        }
         
         result = self.tool._run("echo 'test'")
         
@@ -45,31 +49,61 @@ class TestQwenCodeExecutionTool:
         assert result["stdout"] == "output"
         assert result["stderr"] == ""
         
-        mock_popen.assert_called_once()
+        mock_execute.assert_called_once_with(
+            command="echo 'test'",
+            timeout_seconds=300,
+            working_directory=None
+        )
     
-    @patch("tools.qwen_code_execution_tool.subprocess.Popen")
-    def test_execution_with_timeout(self, mock_popen):
+    @patch("converter.utils.CommandExecutor.execute_command")
+    def test_execution_with_timeout(self, mock_execute):
         """Test command execution with timeout."""
-        # Mock the subprocess to raise a timeout
-        mock_popen.side_effect = TimeoutError("Command timed out")
+        # Mock the command execution to return timeout result
+        mock_execute.return_value = {
+            "command": "sleep 10",
+            "return_code": -1,
+            "stdout": "",
+            "stderr": "Command timed out after 1 seconds",
+            "error": "timeout",
+            "execution_time": 1234567890.0
+        }
         
         result = self.tool._run("sleep 10", timeout_seconds=1)
         
         assert result is not None
         assert result["return_code"] == -1
         assert "timeout" in result.get("error", "")
+        
+        mock_execute.assert_called_once_with(
+            command="sleep 10",
+            timeout_seconds=1,
+            working_directory=None
+        )
     
-    @patch("tools.qwen_code_execution_tool.subprocess.Popen")
-    def test_execution_with_exception(self, mock_popen):
+    @patch("converter.utils.CommandExecutor.execute_command")
+    def test_execution_with_exception(self, mock_execute):
         """Test command execution with exception."""
-        # Mock the subprocess to raise an exception
-        mock_popen.side_effect = Exception("Test exception")
+        # Mock the command execution to return exception result
+        mock_execute.return_value = {
+            "command": "invalid_command",
+            "return_code": -1,
+            "stdout": "",
+            "stderr": "Test exception",
+            "error": "exception",
+            "execution_time": 1234567890.0
+        }
         
         result = self.tool._run("invalid_command")
         
         assert result is not None
         assert result["return_code"] == -1
         assert "exception" in result.get("error", "")
+        
+        mock_execute.assert_called_once_with(
+            command="invalid_command",
+            timeout_seconds=300,
+            working_directory=None
+        )
 
 
 class TestQwenCodeInteractiveTool:
@@ -86,14 +120,17 @@ class TestQwenCodeInteractiveTool:
         assert self.tool.description is not None
         assert self.tool.args_schema is not None
     
-    @patch("tools.qwen_code_execution_tool.subprocess.Popen")
-    def test_successful_interactive_execution(self, mock_popen):
+    @patch("converter.utils.CommandExecutor.execute_command")
+    def test_successful_interactive_execution(self, mock_execute):
         """Test successful interactive command execution."""
-        # Mock the subprocess
-        mock_process = MagicMock()
-        mock_process.communicate.return_value = ("response", "")
-        mock_process.returncode = 0
-        mock_popen.return_value = mock_process
+        # Mock the command execution
+        mock_execute.return_value = {
+            "command": "qwen-code",
+            "return_code": 0,
+            "stdout": "response",
+            "stderr": "",
+            "execution_time": 1234567890.0
+        }
         
         result = self.tool._run("qwen-code", "Generate a test script")
         
@@ -103,28 +140,63 @@ class TestQwenCodeInteractiveTool:
         assert result["stderr"] == ""
         assert result["prompt"] == "Generate a test script"
         
-        mock_popen.assert_called_once()
+        mock_execute.assert_called_once_with(
+            command="qwen-code",
+            timeout_seconds=300,
+            working_directory=None,
+            input_data="Generate a test script"
+        )
     
-    @patch("tools.qwen_code_execution_tool.subprocess.Popen")
-    def test_interactive_execution_with_timeout(self, mock_popen):
+    @patch("converter.utils.CommandExecutor.execute_command")
+    def test_interactive_execution_with_timeout(self, mock_execute):
         """Test interactive command execution with timeout."""
-        # Mock the subprocess to raise a timeout
-        mock_popen.side_effect = TimeoutError("Command timed out")
+        # Mock the command execution to return timeout result
+        mock_execute.return_value = {
+            "command": "qwen-code",
+            "return_code": -1,
+            "stdout": "",
+            "stderr": "Command timed out after 1 seconds",
+            "error": "timeout",
+            "execution_time": 1234567890.0
+        }
         
         result = self.tool._run("qwen-code", "Generate a test script", timeout_seconds=1)
         
         assert result is not None
         assert result["return_code"] == -1
         assert "timeout" in result.get("error", "")
+        assert result["prompt"] == "Generate a test script"
+        
+        mock_execute.assert_called_once_with(
+            command="qwen-code",
+            timeout_seconds=1,
+            working_directory=None,
+            input_data="Generate a test script"
+        )
     
-    @patch("tools.qwen_code_execution_tool.subprocess.Popen")
-    def test_interactive_execution_with_exception(self, mock_popen):
+    @patch("converter.utils.CommandExecutor.execute_command")
+    def test_interactive_execution_with_exception(self, mock_execute):
         """Test interactive command execution with exception."""
-        # Mock the subprocess to raise an exception
-        mock_popen.side_effect = Exception("Test exception")
+        # Mock the command execution to return exception result
+        mock_execute.return_value = {
+            "command": "qwen-code",
+            "return_code": -1,
+            "stdout": "",
+            "stderr": "Test exception",
+            "error": "exception",
+            "execution_time": 1234567890.0
+        }
         
         result = self.tool._run("qwen-code", "Generate a test script")
         
         assert result is not None
         assert result["return_code"] == -1
         assert "exception" in result.get("error", "")
+        assert result["prompt"] == "Generate a test script"
+        
+        mock_execute.assert_called_once_with(
+            command="qwen-code",
+            timeout_seconds=300,
+            working_directory=None,
+            input_data="Generate a test script"
+        )

@@ -132,7 +132,10 @@ wcsaga_godot_converter/
 │   ├── analyst/            # Code Analyst agent implementation
 │   ├── config/             # Configuration files
 │   ├── context/            # Guidance artifacts
+│   ├── graph_system/       # Dependency graph system for dynamic memory
+│   ├── hitl/               # Human-in-the-loop integration
 │   ├── orchestrator/        # Orchestrator agent implementation
+│   │   └── state_machine/  # Custom state machine for deterministic bolt cycles
 │   ├── prompt_engineering/ # Prompt Engineering agent implementation
 │   ├── refactoring/        # Refactoring Specialist agent implementation
 │   ├── scripts/            # Utility scripts
@@ -141,6 +144,7 @@ wcsaga_godot_converter/
 │   ├── tests/             # System tests
 │   ├── tools/             # Custom tools for CLI agent control
 │   ├── validation/        # Validation Engineer agent implementation
+│   │   └── enhanced/       # Enhanced validation with test quality gates
 │   └── workflows/         # Process definitions
 ├── pyproject.toml         # Python project configuration
 ├── README.md              # Project documentation
@@ -168,3 +172,5 @@ The system includes built-in governance mechanisms:
 - Circuit breaker pattern for intractable problems
 - Integrated security scanning
 - Comprehensive logging and monitoring
+- Test quality gates to ensure rigorous validation
+- Proactive HITL patterns for critical decision points

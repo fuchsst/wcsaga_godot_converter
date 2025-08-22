@@ -31,37 +31,26 @@ class TestConfigManager:
     
     def _create_test_configs(self):
         """Create test configuration files."""
-        # Create crewai_config.yaml
-        crewai_config = {
-            "llm": {
-                "model": "deepseek-ai/DeepSeek-V3.1",
-                "temperature": 0.7,
-                "max_tokens": 4096,
-                "base_url": "https://api.deepseek.com/v1",
-                "api_key_env_var": "DEEPSEEK_API_KEY"
-            },
-            "default_agent": {
+        # Create llm_config.yaml
+        llm_config = {
+            "model": "deepseek-ai/DeepSeek-V3.1",
+            "temperature": 0.7,
+            "max_tokens": 4096,
+            "base_url": "https://api.deepseek.com/v1",
+            "api_key_env_var": "DEEPSEEK_API_KEY"
+        }
+        
+        with open(self.config_dir / "llm.yaml", "w") as f:
+            yaml.dump(llm_config, f)
+        
+        # Create agent_config.yaml
+        agent_config = {
+            "default": {
                 "verbose": True,
                 "allow_delegation": True,
                 "max_rpm": 60,
                 "cache": True
             },
-            "process": {
-                "sequential": {
-                    "timeout": 300
-                },
-                "hierarchical": {
-                    "manager_llm": "deepseek-ai/DeepSeek-V3.1",
-                    "timeout": 600
-                }
-            }
-        }
-        
-        with open(self.config_dir / "crewai_config.yaml", "w") as f:
-            yaml.dump(crewai_config, f)
-        
-        # Create agent_config.yaml
-        agent_config = {
             "migration_architect": {
                 "role": "Lead Systems Architect",
                 "goal": "Decompose the overall migration into a high-level, phased project plan"
@@ -72,8 +61,22 @@ class TestConfigManager:
             }
         }
         
-        with open(self.config_dir / "agent_config.yaml", "w") as f:
+        with open(self.config_dir / "agents.yaml", "w") as f:
             yaml.dump(agent_config, f)
+        
+        # Create process_config.yaml
+        process_config = {
+            "sequential": {
+                "timeout": 300
+            },
+            "hierarchical": {
+                "manager_llm": "deepseek-ai/DeepSeek-V3.1",
+                "timeout": 600
+            }
+        }
+        
+        with open(self.config_dir / "process.yaml", "w") as f:
+            yaml.dump(process_config, f)
     
     def test_config_manager_initialization(self):
         """Test that ConfigManager initializes correctly."""
@@ -91,11 +94,11 @@ class TestConfigManager:
         config_manager = ConfigManager(str(self.config_dir))
         
         # Check that configurations were loaded
-        crewai_config = config_manager._config.get("crewai", {})
-        assert crewai_config is not None
-        assert "llm" in crewai_config
+        llm_config = config_manager._config.get("llm", {})
+        assert llm_config is not None
+        assert "model" in llm_config
         
-        agent_config = config_manager._config.get("agent_config", {})
+        agent_config = config_manager._config.get("agents", {})
         assert agent_config is not None
     
     def test_get_config(self):
@@ -105,7 +108,7 @@ class TestConfigManager:
         config_manager = ConfigManager(str(self.config_dir))
         
         # Test getting a simple configuration value
-        model = config_manager.get_config("crewai", "llm", {}).get("model")
+        model = config_manager.get_config("llm", "model", "default_model")
         assert model == "deepseek-ai/DeepSeek-V3.1"
         
         # Test getting a non-existent configuration with default
@@ -119,11 +122,11 @@ class TestConfigManager:
         config_manager = ConfigManager(str(self.config_dir))
         
         # Test getting a nested configuration value
-        temperature = config_manager.get_nested_config("crewai", "llm", "temperature")
+        temperature = config_manager.get_nested_config("llm", "temperature")
         assert temperature == 0.7
         
         # Test getting a nested configuration with default
-        default_value = config_manager.get_nested_config("crewai", "llm", "nonexistent", default="default")
+        default_value = config_manager.get_nested_config("llm", "nonexistent", default="default")
         assert default_value == "default"
     
     def test_get_secret(self):
@@ -170,10 +173,10 @@ class TestConfigManager:
         # Test getting default agent configuration
         default_agent_config = config_manager.get_agent_config("default")
         assert default_agent_config is not None
-        # The test config doesn't have default agent config, so this will be empty
+        assert default_agent_config.get("verbose") is True
         
         # Test getting specific agent configuration
-        architect_config = config_manager.get_config("agent_config", "migration_architect")
+        architect_config = config_manager.get_agent_config("migration_architect")
         assert architect_config is not None
         assert architect_config.get("role") == "Lead Systems Architect"
     

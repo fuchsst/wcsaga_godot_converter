@@ -1,8 +1,8 @@
 """
-Enhanced Validation Engineer Implementation
+Validation Engineer Implementation
 
-This module implements an enhanced validation engineer that incorporates test quality gates
-and more comprehensive validation checks.
+This module implements a validation engineer that incorporates test quality gates
+and comprehensive validation checks.
 """
 
 import os
@@ -11,19 +11,19 @@ import time
 from typing import Dict, Any, List, Optional
 from pathlib import Path
 
-# Import our enhanced modules
-from .validation.test_quality_gate import TestQualityGate
-from tools.qwen_code_execution_tool import QwenCodeExecutionTool
-from tools.qwen_code_wrapper import QwenCodeWrapper
+# Import our validation modules
+from .test_quality_gate import TestQualityGate
+from ..tools.qwen_code_execution_tool import QwenCodeExecutionTool
+from ..tools.qwen_code_wrapper import QwenCodeWrapper
 
 
-class EnhancedValidationEngineer:
-    """Enhanced agent responsible for validating GDScript code and running tests with quality gates."""
+class ValidationEngineer:
+    """Agent responsible for validating GDScript code and running tests with quality gates."""
     
     def __init__(self, godot_command: str = "godot", qwen_command: str = "qwen-code",
                  min_coverage: float = 85.0, min_test_count: int = 5):
         """
-        Initialize the EnhancedValidationEngineer.
+        Initialize the ValidationEngineer.
         
         Args:
             godot_command: Command to invoke Godot
@@ -163,7 +163,7 @@ class EnhancedValidationEngineer:
             result = self.execution_tool._run(command, timeout_seconds=300)
             
             # Parse test results (this would depend on gdUnit4 output format)
-            parsed_test_results = self._parse_enhanced_test_output(
+            parsed_test_results = self._parse_test_output(
                 result.get("stdout", ""), 
                 result.get("stderr", "")
             )
@@ -182,9 +182,9 @@ class EnhancedValidationEngineer:
                 "error": f"Failed to execute tests: {str(e)}"
             }
     
-    def _parse_enhanced_test_output(self, stdout: str, stderr: str) -> Dict[str, Any]:
+    def _parse_test_output(self, stdout: str, stderr: str) -> Dict[str, Any]:
         """
-        Parse enhanced test output from gdUnit4 with coverage information.
+        Parse test output from gdUnit4 with coverage information.
         
         Args:
             stdout: Standard output from test execution
@@ -193,7 +193,7 @@ class EnhancedValidationEngineer:
         Returns:
             Dictionary with parsed test results including coverage
         """
-        # Enhanced parser with better coverage extraction
+        # Parser with coverage extraction
         results = {
             "total_tests": 0,
             "passed_tests": 0,
@@ -396,9 +396,9 @@ class EnhancedValidationEngineer:
             "security_issues": security_issues
         }
     
-    def generate_enhanced_validation_report(self, files_to_validate: List[str]) -> Dict[str, Any]:
+    def generate_validation_report(self, files_to_validate: List[str]) -> Dict[str, Any]:
         """
-        Generate an enhanced comprehensive validation report for multiple files.
+        Generate a comprehensive validation report for multiple files.
         
         Args:
             files_to_validate: List of file paths to validate
@@ -452,9 +452,9 @@ class EnhancedValidationEngineer:
 
 
 def main():
-    """Main function for testing the EnhancedValidationEngineer."""
-    # Create enhanced validation engineer
-    validator = EnhancedValidationEngineer(min_coverage=85.0, min_test_count=5)
+    """Main function for testing the ValidationEngineer."""
+    # Create validation engineer
+    validator = ValidationEngineer(min_coverage=85.0, min_test_count=5)
     
     # Example usage (commented out since we don't have actual files to validate)
     # result = validator.validate_gdscript_syntax("target/scripts/player/ship.gd")

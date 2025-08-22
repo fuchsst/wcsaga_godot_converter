@@ -71,14 +71,17 @@ source .venv/bin/activate
 pytest tests/ -v
 ```
 
-## Test Coverage
+## Test Categories
 
-The test suite aims to provide comprehensive coverage of all major components:
+The test suite provides comprehensive coverage of all major components:
 
 1. **Tool Tests** - Validate the CLI execution tools
 2. **Agent Tests** - Verify agent functionality
 3. **Workflow Tests** - Ensure workflow orchestration works correctly
 4. **Integration Tests** - Test component interactions
+5. **Quality Gate Tests** - Validate test quality gates
+6. **HITL Integration Tests** - Test human-in-the-loop integration
+7. **Graph System Tests** - Validate dependency graph functionality
 
 ## Writing New Tests
 
@@ -89,6 +92,7 @@ When adding new functionality to the converter system, corresponding tests shoul
 3. Use mocking where appropriate to isolate units under test
 4. Test edge cases and error conditions
 5. Keep tests focused and independent
+6. Include tests for quality gates
 
 ## Continuous Integration
 

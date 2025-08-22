@@ -27,16 +27,10 @@ class ConfigManager:
     
     def _load_all_configurations(self):
         """Load all configuration files."""
-        # Load main crewai configuration
-        crewai_config_path = self.config_dir / "crewai_config.yaml"
-        if crewai_config_path.exists():
-            self._config["crewai"] = self._load_yaml_config(crewai_config_path)
-        
-        # Load other configuration files if they exist
+        # Load all YAML configuration files
         for config_file in self.config_dir.glob("*.yaml"):
-            if config_file.name != "crewai_config.yaml":
-                config_name = config_file.stem
-                self._config[config_name] = self._load_yaml_config(config_file)
+            config_name = config_file.stem
+            self._config[config_name] = self._load_yaml_config(config_file)
     
     def _load_yaml_config(self, config_path: Path) -> Dict[str, Any]:
         """
@@ -112,7 +106,7 @@ class ConfigManager:
         Returns:
             Dictionary with LLM configuration
         """
-        llm_config = self._config.get("crewai", {}).get("llm", {})
+        llm_config = self._config.get("llm", {})
         
         # Load API key from environment variable
         api_key_env_var = llm_config.get("api_key_env_var", "DEEPSEEK_API_KEY")
@@ -126,6 +120,9 @@ class ConfigManager:
         llm_config_copy = llm_config.copy()
         llm_config_copy.pop("api_key_env_var", None)
         llm_config_copy.pop("base_url_env_var", None)
+        
+        # Remove any existing api_key from the config
+        llm_config_copy.pop("api_key", None)
         
         # Add the actual values
         if api_key:
@@ -146,7 +143,7 @@ class ConfigManager:
             Dictionary with agent configuration
         """
         if agent_type == "default":
-            return self._config.get("crewai", {}).get("default_agent", {})
+            return self._config.get("agents", {}).get("default", {})
         else:
             return self._config.get("agents", {}).get(agent_type, {})
     
@@ -160,7 +157,7 @@ class ConfigManager:
         Returns:
             Dictionary with process configuration
         """
-        return self._config.get("crewai", {}).get("process", {}).get(process_type, {})
+        return self._config.get("process", {}).get(process_type, {})
     
     def get_memory_config(self) -> Dict[str, Any]:
         """
@@ -169,7 +166,7 @@ class ConfigManager:
         Returns:
             Dictionary with memory configuration
         """
-        return self._config.get("crewai", {}).get("memory", {})
+        return self._config.get("memory", {})
     
     def validate_config(self) -> bool:
         """
@@ -178,12 +175,8 @@ class ConfigManager:
         Returns:
             True if configuration is valid, False otherwise
         """
-        # Check that we have the basic crewai configuration
-        if "crewai" not in self._config:
-            return False
-        
         # Check that we have LLM configuration
-        llm_config = self._config.get("crewai", {}).get("llm", {})
+        llm_config = self._config.get("llm", {})
         if not llm_config.get("model"):
             return False
         

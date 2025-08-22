@@ -11,8 +11,8 @@ from typing import Dict, Any, List, Optional
 from pathlib import Path
 
 # Import tools
-from tools.qwen_code_wrapper import QwenCodeWrapper
-from prompt_engineering.prompt_engineering_agent import PromptEngineeringAgent
+from ..tools.qwen_code_wrapper import QwenCodeWrapper
+from ..prompt_engineering.prompt_engineering_agent import PromptEngineeringAgent
 
 
 class RefactoringSpecialist:
