@@ -6,11 +6,9 @@ for the dependency graph system.
 """
 
 import logging
-import threading
 import time
-from pathlib import Path
 from threading import Lock, RLock
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 # Import our modules
 from .dependency_graph import DependencyGraph

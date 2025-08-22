@@ -5,8 +5,7 @@ This module implements a test quality gate to validate completeness and rigor of
 including parsing of JUnit XML reports as recommended in the architectural document.
 """
 
-from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 from xml.etree import ElementTree as ET
 
 from converter.utils import generate_timestamp, setup_logging

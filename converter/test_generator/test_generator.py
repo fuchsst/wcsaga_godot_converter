@@ -5,7 +5,6 @@ This agent is responsible for generating unit tests for GDScript code
 using the qwen-code CLI tool.
 """
 
-import json
 import os
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -287,13 +286,6 @@ class TestGenerator:
         if not os.path.exists(test_file):
             return {"success": False, "error": f"Test file does not exist: {test_file}"}
 
-        # Read the test file with errors
-        try:
-            with open(test_file, "r", encoding="utf-8") as f:
-                test_content = f.read()
-        except Exception as e:
-            return {"success": False, "error": f"Failed to read test file: {str(e)}"}
-
         # Use qwen-code to fix the errors
         result = self.qwen_wrapper.fix_bugs(test_file, error_message)
 
@@ -342,40 +334,13 @@ class TestGenerator:
         # For now, we'll create a simple placeholder implementation
         # In a real implementation, this would generate actual tests using qwen-code
 
-        # Create a basic test structure
-        test_code = f"""# Test{entity_name.replace(' ', '').replace('-', '')}
-# Auto-generated tests for {entity_name}
-
-extends "res://addons/gdUnit4/src/GdUnit4"
-
-func test_initialization() -> void:
-    # Test that the entity initializes correctly
-    var entity = {entity_name.replace(' ', '').replace('-', '')}.new()
-    assert_that(entity).is_not_null()
-    # Add entity to scene tree to initialize
-    add_child(entity)
-    entity._ready()
-    # Cleanup
-    entity.queue_free()
-
-func test_basic_functionality() -> void:
-    # Test basic functionality
-    var entity = {entity_name.replace(' ', '').replace('-', '')}.new()
-    add_child(entity)
-    entity._ready()
-    # Add your specific tests here
-    # assert_that(entity.some_method()).is_equal(expected_value)
-    entity.queue_free()
-"""
-
         return {"total": 2, "passed": 2, "failed": 0, "coverage": 85.0, "duration": 0.1}
 
 
 def main():
     """Main function for testing the TestGenerator."""
-    generator = TestGenerator()
-
     # Example usage (commented out since we don't have actual files to test)
+    # generator = TestGenerator()
     # result = generator.generate_tests_for_file(
     #     source_file="target/scripts/player/ship.gd",
     #     test_file="target/scripts/player/test_ship.gd"
@@ -383,7 +348,4 @@ def main():
     #
     # print("Test Generation Result:")
     # print(json.dumps(result, indent=2))
-
-
-if __name__ == "__main__":
-    main()
+    pass

@@ -5,10 +5,8 @@ This module implements a validation engineer that incorporates test quality gate
 and comprehensive validation checks.
 """
 
-import json
 import os
 import time
-from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from ..tools.qwen_code_execution_tool import QwenCodeExecutionTool

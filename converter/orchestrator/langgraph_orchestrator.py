@@ -6,15 +6,13 @@ with a robust, stateful approach.
 """
 
 import asyncio
-import json
-import logging
 from pathlib import Path
-from typing import Any, Dict, List, Optional, TypedDict
+from typing import Any, Dict, List, Optional, TypedDict, Union
 
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import END, StateGraph
-from langgraph.types import Command, interrupt
 from langgraph.pregel import RetryPolicy
+from langgraph.types import Command, interrupt
 
 from converter.analyst.codebase_analyst import CodebaseAnalyst
 from converter.graph_system.graph_manager import GraphManager
@@ -114,8 +112,7 @@ class LangGraphOrchestrator:
 
         # Configure retry policy for error handling
         self.retry_policy = RetryPolicy(
-            max_attempts=3,
-            retry_on=(ValueError, RuntimeError, ConnectionError)
+            max_attempts=3, retry_on=(ValueError, RuntimeError, ConnectionError)
         )
 
         # Build the LangGraph workflow
@@ -266,7 +263,9 @@ class LangGraphOrchestrator:
 
             # Determine target files based on analysis
             target_files = []
-            entity_name = state.get("active_task", {}).get("entity_name", "unknown").lower()
+            entity_name = (
+                state.get("active_task", {}).get("entity_name", "unknown").lower()
+            )
             target_files.append(f"target/scenes/{entity_name}.tscn")
             target_files.append(f"target/scripts/{entity_name}.gd")
             state["target_files"] = target_files
@@ -279,7 +278,9 @@ class LangGraphOrchestrator:
                 {
                     "step": "codebase_analysis",
                     "error": str(e),
-                    "entity": state.get("active_task", {}).get("entity_name", "unknown"),
+                    "entity": state.get("active_task", {}).get(
+                        "entity_name", "unknown"
+                    ),
                 }
             )
 
@@ -431,24 +432,29 @@ class LangGraphOrchestrator:
 
         # Use LangGraph's interrupt function to pause execution for human input
         human_response = interrupt(human_request)
-        
+
         # Process human response
         if human_response.get("approved", False):
             state["human_review_result"] = {
                 "approved": True,
                 "timestamp": generate_timestamp(),
-                "comments": human_response.get("comments", "")
+                "comments": human_response.get("comments", ""),
             }
             return state
         else:
             # If rejected, return Command to route to escalation
-            return Command(goto="escalate_to_human", update={
-                "human_review_result": {
-                    "approved": False,
-                    "timestamp": generate_timestamp(),
-                    "comments": human_response.get("comments", "Task rejected by human reviewer")
-                }
-            })
+            return Command(
+                goto="escalate_to_human",
+                update={
+                    "human_review_result": {
+                        "approved": False,
+                        "timestamp": generate_timestamp(),
+                        "comments": human_response.get(
+                            "comments", "Task rejected by human reviewer"
+                        ),
+                    }
+                },
+            )
 
     async def _check_human_approval(
         self, state: CenturionGraphState
@@ -460,29 +466,35 @@ class LangGraphOrchestrator:
         state.current_step = "check_human_approval"
         return state
 
+    async def _handle_failure(self, state: CenturionGraphState) -> CenturionGraphState:
+        """Increment retry count and log errors (Implicit Orchestrator)."""
+        logger.warning(
+            f"Handling failure for {state.get('active_task', {}).get('entity_name', 'unknown')}"
+        )
+        state["current_step"] = "failure_handling"
+        state["retry_count"] = state.get("retry_count", 0) + 1
+
+        return state
+
     async def _escalate_to_human(
         self, state: CenturionGraphState
     ) -> CenturionGraphState:
         """Escalate to human review (Implicit Orchestrator)."""
         logger.error(
-            f"Escalating task {state.active_task.get('task_id', 'unknown')} to human review"
+            f"Escalating task {state.get('active_task', {}).get('task_id', 'unknown')} to human review"
         )
-        state.current_step = "human_escalation"
-        state.status = "escalated"
+        state["current_step"] = "human_escalation"
+        state["status"] = "escalated"
 
         # Update the active task status
-        if state.active_task:
-            state.active_task["status"] = "escalated"
-            state.active_task["escalated_at"] = generate_timestamp()
+        if state.get("active_task"):
+            state["active_task"]["status"] = "escalated"
+            state["active_task"]["escalated_at"] = generate_timestamp()
 
         # Request human review through HITL integration
         self.hitl_integration.request_verification(
-            (
-                state.active_task.get("task_id", "unknown")
-                if state.active_task
-                else "unknown"
-            ),
-            f"Migration escalation for {state.active_task.get('entity_name', 'unknown') if state.active_task else 'unknown'}",
+            state.get("active_task", {}).get("task_id", "unknown"),
+            f"Migration escalation for {state.get('active_task', {}).get('entity_name', 'unknown')}",
             {
                 "error_logs": state.get("error_logs", []),
                 "retry_count": state.get("retry_count", 0),
@@ -490,30 +502,6 @@ class LangGraphOrchestrator:
                 "test_results": state.get("test_results"),
                 "validation_result": state.get("validation_result"),
             },
-        )
-
-        return state
-
-    async def _handle_failure(self, state: CenturionGraphState) -> CenturionGraphState:
-        """Increment retry count and log errors (Implicit Orchestrator)."""
-        logger.warning(
-            f"Handling failure for {state.active_task.get('entity_name', 'unknown') if state.active_task else 'unknown'}"
-        )
-        state.current_step = "failure_handling"
-        state.retry_count = state.get("retry_count", 0) + 1
-
-        return state
-
-    async def _escalate_to_human(self, state: MigrationState) -> MigrationState:
-        """Escalate to human review."""
-        logger.error(f"Escalating {state.entity_name} to human review")
-        state.status = "escalated"
-
-        # Request human review
-        self.hitl_integration.request_verification(
-            state.task_id,
-            f"Migration escalation for {state.entity_name}",
-            {"error_logs": state.error_logs, "retry_count": state.retry_count},
         )
 
         return state
@@ -547,7 +535,9 @@ class LangGraphOrchestrator:
         """Determine if we should retry or escalate based on retry count."""
         retry_count = state.get("retry_count", 0)
         max_retries = (
-            state.get("active_task", {}).get("max_retries", 3) if state.get("active_task") else 3
+            state.get("active_task", {}).get("max_retries", 3)
+            if state.get("active_task")
+            else 3
         )
 
         if retry_count < max_retries:

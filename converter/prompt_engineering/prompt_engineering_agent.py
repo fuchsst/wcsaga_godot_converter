@@ -5,7 +5,6 @@ This agent is responsible for converting atomic tasks and code context into
 precise, effective prompts for the CLI coding agents.
 """
 
-import json
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 

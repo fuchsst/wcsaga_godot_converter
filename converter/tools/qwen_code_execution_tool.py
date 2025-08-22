@@ -5,7 +5,7 @@ This tool provides a wrapper for executing qwen-code CLI commands.
 It uses subprocess.Popen for interactive control of the qwen-code process.
 """
 
-from typing import Any, Callable, Dict, Optional
+from typing import Any, Dict, Optional
 
 from pydantic import BaseModel, Field
 
