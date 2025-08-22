@@ -1,36 +1,40 @@
 """
-Validation Engineer Agent Implementation
+Enhanced Validation Engineer Implementation
 
-This agent is responsible for validating generated GDScript code,
-running tests, and ensuring code quality standards.
+This module implements an enhanced validation engineer that incorporates test quality gates
+and more comprehensive validation checks.
 """
 
 import os
 import json
-import subprocess
 import time
 from typing import Dict, Any, List, Optional
 from pathlib import Path
 
-# Import tools
+# Import our enhanced modules
+from .validation.test_quality_gate import TestQualityGate
 from tools.qwen_code_execution_tool import QwenCodeExecutionTool
 from tools.qwen_code_wrapper import QwenCodeWrapper
 
 
-class ValidationEngineer:
-    """Agent responsible for validating GDScript code and running tests."""
+class EnhancedValidationEngineer:
+    """Enhanced agent responsible for validating GDScript code and running tests with quality gates."""
     
-    def __init__(self, godot_command: str = "godot", qwen_command: str = "qwen-code"):
+    def __init__(self, godot_command: str = "godot", qwen_command: str = "qwen-code",
+                 min_coverage: float = 85.0, min_test_count: int = 5):
         """
-        Initialize the ValidationEngineer.
+        Initialize the EnhancedValidationEngineer.
         
         Args:
             godot_command: Command to invoke Godot
             qwen_command: Command to invoke qwen-code
+            min_coverage: Minimum required code coverage percentage
+            min_test_count: Minimum required number of tests
         """
         self.godot_command = godot_command
         self.qwen_wrapper = QwenCodeWrapper(qwen_command)
         self.execution_tool = QwenCodeExecutionTool()
+        self.test_quality_gate = TestQualityGate(min_coverage, min_test_count)
     
     def validate_gdscript_syntax(self, file_path: str) -> Dict[str, Any]:
         """
@@ -78,9 +82,39 @@ class ValidationEngineer:
                 "error": f"Failed to execute syntax validation: {str(e)}"
             }
     
-    def run_unit_tests(self, test_file: str = None, test_directory: str = None) -> Dict[str, Any]:
+    def run_unit_tests_with_quality_gate(self, test_file: str = None, 
+                                        test_directory: str = None) -> Dict[str, Any]:
         """
-        Run unit tests using gdUnit4.
+        Run unit tests using gdUnit4 with quality gate validation.
+        
+        Args:
+            test_file: Specific test file to run (optional)
+            test_directory: Directory containing test files (optional)
+            
+        Returns:
+            Dictionary with comprehensive test results including quality gate validation
+        """
+        # Run tests first
+        test_results = self._run_unit_tests_internal(test_file, test_directory)
+        
+        # Apply quality gate validation
+        quality_validation = self.test_quality_gate.validate_test_quality(
+            test_results.get("test_results", {})
+        )
+        
+        # Combine results
+        combined_results = {
+            "test_execution": test_results,
+            "quality_validation": quality_validation,
+            "overall_success": test_results.get("success", False) and quality_validation.get("passed", False)
+        }
+        
+        return combined_results
+    
+    def _run_unit_tests_internal(self, test_file: str = None, 
+                                test_directory: str = None) -> Dict[str, Any]:
+        """
+        Internal method to run unit tests using gdUnit4.
         
         Args:
             test_file: Specific test file to run (optional)
@@ -119,13 +153,16 @@ class ValidationEngineer:
             result = self.execution_tool._run(command, timeout_seconds=300)
             
             # Parse test results (this would depend on gdUnit4 output format)
-            test_results = self._parse_test_output(result.get("stdout", ""), result.get("stderr", ""))
+            parsed_test_results = self._parse_enhanced_test_output(
+                result.get("stdout", ""), 
+                result.get("stderr", "")
+            )
             
             return {
                 "success": result.get("return_code") == 0,
                 "test_target": test_target,
                 "command_output": result,
-                "test_results": test_results
+                "test_results": parsed_test_results
             }
             
         except Exception as e:
@@ -135,35 +172,48 @@ class ValidationEngineer:
                 "error": f"Failed to execute tests: {str(e)}"
             }
     
-    def _parse_test_output(self, stdout: str, stderr: str) -> Dict[str, Any]:
+    def _parse_enhanced_test_output(self, stdout: str, stderr: str) -> Dict[str, Any]:
         """
-        Parse test output from gdUnit4.
+        Parse enhanced test output from gdUnit4 with coverage information.
         
         Args:
             stdout: Standard output from test execution
             stderr: Standard error from test execution
             
         Returns:
-            Dictionary with parsed test results
+            Dictionary with parsed test results including coverage
         """
-        # This is a simplified parser - in reality, this would need to parse
-        # the specific output format of gdUnit4
+        # This is a more sophisticated parser that attempts to extract
+        # test results and coverage information
         results = {
             "total_tests": 0,
             "passed_tests": 0,
             "failed_tests": 0,
+            "coverage_percentage": 0.0,
+            "duration": 0.0,
             "errors": [],
             "failures": []
         }
         
         # Look for test summary patterns
-        # This is a placeholder implementation
+        # This is a placeholder implementation that would need to be
+        # customized based on the actual gdUnit4 output format
+        
+        # Simple parsing for demonstration
         if "passed" in stdout.lower():
             results["passed_tests"] = stdout.lower().count("passed")
         if "failed" in stdout.lower():
             results["failed_tests"] = stdout.lower().count("failed")
         
         results["total_tests"] = results["passed_tests"] + results["failed_tests"]
+        
+        # Look for coverage information
+        if "coverage" in stdout.lower():
+            # Try to extract coverage percentage
+            import re
+            coverage_match = re.search(r'coverage[:\s]*(\d+\.?\d*)%', stdout, re.IGNORECASE)
+            if coverage_match:
+                results["coverage_percentage"] = float(coverage_match.group(1))
         
         # Collect errors and failures
         if stderr:
@@ -209,7 +259,8 @@ class ValidationEngineer:
             self._check_naming_conventions(content),
             self._check_documentation(content),
             self._check_code_complexity(content),
-            self._check_magic_numbers(content)
+            self._check_magic_numbers(content),
+            self._check_performance_antipatterns(content)
         ]
         
         # Aggregate results
@@ -223,101 +274,27 @@ class ValidationEngineer:
         results["success"] = all_passed
         return results
     
-    def _check_line_length(self, content: str) -> Dict[str, Any]:
-        """Check if lines exceed maximum length."""
-        max_length = 100
-        long_lines = []
-        
-        for i, line in enumerate(content.split('\n'), 1):
-            if len(line) > max_length:
-                long_lines.append({
-                    "line_number": i,
-                    "length": len(line),
-                    "content": line[:50] + "..." if len(line) > 50 else line
-                })
-        
-        return {
-            "check_name": "line_length",
-            "passed": len(long_lines) == 0,
-            "max_length": max_length,
-            "violations": long_lines
-        }
-    
-    def _check_naming_conventions(self, content: str) -> Dict[str, Any]:
-        """Check if naming conventions are followed."""
-        import re
-        
-        # Check for PascalCase class names
-        class_pattern = r'class_name\s+(\w+)'
-        class_matches = re.findall(class_pattern, content)
-        
-        # Check for snake_case function names
-        func_pattern = r'func\s+(\w+)'
-        func_matches = re.findall(func_pattern, content)
-        
-        # Check for CONSTANT_CASE constants
-        const_pattern = r'const\s+(\w+)'
-        const_matches = re.findall(const_pattern, content)
-        
-        # Simple validation (in a real implementation, this would be more thorough)
+    def _check_performance_antipatterns(self, content: str) -> Dict[str, Any]:
+        """Check for performance-related anti-patterns."""
         issues = []
-        for class_name in class_matches:
-            if not class_name[0].isupper():
-                issues.append(f"Class {class_name} should use PascalCase")
         
-        # For now, we'll just return a basic result
+        # Check for _process in loops
+        if "_process" in content and "for " in content:
+            issues.append("Potential performance issue: _process function contains loops")
+        
+        # Check for frequent node lookups
+        if ".get_node(" in content and content.count(".get_node(") > 5:
+            issues.append("Frequent use of get_node - consider using onready variables")
+        
         return {
-            "check_name": "naming_conventions",
+            "check_name": "performance_antipatterns",
             "passed": len(issues) == 0,
             "issues": issues
         }
     
-    def _check_documentation(self, content: str) -> Dict[str, Any]:
-        """Check if functions and classes are documented."""
-        import re
-        
-        # Look for functions without docstrings
-        func_pattern = r'func\s+(\w+)\s*\('
-        func_matches = re.findall(func_pattern, content)
-        
-        # Simple check - in reality, this would be more sophisticated
-        return {
-            "check_name": "documentation",
-            "passed": True,  # Placeholder
-            "undocumented_functions": len(func_matches)
-        }
-    
-    def _check_code_complexity(self, content: str) -> Dict[str, Any]:
-        """Check for overly complex code."""
-        # Simple check for nested conditions
-        nested_if_count = content.count("if ") + content.count("elif ")
-        
-        return {
-            "check_name": "code_complexity",
-            "passed": nested_if_count < 10,  # Arbitrary threshold
-            "nested_conditions": nested_if_count
-        }
-    
-    def _check_magic_numbers(self, content: str) -> Dict[str, Any]:
-        """Check for magic numbers in the code."""
-        import re
-        
-        # Look for numeric literals that aren't 0, 1, or simple cases
-        number_pattern = r'[^a-zA-Z_](\d+\.\d+|\d+)[^a-zA-Z_]'
-        matches = re.findall(number_pattern, content)
-        
-        # Filter out common acceptable numbers
-        magic_numbers = [num for num in matches if num not in ['0', '1', '2', '10', '100']]
-        
-        return {
-            "check_name": "magic_numbers",
-            "passed": len(magic_numbers) == 0,
-            "magic_numbers_found": len(magic_numbers)
-        }
-    
     def run_security_scan(self, file_path: str) -> Dict[str, Any]:
         """
-        Run a basic security scan on GDScript code.
+        Run a comprehensive security scan on GDScript code.
         
         Args:
             file_path: Path to the GDScript file to scan
@@ -357,15 +334,19 @@ class ValidationEngineer:
         if "HTTPClient" in content or "HTTPRequest" in content:
             security_issues.append("Network access detected - review for security implications")
         
+        # Check for eval-like functions
+        if "eval" in content.lower() or "execute" in content.lower():
+            security_issues.append("Dynamic code execution detected - potential security risk")
+        
         return {
             "success": len(security_issues) == 0,
             "file_path": file_path,
             "security_issues": security_issues
         }
     
-    def generate_validation_report(self, files_to_validate: List[str]) -> Dict[str, Any]:
+    def generate_enhanced_validation_report(self, files_to_validate: List[str]) -> Dict[str, Any]:
         """
-        Generate a comprehensive validation report for multiple files.
+        Generate an enhanced comprehensive validation report for multiple files.
         
         Args:
             files_to_validate: List of file paths to validate
@@ -385,7 +366,8 @@ class ValidationEngineer:
                 "passed_syntax": 0,
                 "passed_quality": 0,
                 "passed_security": 0,
-                "failed_files": 0
+                "failed_files": 0,
+                "quality_scores": []
             }
         }
         
@@ -418,8 +400,9 @@ class ValidationEngineer:
 
 
 def main():
-    """Main function for testing the ValidationEngineer."""
-    validator = ValidationEngineer()
+    """Main function for testing the EnhancedValidationEngineer."""
+    # Create enhanced validation engineer
+    validator = EnhancedValidationEngineer(min_coverage=85.0, min_test_count=5)
     
     # Example usage (commented out since we don't have actual files to validate)
     # result = validator.validate_gdscript_syntax("target/scripts/player/ship.gd")

@@ -248,11 +248,34 @@ class MigrationOrchestrator:
         """Run the migration execution phase."""
         logger.info("Running migration execution phase...")
         
-        # This would involve more complex task orchestration
-        # For now, we'll just log that the phase would start
-        logger.info("Migration execution phase would begin here")
-        
-        return {"status": "completed", "phase": "execution", "message": "Execution phase ready to begin"}
+        # Import our enhanced orchestrator
+        try:
+            from .enhanced_orchestrator import EnhancedOrchestrator
+            
+            # Create enhanced orchestrator
+            enhanced_orchestrator = EnhancedOrchestrator(
+                source_path=str(self.source_path),
+                target_path=str(self.target_path),
+                graph_file="dependency_graph.json"
+            )
+            
+            # Run enhanced migration cycle
+            results = enhanced_orchestrator.run_enhanced_migration_cycle()
+            
+            logger.info("Migration execution phase completed")
+            return {
+                "status": "completed", 
+                "phase": "execution", 
+                "message": "Execution phase completed successfully",
+                "details": results
+            }
+        except Exception as e:
+            logger.error(f"Migration execution phase failed: {str(e)}", exc_info=True)
+            return {
+                "status": "failed", 
+                "phase": "execution", 
+                "error": str(e)
+            }
     
     def get_status(self) -> Dict[str, Any]:
         """
