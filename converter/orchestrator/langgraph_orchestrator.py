@@ -6,6 +6,7 @@ with a robust, stateful approach.
 """
 
 import asyncio
+import datetime
 import time
 from pathlib import Path
 from typing import Any, Dict, List, Union
@@ -19,6 +20,7 @@ from converter.agents.asset_conversion.asset_conversion_agent import \
 from converter.agents.code_reimplementation.code_reimplementation_agent import \
     CodeReimplementationAgent
 from converter.agents.debugger.debugger_agent import DebuggerAgent
+from converter.agents.task_decomposition.task_decomposition_agent import TaskDecompositionAgent
 from converter.agents.test_generation.test_generation_agent import \
     TestGenerationAgent
 from converter.agents.validation.validation_agent import ValidationAgent
@@ -115,6 +117,7 @@ class LangGraphOrchestrator:
         """
         self.source_path = Path(source_path)
         self.target_path = Path(target_path)
+        self.graph_file = graph_file  # Store graph_file for use in _build_workflow
 
         # Validate paths
         if not self.source_path.exists():
@@ -124,7 +127,7 @@ class LangGraphOrchestrator:
         self.target_path.mkdir(parents=True, exist_ok=True)
 
         # Initialize enhanced components
-        self.graph_manager = GraphManager(graph_file, auto_save=True)
+        self.graph_manager = GraphManager(self.graph_file, auto_save=True)
         self.quality_gate = TestQualityGate(min_coverage=85.0, min_test_count=5)
         self.hitl_integration = LangGraphHITLIntegration()
 
@@ -150,6 +153,7 @@ class LangGraphOrchestrator:
         builder = StateGraph(CenturionGraphState)
 
         # Initialize specialist agents
+        self.task_decomposition_agent = TaskDecompositionAgent(self.graph_file)
         self.code_reimplementation_agent = CodeReimplementationAgent()
         self.test_generation_agent = TestGenerationAgent()
         self.validation_agent = ValidationAgent()
@@ -286,9 +290,9 @@ class LangGraphOrchestrator:
     ) -> CenturionGraphState:
         """Parse source code and legacy files using tools (Codebase Analyst role)."""
         logger.info(
-            f"Analyzing codebase for {state.get('active_task', {}).get('entity_name', 'unknown')}"
+            f"Analyzing codebase for {state.active_task.entity_name if state.active_task else 'unknown'}"
         )
-        state["current_step"] = "codebase_analysis"
+        state.current_step = "codebase_analysis"
 
         try:
             # Initialize Codebase Analyst
@@ -296,32 +300,28 @@ class LangGraphOrchestrator:
 
             # Perform actual analysis
             analysis_result = analyst.analyze_entity(
-                state.get("active_task", {}).get("entity_name", "unknown"),
-                state.get("active_task", {}).get("source_files", []),
+                state.active_task.entity_name if state.active_task else "unknown",
+                state.active_task.source_files if state.active_task else [],
             )
 
-            state["analysis_report"] = analysis_result
+            state.analysis_report = analysis_result
 
             # Determine target files based on analysis
             target_files = []
-            entity_name = (
-                state.get("active_task", {}).get("entity_name", "unknown").lower()
-            )
+            entity_name = (state.active_task.entity_name if state.active_task else "unknown").lower()
             target_files.append(f"target/scenes/{entity_name}.tscn")
             target_files.append(f"target/scripts/{entity_name}.gd")
-            state["target_files"] = target_files
+            state.target_files = target_files
 
         except Exception as e:
             logger.error(f"Codebase analysis failed: {str(e)}")
-            if "error_logs" not in state:
-                state["error_logs"] = []
-            state["error_logs"].append(
+            if not state.error_logs:
+                state.error_logs = []
+            state.error_logs.append(
                 {
                     "step": "codebase_analysis",
                     "error": str(e),
-                    "entity": state.get("active_task", {}).get(
-                        "entity_name", "unknown"
-                    ),
+                    "entity": state.active_task.entity_name if state.active_task else "unknown",
                 }
             )
 
@@ -347,81 +347,6 @@ class LangGraphOrchestrator:
 
         return target_files
 
-    async def _generate_code(self, state: CenturionGraphState) -> CenturionGraphState:
-        """Craft prompt and call qwen-code tool (Refactoring Specialist via Prompt Engineer)."""
-        logger.info(
-            f"Generating code for {state.active_task.get('entity_name', 'unknown')}"
-        )
-        state.current_step = "code_generation"
-
-        try:
-            # Initialize Refactoring Specialist
-            refactoring_specialist = RefactoringSpecialist()
-
-            # Perform actual refactoring using the analysis report
-            refactored_code = refactoring_specialist.refactor_entity(
-                state.active_task.get("entity_name", "unknown"),
-                state.active_task.get("source_files", []),
-                state.analysis_report,
-            )
-
-            state.generated_gdscript = refactored_code
-
-        except Exception as e:
-            logger.error(f"Code generation failed: {str(e)}")
-            if "error_logs" not in state:
-                state.error_logs = []
-            state.error_logs.append(
-                {
-                    "step": "code_generation",
-                    "error": str(e),
-                    "entity": state.active_task.get("entity_name", "unknown"),
-                }
-            )
-
-        return state
-
-    async def _validate_code(self, state: CenturionGraphState) -> CenturionGraphState:
-        """Run compilation and unit tests via tools (Quality Assurance Agent)."""
-        logger.info(
-            f"Validating code for {state.active_task.get('entity_name', 'unknown')}"
-        )
-        state.current_step = "code_validation"
-
-        try:
-            # Initialize Validation Engineer
-            validation_engineer = ValidationEngineer()
-
-            # Generate tests first
-            test_generator = TestGenerator()
-            test_results = test_generator.generate_tests(
-                state.active_task.get("entity_name", "unknown"),
-                state.generated_gdscript,
-                state.analysis_report,
-            )
-            state.test_results = test_results
-
-            # Validate the generated code and tests
-            validation_results = validation_engineer.validate_tests(
-                state.active_task.get("entity_name", "unknown"),
-                test_results,
-            )
-
-            state.validation_result = validation_results
-
-        except Exception as e:
-            logger.error(f"Code validation failed: {str(e)}")
-            if "error_logs" not in state:
-                state.error_logs = []
-            state.error_logs.append(
-                {
-                    "step": "code_validation",
-                    "error": str(e),
-                    "entity": state.active_task.get("entity_name", "unknown"),
-                }
-            )
-
-        return state
 
     async def _complete_task(self, state: CenturionGraphState) -> CenturionGraphState:
         """Update task status to completed in task_queue (Implicit Orchestrator)."""

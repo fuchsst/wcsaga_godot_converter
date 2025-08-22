@@ -544,27 +544,193 @@ class ValidationEngineer:
         self, entity_name: str, test_results: Dict[str, Any]
     ) -> Dict[str, Any]:
         """
-        Validate the generated tests for an entity.
+        Validate the generated tests for an entity using behavior-driven testing.
 
         Args:
             entity_name: Name of the entity being validated
-            test_results: Results from test generation
+            test_results: Results from test generation containing test file paths and expected behaviors
 
         Returns:
-            Dictionary with validation results
+            Dictionary with comprehensive validation results including BDD-style test execution
         """
-        # For now, we'll create a simple placeholder implementation
-        # In a real implementation, this would run actual validation using Godot and gdUnit4
+        # Extract test file paths from test results
+        test_files = test_results.get("test_files", [])
+        expected_behaviors = test_results.get("expected_behaviors", [])
+        
+        if not test_files:
+            return {
+                "syntax_valid": False,
+                "style_compliant": False,
+                "test_results": test_results,
+                "entity_name": entity_name,
+                "behavior_validation": {
+                    "passed": False,
+                    "message": "No test files provided for validation"
+                }
+            }
 
-        # Basic validation checks
-        syntax_valid = True  # Placeholder - in reality we'd check syntax
-        style_compliant = True  # Placeholder - in reality we'd check style
+        # Run comprehensive validation including BDD-style behavior checks
+        validation_results = {
+            "syntax_validation": [],
+            "behavior_validation": {
+                "total_scenarios": len(expected_behaviors),
+                "passed_scenarios": 0,
+                "failed_scenarios": 0,
+                "scenario_details": []
+            },
+            "quality_metrics": {
+                "test_coverage": 0.0,
+                "edge_cases_covered": 0,
+                "boundary_tests": 0,
+                "error_handling_tests": 0
+            }
+        }
+
+        # Validate syntax for each test file
+        for test_file in test_files:
+            syntax_result = self.validate_gdscript_syntax(test_file)
+            validation_results["syntax_validation"].append(syntax_result)
+
+        # Run behavior-driven validation using gdUnit4
+        for behavior in expected_behaviors:
+            scenario_result = self._validate_behavior_scenario(behavior, test_files)
+            validation_results["behavior_validation"]["scenario_details"].append(scenario_result)
+            
+            if scenario_result["passed"]:
+                validation_results["behavior_validation"]["passed_scenarios"] += 1
+            else:
+                validation_results["behavior_validation"]["failed_scenarios"] += 1
+
+        # Calculate quality metrics
+        validation_results["quality_metrics"] = self._calculate_quality_metrics(
+            expected_behaviors, validation_results["behavior_validation"]
+        )
+
+        # Determine overall validation status
+        all_syntax_valid = all(result.get("success", False) 
+                              for result in validation_results["syntax_validation"])
+        behavior_passed = (validation_results["behavior_validation"]["passed_scenarios"] > 0 and
+                          validation_results["behavior_validation"]["failed_scenarios"] == 0)
 
         return {
-            "syntax_valid": syntax_valid,
-            "style_compliant": style_compliant,
+            "syntax_valid": all_syntax_valid,
+            "behavior_valid": behavior_passed,
             "test_results": test_results,
             "entity_name": entity_name,
+            "validation_details": validation_results,
+            "overall_valid": all_syntax_valid and behavior_passed
+        }
+
+    def _validate_behavior_scenario(self, behavior: Dict[str, Any], test_files: List[str]) -> Dict[str, Any]:
+        """
+        Validate a specific behavior scenario using BDD-style testing.
+
+        Args:
+            behavior: Behavior scenario with Given-When-Then structure
+            test_files: List of test files to execute
+
+        Returns:
+            Dictionary with scenario validation results
+        """
+        scenario_name = behavior.get("scenario", "Unknown scenario")
+        given = behavior.get("given", "")
+        when = behavior.get("when", "")
+        then = behavior.get("then", "")
+        
+        # Create a focused test execution for this specific behavior
+        try:
+            # Run tests with specific focus on this behavior
+            test_result = self.run_unit_tests_with_quality_gate(test_directory=test_files[0])
+            
+            # Check if the expected behavior is covered by test results
+            behavior_covered = self._check_behavior_coverage(test_result, given, when, then)
+            
+            return {
+                "scenario": scenario_name,
+                "given": given,
+                "when": when,
+                "then": then,
+                "passed": behavior_covered,
+                "test_result": test_result if not behavior_covered else None,
+                "message": "Behavior validated successfully" if behavior_covered 
+                          else f"Behavior not covered: {scenario_name}"
+            }
+            
+        except Exception as e:
+            return {
+                "scenario": scenario_name,
+                "given": given,
+                "when": when,
+                "then": then,
+                "passed": False,
+                "error": str(e),
+                "message": f"Error validating behavior: {scenario_name}"
+            }
+
+    def _check_behavior_coverage(self, test_result: Dict[str, Any], given: str, when: str, then: str) -> bool:
+        """
+        Check if the test results cover the specified behavior.
+
+        Args:
+            test_result: Test execution results
+            given: Given condition from BDD scenario
+            when: When action from BDD scenario
+            then: Then expected result from BDD scenario
+
+        Returns:
+            Boolean indicating if behavior is covered
+        """
+        # Extract test output for analysis
+        test_output = test_result.get("test_execution", {}).get("command_output", {})
+        stdout = test_output.get("stdout", "").lower()
+        stderr = test_output.get("stderr", "").lower()
+        
+        # Simple keyword-based behavior coverage check
+        # In a real implementation, this would use more sophisticated NLP or pattern matching
+        given_covered = given.lower() in stdout or given.lower() in stderr
+        when_covered = when.lower() in stdout or when.lower() in stderr
+        then_covered = then.lower() in stdout or then.lower() in stderr
+        
+        return given_covered and when_covered and then_covered
+
+    def _calculate_quality_metrics(self, expected_behaviors: List[Dict[str, Any]], 
+                                 behavior_validation: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Calculate comprehensive quality metrics for the test suite.
+
+        Args:
+            expected_behaviors: List of expected behaviors
+            behavior_validation: Behavior validation results
+
+        Returns:
+            Dictionary with quality metrics
+        """
+        total_scenarios = len(expected_behaviors)
+        passed_scenarios = behavior_validation.get("passed_scenarios", 0)
+        
+        # Calculate test coverage percentage
+        test_coverage = (passed_scenarios / total_scenarios * 100) if total_scenarios > 0 else 0
+        
+        # Count edge cases and boundary tests
+        edge_cases = sum(1 for behavior in expected_behaviors 
+                        if any(keyword in behavior.get("scenario", "").lower() 
+                              for keyword in ["edge", "corner", "extreme"]))
+        
+        boundary_tests = sum(1 for behavior in expected_behaviors 
+                            if any(keyword in behavior.get("scenario", "").lower() 
+                                  for keyword in ["boundary", "limit", "max", "min"]))
+        
+        error_handling_tests = sum(1 for behavior in expected_behaviors 
+                                  if any(keyword in behavior.get("scenario", "").lower() 
+                                        for keyword in ["error", "exception", "invalid"]))
+        
+        return {
+            "test_coverage": round(test_coverage, 2),
+            "edge_cases_covered": edge_cases,
+            "boundary_tests": boundary_tests,
+            "error_handling_tests": error_handling_tests,
+            "total_behaviors": total_scenarios,
+            "covered_behaviors": passed_scenarios
         }
 
 

@@ -326,85 +326,88 @@ Pay special attention to the class mapping and Godot-specific patterns.
         analysis_result: Optional[Dict[str, Any]] = None,
     ) -> str:
         """
-        Refactor an entity (e.g., a ship) to GDScript.
+        Refactor an entity (e.g., a ship) to GDScript using qwen-code with analysis context.
 
         Args:
             entity_name: Name of the entity to refactor
             source_files: List of source files related to the entity
-            analysis_result: Optional analysis result from CodebaseAnalyst
+            analysis_result: Analysis result from CodebaseAnalyst containing dependencies and structure
 
         Returns:
             Refactored GDScript code as a string
         """
-        # For now, we'll create a simple placeholder implementation
-        # In a real implementation, this would use the analysis result to guide the refactoring
+        # Read source files content
+        source_content = {}
+        for file_path in source_files:
+            try:
+                if os.path.exists(file_path):
+                    with open(file_path, "r", encoding="utf-8") as f:
+                        source_content[file_path] = f.read()
+                else:
+                    source_content[file_path] = f"# File not found: {file_path}"
+            except Exception as e:
+                source_content[file_path] = f"# Error reading file: {str(e)}"
 
-        # Create a basic GDScript class structure
-        refactored_code = f"""# {entity_name}
-# Auto-generated GDScript class
+        # Create target file path
+        target_file = f"target/scripts/{entity_name.lower().replace(' ', '_')}.gd"
+
+        # Build comprehensive specification for qwen-code
+        specification = f"""Refactor the following C++ entity to idiomatic Godot GDScript:
+
+ENTITY: {entity_name}
+TARGET: {target_file}
+
+ANALYSIS REPORT:
+{json.dumps(analysis_result or {}, indent=2, ensure_ascii=False)}
+
+SOURCE FILES:
+"""
+
+        # Add each source file content
+        for file_path, content in source_content.items():
+            specification += f"\n--- {file_path} ---\n{content}\n"
+
+        specification += f"""
+REFACTORING INSTRUCTIONS:
+1. Follow Godot GDScript style guide strictly
+2. Use PascalCase for class names, snake_case for methods/variables
+3. Implement proper Godot node hierarchy and composition
+4. Convert C++ patterns to Godot equivalents (signals, resources, scenes)
+5. Ensure static typing with type hints
+6. Create a self-contained scene with appropriate node structure
+7. Handle any dependencies identified in the analysis report
+8. Include proper error handling and documentation
+
+Generate complete, production-ready GDScript code.
+"""
+
+        # Generate the prompt for qwen-code
+        prompt = self.prompt_engine.create_generation_prompt(
+            target_file_path=target_file,
+            specification=specification
+        )
+
+        # Execute the refactoring using qwen-code
+        result = self.qwen_wrapper.generate_code(prompt)
+
+        if result.get("success"):
+            return result.get("generated_code", "# Error: No code generated")
+        else:
+            # Fallback to basic implementation if qwen-code fails
+            error_msg = result.get("error", "Unknown error")
+            print(f"Qwen-code refactoring failed: {error_msg}")
+            
+            # Create a minimal fallback implementation
+            return f"""# {entity_name}
+# Auto-generated GDScript (fallback)
 
 class_name {entity_name.replace(' ', '').replace('-', '')}
 
 extends Node
 
-# ------------------------------------------------------------------------------
-# Signals
-# ------------------------------------------------------------------------------
-# Define signals here
-
-# ------------------------------------------------------------------------------
-# Enums
-# ------------------------------------------------------------------------------
-# Define enums here
-
-# ------------------------------------------------------------------------------
-# Constants
-# ------------------------------------------------------------------------------
-# Define constants here
-
-# ------------------------------------------------------------------------------
-# Exported Variables
-# ------------------------------------------------------------------------------
-# Define exported variables here
-
-# ------------------------------------------------------------------------------
-# Public Variables
-# ------------------------------------------------------------------------------
-# Define public variables here
-
-# ------------------------------------------------------------------------------
-# Private Variables
-# ------------------------------------------------------------------------------
-# Define private variables here
-
-# ------------------------------------------------------------------------------
-# Onready Variables
-# ------------------------------------------------------------------------------
-# Define onready variables here
-
-# ------------------------------------------------------------------------------
-# Built-in Virtual Methods
-# ------------------------------------------------------------------------------
-func _ready() -> void:
-    # Initialization code here
-    pass
-
-func _process(delta: float) -> void:
-    # Frame processing code here
-    pass
-
-# ------------------------------------------------------------------------------
-# Public Methods
-# ------------------------------------------------------------------------------
-# Define public methods here
-
-# ------------------------------------------------------------------------------
-# Private Methods
-# ------------------------------------------------------------------------------
-# Define private methods here
+# TODO: Implement proper refactoring based on analysis
+# Error during qwen-code execution: {error_msg}
 """
-
-        return refactored_code
 
 
 def main():
