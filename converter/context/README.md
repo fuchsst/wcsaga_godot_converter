@@ -2,7 +2,7 @@
 
 This directory contains the guidance artifacts and rulebooks for the AI agents.
 
-Based on the "Agentic Migration with CLI Agents" document, these artifacts are essential for ensuring high-quality, consistent output:
+These artifacts are essential for ensuring high-quality, consistent output:
 
 - `STYLE_GUIDE.md` - Architectural style guide for Godot/GDScript
 - `RULES.md` - Virtual constitution with strict principles for AI actions

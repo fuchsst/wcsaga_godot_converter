@@ -9,8 +9,8 @@
 **Testing:**
 - `make test` - Run all tests
 - `make test-coverage` - Run tests with coverage
-- `python run_tests.py [module]` - Run specific test module
-- `pytest converter/tests/test_[module].py::TestClass::test_method` - Run single test
+- `uv run run_tests.py [module]` - Run specific test module
+- `uv run pytest converter/tests/test_[module].py::TestClass::test_method` - Run single test
 
 **Code Quality:**
 - `make format` - Format code with Black and isort
@@ -79,5 +79,5 @@
 2. Write tests for new features
 3. Implement functionality
 4. Run `make quality` to check code
-5. Run specific tests: `pytest converter/tests/test_[module].py`
+5. Run specific tests: `uv run pytest converter/tests/test_[module].py`
 6. Commit changes with descriptive messages

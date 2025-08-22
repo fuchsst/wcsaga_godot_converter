@@ -1,18 +1,17 @@
-# Test Generator Agent
+# Test Generator
 
-This directory contains the implementation of the Test Generator agent, which creates unit tests.
-
-Based on the "Agentic Migration with CLI Agents" document, this agent is specifically configured to work with the **qwen-code** CLI agent:
+This directory contains the implementation of the Test Generator component, which creates unit tests.
 
 ## Responsibilities
+
 - Receive newly generated Godot files and analyst's report
-- Write comprehensive suite of unit tests using GUT framework
-- Ensure 100% test coverage for public methods and signals
+- Write comprehensive suite of unit tests using gdUnit4 framework
+- Ensure comprehensive test coverage for public methods and signals
 - Use qwen-code CLI agent for all test generation tasks
 
 ## Key Components
 
-- `test_generator.py` - Main implementation of the Test Generator agent
+- `test_generator.py` - Main implementation of the Test Generator component
 
 ## Integration with Other Systems
 

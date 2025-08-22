@@ -2,7 +2,7 @@
 
 This directory contains the process definitions for orchestrating the migration.
 
-Based on the "Agentic Migration with CLI Agents" document, we support two workflow models:
+The system supports two workflow models:
 
 ## Current Implementation
 
@@ -13,7 +13,6 @@ Based on the "Agentic Migration with CLI Agents" document, we support two workfl
 
 - `sequential_workflow.py` - Sequential workflow processor for atomic tasks
 - `hierarchical_workflow.py` - Hierarchical workflow processor for complex tasks
-- `migration_campaign.py` - Overall migration campaign orchestration (planned)
 
 ## Integration with Other Systems
 

@@ -2,7 +2,7 @@
 LangGraph Orchestrator Implementation
 
 This module implements the main orchestrator using LangGraph for deterministic state management
-and replaces the CrewAI-based orchestrator with a more robust, stateful approach.
+with a robust, stateful approach.
 """
 
 import asyncio

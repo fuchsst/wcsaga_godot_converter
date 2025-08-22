@@ -76,7 +76,7 @@ pytest tests/ -v
 The test suite provides comprehensive coverage of all major components:
 
 1. **Tool Tests** - Validate the CLI execution tools
-2. **Agent Tests** - Verify agent functionality
+2. **Component Tests** - Verify component functionality
 3. **Workflow Tests** - Ensure workflow orchestration works correctly
 4. **Integration Tests** - Test component interactions
 5. **Quality Gate Tests** - Validate test quality gates

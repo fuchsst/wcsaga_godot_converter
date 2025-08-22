@@ -3,7 +3,7 @@
 Main Orchestrator for Wing Commander Saga to Godot Migration
 
 This script serves as the entry point for the hierarchical multi-agent migration system.
-It now uses LangGraph for deterministic state management instead of CrewAI.
+It uses LangGraph for deterministic state management.
 """
 
 import os

@@ -13,16 +13,19 @@ help:
 	@echo ""
 	@echo "Usage:"
 	@echo "  make install           Install dependencies"
-	@echo "  make install-dev        Install development dependencies"
-	@echo "  make test               Run all tests"
-	@echo "  make test-coverage      Run tests with coverage"
-	@echo "  make format             Format code with black and isort"
-	@echo "  make lint               Lint code with flake8"
-	@echo "  make typecheck          Run type checking with mypy"
-	@echo "  make quality            Run all quality checks"
-	@echo "  make clean              Clean build artifacts"
-	@echo "  make setup-env          Run environment setup"
-	@echo "  make analyze            Run codebase analysis"
+	@echo "  make install-dev       Install development dependencies"
+	@echo "  make test              Run all tests"
+	@echo "  make test-coverage     Run tests with coverage"
+	@echo "  make format            Format code with black and isort"
+	@echo "  make lint              Lint code with flake8"
+	@echo "  make typecheck         Run type checking with mypy"
+	@echo "  make quality           Run all quality checks"
+	@echo "  make clean             Clean build artifacts"
+	@echo "  make setup-env         Run environment setup"
+	@echo "  make analyze           Run codebase analysis"
+	@echo "  make migrate           Run migration"
+	@echo "  make init-env          Initialize virtual environment with uv"
+	@echo "  make list-tests        List available test modules"
 
 # Install dependencies
 .PHONY: install
@@ -76,14 +79,28 @@ clean:
 # Run environment setup
 .PHONY: setup-env
 setup-env:
-	$(PYTHON) setup_environment.py --full
+	cd $(CONVERTER_DIR)/scripts && $(PYTHON) setup_environment.py --full
 
 # Run codebase analysis
 .PHONY: analyze
 analyze:
-	$(PYTHON) analyze_source_codebase.py --source source --output analysis.json
+	cd $(CONVERTER_DIR)/scripts && $(PYTHON) analyze_source_codebase.py --source ../source --output ../analysis.json
 
 # Run migration
 .PHONY: migrate
 migrate:
 	cd $(CONVERTER_DIR) && $(PYTHON) orchestrator/main.py --source ../source --target ../target
+
+# Initialize virtual environment with uv
+.PHONY: init-env
+init-env:
+	$(UV) venv
+	$(UV) pip install -r requirements.txt
+	@echo "Virtual environment setup complete!"
+	@echo "To activate the environment, run: source .venv/bin/activate"
+
+# List available test modules
+.PHONY: list-tests
+list-tests:
+	@echo "Available test modules:"
+	@cd $(CONVERTER_DIR)/tests && ls test_*.py | sed 's/test_//' | sed 's/\.py$$//' | sort

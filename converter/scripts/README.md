@@ -2,15 +2,19 @@
 
 This directory contains utility scripts for setting up and running the migration.
 
+## Key Components
+
 - `setup_environment.py` - Setup script for the migration environment
 - `analyze_source_codebase.py` - Script to analyze the legacy codebase
 - `run.sh` - Main script to start the migration process
 
-## Key Components
+## Usage
 
-- `setup_environment.py` - Comprehensive environment setup script
-- `analyze_source_codebase.py` - Enhanced codebase analysis script
-- `run.sh` - Main migration execution script
+The utility scripts provide command-line interfaces for common migration tasks:
+
+- Environment setup
+- Codebase analysis
+- Migration execution
 
 ## Integration with Other Systems
 

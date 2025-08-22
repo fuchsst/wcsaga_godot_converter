@@ -28,99 +28,112 @@ We are standardizing on a single, powerful CLI coding agent: **qwen-code**, whic
 - DeepSeek API key for cognitive agents
 - qwen-code CLI agent for code generation tasks
 
-## Installation
+## Development Setup
 
-1. Clone the repository:
-   ```bash
-   git clone <repository-url>
-   cd wcsaga_godot_converter
-   ```
+### Initialize Environment with UV
 
-2. Install dependencies using uv:
-   ```bash
-   uv venv
-   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-   uv pip install -e .
-   ```
+Initialize a virtual environment and install dependencies:
 
-3. For development dependencies:
-   ```bash
-   uv pip install -e ".[dev]"
-   ```
-
-## Usage
-
-### Environment Setup
-
-1. Set up environment variables:
-   ```bash
-   export DEEPSEEK_API_KEY="your-deepseek-api-key"
-   export DEEPSEEK_BASE_URL="https://api.deepseek.com/v1"
-   ```
-
-2. Run the setup script:
-   ```bash
-   python setup_environment.py --full
-   ```
-
-### Code Analysis
-
-Analyze the source codebase:
 ```bash
-python analyze_source_codebase.py --source ../source --output analysis.json
+make init-env
 ```
 
-### Migration Process
+Or manually:
 
-Run the migration:
 ```bash
-cd converter
-python orchestrator/main.py --source ../source --target ../target
+uv venv
+source .venv/bin/activate
+uv pip install -r requirements.txt
 ```
 
-Or use the convenience script:
+### Install Dependencies
+
+Install the package in development mode:
+
 ```bash
-./run.sh ../source ../target
+make install-dev
 ```
 
-## Development
+Or manually:
 
-### Running Tests
-
-Execute the test suite:
 ```bash
-pytest
+uv pip install -e ".[dev]"
 ```
 
-Or with coverage:
+## Development Workflow
+
+This project uses `make` as the primary build tool with `uv` for dependency management. All development tasks should be performed through `make` commands.
+
+### Testing
+
+Run all tests:
+
 ```bash
-pytest --cov=converter
+make test
 ```
 
-### Code Formatting
+Run tests with coverage:
 
-Format code with Black:
 ```bash
-black .
+make test-coverage
 ```
 
-Sort imports with isort:
+List available test modules:
+
 ```bash
-isort .
+make list-tests
 ```
 
-### Linting
+### Code Quality
+
+Run all quality checks (formatting, linting, type checking):
+
+```bash
+make quality
+```
+
+Format code with Black and isort:
+
+```bash
+make format
+```
 
 Lint code with flake8:
+
 ```bash
-flake8 .
+make lint
 ```
 
-### Type Checking
+Type checking with mypy:
 
-Run mypy for type checking:
 ```bash
-mypy .
+make typecheck
+```
+
+### Other Development Tasks
+
+Run environment setup:
+
+```bash
+make setup-env
+```
+
+Analyze source codebase:
+
+```bash
+make analyze
+```
+
+Run migration:
+
+```bash
+make migrate
+```
+
+Clean build artifacts:
+
+```bash
+make clean
 ```
 
 ## Project Structure
@@ -147,10 +160,10 @@ wcsaga_godot_converter/
 │   │   └── enhanced/       # Enhanced validation with test quality gates
 │   └── workflows/         # Process definitions
 ├── pyproject.toml         # Python project configuration
+├── Makefile               # Build and development commands
 ├── README.md              # Project documentation
-├── setup_environment.py   # Environment setup script
-├── analyze_source_codebase.py # Codebase analysis script
-└── requirements.txt       # Legacy requirements file
+├── requirements.txt       # Python dependencies
+└── run_tests.py           # Test runner script
 ```
 
 ## Contributing

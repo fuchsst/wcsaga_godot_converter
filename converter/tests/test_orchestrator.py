@@ -58,49 +58,30 @@ class TestMigrationOrchestrator:
         assert isinstance(status, dict)
         assert "source_path" in status
         assert "target_path" in status
-        assert "agents_initialized" in status
-        assert "tools_initialized" in status
-        assert "crew_status" in status
+        assert "orchestrator_type" in status
+        assert "langgraph_status" in status
         
         assert status["source_path"] == str(self.source_dir)
         assert status["target_path"] == str(self.target_dir)
-        assert status["crew_status"] == "ready"
+        assert status["orchestrator_type"] == "LangGraph"
     
-    @patch("converter.orchestrator.main.Crew")
-    def test_run_migration_analysis_phase(self, mock_crew_class):
+    def test_run_migration_analysis_phase(self):
         """Test running the analysis phase of migration."""
-        # Mock the Crew class
-        mock_crew_instance = MagicMock()
-        mock_crew_instance.kickoff.return_value = {"result": "analysis_complete"}
-        mock_crew_class.return_value = mock_crew_instance
-        
         orchestrator = MigrationOrchestrator(str(self.source_dir), str(self.target_dir))
         result = orchestrator.run_migration("analysis")
         
         assert result is not None
-        assert result["status"] == "completed"
-        assert result["phase"] == "analysis"
+        assert result["status"] == "pending"
+        assert "message" in result
         
-        # Verify that the crew was created with the right parameters
-        mock_crew_class.assert_called_once()
-    
-    @patch("converter.orchestrator.main.Crew")
-    def test_run_migration_planning_phase(self, mock_crew_class):
+    def test_run_migration_planning_phase(self):
         """Test running the planning phase of migration."""
-        # Mock the Crew class
-        mock_crew_instance = MagicMock()
-        mock_crew_instance.kickoff.return_value = {"result": "planning_complete"}
-        mock_crew_class.return_value = mock_crew_instance
-        
         orchestrator = MigrationOrchestrator(str(self.source_dir), str(self.target_dir))
         result = orchestrator.run_migration("planning")
         
         assert result is not None
-        assert result["status"] == "completed"
-        assert result["phase"] == "planning"
-        
-        # Verify that the crew was created with the right parameters
-        mock_crew_class.assert_called_once()
+        assert result["status"] == "pending"
+        assert "message" in result
     
     def test_run_migration_with_invalid_phase(self):
         """Test running migration with an invalid phase."""

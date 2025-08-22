@@ -84,9 +84,6 @@ def main():
     # Check dependencies
     print("\n📦 Checking key dependencies...")
     try:
-        import crewai
-        print("✅ CrewAI imported successfully")
-        
         import pydantic
         print("✅ Pydantic imported successfully")
         

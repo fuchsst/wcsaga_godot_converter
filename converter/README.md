@@ -4,38 +4,35 @@ This directory contains the agentic migration system for converting the Wing Com
 
 ## Project Overview
 
-This system implements a hierarchical multi-agent framework for migrating the Wing Commander Saga game engine from C++ to Godot. Based on the Agentic Migration Playbook and specifically the "Agentic Migration with CLI Agents" approach, it uses specialized AI agents to automate the complex process of code translation, refactoring, and validation.
+This system implements a LangGraph-based state machine framework for migrating the Wing Commander Saga game engine from C++ to Godot. It uses a deterministic workflow with specialized components to automate the complex process of code translation, refactoring, and validation.
 
 ## Architecture
 
-The system is organized around five specialized AI agents, all powered by the **DeepSeek V3.1** model for consistent cognitive performance:
+The system is organized around a LangGraph state machine with specialized components:
 
-1. **MigrationArchitect** - Lead Systems Architect responsible for high-level planning
-2. **CodebaseAnalyst** - Senior Software Analyst who analyzes the legacy codebase
-3. **TaskDecompositionSpecialist** - Technical Project Manager who breaks down tasks
-4. **PromptEngineeringAgent** - AI Communications Specialist who creates precise prompts
-5. **QualityAssuranceAgent** - QA Automation Engineer who verifies results
+1. **Codebase Analysis** - Analyzes the legacy C++ codebase to identify dependencies and patterns
+2. **Refactoring Engine** - Converts C++ code to GDScript using advanced transformation rules
+3. **Test Generation** - Creates comprehensive unit tests for the migrated code
+4. **Validation Engine** - Validates the migrated code against quality gates
+5. **Human-in-the-Loop Integration** - Provides strategic human oversight for critical decisions
 
-We are standardizing on a single, powerful CLI coding agent: **qwen-code**, which is built upon Alibaba's state-of-the-art Qwen3-Coder models.
+The system uses **qwen-code** as the primary CLI coding agent, built upon Alibaba's state-of-the-art Qwen3-Coder models.
 
 ## Directory Structure
 
-- `agents/` - Agent definitions and configurations (powered by DeepSeek V3.1)
-- `analyst/` - Code Analyst agent implementation
+- `analyst/` - Code analysis implementation
 - `config/` - Configuration files
 - `context/` - Guidance artifacts (style guides, rules, templates, examples)
-- `graph_system/` - Dependency graph system for dynamic memory
+- `graph_system/` - Dependency graph system for tracking code relationships
 - `hitl/` - Human-in-the-loop integration
-- `orchestrator/` - Orchestrator agent implementation (DeepSeek V3.1)
-- `prompt_engineering/` - Prompt Engineering agent implementation
-- `refactoring/` - Refactoring Specialist agent implementation (qwen-code)
+- `orchestrator/` - LangGraph orchestrator implementation
+- `refactoring/` - Refactoring engine implementation
 - `scripts/` - Utility scripts
 - `tasks/` - Task definitions and templates
-- `test_generator/` - Test Generator agent implementation (qwen-code)
+- `test_generator/` - Test generation implementation
 - `tests/` - System tests
-- `tools/` - Custom tools for CLI agent control (qwen-code)
-- `validation/` - Validation Engineer agent implementation (qwen-code)
-- `workflows/` - Process definitions
+- `tools/` - Custom tools for CLI agent control
+- `validation/` - Validation engine implementation
 
 ## Key Components
 

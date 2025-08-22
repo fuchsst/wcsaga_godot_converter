@@ -2,20 +2,19 @@
 
 This directory contains the implementation of the Code Analyst agent, which analyzes the source codebase.
 
-Based on the "Agentic Migration with CLI Agents" document, this agent is powered by the **DeepSeek V3.1** model.
-
 ## Responsibilities
 
 - Receive a task (e.g., "GTC Fenris")
 - Analyze all related source files
 - Produce a structured JSON report classifying components
 - Identify dependencies and architectural patterns
-- Use DeepSeek V3.1 model for advanced code analysis
 
 ## Key Components
 
 - `codebase_analyst.py` - Main implementation of the Codebase Analyst agent
 - `__init__.py` - Package initialization file
+- `example_usage.py` - Example usage of the Codebase Analyst
+- `test_codebase_analyst.py` - Unit tests for the Codebase Analyst
 
 ## Implementation Details
 
