@@ -86,6 +86,7 @@ class EnhancedValidationEngineer:
                                         test_directory: str = None) -> Dict[str, Any]:
         """
         Run unit tests using gdUnit4 with quality gate validation.
+        Includes code coverage validation and minimum test requirements.
         
         Args:
             test_file: Specific test file to run (optional)
@@ -102,11 +103,20 @@ class EnhancedValidationEngineer:
             test_results.get("test_results", {})
         )
         
-        # Combine results
+        # Additional validation: check code coverage
+        coverage_validation = self._validate_code_coverage(test_results)
+        quality_validation["coverage_validation"] = coverage_validation
+        
+        # Update overall success to include coverage
+        quality_validation_passed = quality_validation.get("passed", False)
+        coverage_passed = coverage_validation.get("passed", False)
+        
         combined_results = {
             "test_execution": test_results,
             "quality_validation": quality_validation,
-            "overall_success": test_results.get("success", False) and quality_validation.get("passed", False)
+            "overall_success": (test_results.get("success", False) and 
+                               quality_validation_passed and 
+                               coverage_passed)
         }
         
         return combined_results
@@ -183,8 +193,7 @@ class EnhancedValidationEngineer:
         Returns:
             Dictionary with parsed test results including coverage
         """
-        # This is a more sophisticated parser that attempts to extract
-        # test results and coverage information
+        # Enhanced parser with better coverage extraction
         results = {
             "total_tests": 0,
             "passed_tests": 0,
@@ -192,34 +201,77 @@ class EnhancedValidationEngineer:
             "coverage_percentage": 0.0,
             "duration": 0.0,
             "errors": [],
-            "failures": []
+            "failures": [],
+            "test_cases": []
         }
         
-        # Look for test summary patterns
-        # This is a placeholder implementation that would need to be
-        # customized based on the actual gdUnit4 output format
+        # Parse test results with more sophisticated pattern matching
+        import re
         
-        # Simple parsing for demonstration
-        if "passed" in stdout.lower():
-            results["passed_tests"] = stdout.lower().count("passed")
-        if "failed" in stdout.lower():
-            results["failed_tests"] = stdout.lower().count("failed")
+        # Extract test counts
+        passed_match = re.search(r'passed:\s*(\d+)', stdout, re.IGNORECASE)
+        failed_match = re.search(r'failed:\s*(\d+)', stdout, re.IGNORECASE)
+        total_match = re.search(r'total:\s*(\d+)', stdout, re.IGNORECASE)
         
-        results["total_tests"] = results["passed_tests"] + results["failed_tests"]
+        if passed_match:
+            results["passed_tests"] = int(passed_match.group(1))
+        if failed_match:
+            results["failed_tests"] = int(failed_match.group(1))
+        if total_match:
+            results["total_tests"] = int(total_match.group(1))
+        else:
+            results["total_tests"] = results["passed_tests"] + results["failed_tests"]
         
-        # Look for coverage information
-        if "coverage" in stdout.lower():
-            # Try to extract coverage percentage
-            import re
-            coverage_match = re.search(r'coverage[:\s]*(\d+\.?\d*)%', stdout, re.IGNORECASE)
+        # Extract coverage percentage with multiple patterns
+        coverage_patterns = [
+            r'coverage[:\s]*(\d+\.?\d*)%',
+            r'line coverage[:\s]*(\d+\.?\d*)%',
+            r'code coverage[:\s]*(\d+\.?\d*)%'
+        ]
+        
+        for pattern in coverage_patterns:
+            coverage_match = re.search(pattern, stdout, re.IGNORECASE)
             if coverage_match:
                 results["coverage_percentage"] = float(coverage_match.group(1))
+                break
+        
+        # Extract duration
+        duration_match = re.search(r'duration[:\s]*(\d+\.?\d*)s', stdout, re.IGNORECASE)
+        if duration_match:
+            results["duration"] = float(duration_match.group(1))
         
         # Collect errors and failures
         if stderr:
             results["errors"].append(stderr)
         
+        # Parse individual test cases for better quality assessment
+        test_case_matches = re.findall(r'(test_.*?)(?:passed|failed|error)', stdout, re.IGNORECASE)
+        for match in test_case_matches:
+            results["test_cases"].append(match.strip())
+        
         return results
+
+    def _validate_code_coverage(self, test_results: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Validate code coverage meets minimum requirements.
+        
+        Args:
+            test_results: Test execution results
+            
+        Returns:
+            Dictionary with coverage validation results
+        """
+        coverage = test_results.get("test_results", {}).get("coverage_percentage", 0.0)
+        min_coverage = self.test_quality_gate.min_coverage
+        
+        passed = coverage >= min_coverage
+        
+        return {
+            "passed": passed,
+            "current_coverage": coverage,
+            "min_required_coverage": min_coverage,
+            "message": f"Code coverage validation {'passed' if passed else 'failed'}: {coverage}% vs required {min_coverage}%"
+        }
     
     def validate_code_quality(self, file_path: str) -> Dict[str, Any]:
         """

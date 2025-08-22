@@ -24,6 +24,8 @@ class TaskStatus(Enum):
     COMPLETED = "completed"
     FAILED = "failed"
     SKIPPED = "skipped"
+    HUMAN_REVIEW = "human_review"
+    ESCALATED = "escalated"
 
 
 @dataclass
@@ -132,6 +134,22 @@ class SequentialWorkflow:
         try:
             # Execute the task
             result = task_executor(task)
+            
+            # Check if task requires human review
+            if result.get("requires_human_review", False):
+                task.status = TaskStatus.HUMAN_REVIEW
+                task.result = result
+                task.end_time = time.time()
+                logger.info(f"Task '{task.name}' requires human review")
+                return True
+            
+            # Check if task was escalated
+            if result.get("escalated", False):
+                task.status = TaskStatus.ESCALATED
+                task.result = result
+                task.end_time = time.time()
+                logger.info(f"Task '{task.name}' has been escalated")
+                return True
             
             # Update task with results
             task.result = result

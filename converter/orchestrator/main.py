@@ -262,12 +262,24 @@ class MigrationOrchestrator:
             # Run enhanced migration cycle
             results = enhanced_orchestrator.run_enhanced_migration_cycle()
             
+            # Check for tasks requiring human review
+            human_review_tasks = []
+            escalated_tasks = []
+            if isinstance(results, dict) and "details" in results:
+                for task_result in results.get("details", []):
+                    if task_result.get("status") == "human_review":
+                        human_review_tasks.append(task_result)
+                    elif task_result.get("status") == "escalated":
+                        escalated_tasks.append(task_result)
+            
             logger.info("Migration execution phase completed")
             return {
                 "status": "completed", 
                 "phase": "execution", 
                 "message": "Execution phase completed successfully",
-                "details": results
+                "details": results,
+                "human_review_tasks": human_review_tasks,
+                "escalated_tasks": escalated_tasks
             }
         except Exception as e:
             logger.error(f"Migration execution phase failed: {str(e)}", exc_info=True)
