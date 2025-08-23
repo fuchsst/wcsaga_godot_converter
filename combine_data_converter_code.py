@@ -161,7 +161,7 @@ def main():
     """Main execution function."""
     # Get wcs_data_migration directory
     script_dir = Path(__file__).parent
-    migration_dir = script_dir / "target" / "addons" / "wcs_data_migration"
+    migration_dir = script_dir / "data_converter"
 
     if not migration_dir.exists():
         print(f"Error: WCS Data Migration directory not found at {migration_dir}")

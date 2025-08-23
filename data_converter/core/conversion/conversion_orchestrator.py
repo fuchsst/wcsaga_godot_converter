@@ -4,6 +4,8 @@ Conversion Orchestrator
 
 Single Responsibility: Orchestrate the overall conversion workflow
 Coordinates between different converters following SOLID principles.
+
+Refactored to use Dependency Injection for better decoupling.
 """
 
 import logging
@@ -11,6 +13,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+from ..dependency_injection import get_container, register_converter_services, inject_dependencies
 from ..catalog.asset_catalog import AssetCatalog
 from .job_manager import ConversionJob, JobManager
 from .progress_tracker import ProgressTracker
@@ -31,10 +34,17 @@ class ConversionOrchestrator:
         self.wcs_source_dir = Path(wcs_source_dir)
         self.godot_target_dir = Path(godot_target_dir)
         
-        # Initialize components (Dependency Injection)
-        self.job_manager = JobManager()
-        self.progress_tracker = ProgressTracker()
-        self.asset_catalog = AssetCatalog(godot_target_dir / "asset_catalog.db")
+        # Register all services in DI container
+        register_converter_services(wcs_source_dir, godot_target_dir)
+        
+        # Initialize components using Dependency Injection
+        container = get_container()
+        self.job_manager = container.get_service('job_manager')
+        self.progress_tracker = container.get_service('progress_tracker')
+        self.asset_catalog = container.get_service('asset_catalog')
+        
+        # Inject dependencies into this instance
+        inject_dependencies(self)
         
         self.logger = logging.getLogger(self.__class__.__name__)
     

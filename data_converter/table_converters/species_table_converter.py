@@ -9,7 +9,7 @@ Handles Species.tbl files for in-game encyclopedia entries.
 import re
 from typing import Any, Dict, List, Optional
 
-from .base_table_converter import BaseTableConverter, ParseState, TableType
+from .base_converter import BaseTableConverter, ParseState, TableType
 
 
 class SpeciesTableConverter(BaseTableConverter):

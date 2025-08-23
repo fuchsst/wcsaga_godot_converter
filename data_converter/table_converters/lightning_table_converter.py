@@ -8,7 +8,7 @@ Single Responsibility: Lightning and storm definitions parsing and conversion on
 import re
 from typing import Any, Dict, List, Optional
 
-from .base_table_converter import BaseTableConverter, ParseState, TableType
+from .base_converter import BaseTableConverter, ParseState, TableType
 
 
 class LightningTableConverter(BaseTableConverter):

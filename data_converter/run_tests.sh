@@ -1,12 +1,12 @@
 #!/bin/bash
 
-# This script runs pytest within the 'conversion_tools' directory,
+# This script runs pytest within the 'data_converter' directory,
 # using the virtual environment in 'target/venv'.
 
 # Determine the script's directory and the project root
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-TARGET_DIR="$(cd "$SCRIPT_DIR/.." && pwd)" # Moves up one level from conversion_tools to target
-PROJECT_ROOT_DIR="$(cd "$TARGET_DIR/.." && pwd)" # Moves up one level from target to project root
+PROJECT_ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)" # Moves up one level from data_converter to project root
+TARGET_DIR="$PROJECT_ROOT_DIR/target"
 VENV_PATH="$TARGET_DIR/venv"
 
 # Default to running all tests if no specific test is provided

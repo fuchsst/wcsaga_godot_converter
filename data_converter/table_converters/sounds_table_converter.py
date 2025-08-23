@@ -11,9 +11,9 @@ logic of other converters.
 import re
 from typing import Any, Dict, List, Optional
 
-from core.path_resolver import TargetPathResolver
+from ..core.path_resolver import TargetPathResolver
 
-from .base_table_converter import BaseTableConverter, ParseState, TableType
+from .base_converter import BaseTableConverter, ParseState, TableType
 
 
 class SoundsTableConverter(BaseTableConverter):

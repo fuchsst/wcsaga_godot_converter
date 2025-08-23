@@ -9,7 +9,7 @@ Handles stars.tbl files for environment and celestial body configuration.
 import re
 from typing import Any, Dict, List, Optional
 
-from .base_table_converter import BaseTableConverter, ParseState, TableType
+from .base_converter import BaseTableConverter, ParseState, TableType
 
 
 class StarsTableConverter(BaseTableConverter):

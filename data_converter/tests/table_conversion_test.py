@@ -15,8 +15,8 @@ from pathlib import Path
 
 import pytest
 # Import from same directory
-from table_data_converter import (ArmorTypeData, ParseState, ShipClassData,
-                                  TableDataConverter, WeaponData)
+from data_converter.core.table_data_structures import (ArmorTypeData, ParseState, ShipClassData, WeaponData)
+from data_converter.table_data_converter import TableDataConverter
 
 
 def test_parse_state():

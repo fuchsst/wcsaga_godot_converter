@@ -21,11 +21,11 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set
 
-from core.asset_discovery import AssetDiscoveryEngine
-from core.entity_classifier import EntityClassifier, EntityType, TableType
-from core.path_resolver import TargetPathResolver
+from ..core.asset_discovery import AssetDiscoveryEngine
+from ..core.entity_classifier import EntityClassifier, EntityType, TableType
+from ..core.path_resolver import TargetPathResolver
 # Core addon imports
-from data_structures import AssetMapping, AssetRelationship
+from ..data_structures import AssetMapping, AssetRelationship
 
 logger = logging.getLogger(__name__)
 

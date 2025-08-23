@@ -11,11 +11,22 @@ Single Responsibility: Ship table parsing and conversion only.
 import re
 from typing import Any, Dict, List, Optional
 
-from .base_table_converter import BaseTableConverter, ParseState, TableType
+from .base_converter import BaseTableConverter, ParseState, TableType
 
 
 class ShipTableConverter(BaseTableConverter):
     """Converts WCS ships.tbl files to Godot ship resources"""
+    
+    def __init__(self, source_dir, target_dir):
+        """Initialize ship table converter with statistics tracking."""
+        super().__init__(source_dir, target_dir)
+        
+        # Ship-specific statistics
+        self._entries_processed = 0
+        self._conversion_errors = []
+        self._conversion_warnings = []
+        self._asset_registry = {}
+        self._relationship_mappings = {}
     
     def _init_parse_patterns(self) -> Dict[str, re.Pattern]:
         """Initialize regex patterns for ship table parsing"""
@@ -92,7 +103,7 @@ class ShipTableConverter(BaseTableConverter):
         return TableType.SHIPS
     
     def parse_entry(self, state: ParseState) -> Optional[Dict[str, Any]]:
-        """Parse a single ship entry from the table"""
+        """Parse a single ship entry from the table and capture asset relationships"""
         ship_data = {}
         
         while state.has_more_lines():
@@ -113,10 +124,14 @@ class ShipTableConverter(BaseTableConverter):
             # Parse ship properties
             if 'name' in ship_data:  # Only parse if we're in a ship section
                 if self._parse_ship_property(line, ship_data):
+                    # Capture asset relationships for asset mapping
+                    self._capture_asset_relationships(line, ship_data)
                     continue
                 
                 # Check for section end
                 if self._parse_patterns['section_end'].match(line):
+                    # Finalize asset mapping for this ship
+                    self._finalize_ship_asset_mapping(ship_data)
                     return ship_data if ship_data else None
         
         return ship_data if ship_data else None
@@ -209,3 +224,89 @@ class ShipTableConverter(BaseTableConverter):
         import tempfile
         with tempfile.TemporaryDirectory() as temp_dir:
             return self.convert_to_godot_resources(entries, temp_dir)
+    
+    # ========== ASSET MAPPING INTEGRATION ==========
+    
+    def _capture_asset_relationships(self, line: str, ship_data: Dict[str, Any]) -> None:
+        """Capture asset relationships from parsed ship properties"""
+        # Asset property patterns that should be captured for mapping
+        asset_properties = [
+            'model_file', 'pof_file', 'pof_target_file', 'cockpit_pof_file',
+            'warpin_start_sound', 'warpin_end_sound', 'warpout_start_sound', 'warpout_end_sound',
+            'engine_sound', 'alive_sound', 'dead_sound', 'rotation_sound',
+            'turret_base_rotation_sound', 'turret_gun_rotation_sound',
+            'warpin_animation', 'warpout_animation', 'explosion_animations', 'shockwave_model',
+            'selection_effect', 'thruster_flame', 'thruster_glow',
+            'thruster_start_sound', 'thruster_loop_sound', 'thruster_stop_sound',
+            'shield_icon', 'ship_icon', 'ship_anim', 'ship_overhead',
+            'tech_model', 'tech_anim', 'tech_image', 'texture_replace'
+        ]
+        
+        for prop_name in asset_properties:
+            pattern = self._parse_patterns.get(prop_name)
+            if pattern:
+                match = pattern.match(line)
+                if match:
+                    asset_path = match.group(1).strip()
+                    if asset_path:
+                        # Store in asset registry
+                        ship_name = ship_data.get('name', 'unknown')
+                        if ship_name not in self._asset_registry:
+                            self._asset_registry[ship_name] = []
+                        self._asset_registry[ship_name].append({
+                            'property': prop_name,
+                            'asset_path': asset_path,
+                            'asset_type': self._get_asset_type(prop_name, asset_path)
+                        })
+    
+    def _finalize_ship_asset_mapping(self, ship_data: Dict[str, Any]) -> None:
+        """Finalize asset mapping for a completed ship entry"""
+        ship_name = ship_data.get('name')
+        if not ship_name or ship_name not in self._asset_registry:
+            return
+        
+        # Create relationship mapping for this ship
+        self._relationship_mappings[ship_name] = {
+            'entity_type': 'ship',
+            'assets': self._asset_registry[ship_name],
+            'primary_asset': self._get_primary_asset(ship_data),
+            'related_assets': self._asset_registry[ship_name]
+        }
+        
+        # Update statistics
+        self._entries_processed += 1
+    
+    def _get_asset_type(self, property_name: str, asset_path: str) -> str:
+        """Determine asset type based on property name and path"""
+        if any(prop in property_name for prop in ['sound', 'snd']):
+            return 'audio'
+        elif any(prop in property_name for prop in ['model', 'pof']):
+            return 'model'
+        elif any(prop in property_name for prop in ['animation', 'anim', 'effect']):
+            return 'animation'
+        elif any(prop in property_name for prop in ['icon', 'image']):
+            return 'texture'
+        else:
+            # Infer from file extension
+            if asset_path.lower().endswith(('.wav', '.ogg', '.mp3')):
+                return 'audio'
+            elif asset_path.lower().endswith(('.pof', '.obj', '.gltf', '.glb')):
+                return 'model'
+            elif asset_path.lower().endswith(('.dds', '.png', '.jpg', '.jpeg', '.tga')):
+                return 'texture'
+            else:
+                return 'unknown'
+    
+    def _get_primary_asset(self, ship_data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """Get the primary asset (main model) for the ship"""
+        primary_asset_props = ['pof_file', 'model_file']
+        
+        for prop in primary_asset_props:
+            asset_path = ship_data.get(prop)
+            if asset_path:
+                return {
+                    'property': prop,
+                    'asset_path': asset_path,
+                    'asset_type': 'model'
+                }
+        return None

@@ -9,7 +9,7 @@ Handles Species_defs.tbl files for species properties.
 import re
 from typing import Any, Dict, List, Optional
 
-from .base_table_converter import BaseTableConverter, ParseState, TableType
+from .base_converter import BaseTableConverter, ParseState, TableType
 
 
 class SpeciesDefsTableConverter(BaseTableConverter):

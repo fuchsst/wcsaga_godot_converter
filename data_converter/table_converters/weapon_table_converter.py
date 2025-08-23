@@ -9,7 +9,8 @@ Single Responsibility: Weapon table parsing and conversion only.
 import re
 from typing import Any, Dict, List, Optional
 
-from .base_table_converter import BaseTableConverter, ParseState, TableType
+from .base_converter import BaseTableConverter, ParseState, TableType
+from ..core.table_data_structures import WeaponData
 
 
 class WeaponTableConverter(BaseTableConverter):
@@ -191,3 +192,62 @@ class WeaponTableConverter(BaseTableConverter):
         import tempfile
         with tempfile.TemporaryDirectory() as temp_dir:
             return self.convert_to_godot_resources(entries, temp_dir)
+    
+    # ========== WEAPON BLOCK PARSING METHODS ==========
+    
+    def _parse_particle_spew_block(self, parse_state: ParseState, weapon: WeaponData) -> None:
+        """Parse particle spew properties block"""
+        while parse_state.advance_line():
+            line = parse_state.get_current_line_text()
+            
+            if line.startswith(("$", "#")) and not line.startswith("+"):
+                parse_state.current_line -= 1
+                break
+            
+            if line.startswith("+Count:"):
+                weapon.particle_spew_count = self._extract_int_value(line)
+            elif line.startswith("+Time:"):
+                weapon.particle_spew_time = self._extract_float_value(line)
+            elif line.startswith("+Vel:"):
+                weapon.particle_spew_vel = self._extract_float_value(line)
+    
+    def _parse_trail_block(self, parse_state: ParseState, weapon: WeaponData) -> None:
+        """Parse trail properties block"""
+        while parse_state.advance_line():
+            line = parse_state.get_current_line_text()
+            
+            if line.startswith(("$", "#")) and not line.startswith("+"):
+                parse_state.current_line -= 1
+                break
+            
+            if line.startswith("+Life:"):
+                weapon.trail_life = self._extract_float_value(line)
+            elif line.startswith("+Width:"):
+                weapon.trail_width = self._extract_float_value(line)
+            elif line.startswith("+Alpha:"):
+                weapon.trail_alpha = self._extract_float_value(line)
+            elif line.startswith("+UV Tiling:"):
+                tiling = self._extract_vector3(line)
+                weapon.trail_uv_tiling = (tiling[0], tiling[1])  # Only use X and Y
+    
+    # ========== UTILITY METHODS ==========
+    
+    def _extract_string_value(self, line: str) -> str:
+        """Extract string value from table line"""
+        from ..core.common_utils import ConversionUtils
+        return ConversionUtils.extract_string_value(line)
+    
+    def _extract_int_value(self, line: str) -> int:
+        """Extract integer value from table line"""
+        from ..core.common_utils import ConversionUtils
+        return ConversionUtils.extract_int_value(line)
+    
+    def _extract_float_value(self, line: str) -> float:
+        """Extract float value from table line"""
+        from ..core.common_utils import ConversionUtils
+        return ConversionUtils.extract_float_value(line)
+    
+    def _extract_vector3(self, line: str) -> Tuple[float, float, float]:
+        """Extract Vector3 values from table line"""
+        from ..core.common_utils import ConversionUtils
+        return ConversionUtils.extract_vector3(line)

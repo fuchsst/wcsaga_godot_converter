@@ -8,7 +8,7 @@ Single Responsibility: Lua script parsing from scripting.tbl.
 import re
 from typing import Any, Dict, List, Optional
 
-from .base_table_converter import BaseTableConverter, ParseState, TableType
+from .base_converter import BaseTableConverter, ParseState, TableType
 
 
 class ScriptingTableConverter(BaseTableConverter):

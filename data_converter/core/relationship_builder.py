@@ -17,9 +17,9 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Dict, List, Optional, Set
 
-from data_structures import AssetMapping, AssetRelationship
-from table_converters.base_table_converter import ParseState
-from table_converters.sounds_table_converter import SoundsTableConverter
+from ..data_structures import AssetMapping, AssetRelationship
+from .table_data_structures import ParseState
+from ..table_converters.sounds_table_converter import SoundsTableConverter
 
 from .asset_discovery import AssetDiscoveryEngine
 from .entity_classifier import EntityClassifier, EntityType, TableType
