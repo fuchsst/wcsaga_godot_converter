@@ -213,8 +213,14 @@ class POFValidator:
 
     def _collect_texture_indices(self, node: BSPNode, indices: Set[int]) -> None:
         """Recursively collect texture indices from BSP tree."""
-        for polygon in node.polygons:
-            indices.add(polygon.texture_index)
+        # Handle both BSPNode types (basic and enhanced)
+        if hasattr(node, 'polygons'):
+            # Enhanced BSPNode with polygons list
+            for polygon in node.polygons:
+                indices.add(polygon.texture_index)
+        elif hasattr(node, 'polygon') and node.polygon:
+            # Basic BSPNode with single polygon
+            indices.add(node.polygon.texture_index)
         
         if node.front_child:
             self._collect_texture_indices(node.front_child, indices)
@@ -248,7 +254,16 @@ class POFValidator:
         
         # Validate polygons in leaf nodes
         if node.node_type == BSPNodeType.LEAF:
-            for i, polygon in enumerate(node.polygons):
+            # Handle both BSPNode types (basic and enhanced)
+            polygons_to_validate = []
+            if hasattr(node, 'polygons'):
+                # Enhanced BSPNode with polygons list
+                polygons_to_validate = node.polygons
+            elif hasattr(node, 'polygon') and node.polygon:
+                # Basic BSPNode with single polygon
+                polygons_to_validate = [node.polygon]
+            
+            for i, polygon in enumerate(polygons_to_validate):
                 if len(polygon.vertices) < 3:
                     errors.append(f"Invalid polygon in {context}: only {len(polygon.vertices)} vertices")
                     self.error_handler.add_validation_error(

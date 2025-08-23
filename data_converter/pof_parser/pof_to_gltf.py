@@ -4,6 +4,9 @@ import struct
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
+# Import enhanced types for type safety
+from .pof_enhanced_types import POFModelDataEnhanced, SubObject
+
 import numpy as np
 
 # Assuming pygltflib is installed: pip install pygltflib
@@ -86,13 +89,13 @@ def _numpy_to_gltf_type(arr: np.ndarray) -> Tuple[int, str]:
 
 
 def convert_pof_to_gltf(
-    pof_data: Dict[str, Any], pof_file_path: str, output_path: str, progress=None
+    pof_data: POFModelDataEnhanced, pof_file_path: str, output_path: str, progress=None
 ) -> bool:
     """
     Converts parsed POF data into a GLTF/GLB file.
 
     Args:
-        pof_data: The dictionary containing parsed POF data from POFParser.
+        pof_data: The POFModelDataEnhanced instance containing parsed POF data from POFParser.
         pof_file_path: The Path object pointing to the original POF file (needed to read BSP data).
         output_path: The path to save the resulting .glb file.
         progress: An optional progress reporting object.
@@ -106,14 +109,14 @@ def convert_pof_to_gltf(
         return False
 
     logger.info(
-        f"Starting GLTF conversion for {pof_data.get('filename', 'Unknown POF')}"
+        f"Starting GLTF conversion for {pof_data.filename}"
     )
 
     # --- Basic GLTF Structure ---
     gltf = GLTF2()
     gltf.scene = 0  # Default scene index
     gltf.scenes.append(Scene(nodes=[0]))  # Scene 0 contains the root node (node 0)
-    gltf.nodes.append(Node(name=pof_data.get("filename", "POF Model")))  # Root node
+    gltf.nodes.append(Node(name=pof_data.filename))  # Root node
 
     # --- Coordinate System Conversion ---
     # POF: +X Right, +Y Up, +Z Forward (Right-Handed)
@@ -142,13 +145,13 @@ def convert_pof_to_gltf(
 
     # Create GLTF nodes first to establish hierarchy later
     # Node 0 is the root
-    for subobj_index, subobj in enumerate(pof_data.get("objects", [])):
-        node = Node(name=subobj.get("name", f"Subobject_{subobj_index}"))
+    for subobj_index, subobj in enumerate(pof_data.subobjects):
+        node = Node(name=subobj.name)
         # Store translation temporarily, apply after conversion
-        node.translation = convert_pos(subobj.get("offset", [0, 0, 0]))
+        node.translation = convert_pos(subobj.offset.to_list())
         # Store parent index for later linking
-        node._pof_parent = subobj.get("parent", -1)  # Custom attribute for temp storage
-        node._pof_number = subobj.get("number", -1)
+        node._pof_parent = subobj.parent  # Custom attribute for temp storage
+        node._pof_number = subobj.number
         gltf.nodes.append(node)
         subobj_node_map[node._pof_number] = (
             len(gltf.nodes) - 1
@@ -157,15 +160,15 @@ def convert_pof_to_gltf(
     # --- Process Subobjects for Geometry ---
     # No need for POFParser instance here if BSP data is read directly
 
-    for subobj_index, subobj in enumerate(pof_data.get("objects", [])):
-        subobj_num = subobj.get("number", -1)
+    for subobj_index, subobj in enumerate(pof_data.subobjects):
+        subobj_num = subobj.number
         logger.debug(
-            f"Processing geometry for subobject {subobj_num}: {subobj.get('name', 'N/A')}"
+            f"Processing geometry for subobject {subobj_num}: {subobj.name}"
         )
 
         # --- Read BSP Data ---
-        bsp_data_offset = subobj.get("bsp_data_offset", -1)
-        bsp_data_size = subobj.get("bsp_data_size", 0)
+        bsp_data_offset = subobj.bsp_data_offset
+        bsp_data_size = subobj.bsp_data_size
         bsp_data_bytes = None
 
         if bsp_data_offset >= 0 and bsp_data_size > 0:
@@ -217,7 +220,7 @@ def convert_pof_to_gltf(
         # Remap polygon indices and group by texture
         for poly in parsed_bsp["polygons"]:
             tex_idx = poly["texture_index"]
-            if tex_idx < 0 or tex_idx >= len(pof_data.get("textures", [])):
+            if tex_idx < 0 or tex_idx >= len(pof_data.textures):
                 logger.warning(
                     f"Invalid texture index {tex_idx} in subobject {subobj_num}. Using material 0."
                 )
@@ -445,7 +448,7 @@ def convert_pof_to_gltf(
         )
     sampler_index = 0
 
-    for idx, tex_name in enumerate(pof_data.get("textures", [])):
+    for idx, tex_name in enumerate(pof_data.textures):
         if not tex_name or tex_name.lower() == "none":
             # Create a default material for "none" texture index or invalid indices
             if -1 not in material_map:

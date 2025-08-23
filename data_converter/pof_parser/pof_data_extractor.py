@@ -15,6 +15,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from .pof_parser import POFParser
 from .vector3d import Vector3D
+from .pof_enhanced_types import POFModelDataEnhanced
 
 logger = logging.getLogger(__name__)
 
@@ -191,7 +192,7 @@ class POFDataExtractor:
         """Initialize POF data extractor."""
         self.parser = POFParser()
 
-    def extract_model_data(self, file_path: Path) -> Optional[POFModelData]:
+    def extract_model_data(self, file_path: Path) -> Optional[POFModelDataEnhanced]:
         """
         Extract comprehensive model data from POF file.
 
@@ -199,7 +200,7 @@ class POFDataExtractor:
             file_path: Path to POF file
 
         Returns:
-            POFModelData object with extracted data, or None if parsing failed
+            POFModelDataEnhanced object with extracted data, or None if parsing failed
         """
         logger.info(f"Extracting model data from: {file_path}")
 
@@ -210,46 +211,14 @@ class POFDataExtractor:
             return None
 
         try:
-            # Extract header information first to get required constructor parameters
-            header = parsed_data.get("header", {})
-            max_radius = header.get("max_radius", 0.0)
-            bounding_box_min = tuple(header.get("min_bounding", [0.0, 0.0, 0.0]))
-            bounding_box_max = tuple(header.get("max_bounding", [0.0, 0.0, 0.0]))
-
-            # Create model data structure with required parameters
-            model_data = POFModelData(
-                filename=file_path.name,
-                version=parsed_data.get("version", 0),
-                max_radius=max_radius,
-                bounding_box_min=bounding_box_min,
-                bounding_box_max=bounding_box_max
-            )
-
-            # Extract remaining header information
-            self._extract_header_data(parsed_data, model_data)
-
-            # Extract textures
-            self._extract_texture_data(parsed_data, model_data)
-
-            # Extract subobjects and geometry
-            self._extract_subobject_data(parsed_data, model_data)
-
-            # Extract gameplay elements
-            self._extract_weapon_points(parsed_data, model_data)
-            self._extract_docking_points(parsed_data, model_data)
-            self._extract_thrusters(parsed_data, model_data)
-            self._extract_special_points(parsed_data, model_data)
-            self._extract_paths(parsed_data, model_data)
-
-            # Extract shield mesh
-            self._extract_shield_data(parsed_data, model_data)
-
+            # For enhanced data structure, we can return it directly
+            # since it already contains all the structured data
             logger.info(
-                f"Successfully extracted model data: {len(model_data.subobjects)} subobjects, "
-                f"{len(model_data.textures)} textures, {len(model_data.weapon_points)} weapon points"
+                f"Successfully extracted model data: {len(parsed_data.subobjects)} subobjects, "
+                f"{len(parsed_data.textures)} textures, {len(parsed_data.gun_points)} gun points"
             )
 
-            return model_data
+            return parsed_data
 
         except Exception as e:
             logger.error(
@@ -407,10 +376,10 @@ class POFDataExtractor:
         godot_data = {
             "metadata": {
                 "source_file": model_data.filename,
-                "pof_version": model_data.version,
-                "max_radius": model_data.max_radius,
-                "mass": model_data.mass,
-                "center_of_mass": model_data.center_of_mass,
+                "pof_version": model_data.version.value,
+                "max_radius": model_data.header.max_radius,
+                "mass": model_data.header.mass,
+                "center_of_mass": model_data.header.mass_center.to_list(),
             },
             "scene_tree": self._create_godot_scene_tree(model_data),
             "materials": self._create_godot_materials(model_data),
@@ -420,7 +389,7 @@ class POFDataExtractor:
 
         return godot_data
 
-    def _create_godot_scene_tree(self, model_data: POFModelData) -> Dict[str, Any]:
+    def _create_godot_scene_tree(self, model_data: POFModelDataEnhanced) -> Dict[str, Any]:
         """Create Godot scene tree structure from subobjects."""
         scene_tree = {
             "root": {
@@ -432,9 +401,9 @@ class POFDataExtractor:
 
         # Process subobjects in hierarchy order
         root_objects = [
-            subobj_id
-            for subobj_id, subobj in model_data.subobjects.items()
-            if subobj.get("parent", -1) == -1
+            subobj.number
+            for subobj in model_data.subobjects
+            if subobj.parent == -1
         ]
 
         for subobj_id in root_objects:
@@ -444,16 +413,18 @@ class POFDataExtractor:
         return scene_tree
 
     def _create_subobject_node(
-        self, subobj_id: int, model_data: POFModelData
+        self, subobj_id: int, model_data: POFModelDataEnhanced
     ) -> Dict[str, Any]:
         """Create Godot node for a subobject."""
-        subobj = model_data.subobjects[subobj_id]
+        subobj = next((sobj for sobj in model_data.subobjects if sobj.number == subobj_id), None)
+        if not subobj:
+            return {"name": f"unknown_{subobj_id}", "type": "Node3D"}
 
         node = {
-            "name": subobj["name"],
+            "name": subobj.name,
             "type": "MeshInstance3D",
             "transform": {
-                "position": subobj["offset"],
+                "position": [subobj.offset.x, subobj.offset.y, subobj.offset.z],
                 "rotation": [0.0, 0.0, 0.0],
                 "scale": [1.0, 1.0, 1.0],
             },
@@ -477,17 +448,18 @@ class POFDataExtractor:
 
         return node
 
-    def _create_godot_materials(self, model_data: POFModelData) -> List[Dict[str, Any]]:
+    def _create_godot_materials(self, model_data: POFModelDataEnhanced) -> List[Dict[str, Any]]:
         """Create Godot material definitions."""
         godot_materials = []
 
-        for material in model_data.materials:
+        # Create materials from texture names
+        for i, texture_name in enumerate(model_data.textures):
             godot_material = {
-                "name": material.name,
+                "name": f"material_{i}",
                 "type": "StandardMaterial3D",
                 "properties": {
-                    "albedo_texture": material.texture_path,
-                    "albedo_color": material.diffuse_color,
+                    "albedo_texture": texture_name,
+                    "albedo_color": [1.0, 1.0, 1.0, 1.0],
                     "metallic": 0.0,
                     "roughness": 0.5,
                 },
@@ -496,7 +468,7 @@ class POFDataExtractor:
 
         return godot_materials
 
-    def _create_collision_data(self, model_data: POFModelData) -> Dict[str, Any]:
+    def _create_collision_data(self, model_data: POFModelDataEnhanced) -> Dict[str, Any]:
         """Create collision shape data for Godot."""
         return {
             "hull_shape": {
@@ -506,30 +478,30 @@ class POFDataExtractor:
             "detail_shapes": [],  # Per-subobject collision shapes
         }
 
-    def _create_gameplay_nodes(self, model_data: POFModelData) -> Dict[str, Any]:
+    def _create_gameplay_nodes(self, model_data: POFModelDataEnhanced) -> Dict[str, Any]:
         """Create gameplay-specific node data."""
         return {
             "weapon_hardpoints": [
                 {
                     "name": wp.name,
-                    "position": wp.position,
-                    "normal": wp.normal,
+                    "position": [wp.position.x, wp.position.y, wp.position.z],
+                    "normal": [wp.normal.x, wp.normal.y, wp.normal.z],
                     "type": wp.weapon_type,
                     "bank": wp.bank_number,
                 }
-                for wp in model_data.weapon_points
+                for wp in model_data.gun_points
             ],
             "docking_bays": [
                 {
                     "name": dp.name,
-                    "position": dp.position,
-                    "normal": dp.normal,
+                    "position": [dp.position.x, dp.position.y, dp.position.z],
+                    "normal": [dp.normal.x, dp.normal.y, dp.normal.z],
                     "type": dp.dock_type,
                 }
                 for dp in model_data.docking_points
             ],
             "engine_points": [
-                {"position": t.position, "normal": t.normal, "radius": t.radius}
+                {"position": [t.position.x, t.position.y, t.position.z], "normal": [t.normal.x, t.normal.y, t.normal.z], "radius": t.radius}
                 for t in model_data.thrusters
             ],
         }

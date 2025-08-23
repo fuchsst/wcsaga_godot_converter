@@ -34,7 +34,7 @@ Ships.tbl may reference engine and other sounds:
 ## Target Structure
 ```
 /data/ships/{faction}/{type}/{ship_name}.tres    # ShipClass resource
-/entities/fighters/{faction}_{ship_name}/        # Entity directory
+/entities/fighters/{faction}/{ship_name}/        # Entity directory
 ├── {ship_name}.tscn                             # Ship scene
 ├── {ship_name}.gd                               # Ship script
 ├── {ship_name}.tres                             # Ship instance data
@@ -48,7 +48,7 @@ Ships.tbl may reference engine and other sounds:
 ## Example Mapping
 For F-27B Arrow fighter:
 - ships.tbl entry → /data/ships/terran/fighters/arrow.tres
-- tcf_arrow.pof → /entities/fighters/terran_arrow/arrow.glb
-- arrow.pcx → /entities/fighters/terran_arrow/arrow_diffuse.webp
-- arrow_normals.pcx → /entities/fighters/terran_arrow/arrow_normal.webp
-- engine.wav → /entities/fighters/terran_arrow/arrow_engine.ogg
+- tcf_arrow.pof → /entities/fighters/confed/arrow/arrow.glb
+- arrow.pcx → /entities/fighters/confed/arrow/arrow_diffuse.webp
+- arrow_normals.pcx → /entities/fighters/confed/arrow/arrow_normal.webp
+- engine.wav → /entities/fighters/confed/arrow/arrow_engine.ogg

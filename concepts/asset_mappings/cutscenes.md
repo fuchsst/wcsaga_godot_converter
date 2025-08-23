@@ -3335,4 +3335,4 @@ For a capital ship explosion effect:
 - debris.pcx → /textures/effects/explosions/large/capitals/terran/tigers_claw/primary/debris.webp
 - smoke.ani → /animations/effects/explosions/large/capitals/terran/tigers_claw/primary/smoke.png
 - smoke.pcx → /textures/effects/explosions/large/capitals/terran/tigers_claw/primary/smoke.webp
-- explosion_sound.wav → /audio/sfx/effects/explosions/large/capitals/terran/tigers_claw/primary/explosion.ogg
+- explosion_sound.wav → /audio/sfx/explosions/large/capitals/terran/tigers_claw/primary/explosion.ogg

@@ -64,7 +64,10 @@ class BSPTreeParser:
             import io
             stream = io.BytesIO(bsp_bytes)
             
-            # Parse BSP tree structure
+            # Parse DEFPOINTS chunk first (vertex definitions)
+            self._parse_defpoints_chunk(stream, pof_version)
+            
+            # Parse BSP tree structure starting from current position
             root_node = self._parse_bsp_node(stream, pof_version)
             
             if root_node:
@@ -97,42 +100,124 @@ class BSPTreeParser:
         return result
 
     def _parse_bsp_node(self, stream: BinaryIO, pof_version: int) -> Optional[BSPNode]:
-        """Parse a single BSP node recursively."""
+        """Parse a single BSP node recursively based on Rust implementation."""
         try:
-            node_type_val = read_ubyte(stream)
+            # Read chunk header (opcode and length)
+            opcode = read_ubyte(stream)
+            chunk_length = read_int(stream)
             
-            try:
-                node_type = BSPNodeType(node_type_val)
-            except ValueError:
-                self.error_handler.add_error(
-                    f"Invalid BSP node type: {node_type_val}",
-                    severity=ErrorSeverity.ERROR,
-                    category=ErrorCategory.VALIDATION,
-                    recovery_action="Treat as empty node"
-                )
-                node_type = BSPNodeType.EMPTY
+            # Store current position for seeking
+            chunk_start = stream.tell()
             
-            if node_type == BSPNodeType.EMPTY:
-                return BSPNode(node_type=node_type, normal=Vector3D(0, 0, 0), plane_distance=0.0)
-            
-            normal = read_vector(stream)
-            plane_distance = read_float(stream)
-            
-            node = BSPNode(
-                node_type=node_type,
-                normal=normal,
-                plane_distance=plane_distance
-            )
-            
-            if node_type == BSPNodeType.NODE:
+            if opcode == OP_SORTNORM:
+                # SORTNORM node - splitting node with plane
+                normal = read_vector(stream)
+                point = read_vector(stream)
+                reserved = read_int(stream)  # Unused
+                
+                # Read front and back child offsets
+                front_offset = read_int(stream)
+                back_offset = read_int(stream)
+                
+                # Read prelist, postlist, online (unused)
+                prelist = read_int(stream)
+                postlist = read_int(stream)
+                online = read_int(stream)
+                
+                # Parse bounding box for newer versions
+                bbox = None
+                if pof_version >= 2000:  # Version 20.00+
+                    bbox_min = read_vector(stream)
+                    bbox_max = read_vector(stream)
+                    bbox = BoundingBox(min=bbox_min, max=bbox_max)
+                
                 # Parse child nodes
-                node.front_child = self._parse_bsp_node(stream, pof_version)
-                node.back_child = self._parse_bsp_node(stream, pof_version)
-            elif node_type == BSPNodeType.LEAF:
-                # Parse polygons in leaf
-                node.polygons = self._parse_leaf_polygons(stream, pof_version)
-            
-            return node
+                front_child = None
+                if front_offset != 0:
+                    stream.seek(chunk_start + front_offset)
+                    front_child = self._parse_bsp_node(stream, pof_version)
+                
+                back_child = None
+                if back_offset != 0:
+                    stream.seek(chunk_start + back_offset)
+                    back_child = self._parse_bsp_node(stream, pof_version)
+                
+                # Restore position
+                stream.seek(chunk_start + chunk_length)
+                
+                return BSPNode(
+                    node_type=BSPNodeType.NODE,
+                    normal=normal,
+                    plane_distance=normal.dot(point),
+                    front_child=front_child,
+                    back_child=back_child,
+                    polygons=[]
+                )
+                
+            elif opcode == OP_BOUNDBOX:
+                # BOUNDBOX node - leaf node with polygons
+                bbox_min = read_vector(stream)
+                bbox_max = read_vector(stream)
+                bbox = BoundingBox(min=bbox_min, max=bbox_max)
+                
+                polygons = []
+                
+                # Parse polygons until ENDOFBRANCH
+                while True:
+                    poly_opcode = read_ubyte(stream)
+                    poly_length = read_int(stream)
+                    
+                    if poly_opcode == OP_EOF:
+                        break
+                    
+                    poly_start = stream.tell()
+                    
+                    if poly_opcode == OP_FLATPOLY:
+                        polygon = self._parse_flat_polygon(stream, pof_version)
+                        if polygon:
+                            polygons.append(polygon)
+                    elif poly_opcode == OP_TMAPPOLY:
+                        polygon = self._parse_textured_polygon(stream, pof_version)
+                        if polygon:
+                            polygons.append(polygon)
+                    else:
+                        # Skip unknown polygon types
+                        stream.seek(poly_start + poly_length)
+                        continue
+                    
+                    # Ensure we're at the end of the polygon chunk
+                    stream.seek(poly_start + poly_length)
+                
+                return BSPNode(
+                    node_type=BSPNodeType.LEAF,
+                    normal=Vector3D(0, 0, 0),
+                    plane_distance=0.0,
+                    front_child=None,
+                    back_child=None,
+                    polygons=polygons
+                )
+                
+            elif opcode == OP_EOF:
+                # End of branch - empty node
+                return BSPNode(
+                    node_type=BSPNodeType.EMPTY,
+                    normal=Vector3D(0, 0, 0),
+                    plane_distance=0.0,
+                    front_child=None,
+                    back_child=None,
+                    polygons=[]
+                )
+                
+            else:
+                self.error_handler.add_error(
+                    f"Unknown BSP opcode: {opcode}",
+                    severity=ErrorSeverity.WARNING,
+                    category=ErrorCategory.COMPATIBILITY,
+                    recovery_action="Skip unknown node type"
+                )
+                # Skip unknown chunk
+                stream.seek(chunk_start + chunk_length)
+                return None
             
         except Exception as e:
             self.error_handler.add_error(
@@ -297,18 +382,60 @@ class BSPTreeParser:
             )
             return None
 
-    def _parse_vertex_list(self, stream: BinaryIO) -> None:
-        """Parse vertex list (DEFPOINTS opcode)."""
+    def _parse_defpoints_chunk(self, stream: BinaryIO, pof_version: int) -> None:
+        """Parse DEFPOINTS chunk (vertex definitions) based on Rust implementation."""
         try:
-            num_vertices = read_int(stream)
+            # Read DEFPOINTS header
+            opcode = read_ubyte(stream)
+            if opcode != OP_DEFPOINTS:
+                self.error_handler.add_error(
+                    f"Expected DEFPOINTS opcode, got {opcode}",
+                    severity=ErrorSeverity.ERROR,
+                    category=ErrorCategory.PARSING,
+                    recovery_action="Skip BSP parsing"
+                )
+                return
             
+            # Read vertex and normal counts
+            num_vertices = read_int(stream)
+            num_normals = read_int(stream)
+            
+            # Read offset to vertex data
+            data_offset = read_int(stream)
+            
+            # Read normal counts per vertex
+            norm_counts = []
             for _ in range(num_vertices):
+                norm_counts.append(read_ubyte(stream))
+            
+            # Seek to vertex data
+            current_pos = stream.tell()
+            stream.seek(data_offset)
+            
+            # Parse vertices and normals
+            for count in norm_counts:
+                # Read vertex
                 vertex = read_vector(stream)
                 self.vertices.append(vertex)
                 
+                # Read normals for this vertex
+                for _ in range(count):
+                    normal = read_vector(stream)
+                    # Normals are stored but not currently used in BSP parsing
+                    
+            # Verify we read the correct number of normals
+            total_normals = sum(norm_counts)
+            if total_normals != num_normals:
+                self.error_handler.add_error(
+                    f"Normal count mismatch: expected {num_normals}, got {total_normals}",
+                    severity=ErrorSeverity.WARNING,
+                    category=ErrorCategory.DATA_INTEGRITY,
+                    recovery_action="Continue with available normals"
+                )
+                
         except Exception as e:
             self.error_handler.add_error(
-                f"Failed to parse vertex list: {e}",
+                f"Failed to parse DEFPOINTS chunk: {e}",
                 severity=ErrorSeverity.ERROR,
                 category=ErrorCategory.PARSING,
                 recovery_action="Use empty vertex list"

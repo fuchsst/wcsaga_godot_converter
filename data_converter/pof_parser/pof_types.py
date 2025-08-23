@@ -23,9 +23,36 @@ class POFVersion(IntEnum):
 
 class BSPNodeType(IntEnum):
     """BSP node types matching Rust reference."""
-    NODE = 0
-    LEAF = 1
-    EMPTY = 2
+    SPLIT = 0  # Split node with front/back children
+    LEAF = 1   # Leaf node with polygon
+    EMPTY = 2  # Empty node
+
+
+class BSPChunkType(IntEnum):
+    """BSP chunk types matching Rust reference."""
+    ENDOFBRANCH = 0
+    DEFFPOINTS = 1
+    FLATPOLY = 2
+    TMAPPOLY = 3
+    SORTNORM = 4
+    BOUNDBOX = 5
+    TMAPPOLY2 = 6
+    SORTNORM2 = 7
+
+
+class MovementType(IntEnum):
+    """Subobject movement types."""
+    NONE = 0
+    ROTATION = 1
+    TRANSLATION = 2
+    BOTH = 3
+
+
+class MovementAxis(IntEnum):
+    """Movement axis enumeration."""
+    X = 0
+    Y = 1
+    Z = 2
 
 
 class ModelType(Enum):
@@ -131,22 +158,21 @@ class BSPPolygon:
 
 @dataclass
 class BSPNode:
-    """BSP tree node with plane and children."""
+    """BSP tree node matching Rust reference structure."""
     node_type: BSPNodeType
-    normal: Vector3D
-    plane_distance: float
+    bbox: Optional[BoundingBox] = None
     front_child: Optional['BSPNode'] = None
     back_child: Optional['BSPNode'] = None
-    polygons: List[BSPPolygon] = field(default_factory=list)
+    polygon: Optional[BSPPolygon] = None  # For LEAF nodes
     
     def __post_init__(self):
         """Validate BSP node."""
         if not isinstance(self.node_type, BSPNodeType):
             raise ValueError("Node type must be BSPNodeType")
-        if not isinstance(self.normal, Vector3D):
-            raise ValueError("Normal must be a Vector3D")
-        if not isinstance(self.plane_distance, (int, float)):
-            raise ValueError("Plane distance must be numeric")
+        if self.node_type == BSPNodeType.LEAF and self.polygon is None:
+            raise ValueError("LEAF nodes must have a polygon")
+        if self.node_type == BSPNodeType.SPLIT and (self.front_child is None or self.back_child is None):
+            raise ValueError("SPLIT nodes must have both front and back children")
 
 
 @dataclass

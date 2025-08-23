@@ -182,9 +182,36 @@ class POFVersionHandler:
         Returns:
             Parser function or None if not available
         """
-        # This would return different parser functions based on version
-        # For now, return None to use default parsers
-        return None
+        try:
+            pof_version = POFVersion(version)
+            
+            # Map chunk IDs to version-specific parsers
+            if chunk_id == ID_OHDR:
+                # Import here to avoid circular imports
+                from .pof_header_parser import (
+                    read_ohdr_chunk_v1800,
+                    read_ohdr_chunk_v2100,
+                    read_ohdr_chunk_v2112,
+                    read_ohdr_chunk_v2117
+                )
+                
+                # Return version-specific OHDR parser
+                if pof_version == POFVersion.VERSION_1800:
+                    return read_ohdr_chunk_v1800
+                elif pof_version == POFVersion.VERSION_2100:
+                    return read_ohdr_chunk_v2100
+                elif pof_version == POFVersion.VERSION_2112:
+                    return read_ohdr_chunk_v2112
+                elif pof_version == POFVersion.VERSION_2117:
+                    return read_ohdr_chunk_v2117
+            
+            # Add version-specific parsers for other chunks here
+            # For now, return None for other chunks to use default parsers
+            return None
+            
+        except ValueError:
+            # Unknown version, use default parser
+            return None
     
     def apply_version_specific_fixes(self, parsed_data: Dict[str, Any], version: int) -> Dict[str, Any]:
         """

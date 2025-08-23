@@ -101,3 +101,144 @@ def read_ohdr_chunk(f: BinaryIO, length: int) -> Dict[str, Any]:
         logger.error(f"Read past end of OHDR chunk by {-remaining} bytes!")
 
     return header_data
+
+
+def read_ohdr_chunk_v1800(f: BinaryIO, length: int) -> Dict[str, Any]:
+    """Parses OHDR chunk for FS1 format (version 1800)."""
+    header_data = {}
+    header_data["max_radius"] = read_float(f)
+    header_data["obj_flags"] = read_uint(f)
+    header_data["num_subobjects"] = read_int(f)
+
+    min_bounding = read_vector(f)
+    max_bounding = read_vector(f)
+    header_data["min_bounding"] = min_bounding.to_list()
+    header_data["max_bounding"] = max_bounding.to_list()
+
+    header_data["detail_levels"] = [read_int(f) for _ in range(MAX_MODEL_DETAIL_LEVELS)]
+    header_data["debris_pieces"] = [read_int(f) for _ in range(MAX_DEBRIS_OBJECTS)]
+
+    # FS1 format doesn't have mass properties, cross sections, or lights
+    header_data["mass"] = 0.0
+    header_data["mass_center"] = [0.0, 0.0, 0.0]
+    header_data["moment_inertia"] = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
+    header_data["cross_sections"] = []
+    header_data["lights"] = []
+
+    return header_data
+
+
+def read_ohdr_chunk_v2100(f: BinaryIO, length: int) -> Dict[str, Any]:
+    """Parses OHDR chunk for FS2 base format (version 2100)."""
+    header_data = {}
+    header_data["max_radius"] = read_float(f)
+    header_data["obj_flags"] = read_uint(f)
+    header_data["num_subobjects"] = read_int(f)
+
+    min_bounding = read_vector(f)
+    max_bounding = read_vector(f)
+    header_data["min_bounding"] = min_bounding.to_list()
+    header_data["max_bounding"] = max_bounding.to_list()
+
+    header_data["detail_levels"] = [read_int(f) for _ in range(MAX_MODEL_DETAIL_LEVELS)]
+    header_data["debris_pieces"] = [read_int(f) for _ in range(MAX_DEBRIS_OBJECTS)]
+
+    # FS2 base format has mass properties but not cross sections or lights
+    header_data["mass"] = read_float(f)
+    mass_center = read_vector(f)
+    header_data["mass_center"] = mass_center.to_list()
+    
+    # Moment of inertia (3x3 matrix stored as 3 vectors)
+    rvec = read_vector(f)
+    uvec = read_vector(f)
+    fvec = read_vector(f)
+    header_data["moment_inertia"] = [rvec.to_list(), uvec.to_list(), fvec.to_list()]
+
+    header_data["cross_sections"] = []
+    header_data["lights"] = []
+
+    return header_data
+
+
+def read_ohdr_chunk_v2112(f: BinaryIO, length: int) -> Dict[str, Any]:
+    """Parses OHDR chunk for FS2 enhanced format (version 2112)."""
+    header_data = {}
+    header_data["max_radius"] = read_float(f)
+    header_data["obj_flags"] = read_uint(f)
+    header_data["num_subobjects"] = read_int(f)
+
+    min_bounding = read_vector(f)
+    max_bounding = read_vector(f)
+    header_data["min_bounding"] = min_bounding.to_list()
+    header_data["max_bounding"] = max_bounding.to_list()
+
+    header_data["detail_levels"] = [read_int(f) for _ in range(MAX_MODEL_DETAIL_LEVELS)]
+    header_data["debris_pieces"] = [read_int(f) for _ in range(MAX_DEBRIS_OBJECTS)]
+
+    # FS2 enhanced format has mass properties and cross sections
+    header_data["mass"] = read_float(f)
+    mass_center = read_vector(f)
+    header_data["mass_center"] = mass_center.to_list()
+    
+    # Moment of inertia (3x3 matrix stored as 3 vectors)
+    rvec = read_vector(f)
+    uvec = read_vector(f)
+    fvec = read_vector(f)
+    header_data["moment_inertia"] = [rvec.to_list(), uvec.to_list(), fvec.to_list()]
+
+    # Cross sections
+    num_cross_sections = read_int(f)
+    header_data["cross_sections"] = []
+    for _ in range(num_cross_sections):
+        depth = read_float(f)
+        radius = read_float(f)
+        header_data["cross_sections"].append((depth, radius))
+
+    header_data["lights"] = []
+
+    return header_data
+
+
+def read_ohdr_chunk_v2117(f: BinaryIO, length: int) -> Dict[str, Any]:
+    """Parses OHDR chunk for WCS current format (version 2117)."""
+    header_data = {}
+    header_data["max_radius"] = read_float(f)
+    header_data["obj_flags"] = read_uint(f)
+    header_data["num_subobjects"] = read_int(f)
+
+    min_bounding = read_vector(f)
+    max_bounding = read_vector(f)
+    header_data["min_bounding"] = min_bounding.to_list()
+    header_data["max_bounding"] = max_bounding.to_list()
+
+    header_data["detail_levels"] = [read_int(f) for _ in range(MAX_MODEL_DETAIL_LEVELS)]
+    header_data["debris_pieces"] = [read_int(f) for _ in range(MAX_DEBRIS_OBJECTS)]
+
+    # WCS current format has all features
+    header_data["mass"] = read_float(f)
+    mass_center = read_vector(f)
+    header_data["mass_center"] = mass_center.to_list()
+    
+    # Moment of inertia (3x3 matrix stored as 3 vectors)
+    rvec = read_vector(f)
+    uvec = read_vector(f)
+    fvec = read_vector(f)
+    header_data["moment_inertia"] = [rvec.to_list(), uvec.to_list(), fvec.to_list()]
+
+    # Cross sections
+    num_cross_sections = read_int(f)
+    header_data["cross_sections"] = []
+    for _ in range(num_cross_sections):
+        depth = read_float(f)
+        radius = read_float(f)
+        header_data["cross_sections"].append((depth, radius))
+
+    # Lights
+    num_lights = read_int(f)
+    header_data["lights"] = []
+    for _ in range(num_lights):
+        pos = read_vector(f)
+        light_type = read_int(f)
+        header_data["lights"].append({"position": pos.to_list(), "type": light_type})
+
+    return header_data

@@ -18,6 +18,9 @@ from .pof_format_analyzer import POFFormatAnalyzer
 from .pof_mesh_converter import POFMeshConverter
 from .pof_parser import POFParser
 
+# Import enhanced types for type safety
+from .pof_enhanced_types import POFModelDataEnhanced
+
 # Configure logging
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
@@ -187,25 +190,24 @@ def parse_pof_file(file_path: Path, output_file: Optional[Path] = None) -> bool:
 
         # Print summary
         print(f"\n=== POF Parsing Results: {file_path.name} ===")
-        print(f"Filename: {parsed_data.get('filename', 'Unknown')}")
-        print(f"Version: {parsed_data.get('version', 'Unknown')}")
+        print(f"Filename: {parsed_data.filename}")
+        print(f"Version: {parsed_data.version.value}")
 
-        header = parsed_data.get("header", {})
-        print(f"Max Radius: {header.get('max_radius', 0.0):.2f}")
-        print(f"Subobjects: {header.get('num_subobjects', 0)}")
+        print(f"Max Radius: {parsed_data.header.max_radius:.2f}")
+        print(f"Subobjects: {parsed_data.header.num_subobjects}")
 
         print(f"Parsed Chunks:")
-        print(f"  Textures: {len(parsed_data.get('textures', []))}")
-        print(f"  Objects: {len(parsed_data.get('objects', []))}")
-        print(f"  Special Points: {len(parsed_data.get('special_points', []))}")
-        print(f"  Paths: {len(parsed_data.get('paths', []))}")
-        print(f"  Gun Points: {len(parsed_data.get('gun_points', []))}")
-        print(f"  Missile Points: {len(parsed_data.get('missile_points', []))}")
-        print(f"  Docking Points: {len(parsed_data.get('docking_points', []))}")
-        print(f"  Thrusters: {len(parsed_data.get('thrusters', []))}")
-        print(f"  Eye Points: {len(parsed_data.get('eye_points', []))}")
-        print(f"  Insignia: {len(parsed_data.get('insignia', []))}")
-        print(f"  Glow Banks: {len(parsed_data.get('glow_banks', []))}")
+        print(f"  Textures: {len(parsed_data.textures)}")
+        print(f"  Objects: {len(parsed_data.subobjects)}")
+        print(f"  Special Points: {len(parsed_data.special_points)}")
+        print(f"  Paths: {len(parsed_data.paths)}")
+        print(f"  Gun Points: {len(parsed_data.gun_points)}")
+        print(f"  Missile Points: {len(parsed_data.missile_points)}")
+        print(f"  Docking Points: {len(parsed_data.docking_points)}")
+        print(f"  Thrusters: {len(parsed_data.thrusters)}")
+        print(f"  Eye Points: {len(parsed_data.eye_points)}")
+        print(f"  Insignia: {len(parsed_data.insignia)}")
+        print(f"  Glow Banks: {len(parsed_data.glow_banks)}")
 
         # Save parsed data if requested
         if output_file:

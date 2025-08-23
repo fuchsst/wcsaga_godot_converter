@@ -3,7 +3,7 @@ import logging
 import struct
 from typing import Any, BinaryIO, Dict, List, Tuple
 
-from .vector3d import Vector3D
+from .pof_enhanced_types import Vector3D
 
 logger = logging.getLogger(__name__)
 

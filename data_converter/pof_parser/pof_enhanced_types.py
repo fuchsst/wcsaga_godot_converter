@@ -238,6 +238,7 @@ class BSPNode:
     front_child: Optional['BSPNode'] = None
     back_child: Optional['BSPNode'] = None
     polygons: List[BSPPolygon] = field(default_factory=list)
+    bbox: Optional[BoundingBox] = None
     
     def __post_init__(self):
         """Validate BSP node consistency."""
@@ -247,6 +248,8 @@ class BSPNode:
             raise ValueError("Normal must be a Vector3D")
         if not isinstance(self.plane_distance, (int, float)):
             raise ValueError("Plane distance must be numeric")
+        if self.bbox is not None and not isinstance(self.bbox, BoundingBox):
+            raise ValueError("Bounding box must be BoundingBox or None")
         
         # Validate normal is unit length for splitting nodes
         if self.node_type == BSPNodeType.NODE:
@@ -528,6 +531,33 @@ def dict_to_subobject(data: Dict[str, Any]) -> SubObject:
     )
 
 
+def dict_to_header(data: Dict[str, Any], version: POFVersion) -> POFHeader:
+    """Convert dictionary to POFHeader with validation."""
+    return POFHeader(
+        version=version,
+        max_radius=data.get('max_radius', 0.0),
+        object_flags=data.get('obj_flags', 0),
+        num_subobjects=data.get('num_subobjects', 0),
+        bounding_box=BoundingBox(
+            Vector3D(*data.get('min_bounding', [0, 0, 0])),
+            Vector3D(*data.get('max_bounding', [0, 0, 0]))
+        ),
+        detail_levels=data.get('detail_levels', [-1] * 8),
+        debris_pieces=data.get('debris_pieces', [-1] * 32),
+        mass=data.get('mass', 0.0),
+        mass_center=Vector3D(*data.get('mass_center', [0, 0, 0])),
+        moment_of_inertia=[
+            Vector3D(*row) for row in data.get('moment_inertia', [
+                [1, 0, 0],
+                [0, 1, 0], 
+                [0, 0, 1]
+            ])
+        ],
+        cross_sections=data.get('cross_sections', []),
+        lights=data.get('lights', [])
+    )
+
+
 def subobject_to_dict(subobj: SubObject) -> Dict[str, Any]:
     """Convert SubObject to dictionary for serialization."""
     return {
@@ -545,3 +575,88 @@ def subobject_to_dict(subobj: SubObject) -> Dict[str, Any]:
         'bsp_data_size': subobj.bsp_data_size,
         'bsp_data_offset': subobj.bsp_data_offset
     }
+
+
+def dict_to_special_point(data: Dict[str, Any], point_type: str) -> SpecialPoint:
+    """Convert dictionary to SpecialPoint with validation."""
+    return SpecialPoint(
+        name=data.get('name', ''),
+        position=Vector3D(*data.get('position', [0, 0, 0])),
+        normal=Vector3D(*data.get('normal', [0, 0, 0])),
+        point_type=point_type,
+        properties=data.get('properties', {})
+    )
+
+
+def dict_to_animation_path(data: Dict[str, Any]) -> AnimationPath:
+    """Convert dictionary to AnimationPath with validation."""
+    nodes = []
+    for node_data in data.get('nodes', []):
+        nodes.append(PathNode(
+            position=Vector3D(*node_data.get('position', [0, 0, 0])),
+            rotation=Vector3D(*node_data.get('rotation', [0, 0, 0])),
+            time=node_data.get('time', 0.0),
+            properties=node_data.get('properties', {})
+        ))
+    
+    return AnimationPath(
+        name=data.get('name', ''),
+        nodes=nodes,
+        loop=data.get('loop', False),
+        duration=data.get('duration', 0.0)
+    )
+
+
+def dict_to_insignia(data: Dict[str, Any]) -> InsigniaData:
+    """Convert dictionary to InsigniaData with validation."""
+    return InsigniaData(
+        texture_index=data.get('texture_index', 0),
+        position=Vector3D(*data.get('position', [0, 0, 0])),
+        size=Vector3D(*data.get('size', [1, 1, 1])),
+        rotation=Vector3D(*data.get('rotation', [0, 0, 0]))
+    )
+
+
+def dict_to_glow_bank(data: Dict[str, Any]) -> GlowBank:
+    """Convert dictionary to GlowBank with validation."""
+    return GlowBank(
+        position=Vector3D(*data.get('position', [0, 0, 0])),
+        normal=Vector3D(*data.get('normal', [0, 0, 0])),
+        radius=data.get('radius', 1.0),
+        color=tuple(data.get('color', (1.0, 1.0, 1.0, 1.0))),
+        intensity=data.get('intensity', 1.0)
+    )
+
+
+def dict_to_shield_mesh(data: Dict[str, Any]) -> ShieldMesh:
+    """Convert dictionary to ShieldMesh with validation."""
+    vertices = [Vector3D(*v) for v in data.get('vertices', [])]
+    normals = [Vector3D(*n) for n in data.get('normals', [])]
+    polygons = []
+    
+    for poly_data in data.get('polygons', []):
+        polygons.append(BSPPolygon(
+            vertices=[Vector3D(*v) for v in poly_data.get('vertices', [])],
+            normal=Vector3D(*poly_data.get('normal', [0, 0, 0])),
+            plane_distance=poly_data.get('plane_distance', 0.0),
+            texture_index=poly_data.get('texture_index', 0)
+        ))
+    
+    return ShieldMesh(
+        vertices=vertices,
+        normals=normals,
+        polygons=polygons,
+        collision_tree=None  # Will be populated separately
+    )
+
+
+def list_to_vector3d(coords: List[float]) -> Vector3D:
+    """Convert list of coordinates to Vector3D."""
+    if len(coords) >= 3:
+        return Vector3D(coords[0], coords[1], coords[2])
+    elif len(coords) == 2:
+        return Vector3D(coords[0], coords[1], 0.0)
+    elif len(coords) == 1:
+        return Vector3D(coords[0], 0.0, 0.0)
+    else:
+        return Vector3D(0.0, 0.0, 0.0)
