@@ -7,7 +7,7 @@ Single Responsibility: Weapon table parsing and conversion only.
 """
 
 import re
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 from .base_converter import BaseTableConverter, ParseState, TableType
 from ..core.table_data_structures import WeaponData

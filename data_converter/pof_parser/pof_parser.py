@@ -48,6 +48,10 @@ from .pof_texture_parser import read_txtr_chunk
 from .pof_thruster_parser import read_fuel_chunk
 from .pof_weapon_points_parser import read_gpnt_chunk, read_mpnt_chunk
 
+# Import enhanced error handling and types
+from .pof_error_handler import POFErrorHandler, ErrorSeverity, ErrorCategory
+from .pof_enhanced_types import POFModelDataEnhanced, SubObject, SpecialPoint, dict_to_subobject
+
 logger = logging.getLogger(__name__)
 
 
@@ -63,10 +67,13 @@ class POFParser:
     """
 
     def __init__(self) -> None:
-        """Initialize POF parser with empty data structure."""
+        """Initialize POF parser with empty data structure and error handler."""
         self._initialize_data_structure()
         self.bsp_data_cache: Dict[int, bytes] = {}
         self._current_file_handle: Optional[BinaryIO] = None
+        self.error_handler = POFErrorHandler()
+        self._current_chunk_id: Optional[int] = None
+        self._current_chunk_name: Optional[str] = None
 
     def _initialize_data_structure(self) -> None:
         """Initialize the POF data structure with empty containers."""
@@ -151,6 +158,7 @@ class POFParser:
         self.pof_data["filename"] = file_path.name
         self.bsp_data_cache.clear()
         self._current_file_handle = None
+        self.error_handler.clear_errors()
 
         logger.info(f"Parsing POF file: {file_path}")
 
@@ -160,26 +168,50 @@ class POFParser:
 
                 # Validate POF header
                 if not self._validate_header(f):
+                    self.error_handler.add_error(
+                        "Failed to validate POF header",
+                        severity=ErrorSeverity.ERROR,
+                        category=ErrorCategory.VALIDATION,
+                        recovery_action="Cannot continue parsing"
+                    )
                     return None
 
                 # Parse all chunks
                 self._parse_chunks(f)
 
-                logger.info(f"Successfully parsed {file_path}")
+                # Check if parsing was successful
+                if self.error_handler.has_errors(ErrorSeverity.ERROR):
+                    logger.warning(f"Parsing completed with errors: {file_path}")
+                    logger.info(self.error_handler.format_error_report())
+                else:
+                    logger.info(f"Successfully parsed {file_path}")
+
                 return self.pof_data
 
         except FileNotFoundError:
-            logger.error(f"POF file not found: {file_path}")
+            error = self.error_handler.add_error(
+                f"POF file not found: {file_path}",
+                severity=ErrorSeverity.ERROR,
+                category=ErrorCategory.IO,
+                recovery_action="Check file path and permissions"
+            )
+            logger.error(str(error))
             return None
         except Exception as e:
-            logger.error(f"Error parsing POF file {file_path}: {e}", exc_info=True)
+            error = self.error_handler.add_error(
+                f"Unexpected error parsing POF file {file_path}: {e}",
+                severity=ErrorSeverity.CRITICAL,
+                category=ErrorCategory.PARSING,
+                recovery_action="Review file integrity and try again"
+            )
+            logger.error(str(error), exc_info=True)
             return None
         finally:
             self._current_file_handle = None
 
     def _validate_header(self, f: BinaryIO) -> bool:
         """
-        Validate POF file header.
+        Validate POF file header with enhanced error tracking.
 
         Args:
             f: File handle positioned at start of file
@@ -188,24 +220,38 @@ class POFParser:
             True if header is valid, False otherwise
         """
         try:
+            current_pos = f.tell()
+            self.error_handler.set_position(current_pos)
+            
             # Read POF header
             pof_id = struct.unpack("<I", f.read(4))[0]
             pof_version = struct.unpack("<i", f.read(4))[0]
 
             if pof_id != POF_HEADER_ID:
-                logger.error(
-                    f"Invalid POF header ID. Expected {POF_HEADER_ID:08X}, got {pof_id:08X}"
+                self.error_handler.add_error(
+                    f"Invalid POF header ID. Expected {POF_HEADER_ID:08X}, got {pof_id:08X}",
+                    severity=ErrorSeverity.ERROR,
+                    category=ErrorCategory.VALIDATION,
+                    recovery_action="Check if file is a valid POF file"
                 )
                 return False
 
             # Version compatibility check
+            self.error_handler.set_version_context(pof_version)
+            
             if pof_version < PM_COMPATIBLE_VERSION:
-                logger.warning(
-                    f"POF version {pof_version} is below minimum compatible version {PM_COMPATIBLE_VERSION}"
+                self.error_handler.add_error(
+                    f"POF version {pof_version} is below minimum compatible version {PM_COMPATIBLE_VERSION}",
+                    severity=ErrorSeverity.WARNING,
+                    category=ErrorCategory.COMPATIBILITY,
+                    recovery_action="Attempt parsing with fallback methods"
                 )
             elif (pof_version // 100) > PM_OBJFILE_MAJOR_VERSION:
-                logger.warning(
-                    f"POF version {pof_version} may be incompatible (major version > {PM_OBJFILE_MAJOR_VERSION})"
+                self.error_handler.add_error(
+                    f"POF version {pof_version} may be incompatible (major version > {PM_OBJFILE_MAJOR_VERSION})",
+                    severity=ErrorSeverity.WARNING,
+                    category=ErrorCategory.COMPATIBILITY,
+                    recovery_action="Proceed with caution and validate results"
                 )
 
             self.pof_data["version"] = pof_version
@@ -213,12 +259,17 @@ class POFParser:
             return True
 
         except (struct.error, EOFError) as e:
-            logger.error(f"Failed to read POF header: {e}")
+            self.error_handler.add_error(
+                f"Failed to read POF header: {e}",
+                severity=ErrorSeverity.ERROR,
+                category=ErrorCategory.PARSING,
+                recovery_action="Check file integrity and size"
+            )
             return False
 
     def _parse_chunks(self, f: BinaryIO) -> None:
         """
-        Parse all chunks in the POF file.
+        Parse all chunks in the POF file with enhanced error tracking.
 
         Args:
             f: File handle positioned after header
@@ -261,9 +312,29 @@ class POFParser:
             ID_SLDC: "shield_collision_tree",
         }
 
+        # Chunk ID to name mapping for error reporting
+        chunk_name_map = {
+            ID_OHDR: "OHDR",
+            ID_SOBJ: "SOBJ", 
+            ID_TXTR: "TXTR",
+            ID_SPCL: "SPCL",
+            ID_PATH: "PATH",
+            ID_GPNT: "GPNT",
+            ID_MPNT: "MPNT",
+            ID_DOCK: "DOCK",
+            ID_FUEL: "FUEL",
+            ID_SHLD: "SHLD",
+            ID_EYE: "EYE",
+            ID_INSG: "INSG",
+            ID_ACEN: "ACEN",
+            ID_GLOW: "GLOW",
+            ID_SLDC: "SLDC",
+        }
+
         # Read chunks until EOF
         while True:
             chunk_start_pos = f.tell()
+            self.error_handler.set_position(chunk_start_pos)
 
             try:
                 # Check if there's enough data for a header
@@ -273,28 +344,43 @@ class POFParser:
                     break
 
                 chunk_id, chunk_len = read_chunk_header(f)
-                logger.debug(f"Found chunk ID: {chunk_id:08X}, Length: {chunk_len}")
+                chunk_name = chunk_name_map.get(chunk_id, f"UNKNOWN_{chunk_id:08X}")
+                
+                self.error_handler.set_chunk_context(chunk_id, chunk_name)
+                logger.debug(f"Found chunk ID: {chunk_id:08X} ({chunk_name}), Length: {chunk_len}")
 
-            except (struct.error, EOFError):
+            except (struct.error, EOFError) as e:
+                self.error_handler.add_error(
+                    f"Failed to read chunk header: {e}",
+                    severity=ErrorSeverity.WARNING,
+                    category=ErrorCategory.PARSING,
+                    recovery_action="Assume end of file reached"
+                )
                 logger.debug("Reached end of file or failed to read chunk header")
                 break
             except Exception as e:
-                logger.error(
-                    f"Unexpected error reading chunk header at pos {chunk_start_pos}: {e}"
+                self.error_handler.add_error(
+                    f"Unexpected error reading chunk header at pos {chunk_start_pos}: {e}",
+                    severity=ErrorSeverity.ERROR,
+                    category=ErrorCategory.PARSING,
+                    recovery_action="Skip to next chunk if possible"
                 )
                 break
 
             # Validate chunk length
             if chunk_len < 0:
-                logger.error(
-                    f"Invalid negative chunk length {chunk_len} for ID {chunk_id:08X}"
+                self.error_handler.add_error(
+                    f"Invalid negative chunk length {chunk_len} for ID {chunk_id:08X}",
+                    severity=ErrorSeverity.ERROR,
+                    category=ErrorCategory.VALIDATION,
+                    recovery_action="Skip this chunk"
                 )
                 break
 
             next_chunk_pos = chunk_start_pos + 8 + chunk_len
 
             # Process chunk
-            self._process_chunk(f, chunk_id, chunk_len, chunk_readers, data_key_map)
+            self._process_chunk(f, chunk_id, chunk_len, chunk_readers, data_key_map, chunk_name_map)
 
             # Verify chunk position and seek to next chunk
             self._verify_chunk_position(
@@ -313,9 +399,11 @@ class POFParser:
         chunk_len: int,
         chunk_readers: Dict[int, Any],
         data_key_map: Dict[int, str],
+        chunk_name_map: Dict[int, str],
     ) -> None:
-        """Process a single chunk."""
+        """Process a single chunk with enhanced error handling."""
         reader_func = chunk_readers.get(chunk_id)
+        chunk_name = chunk_name_map.get(chunk_id, f"UNKNOWN_{chunk_id:08X}")
 
         if reader_func:
             data_key = data_key_map.get(chunk_id)
@@ -323,14 +411,31 @@ class POFParser:
                 try:
                     parsed_data = reader_func(f, chunk_len)
                     self._store_chunk_data(chunk_id, data_key, parsed_data)
+                    logger.debug(f"Successfully parsed chunk {chunk_name}")
                 except Exception as e:
-                    logger.error(f"Error parsing chunk {chunk_id:08X}: {e}")
+                    self.error_handler.add_error(
+                        f"Error parsing chunk {chunk_name}: {e}",
+                        severity=ErrorSeverity.ERROR,
+                        category=ErrorCategory.PARSING,
+                        recovery_action="Skip chunk and continue parsing"
+                    )
                     read_unknown_chunk(f, chunk_len, chunk_id)
             else:
-                logger.error(f"No data key mapped for chunk ID {chunk_id:08X}")
+                self.error_handler.add_error(
+                    f"No data key mapped for chunk ID {chunk_id:08X} ({chunk_name})",
+                    severity=ErrorSeverity.WARNING,
+                    category=ErrorCategory.PARSING,
+                    recovery_action="Skip chunk"
+                )
                 read_unknown_chunk(f, chunk_len, chunk_id)
         else:
             # Handle unknown chunks
+            self.error_handler.add_error(
+                f"Unknown chunk type {chunk_id:08X} ({chunk_name})",
+                severity=ErrorSeverity.WARNING,
+                category=ErrorCategory.COMPATIBILITY,
+                recovery_action="Skip unknown chunk"
+            )
             read_unknown_chunk(f, chunk_len, chunk_id)
 
     def _store_chunk_data(self, chunk_id: int, data_key: str, parsed_data: Any) -> None:
@@ -358,19 +463,26 @@ class POFParser:
         next_chunk_pos: int,
         chunk_len: int,
     ) -> None:
-        """Verify chunk position and seek to next chunk if needed."""
+        """Verify chunk position and seek to next chunk if needed with error tracking."""
         current_pos = f.tell()
+        chunk_name = f"{chunk_id:08X}"
 
         if current_pos > next_chunk_pos:
-            logger.error(
-                f"Read past end of chunk {chunk_id:08X}! Expected {next_chunk_pos}, got {current_pos}"
+            self.error_handler.add_error(
+                f"Read past end of chunk {chunk_name}! Expected {next_chunk_pos}, got {current_pos}",
+                severity=ErrorSeverity.ERROR,
+                category=ErrorCategory.PARSING,
+                recovery_action="Seek to next chunk position"
             )
             f.seek(next_chunk_pos)
         elif current_pos < next_chunk_pos:
             bytes_skipped = next_chunk_pos - current_pos
-            logger.warning(
-                f"Chunk read mismatch for ID {chunk_id:08X}. "
+            self.error_handler.add_error(
+                f"Chunk read mismatch for {chunk_name}. "
                 f"Read {current_pos - (chunk_start_pos + 8)} bytes, expected {chunk_len}. "
-                f"Skipping {bytes_skipped} bytes"
+                f"Skipping {bytes_skipped} bytes",
+                severity=ErrorSeverity.WARNING,
+                category=ErrorCategory.DATA_INTEGRITY,
+                recovery_action="Seek to expected position"
             )
             f.seek(next_chunk_pos)

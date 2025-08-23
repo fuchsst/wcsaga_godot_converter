@@ -274,14 +274,103 @@ class _BSPGeometryParser:
             raise EOFError("Index error during TMAPPOLY parsing")
 
     def _parse_bsp_flatpoly(self, data: bytes, offset: int):
-        """Parses OP_FLATPOLY chunk (Currently skips)."""
-        # Flat polys are rare and don't have UVs. Need to decide how to handle them.
-        # Option 1: Skip them (simplest).
-        # Option 2: Assign default UVs (e.g., [0,0]) and add them.
-        # Option 3: Create separate primitives without UVs (more complex GLTF).
-        # For now, skipping seems safest unless they are found to be important.
-        logger.debug("Skipping FLATPOLY chunk.")
-        pass
+        """Parses OP_FLATPOLY chunk and adds flat-shaded polygons to final geometry with default UVs."""
+        try:
+            # Read polygon header info
+            normal_x, normal_y, normal_z = struct.unpack_from("<fff", data, offset + 8)
+            # color = struct.unpack_from("<i", data, offset + 20)[0]  # Color value, not currently used
+            nv = struct.unpack_from("<i", data, offset + 24)[0]  # Number of vertices
+
+            if nv <= 2:  # Need at least 3 vertices for a triangle
+                if nv > 0:
+                    logger.warning(
+                        f"FLATPOLY with {nv} vertices found (needs >= 3). Skipping."
+                    )
+                return
+
+            # Read vertex indices (shorts)
+            indices = []
+            vert_offset = offset + 28
+            # Check bounds before reading vertex indices
+            expected_indices_size = nv * 2  # Each index is 2 bytes (short)
+            if vert_offset + expected_indices_size > len(data):
+                logger.error(
+                    f"FLATPOLY: Data too short for vertex indices. Offset: {vert_offset}, NV: {nv}, Expected Size: {expected_indices_size}, Data Len: {len(data)}"
+                )
+                raise EOFError("Insufficient data for FLATPOLY vertex indices")
+
+            for _ in range(nv):
+                vert_idx = struct.unpack_from("<h", data, vert_offset)[0]
+                vert_offset += 2
+                indices.append(vert_idx)
+
+            # Use default UV coordinates for all vertices
+            uvs = [(0.0, 0.0)] * nv
+
+            # Triangulate the polygon (simple fan triangulation) and add to final geometry lists
+            for i in range(1, nv - 1):
+                tri_final_indices = (
+                    []
+                )  # Indices for the current triangle pointing to final geometry lists
+                valid_tri = True
+                for k in [0, i, i + 1]:  # Indices for the fan triangle
+                    pof_vert_idx = indices[k]
+                    # POF uses the vertex index also as the index into the normal list
+                    # (since only the first normal per vertex is stored in our lists)
+                    pof_norm_idx = pof_vert_idx
+                    uv_tuple = uvs[k]
+
+                    # Validate indices against the temporary lists populated by DEFPOINTS
+                    if not (0 <= pof_vert_idx < len(self.bsp_vertices)):
+                        logger.error(
+                            f"FLATPOLY: Invalid POF vertex index {pof_vert_idx} encountered in polygon. Max verts: {len(self.bsp_vertices)}. Skipping triangle."
+                        )
+                        valid_tri = False
+                        break
+                    if not (0 <= pof_norm_idx < len(self.bsp_normals)):
+                        logger.error(
+                            f"FLATPOLY: Invalid POF normal index {pof_norm_idx} encountered in polygon. Max norms: {len(self.bsp_normals)}. Skipping triangle."
+                        )
+                        valid_tri = False
+                        break
+
+                    # Create a unique key for this combination of vertex attributes
+                    vertex_key = (pof_vert_idx, pof_norm_idx, uv_tuple)
+
+                    # Deduplicate vertex data
+                    if vertex_key not in self.vertex_map:
+                        # This vertex combination is new, add it to the final geometry lists
+                        new_final_idx = len(self.geometry["vertices"])
+                        self.vertex_map[vertex_key] = new_final_idx
+                        self.geometry["vertices"].append(
+                            self.bsp_vertices[pof_vert_idx].to_list()
+                        )
+                        self.geometry["normals"].append(
+                            self.bsp_normals[pof_norm_idx].to_list()
+                        )
+                        self.geometry["uvs"].append(list(uv_tuple))
+                        tri_final_indices.append(new_final_idx)
+                    else:
+                        # Vertex combination already exists, reuse its index
+                        tri_final_indices.append(self.vertex_map[vertex_key])
+
+                # If all indices for the triangle were valid, add the triangle to the polygon list
+                if valid_tri:
+                    self.geometry["polygons"].append(
+                        {
+                            "texture_index": -1,  # Use -1 for untextured/flat polygons
+                            "indices": tri_final_indices,  # These indices point to the final geometry lists
+                        }
+                    )
+
+        except struct.error as e:
+            logger.error(f"Struct error parsing FLATPOLY at offset {offset}: {e}")
+            raise EOFError("Struct error during FLATPOLY parsing")
+        except IndexError as e:
+            logger.error(
+                f"Index error parsing FLATPOLY at offset {offset} (likely accessing bsp_vertices/normals): {e}"
+            )
+            raise EOFError("Index error during FLATPOLY parsing")
 
     def _parse_bsp_sortnorm(self, data: bytes, offset: int):
         """Recursively parses OP_SORTNORM chunk."""

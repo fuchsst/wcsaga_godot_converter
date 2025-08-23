@@ -266,8 +266,25 @@ class BaseTableConverter(IFileConverter, IValidatableConverter):
         """Convert resource dictionary to string content"""
         lines = ['[gd_resource type="Resource"]', "", "[resource]"]
         for key, value in resource.items():
-            lines.append(f"{key} = {self._format_tres_value(value)}")
+            lines.append(f"{key} = {self._format_value(value)}")
         return "\n".join(lines)
+
+    def _format_value(self, value: Any) -> str:
+        """Format a value for Godot TRES format"""
+        if isinstance(value, str):
+            return f'"{value}"'
+        elif isinstance(value, bool):
+            return str(value).lower()
+        elif isinstance(value, (int, float)):
+            return str(value)
+        elif isinstance(value, list):
+            formatted_items = [self._format_value(item) for item in value]
+            return f"[{', '.join(formatted_items)}]"
+        elif isinstance(value, dict):
+            formatted_items = [f"{k}: {self._format_value(v)}" for k, v in value.items()]
+            return f"{{{', '.join(formatted_items)}}}"
+        else:
+            return f'"{str(value)}"'
 
     def _should_skip_line(self, line: str, state: ParseState) -> bool:
         """Check if line should be skipped (comments, empty lines)"""

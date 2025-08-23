@@ -170,8 +170,12 @@ class TestPOFDataExtractor(unittest.TestCase):
             f.write(struct.pack("<i", len(ohdr_data)))
             f.write(ohdr_data)
 
-            # TXTR chunk with test texture
-            texture_data = b"test_texture.dds\x00"
+            # TXTR chunk with test texture (proper format: num_textures + length-prefixed strings)
+            texture_name = b"test_texture.dds"
+            texture_data = struct.pack("<i", 1)  # num_textures
+            texture_data += struct.pack("<i", len(texture_name))  # length of first texture
+            texture_data += texture_name  # texture name bytes
+            
             f.write(struct.pack("<I", ID_TXTR))
             f.write(struct.pack("<i", len(texture_data)))
             f.write(texture_data)
@@ -277,10 +281,20 @@ class TestIntegration(unittest.TestCase):
             f.write(struct.pack("<I", POF_HEADER_ID))
             f.write(struct.pack("<i", 2100))
 
-            # Simple OHDR chunk
-            ohdr_data = struct.pack("<fIi", 75.0, 0x1, 0)
-            ohdr_data += struct.pack("<fff", -37.5, -37.5, -37.5)
-            ohdr_data += struct.pack("<fff", 37.5, 37.5, 37.5)
+            # Complete OHDR chunk
+            ohdr_data = struct.pack("<fIi", 75.0, 0x1, 0)  # radius, flags, num_subobjects
+            ohdr_data += struct.pack("<fff", -37.5, -37.5, -37.5)  # min bounds
+            ohdr_data += struct.pack("<fff", 37.5, 37.5, 37.5)  # max bounds
+            # Detail levels (8 ints)
+            ohdr_data += struct.pack("<" + "i" * 8, 0, -1, -1, -1, -1, -1, -1, -1)
+            # Debris objects (32 ints)
+            ohdr_data += struct.pack("<" + "i" * 32, *[-1] * 32)
+            # Mass, center of mass, moment of inertia
+            ohdr_data += struct.pack("<f", 100.0)  # mass
+            ohdr_data += struct.pack("<fff", 0.0, 0.0, 0.0)  # center of mass
+            ohdr_data += struct.pack("<fff", 1.0, 0.0, 0.0)  # moment of inertia row 1
+            ohdr_data += struct.pack("<fff", 0.0, 1.0, 0.0)  # moment of inertia row 2
+            ohdr_data += struct.pack("<fff", 0.0, 0.0, 1.0)  # moment of inertia row 3
 
             f.write(struct.pack("<I", ID_OHDR))
             f.write(struct.pack("<i", len(ohdr_data)))

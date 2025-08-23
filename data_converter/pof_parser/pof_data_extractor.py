@@ -210,12 +210,22 @@ class POFDataExtractor:
             return None
 
         try:
-            # Create model data structure
+            # Extract header information first to get required constructor parameters
+            header = parsed_data.get("header", {})
+            max_radius = header.get("max_radius", 0.0)
+            bounding_box_min = tuple(header.get("min_bounding", [0.0, 0.0, 0.0]))
+            bounding_box_max = tuple(header.get("max_bounding", [0.0, 0.0, 0.0]))
+
+            # Create model data structure with required parameters
             model_data = POFModelData(
-                filename=file_path.name, version=parsed_data.get("version", 0)
+                filename=file_path.name,
+                version=parsed_data.get("version", 0),
+                max_radius=max_radius,
+                bounding_box_min=bounding_box_min,
+                bounding_box_max=bounding_box_max
             )
 
-            # Extract header information
+            # Extract remaining header information
             self._extract_header_data(parsed_data, model_data)
 
             # Extract textures

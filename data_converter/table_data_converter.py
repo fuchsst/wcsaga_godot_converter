@@ -25,6 +25,7 @@ from typing import Any, Dict, List
 
 # Import our new modular components
 from .table_converters.converter_factory import ConverterFactory
+from .table_converters.table_types import TableType
 
 logger = logging.getLogger(__name__)
 
@@ -119,11 +120,14 @@ class TableDataConverter:
         # Get statistics using interface method
         converter_stats = converter.get_stats()
 
-        # Aggregate entries processed
+        # Aggregate entries processed based on converter type
         if "entries_processed" in converter_stats:
-            self.conversion_stats["ships_processed"] += converter_stats[
-                "entries_processed"
-            ]
+            table_type = converter.get_table_type()
+            stat_key = self._get_stat_key_for_table_type(table_type)
+            if stat_key:
+                self.conversion_stats[stat_key] += converter_stats["entries_processed"]
+            else:
+                logger.warning(f"Unknown table type for statistics: {table_type}")
 
         # Aggregate errors
         if "errors" in converter_stats:
@@ -149,6 +153,26 @@ class TableDataConverter:
                     self.damage_type_registry.update(mapping_data)
                 elif mapping_type == "species_registry":
                     self.species_registry.update(mapping_data)
+
+    def _get_stat_key_for_table_type(self, table_type: TableType) -> str:
+        """
+        Map TableType enum to the appropriate statistic key.
+
+        Args:
+            table_type: The TableType enum value
+
+        Returns:
+            str: The statistic key for the conversion_stats dictionary
+        """
+        stat_map = {
+            TableType.SHIPS: "ships_processed",
+            TableType.WEAPONS: "weapons_processed",
+            TableType.ARMOR: "armor_types_processed",
+            TableType.SPECIES: "species_processed",
+            TableType.SPECIES_ENTRIES: "species_processed",
+            TableType.IFF: "iff_factions_processed",
+        }
+        return stat_map.get(table_type, None)
 
     def generate_conversion_summary(self) -> Dict[str, Any]:
         """Generate comprehensive conversion summary report"""
