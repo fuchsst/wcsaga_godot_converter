@@ -7,6 +7,7 @@ from .pof_chunks import read_int, read_string_len
 
 logger = logging.getLogger(__name__)
 
+
 def read_txtr_chunk(f: BinaryIO, length: int) -> List[str]:
     """Parses the Texture Filenames (TXTR) chunk."""
     num_textures = read_int(f)

@@ -13,6 +13,7 @@ from enum import Enum
 
 class TableType(Enum):
     """Table file types supported by the converter system."""
+
     SHIPS = "ships"
     WEAPONS = "weapons"
     ARMOR = "armor"

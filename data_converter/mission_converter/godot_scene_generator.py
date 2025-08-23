@@ -13,12 +13,18 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Tuple
 
-from .fs2_mission_parser import (MissionData, MissionObject, MissionWaypoint,
-                                 MissionWing, ObjectType)
+from .fs2_mission_parser import (
+    MissionData,
+    MissionObject,
+    MissionWaypoint,
+    MissionWing,
+    ObjectType,
+)
 
 
 class GodotNodeType(Enum):
     """Godot node types for mission objects."""
+
     NODE3D = "Node3D"
     RIGIDBODY3D = "RigidBody3D"
     STATICBODY3D = "StaticBody3D"
@@ -32,6 +38,7 @@ class GodotNodeType(Enum):
 @dataclass
 class GodotNode:
     """Represents a Godot scene node."""
+
     name: str
     type: str
     parent: Optional[str] = None
@@ -41,7 +48,7 @@ class GodotNode:
     script: Optional[str] = None
     groups: List[str] = []
     properties: Dict[str, Any] = {}
-    
+
     def __post_init__(self):
         if self.groups is None:
             self.groups = []
@@ -52,11 +59,12 @@ class GodotNode:
 @dataclass
 class GodotScene:
     """Represents a complete Godot scene."""
+
     format: int = 3  # Godot 4.x format
     root_node: Optional[GodotNode] = None
     nodes: List[GodotNode] = []
     connections: List[Dict[str, Any]] = []
-    
+
     def __post_init__(self):
         if self.nodes is None:
             self.nodes = []
@@ -66,68 +74,78 @@ class GodotScene:
 
 class GodotSceneGenerator:
     """Generates Godot scene files from FS2 mission data."""
-    
+
     def __init__(self) -> None:
         """Initialize scene generator."""
         self.logger = logging.getLogger(__name__)
-        
+
         # WCS to Godot coordinate system conversion
         # WCS: X=right, Y=up, Z=forward (right-handed)
         # Godot: X=right, Y=up, Z=back (right-handed, but Z is inverted)
         self.coord_scale = 0.01  # Convert WCS units to Godot meters
-        
+
         # Ship class to node type mapping
         self.ship_class_node_mapping = {
-            'fighter': GodotNodeType.CHARACTERBODY3D,
-            'bomber': GodotNodeType.CHARACTERBODY3D,
-            'cruiser': GodotNodeType.CHARACTERBODY3D,
-            'freighter': GodotNodeType.CHARACTERBODY3D,
-            'transport': GodotNodeType.CHARACTERBODY3D,
-            'capital': GodotNodeType.RIGIDBODY3D,
-            'supercap': GodotNodeType.RIGIDBODY3D,
-            'installation': GodotNodeType.STATICBODY3D,
-            'navbuoy': GodotNodeType.STATICBODY3D,
-            'support': GodotNodeType.CHARACTERBODY3D,
-            'sentry gun': GodotNodeType.STATICBODY3D,
-            'escape pod': GodotNodeType.RIGIDBODY3D,
-            'cargo': GodotNodeType.RIGIDBODY3D,
-            'asteroid': GodotNodeType.RIGIDBODY3D
+            "fighter": GodotNodeType.CHARACTERBODY3D,
+            "bomber": GodotNodeType.CHARACTERBODY3D,
+            "cruiser": GodotNodeType.CHARACTERBODY3D,
+            "freighter": GodotNodeType.CHARACTERBODY3D,
+            "transport": GodotNodeType.CHARACTERBODY3D,
+            "capital": GodotNodeType.RIGIDBODY3D,
+            "supercap": GodotNodeType.RIGIDBODY3D,
+            "installation": GodotNodeType.STATICBODY3D,
+            "navbuoy": GodotNodeType.STATICBODY3D,
+            "support": GodotNodeType.CHARACTERBODY3D,
+            "sentry gun": GodotNodeType.STATICBODY3D,
+            "escape pod": GodotNodeType.RIGIDBODY3D,
+            "cargo": GodotNodeType.RIGIDBODY3D,
+            "asteroid": GodotNodeType.RIGIDBODY3D,
         }
-    
-    def generate_mission_scene(self, mission_data: MissionData, output_path: Path, 
-                              asset_base_path: str = "res://") -> bool:
+
+    def generate_mission_scene(
+        self,
+        mission_data: MissionData,
+        output_path: Path,
+        asset_base_path: str = "res://",
+    ) -> bool:
         """Generate complete Godot scene from mission data."""
         try:
-            self.logger.info(f"Generating Godot scene: {mission_data.mission_info.name}")
-            
+            self.logger.info(
+                f"Generating Godot scene: {mission_data.mission_info.name}"
+            )
+
             # Create scene structure
             scene = self._create_scene_structure(mission_data, asset_base_path)
-            
+
             # Write scene file
             scene_content = self._generate_scene_file_content(scene)
-            
+
             # Ensure output directory exists
             output_path.parent.mkdir(parents=True, exist_ok=True)
-            
-            with open(output_path, 'w', encoding='utf-8') as f:
+
+            with open(output_path, "w", encoding="utf-8") as f:
                 f.write(scene_content)
-            
+
             self.logger.info(f"Generated scene file: {output_path}")
-            
+
             # Note: Using generic MissionController, no need for custom script generation
-            
+
             return True
-            
+
         except Exception as e:
             self.logger.error(f"Failed to generate scene: {e}")
             return False
-    
-    def _create_scene_structure(self, mission_data: MissionData, asset_base_path: str) -> GodotScene:
+
+    def _create_scene_structure(
+        self, mission_data: MissionData, asset_base_path: str
+    ) -> GodotScene:
         """Create hierarchical scene structure from mission data."""
         scene = GodotScene()
-        
+
         # Create root mission node using generic MissionController
-        mission_name = self._sanitize_node_name(mission_data.mission_info.name or "Mission")
+        mission_name = self._sanitize_node_name(
+            mission_data.mission_info.name or "Mission"
+        )
         root_node = GodotNode(
             name=mission_name,
             type="MissionController",  # Use generic mission controller
@@ -135,48 +153,44 @@ class GodotSceneGenerator:
             properties={
                 "mission_resource_path": f"res://resources/missions/{mission_name}.tres",
                 "auto_start_mission": True,
-                "debug_mode": False
-            }
+                "debug_mode": False,
+            },
         )
         scene.root_node = root_node
         scene.nodes.append(root_node)
-        
+
         # Create organizational containers (will be created by MissionController)
         ships_container = GodotNode(
-            name="Ships",
-            type=GodotNodeType.NODE3D.value,
-            parent=root_node.name
+            name="Ships", type=GodotNodeType.NODE3D.value, parent=root_node.name
         )
         scene.nodes.append(ships_container)
-        
+
         wings_container = GodotNode(
-            name="Wings", 
-            type=GodotNodeType.NODE3D.value,
-            parent=root_node.name
+            name="Wings", type=GodotNodeType.NODE3D.value, parent=root_node.name
         )
         scene.nodes.append(wings_container)
-        
+
         waypoints_container = GodotNode(
-            name="Waypoints",
-            type=GodotNodeType.NODE3D.value,
-            parent=root_node.name
+            name="Waypoints", type=GodotNodeType.NODE3D.value, parent=root_node.name
         )
         scene.nodes.append(waypoints_container)
-        
+
         # Note: Ships, wings, and waypoints are now created from resources by MissionController
         # No need to create individual nodes here - they'll be spawned at runtime
-        
+
         return scene
-    
-    def _create_ship_node(self, obj: MissionObject, parent_name: str, asset_base_path: str) -> GodotNode:
+
+    def _create_ship_node(
+        self, obj: MissionObject, parent_name: str, asset_base_path: str
+    ) -> GodotNode:
         """Create ship node from mission object."""
         # Determine appropriate node type based on ship class
         node_type = self._get_ship_node_type(obj.class_name)
-        
+
         # Convert WCS coordinates to Godot
         godot_position = self._convert_wcs_coordinates(obj.position)
         godot_rotation = self._convert_wcs_orientation(obj.orientation)
-        
+
         # Create ship node
         ship_node = GodotNode(
             name=self._sanitize_node_name(obj.name),
@@ -200,16 +214,18 @@ class GodotSceneGenerator:
                 "departure_anchor": obj.departure_anchor,
                 "orders": obj.orders,
                 "goals": obj.goals,
-                "subsystem_status": obj.subsystem_status
-            }
+                "subsystem_status": obj.subsystem_status,
+            },
         )
-        
+
         # Add model reference if available
-        model_path = f"{asset_base_path}models/{obj.class_name.lower().replace(' ', '_')}.glb"
+        model_path = (
+            f"{asset_base_path}models/{obj.class_name.lower().replace(' ', '_')}.glb"
+        )
         ship_node.properties["model_path"] = model_path
-        
+
         return ship_node
-    
+
     def _create_wing_node(self, wing: MissionWing, parent_name: str) -> GodotNode:
         """Create wing node from mission wing."""
         wing_node = GodotNode(
@@ -229,16 +245,18 @@ class GodotSceneGenerator:
                 "arrival_cue": wing.arrival_cue,
                 "departure_cue": wing.departure_cue,
                 "orders": wing.orders,
-                "goals": wing.goals
-            }
+                "goals": wing.goals,
+            },
         )
-        
+
         return wing_node
-    
-    def _create_waypoint_node(self, waypoint: MissionWaypoint, parent_name: str) -> GodotNode:
+
+    def _create_waypoint_node(
+        self, waypoint: MissionWaypoint, parent_name: str
+    ) -> GodotNode:
         """Create waypoint node from mission waypoint."""
         godot_position = self._convert_wcs_coordinates(waypoint.position)
-        
+
         waypoint_node = GodotNode(
             name=self._sanitize_node_name(waypoint.name),
             type=GodotNodeType.MARKER3D.value,
@@ -247,38 +265,44 @@ class GodotSceneGenerator:
             groups=["waypoints", f"list_{waypoint.list_name}"],
             properties={
                 "list_name": waypoint.list_name,
-                "waypoint_index": waypoint.name.split('_')[-1] if '_' in waypoint.name else "0"
-            }
+                "waypoint_index": (
+                    waypoint.name.split("_")[-1] if "_" in waypoint.name else "0"
+                ),
+            },
         )
-        
+
         return waypoint_node
-    
+
     def _get_ship_node_type(self, ship_class: str) -> GodotNodeType:
         """Determine appropriate Godot node type for ship class."""
         ship_class_lower = ship_class.lower()
-        
+
         # Check for specific matches first
         for class_keyword, node_type in self.ship_class_node_mapping.items():
             if class_keyword in ship_class_lower:
                 return node_type
-        
+
         # Default to CharacterBody3D for unknown ship types
         return GodotNodeType.CHARACTERBODY3D
-    
-    def _convert_wcs_coordinates(self, wcs_coords: Tuple[float, float, float]) -> Tuple[float, float, float]:
+
+    def _convert_wcs_coordinates(
+        self, wcs_coords: Tuple[float, float, float]
+    ) -> Tuple[float, float, float]:
         """Convert WCS coordinates to Godot coordinate system."""
         x, y, z = wcs_coords
-        
+
         # WCS to Godot coordinate conversion
-        # WCS: X=right, Y=up, Z=forward 
+        # WCS: X=right, Y=up, Z=forward
         # Godot: X=right, Y=up, Z=back (Z is inverted)
         godot_x = x * self.coord_scale
         godot_y = y * self.coord_scale
         godot_z = -z * self.coord_scale  # Invert Z axis
-        
+
         return (godot_x, godot_y, godot_z)
-    
-    def _convert_wcs_orientation(self, wcs_orientation: Tuple[float, float, float]) -> Tuple[float, float, float]:
+
+    def _convert_wcs_orientation(
+        self, wcs_orientation: Tuple[float, float, float]
+    ) -> Tuple[float, float, float]:
         """Convert WCS orientation to Godot rotation (simplified)."""
         # For now, use simple conversion
         # In full implementation, would need proper matrix to Euler conversion
@@ -287,66 +311,72 @@ class GodotSceneGenerator:
             # Basic rotation conversion (may need refinement)
             return (x, y, -z)  # Invert Z rotation for coordinate system
         return (0.0, 0.0, 0.0)
-    
+
     def _sanitize_node_name(self, name: str) -> str:
         """Sanitize name for use as Godot node name."""
         # Replace invalid characters
-        sanitized = re.sub(r'[^a-zA-Z0-9_]', '_', name)
-        
+        sanitized = re.sub(r"[^a-zA-Z0-9_]", "_", name)
+
         # Ensure doesn't start with number
         if sanitized and sanitized[0].isdigit():
             sanitized = f"_{sanitized}"
-        
+
         # Ensure not empty
         if not sanitized:
             sanitized = "Node"
-        
+
         return sanitized
-    
+
     def _generate_scene_file_content(self, scene: GodotScene) -> str:
         """Generate .tscn file content from scene structure."""
         lines = []
-        
+
         # Add header
         lines.append(f"[gd_scene load_steps=1 format={scene.format}]")
         lines.append("")
-        
+
         # Add root node
         if scene.root_node:
-            lines.append(f'[node name="{scene.root_node.name}" type="{scene.root_node.type}"]')
+            lines.append(
+                f'[node name="{scene.root_node.name}" type="{scene.root_node.type}"]'
+            )
             if scene.root_node.script:
                 lines.append(f'script = preload("{scene.root_node.script}")')
-            
+
             # Add root node properties
             self._add_node_properties(lines, scene.root_node)
             lines.append("")
-        
+
         # Add child nodes
         for node in scene.nodes[1:]:  # Skip root node
-            lines.append(f'[node name="{node.name}" type="{node.type}" parent="{node.parent}"]')
-            
+            lines.append(
+                f'[node name="{node.name}" type="{node.type}" parent="{node.parent}"]'
+            )
+
             # Add transform
             if node.position != (0.0, 0.0, 0.0):
-                lines.append(f'transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, {node.position[0]}, {node.position[1]}, {node.position[2]})')
-            
+                lines.append(
+                    f"transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, {node.position[0]}, {node.position[1]}, {node.position[2]})"
+                )
+
             # Add node properties
             self._add_node_properties(lines, node)
             lines.append("")
-        
+
         # Add connections if any
         for connection in scene.connections:
             signal_line = f'[connection signal="{connection["signal"]}" from="{connection["from"]}" to="{connection["to"]}" method="{connection["method"]}"]'
             lines.append(signal_line)
-        
-        return '\n'.join(lines)
-    
+
+        return "\n".join(lines)
+
     def _add_node_properties(self, lines: List[str], node: GodotNode) -> None:
         """Add node properties to scene file lines."""
         # Add groups
         if node.groups:
-            groups_str = ', '.join(f'&"{group}"' for group in node.groups)
-            lines.append(f'groups = [{groups_str}]')
-        
+            groups_str = ", ".join(f'&"{group}"' for group in node.groups)
+            lines.append(f"groups = [{groups_str}]")
+
         # Add custom properties as metadata
         if node.properties:
             for key, value in node.properties.items():
@@ -357,25 +387,27 @@ class GodotSceneGenerator:
                     json_value = json.dumps(value)
                     lines.append(f'metadata/{key} = "{json_value}"')
                 else:
-                    lines.append(f'metadata/{key} = {value}')
-    
-    def _generate_mission_script(self, mission_data: MissionData, script_path: Path) -> None:
+                    lines.append(f"metadata/{key} = {value}")
+
+    def _generate_mission_script(
+        self, mission_data: MissionData, script_path: Path
+    ) -> None:
         """Generate GDScript mission controller file."""
         script_content = self._create_mission_script_content(mission_data)
-        
+
         # Ensure script directory exists
         script_path.parent.mkdir(parents=True, exist_ok=True)
-        
-        with open(script_path, 'w', encoding='utf-8') as f:
+
+        with open(script_path, "w", encoding="utf-8") as f:
             f.write(script_content)
-        
+
         self.logger.info(f"Generated mission script: {script_path}")
-    
+
     def _create_mission_script_content(self, mission_data: MissionData) -> str:
         """Create GDScript content for mission controller."""
         mission_name = mission_data.mission_info.name or "Unknown Mission"
         sanitized_class_name = self._sanitize_node_name(mission_name) + "Mission"
-        
+
         script_template = f'''class_name {sanitized_class_name}
 extends Node3D
 
@@ -670,20 +702,20 @@ func is_mission_active() -> bool:
     """Check if mission is currently active."""
     return mission_started and not mission_completed
 '''
-        
+
         return script_template
-    
+
     def _generate_objectives_code(self, goals: List) -> str:
         """Generate GDScript code for setting up objectives."""
         if not goals:
             return "    # No objectives defined"
-        
+
         lines = []
         for i, goal in enumerate(goals):
             goal_name = goal.name or f"objective_{i}"
             goal_type = goal.type or "primary"
             goal_message = goal.message or goal_name
-            
+
             lines.append(f'    objectives["{goal_name}"] = {{')
             lines.append(f'        "type": "{goal_type}",')
             lines.append(f'        "name": "{goal_name}",')
@@ -691,28 +723,28 @@ func is_mission_active() -> bool:
             lines.append(f'        "formula": "{goal.formula}",')
             lines.append(f'        "completed": false,')
             lines.append(f'        "failed": false')
-            lines.append('    }')
-            
-        return '\n'.join(lines)
-    
+            lines.append("    }")
+
+        return "\n".join(lines)
+
     def _generate_events_code(self, events: List) -> str:
         """Generate GDScript code for setting up events."""
         if not events:
             return "    # No events defined"
-        
+
         lines = []
         for i, event in enumerate(events):
             event_name = event.name or f"event_{i}"
-            
-            lines.append(f'    events.append({{')
+
+            lines.append(f"    events.append({{")
             lines.append(f'        "name": "{event_name}",')
             lines.append(f'        "formula": "{event.formula}",')
             lines.append(f'        "repeat_count": {event.repeat_count},')
             lines.append(f'        "score": {event.score},')
             lines.append(f'        "active": true')
-            lines.append('    })')
-            
-        return '\n'.join(lines)
+            lines.append("    })")
+
+        return "\n".join(lines)
 
 
 # Import required module
@@ -721,10 +753,15 @@ import re
 # Example usage and testing
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
-    
+
     # Test with sample mission data
-    from .fs2_mission_parser import (MissionData, MissionEvent, MissionGoal,
-                                     MissionInfo, MissionObject)
+    from .fs2_mission_parser import (
+        MissionData,
+        MissionEvent,
+        MissionGoal,
+        MissionInfo,
+        MissionObject,
+    )
 
     # Create test mission data
     test_mission = MissionData()
@@ -732,31 +769,29 @@ if __name__ == "__main__":
         name="Test Mission",
         author="Test Author",
         version=2.0,
-        description="A test mission for validation"
+        description="A test mission for validation",
     )
-    
+
     # Add test ship
     test_ship = MissionObject(
         name="Alpha 1",
         class_name="GTF Ulysses",
         position=(1000.0, 0.0, 2000.0),
-        team="friendly"
+        team="friendly",
     )
     test_mission.objects.append(test_ship)
-    
+
     # Add test goal
     test_goal = MissionGoal(
-        type="primary",
-        name="Destroy Enemy",
-        message="Destroy all enemy fighters"
+        type="primary", name="Destroy Enemy", message="Destroy all enemy fighters"
     )
     test_mission.goals.append(test_goal)
-    
+
     # Generate scene
     generator = GodotSceneGenerator()
     output_path = Path("test_mission.tscn")
     success = generator.generate_mission_scene(test_mission, output_path)
-    
+
     if success:
         print(f"Successfully generated test scene: {output_path}")
     else:

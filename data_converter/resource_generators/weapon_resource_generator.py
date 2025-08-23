@@ -13,110 +13,121 @@ from typing import Any, Dict, List
 
 class WeaponResourceGenerator:
     """Generates WeaponData .tres resource files from parsed weapon table data"""
-    
+
     def __init__(self, output_dir: str):
         self.output_dir = output_dir
         self.weapons_dir = os.path.join(output_dir, "weapons")
         os.makedirs(self.weapons_dir, exist_ok=True)
-    
-    def generate_weapon_resources(self, weapon_entries: List[Dict[str, Any]]) -> List[str]:
+
+    def generate_weapon_resources(
+        self, weapon_entries: List[Dict[str, Any]]
+    ) -> List[str]:
         """Generate .tres resource files for all weapon entries"""
         generated_files = []
-        
+
         # Organize weapons by type
         weapons_by_type = self._organize_weapons_by_type(weapon_entries)
-        
+
         for weapon_type, weapons in weapons_by_type.items():
             type_dir = os.path.join(self.weapons_dir, weapon_type)
             os.makedirs(type_dir, exist_ok=True)
-            
+
             for weapon in weapons:
-                resource_file = self._generate_single_weapon_resource(weapon, weapon_type)
+                resource_file = self._generate_single_weapon_resource(
+                    weapon, weapon_type
+                )
                 if resource_file:
                     generated_files.append(resource_file)
-        
+
         # Generate weapon registry
         registry_file = self._generate_weapon_registry(weapon_entries)
         if registry_file:
             generated_files.append(registry_file)
-        
+
         return generated_files
-    
-    def _organize_weapons_by_type(self, weapon_entries: List[Dict[str, Any]]) -> Dict[str, List[Dict[str, Any]]]:
+
+    def _organize_weapons_by_type(
+        self, weapon_entries: List[Dict[str, Any]]
+    ) -> Dict[str, List[Dict[str, Any]]]:
         """Organize weapons by type (primary, secondary, beam, etc.)"""
-        weapons_by_type = {
-            "primary": [],
-            "secondary": [],
-            "beam": [],
-            "special": []
-        }
-        
+        weapons_by_type = {"primary": [], "secondary": [], "beam": [], "special": []}
+
         for weapon in weapon_entries:
-            weapon_type = self._determine_weapon_type(weapon.get('name', ''))
+            weapon_type = self._determine_weapon_type(weapon.get("name", ""))
             weapons_by_type[weapon_type].append(weapon)
-        
+
         return weapons_by_type
-    
+
     def _determine_weapon_type(self, weapon_name: str) -> str:
         """Determine weapon type from name"""
         name_lower = weapon_name.lower()
-        
-        if any(word in name_lower for word in ['beam', 'laser']):
+
+        if any(word in name_lower for word in ["beam", "laser"]):
             return "beam"
-        elif any(word in name_lower for word in ['missile', 'torpedo', 'bomb', 'rocket']):
+        elif any(
+            word in name_lower for word in ["missile", "torpedo", "bomb", "rocket"]
+        ):
             return "secondary"
-        elif any(word in name_lower for word in ['emp', 'flak', 'swarm']):
+        elif any(word in name_lower for word in ["emp", "flak", "swarm"]):
             return "special"
         else:
             return "primary"  # Default for guns, cannons, etc.
-    
-    def _generate_single_weapon_resource(self, weapon: Dict[str, Any], weapon_type: str) -> str:
+
+    def _generate_single_weapon_resource(
+        self, weapon: Dict[str, Any], weapon_type: str
+    ) -> str:
         """Generate a single WeaponData .tres resource file"""
-        weapon_name = weapon.get('name', 'unknown_weapon')
+        weapon_name = weapon.get("name", "unknown_weapon")
         safe_name = self._sanitize_filename(weapon_name)
-        
+
         # Create .tres resource content
         resource_content = self._create_weapon_resource_content(weapon, weapon_type)
-        
+
         # Write resource file
         output_path = os.path.join(self.weapons_dir, weapon_type, f"{safe_name}.tres")
-        
+
         try:
-            with open(output_path, 'w') as f:
+            with open(output_path, "w") as f:
                 f.write(resource_content)
             print(f"Generated weapon resource: {output_path}")
             return output_path
         except Exception as e:
             print(f"Error writing weapon resource {output_path}: {e}")
             return ""
-    
-    def _create_weapon_resource_content(self, weapon: Dict[str, Any], weapon_type: str) -> str:
+
+    def _create_weapon_resource_content(
+        self, weapon: Dict[str, Any], weapon_type: str
+    ) -> str:
         """Create .tres resource content for WeaponData"""
-        
+
         # Extract weapon properties with defaults
-        weapon_name = weapon.get('name', 'Unknown Weapon')
-        damage = weapon.get('damage', 100.0)
-        velocity = weapon.get('velocity', 500.0)
-        mass = weapon.get('mass', 1.0)
-        fire_wait = weapon.get('fire_wait', 0.5)
-        weapon_range = weapon.get('weapon_range', 1000.0)
-        
+        weapon_name = weapon.get("name", "Unknown Weapon")
+        damage = weapon.get("damage", 100.0)
+        velocity = weapon.get("velocity", 500.0)
+        mass = weapon.get("mass", 1.0)
+        fire_wait = weapon.get("fire_wait", 0.5)
+        weapon_range = weapon.get("weapon_range", 1000.0)
+
         # Determine weapon characteristics
         is_homing = self._is_homing_weapon(weapon_name)
         pierces_shields = self._pierces_shields(weapon_name)
         weapon_class = self._get_weapon_class(weapon_type)
-        
+
         # Asset paths
         safe_name = self._sanitize_filename(weapon_name)
-        projectile_scene = f"res://scenes/weapons/{weapon_type}/{safe_name}_projectile.tscn"
+        projectile_scene = (
+            f"res://scenes/weapons/{weapon_type}/{safe_name}_projectile.tscn"
+        )
         firing_sound = f"res://assets/audio/weapons/{safe_name}_fire.ogg"
         impact_sound = f"res://assets/audio/weapons/{safe_name}_impact.ogg"
-        
+
         # Create .tres content using existing WeaponData structure
-        resource_content = self._create_comprehensive_weapon_resource(weapon, weapon_type)
-        
+        resource_content = self._create_comprehensive_weapon_resource(
+            weapon, weapon_type
+        )
+
         # Create comprehensive WeaponData .tres content
-        resource_content = f'''[gd_resource type="WeaponData" script_class="WeaponData" load_steps=2 format=3]
+        resource_content = f"""[gd_resource type="WeaponData" script_class="WeaponData" load_steps=2 format=3]
 
 [ext_resource type="Script" path="res://addons/wcs_asset_core/structures/weapon_data.gd" id="1"]
 
@@ -211,86 +222,92 @@ flags2 = 0
 
 # Miscellaneous
 cargo_size = {weapon.get('cargo_size', 1.0)}
-'''
+"""
         return resource_content
-    
+
     def _is_homing_weapon(self, weapon_name: str) -> bool:
         """Determine if weapon has homing capability"""
         name_lower = weapon_name.lower()
-        return any(word in name_lower for word in ['homing', 'missile', 'torpedo', 'aspect'])
-    
+        return any(
+            word in name_lower for word in ["homing", "missile", "torpedo", "aspect"]
+        )
+
     def _pierces_shields(self, weapon_name: str) -> bool:
         """Determine if weapon pierces shields"""
         name_lower = weapon_name.lower()
-        return any(word in name_lower for word in ['piercing', 'anti-shield', 'phaser'])
-    
+        return any(word in name_lower for word in ["piercing", "anti-shield", "phaser"])
+
     def _get_weapon_subtype(self, weapon_type: str) -> int:
         """Get weapon subtype constant"""
         type_mapping = {
-            "primary": 1,    # WP_PRIMARY
+            "primary": 1,  # WP_PRIMARY
             "secondary": 2,  # WP_SECONDARY
-            "beam": 3,       # WP_BEAM
-            "special": 4     # WP_SPECIAL
+            "beam": 3,  # WP_BEAM
+            "special": 4,  # WP_SPECIAL
         }
         return type_mapping.get(weapon_type, 1)
-    
+
     def _get_render_type(self, weapon: Dict[str, Any], weapon_type: str) -> int:
         """Determine render type from weapon data"""
         # Check for POF model
-        if weapon.get('model_file') or weapon.get('pof_file'):
+        if weapon.get("model_file") or weapon.get("pof_file"):
             return 1  # WRT_POF
         # Check for laser properties
-        elif weapon.get('laser_bitmap') or weapon_type == 'beam':
+        elif weapon.get("laser_bitmap") or weapon_type == "beam":
             return 2  # WRT_LASER
         else:
             return 1  # Default to POF
-    
-    def _get_effect_path(self, effect_name: str, effect_type: str, weapon_type: str) -> str:
+
+    def _get_effect_path(
+        self, effect_name: str, effect_type: str, weapon_type: str
+    ) -> str:
         """Get effect path from extracted data or fallback"""
         if effect_name:
             return f"res://effects/weapons/{effect_name}.tscn"
         else:
             return f"res://effects/weapons/{effect_type}_{weapon_type}.tscn"
-    
+
     def _sanitize_filename(self, name: str) -> str:
         """Convert weapon name to valid filename"""
         # Remove invalid characters and spaces
-        safe_name = ''.join(c if c.isalnum() or c in '-_' else '_' for c in name)
-        safe_name = safe_name.lower().strip('_')
-        return safe_name or 'unnamed_weapon'
-    
+        safe_name = "".join(c if c.isalnum() or c in "-_" else "_" for c in name)
+        safe_name = safe_name.lower().strip("_")
+        return safe_name or "unnamed_weapon"
+
     def _generate_weapon_registry(self, weapon_entries: List[Dict[str, Any]]) -> str:
         """Generate weapon registry resource file"""
-        registry_content = '''[gd_resource type="Resource" script_class="WeaponRegistryData" load_steps=2 format=3]
+        registry_content = """[gd_resource type="Resource" script_class="WeaponRegistryData" load_steps=2 format=3]
 
 [ext_resource type="Script" path="res://resources/weapons/weapon_registry_data.gd" id="1"]
 
 [resource]
 script = ExtResource("1")
 weapons_by_type = {
-'''
-        
+"""
+
         # Organize weapons by type
         weapons_by_type = self._organize_weapons_by_type(weapon_entries)
-        
+
         for weapon_type, weapons in weapons_by_type.items():
             if weapons:  # Only include types that have weapons
                 registry_content += f'    "{weapon_type}": [\n'
                 for weapon in weapons:
-                    weapon_name = weapon.get('name', 'unknown')
+                    weapon_name = weapon.get("name", "unknown")
                     safe_name = self._sanitize_filename(weapon_name)
-                    resource_path = f"res://resources/weapons/{weapon_type}/{safe_name}.tres"
+                    resource_path = (
+                        f"res://resources/weapons/{weapon_type}/{safe_name}.tres"
+                    )
                     registry_content += f'        "{resource_path}",\n'
-                registry_content += '    ],\n'
-        
-        registry_content += f'''}}
+                registry_content += "    ],\n"
+
+        registry_content += f"""}}
 total_weapons = {len(weapon_entries)}
-'''
-        
+"""
+
         # Write registry file
         registry_path = os.path.join(self.output_dir, "weapon_registry.tres")
         try:
-            with open(registry_path, 'w') as f:
+            with open(registry_path, "w") as f:
                 f.write(registry_content)
             print(f"Generated weapon registry: {registry_path}")
             return registry_path

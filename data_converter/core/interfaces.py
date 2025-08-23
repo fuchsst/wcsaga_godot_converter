@@ -20,12 +20,12 @@ from .data_structures import ConversionReport
 
 class IFileConverter(ABC):
     """Interface for converters that operate on single files."""
-    
+
     @abstractmethod
     def can_convert(self, file_path: Path) -> bool:
         """Check if this converter can handle the given file."""
         pass
-    
+
     @abstractmethod
     def convert_file(self, file_path: Path, target_path: Optional[Path] = None) -> bool:
         """Convert a single file."""
@@ -34,26 +34,29 @@ class IFileConverter(ABC):
 
 class IDirectoryConverter(ABC):
     """Interface for converters that operate on directories."""
-    
+
     @abstractmethod
-    def convert_directory(self, source_dir: Path, target_dir: Path, 
-                         pattern: str = "*") -> ConversionReport:
+    def convert_directory(
+        self, source_dir: Path, target_dir: Path, pattern: str = "*"
+    ) -> ConversionReport:
         """Convert all matching files in directory."""
         pass
 
 
 class IBatchConverter(ABC):
     """Interface for converters that support batch operations."""
-    
+
     @abstractmethod
-    def convert_batch(self, file_paths: list[Path], target_dir: Path) -> ConversionReport:
+    def convert_batch(
+        self, file_paths: list[Path], target_dir: Path
+    ) -> ConversionReport:
         """Convert multiple files in a batch operation."""
         pass
 
 
 class IValidatableConverter(ABC):
     """Interface for converters that support validation."""
-    
+
     @abstractmethod
     def validate_conversion(self, source_path: Path, target_path: Path) -> bool:
         """Validate conversion results."""
@@ -62,12 +65,12 @@ class IValidatableConverter(ABC):
 
 class IConfigurableConverter(ABC):
     """Interface for converters that support configuration."""
-    
+
     @abstractmethod
     def configure(self, config: dict) -> None:
         """Configure converter with settings."""
         pass
-    
+
     @abstractmethod
     def get_configuration(self) -> dict:
         """Get current converter configuration."""
@@ -76,12 +79,12 @@ class IConfigurableConverter(ABC):
 
 class IProgressReporter(ABC):
     """Interface for converters that report progress."""
-    
+
     @abstractmethod
     def set_progress_callback(self, callback) -> None:
         """Set progress reporting callback."""
         pass
-    
+
     @abstractmethod
     def get_progress(self) -> float:
         """Get current conversion progress (0.0 to 1.0)."""

@@ -17,73 +17,83 @@ from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
+
 class BlenderOBJConverter:
     """
     Automated Blender converter for OBJ to GLB conversion.
-    
+
     Handles Blender automation with proper material preservation,
     mesh optimization, and Godot-specific export settings.
     """
-    
+
     def __init__(self, blender_executable: Optional[Path] = None):
         """
         Initialize Blender converter.
-        
+
         Args:
             blender_executable: Path to Blender executable (auto-detected if None)
         """
         self.blender_executable = blender_executable or self._find_blender_executable()
         self.conversion_script = self._create_conversion_script()
-        
+
         if not self.blender_executable:
-            logger.warning("Blender executable not found - GLB conversion will be unavailable")
-    
-    def convert_obj_to_glb(self, obj_path: Path, glb_path: Path, 
-                          optimize_for_godot: bool = True) -> bool:
+            logger.warning(
+                "Blender executable not found - GLB conversion will be unavailable"
+            )
+
+    def convert_obj_to_glb(
+        self, obj_path: Path, glb_path: Path, optimize_for_godot: bool = True
+    ) -> bool:
         """
         Convert OBJ file to GLB using Blender automation.
-        
+
         Args:
             obj_path: Path to input OBJ file (with corresponding MTL)
             glb_path: Path to output GLB file
             optimize_for_godot: Apply Godot-specific optimizations
-            
+
         Returns:
             True if conversion successful, False otherwise
         """
         if not self.blender_executable:
             logger.error("Blender executable not available for GLB conversion")
             return False
-        
+
         logger.info(f"Converting OBJ to GLB: {obj_path} -> {glb_path}")
-        
+
         try:
             # Create temporary script file with conversion parameters
-            script_content = self._generate_conversion_script(obj_path, glb_path, optimize_for_godot)
-            
-            with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False, encoding='utf-8') as script_file:
+            script_content = self._generate_conversion_script(
+                obj_path, glb_path, optimize_for_godot
+            )
+
+            with tempfile.NamedTemporaryFile(
+                mode="w", suffix=".py", delete=False, encoding="utf-8"
+            ) as script_file:
                 script_file.write(script_content)
                 script_path = Path(script_file.name)
-            
+
             try:
                 # Execute Blender with conversion script
                 result = self._execute_blender_conversion(script_path)
-                
+
                 if result and glb_path.exists():
                     logger.info(f"Successfully converted to GLB: {glb_path}")
                     return True
                 else:
-                    logger.error(f"GLB conversion failed - output file not created: {glb_path}")
+                    logger.error(
+                        f"GLB conversion failed - output file not created: {glb_path}"
+                    )
                     return False
-                    
+
             finally:
                 # Clean up temporary script
                 script_path.unlink(missing_ok=True)
-                
+
         except Exception as e:
             logger.error(f"OBJ to GLB conversion failed: {e}", exc_info=True)
             return False
-    
+
     def _find_blender_executable(self) -> Optional[Path]:
         """Find Blender executable on the system."""
         common_paths = [
@@ -98,16 +108,18 @@ class BlenderOBJConverter:
             # macOS
             Path("/Applications/Blender.app/Contents/MacOS/Blender"),
         ]
-        
+
         # Check common installation paths
         for path in common_paths:
             if path.exists():
                 logger.info(f"Found Blender executable: {path}")
                 return path
-        
+
         # Try to find in PATH
         try:
-            result = subprocess.run(['which', 'blender'], capture_output=True, text=True)
+            result = subprocess.run(
+                ["which", "blender"], capture_output=True, text=True
+            )
             if result.returncode == 0:
                 blender_path = Path(result.stdout.strip())
                 if blender_path.exists():
@@ -115,23 +127,28 @@ class BlenderOBJConverter:
                     return blender_path
         except (subprocess.SubprocessError, FileNotFoundError):
             pass
-        
+
         # Try Windows where command
         try:
-            result = subprocess.run(['where', 'blender'], capture_output=True, text=True, shell=True)
+            result = subprocess.run(
+                ["where", "blender"], capture_output=True, text=True, shell=True
+            )
             if result.returncode == 0:
-                blender_path = Path(result.stdout.strip().split('\n')[0])
+                blender_path = Path(result.stdout.strip().split("\n")[0])
                 if blender_path.exists():
                     logger.info(f"Found Blender via where: {blender_path}")
                     return blender_path
         except (subprocess.SubprocessError, FileNotFoundError):
             pass
-        
-        logger.warning("Blender executable not found - please install Blender or specify path")
+
+        logger.warning(
+            "Blender executable not found - please install Blender or specify path"
+        )
         return None
-    
-    def _generate_conversion_script(self, obj_path: Path, glb_path: Path, 
-                                   optimize_for_godot: bool) -> str:
+
+    def _generate_conversion_script(
+        self, obj_path: Path, glb_path: Path, optimize_for_godot: bool
+    ) -> str:
         """Generate Blender Python script for OBJ to GLB conversion."""
         return f'''
 import bpy
@@ -281,25 +298,23 @@ def main():
 if __name__ == "__main__":
     main()
 '''
-    
+
     def _execute_blender_conversion(self, script_path: Path) -> bool:
         """Execute Blender with conversion script."""
         try:
             cmd = [
                 str(self.blender_executable),
-                '--background',  # Run without GUI
-                '--python', str(script_path)
+                "--background",  # Run without GUI
+                "--python",
+                str(script_path),
             ]
-            
+
             logger.debug(f"Executing Blender command: {' '.join(cmd)}")
-            
+
             result = subprocess.run(
-                cmd,
-                capture_output=True,
-                text=True,
-                timeout=300  # 5 minute timeout
+                cmd, capture_output=True, text=True, timeout=300  # 5 minute timeout
             )
-            
+
             if result.returncode == 0:
                 logger.debug("Blender conversion completed successfully")
                 if result.stdout:
@@ -312,14 +327,14 @@ if __name__ == "__main__":
                 if result.stdout:
                     logger.error(f"Blender stdout: {result.stdout}")
                 return False
-                
+
         except subprocess.TimeoutExpired:
             logger.error("Blender conversion timed out")
             return False
         except Exception as e:
             logger.error(f"Failed to execute Blender: {e}", exc_info=True)
             return False
-    
+
     def _create_conversion_script(self) -> str:
         """Create base Blender Python script template."""
         return """
@@ -327,63 +342,70 @@ if __name__ == "__main__":
 # This will be customized for each conversion job
 """
 
+
 class BlenderBatchConverter:
     """Batch converter for multiple OBJ files."""
-    
+
     def __init__(self, blender_executable: Optional[Path] = None):
         """Initialize batch converter."""
         self.converter = BlenderOBJConverter(blender_executable)
-    
-    def convert_directory(self, input_dir: Path, output_dir: Path, 
-                         pattern: str = "*.obj") -> Dict[str, bool]:
+
+    def convert_directory(
+        self, input_dir: Path, output_dir: Path, pattern: str = "*.obj"
+    ) -> Dict[str, bool]:
         """
         Convert all OBJ files in directory to GLB.
-        
+
         Args:
             input_dir: Directory containing OBJ files
             output_dir: Directory for GLB output
             pattern: File pattern to match
-            
+
         Returns:
             Dictionary mapping input files to conversion success status
         """
         if not self.converter.blender_executable:
             logger.error("Blender not available for batch conversion")
             return {}
-        
+
         results: Dict[str, bool] = {}
         obj_files = list(input_dir.glob(pattern))
-        
+
         logger.info(f"Starting batch conversion of {len(obj_files)} files")
-        
+
         for obj_file in obj_files:
-            glb_file = output_dir / obj_file.with_suffix('.glb').name
+            glb_file = output_dir / obj_file.with_suffix(".glb").name
             success = self.converter.convert_obj_to_glb(obj_file, glb_file)
             results[str(obj_file)] = success
-            
+
             if success:
                 logger.info(f"✓ Converted: {obj_file.name}")
             else:
                 logger.error(f"✗ Failed: {obj_file.name}")
-        
+
         successful = sum(1 for success in results.values() if success)
-        logger.info(f"Batch conversion complete: {successful}/{len(obj_files)} successful")
-        
+        logger.info(
+            f"Batch conversion complete: {successful}/{len(obj_files)} successful"
+        )
+
         return results
 
+
 # Example usage and testing
-if __name__ == '__main__':
+if __name__ == "__main__":
     import sys
-    
-    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-    
+
+    logging.basicConfig(
+        level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+    )
+
     if len(sys.argv) < 3:
         print("Usage: python blender_converter.py <input.obj> <output.glb>")
         sys.exit(1)
-    
+
     obj_path = Path(sys.argv[1])
     glb_path = Path(sys.argv[2])
-    
+
     converter = BlenderOBJConverter()
     if converter.convert_obj_to_glb(obj_path, glb_path):
         print(f"Successfully converted {obj_path} to {glb_path}")

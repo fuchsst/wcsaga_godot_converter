@@ -17,10 +17,10 @@ class MedalsTableConverter(BaseTableConverter):
     def _init_parse_patterns(self) -> Dict[str, re.Pattern]:
         """Initialize regex patterns for medals.tbl parsing"""
         return {
-            'name': re.compile(r'^\$Name:\s*(.+)$', re.IGNORECASE),
-            'bitmap': re.compile(r'^\$Bitmap:\s*(.+)$', re.IGNORECASE),
-            'num_levels': re.compile(r'^\$Num Levels:\s*(\d+)$', re.IGNORECASE),
-            'section_end': re.compile(r'^#End$', re.IGNORECASE),
+            "name": re.compile(r"^\$Name:\s*(.+)$", re.IGNORECASE),
+            "bitmap": re.compile(r"^\$Bitmap:\s*(.+)$", re.IGNORECASE),
+            "num_levels": re.compile(r"^\$Num Levels:\s*(\d+)$", re.IGNORECASE),
+            "section_end": re.compile(r"^#End$", re.IGNORECASE),
         }
 
     def get_table_type(self) -> TableType:
@@ -34,12 +34,12 @@ class MedalsTableConverter(BaseTableConverter):
             if not line or self._should_skip_line(line, state):
                 state.skip_line()
                 continue
-            
-            if self._parse_patterns['name'].match(line.strip()):
+
+            if self._parse_patterns["name"].match(line.strip()):
                 entry = self.parse_entry(state)
                 if entry:
                     entries.append(entry)
-            elif self._parse_patterns['section_end'].match(line.strip()):
+            elif self._parse_patterns["section_end"].match(line.strip()):
                 break
             else:
                 state.skip_line()
@@ -53,52 +53,56 @@ class MedalsTableConverter(BaseTableConverter):
             line = state.next_line()
             if line is None:
                 break
-            
+
             line = line.strip()
             if not line:
                 continue
 
-            if self._parse_patterns['name'].match(line) and 'name' in entry_data:
+            if self._parse_patterns["name"].match(line) and "name" in entry_data:
                 state.current_line -= 1
                 break
-            
-            if self._parse_patterns['section_end'].match(line):
-                state.current_line -=1
+
+            if self._parse_patterns["section_end"].match(line):
+                state.current_line -= 1
                 break
 
-            match = self._parse_patterns['name'].match(line)
+            match = self._parse_patterns["name"].match(line)
             if match:
-                entry_data['name'] = match.group(1).strip()
+                entry_data["name"] = match.group(1).strip()
                 continue
 
-            match = self._parse_patterns['bitmap'].match(line)
+            match = self._parse_patterns["bitmap"].match(line)
             if match:
-                entry_data['bitmap'] = match.group(1).strip()
+                entry_data["bitmap"] = match.group(1).strip()
                 continue
 
-            match = self._parse_patterns['num_levels'].match(line)
+            match = self._parse_patterns["num_levels"].match(line)
             if match:
-                entry_data['num_levels'] = int(match.group(1))
+                entry_data["num_levels"] = int(match.group(1))
                 continue
 
         return self.validate_entry(entry_data) and entry_data or None
 
     def validate_entry(self, entry: Dict[str, Any]) -> bool:
         """Validate a parsed medal entry."""
-        return 'name' in entry and 'bitmap' in entry
+        return "name" in entry and "bitmap" in entry
 
-    def convert_to_godot_resource(self, entries: List[Dict[str, Any]]) -> Dict[str, Any]:
+    def convert_to_godot_resource(
+        self, entries: List[Dict[str, Any]]
+    ) -> Dict[str, Any]:
         """Convert parsed medal entries to a Godot resource dictionary."""
         return {
-            'resource_type': 'WCSMedalDatabase',
-            'medals': {entry['name']: self._convert_medal_entry(entry) for entry in entries},
-            'medal_count': len(entries)
+            "resource_type": "WCSMedalDatabase",
+            "medals": {
+                entry["name"]: self._convert_medal_entry(entry) for entry in entries
+            },
+            "medal_count": len(entries),
         }
 
     def _convert_medal_entry(self, entry: Dict[str, Any]) -> Dict[str, Any]:
         """Convert a single medal entry to the target Godot format."""
         return {
-            'name': entry.get('name'),
-            'bitmap': entry.get('bitmap'),
-            'num_levels': entry.get('num_levels', 1),
+            "name": entry.get("name"),
+            "bitmap": entry.get("bitmap"),
+            "num_levels": entry.get("num_levels", 1),
         }
