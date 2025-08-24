@@ -16,7 +16,6 @@ import json
 import os
 import re
 import shutil
-import winreg
 from dataclasses import asdict, dataclass
 from enum import Enum
 from pathlib import Path

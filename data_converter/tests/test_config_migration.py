@@ -22,7 +22,7 @@ from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 sys.path.append(str(Path(__file__).parent.parent))
-from config_migrator import (
+from tools.config_migrator import (
     AudioSettings,
     ConfigMigrator,
     ConfigType,

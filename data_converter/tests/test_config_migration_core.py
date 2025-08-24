@@ -20,7 +20,7 @@ import pytest
 
 # Import the module under test
 sys.path.append(str(Path(__file__).parent.parent))
-from config_migrator import (
+from tools.config_migrator import (
     AudioSettings,
     ConfigMigrator,
     GameplaySettings,

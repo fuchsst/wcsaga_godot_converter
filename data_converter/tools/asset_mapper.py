@@ -26,7 +26,7 @@ from ..core.entity_classifier import EntityClassifier, EntityType, TableType
 from ..core.path_resolver import TargetPathResolver
 
 # Core addon imports
-from ..data_structures import AssetMapping, AssetRelationship
+from ..core.catalog.asset_catalog import AssetMapping, AssetRelationship
 
 logger = logging.getLogger(__name__)
 

@@ -16,7 +16,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Tuple
 
-from ..data_structures import AssetMapping, AssetRelationship
+from .catalog.asset_catalog import AssetRelationship
 
 logger = logging.getLogger(__name__)
 

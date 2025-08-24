@@ -19,7 +19,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 sys.modules["config_migrator"] = Mock()
 sys.modules["asset_catalog"] = Mock()
 
-from conversion_manager import ConversionJob
+from core.conversion.job_manager import ConversionJob, JobStatus
 
 
 class MinimalConversionManager:
@@ -57,7 +57,7 @@ class MinimalConversionManager:
         if file_hash in self.file_hash_manifest:
             original_target = self.file_hash_manifest[file_hash]
             job.duplicate_of = original_target
-            job.status = "skipped_duplicate"
+            job.status = JobStatus.SKIPPED
             job.progress = 1.0
             self.duplicate_files.append(job)
             return True
@@ -161,12 +161,12 @@ class TestDuplicateDetection(unittest.TestCase):
         # First file should not be duplicate
         is_duplicate1 = self.manager._check_duplicate_file(job1)
         self.assertFalse(is_duplicate1)
-        self.assertEqual(job1.status, "pending")
+        self.assertEqual(job1.status.value, "pending")
 
         # Second file should be detected as duplicate
         is_duplicate2 = self.manager._check_duplicate_file(job2)
         self.assertTrue(is_duplicate2)
-        self.assertEqual(job2.status, "skipped_duplicate")
+        self.assertEqual(job2.status.value, "skipped")
         self.assertEqual(job2.duplicate_of, str(job1.target_path))
 
     def test_duplicate_detection_different_content(self):
@@ -199,8 +199,8 @@ class TestDuplicateDetection(unittest.TestCase):
 
         self.assertFalse(is_duplicate1)
         self.assertFalse(is_duplicate2)
-        self.assertEqual(job1.status, "pending")
-        self.assertEqual(job2.status, "pending")
+        self.assertEqual(job1.status.value, "pending")
+        self.assertEqual(job2.status.value, "pending")
 
     def test_skip_duplicate_detection_for_excluded_types(self):
         """Test that certain job types skip duplicate detection"""
