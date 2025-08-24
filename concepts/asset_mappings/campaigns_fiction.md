@@ -102,71 +102,69 @@ Narrative music files:
 │       ├── chapters.tres            # Chapter definitions
 │       └── plot_points.tres         # Key plot points
 
-/text/fiction/                       # Fiction text directory
-├── hermes/                          # Hermes campaign fiction
-│   ├── disc_01/                     # Disc 1 fiction
-│   │   ├── d1fiction.txt            # Disc 1 fiction text
-│   │   ├── characters/              # Character introductions
-│   │   ├── setting/                 # Setting descriptions
-│   │   └── background/              # Background information
-│   ├── disc_02/                     # Disc 2 fiction
-│   │   ├── d2fiction.txt            # Disc 2 fiction text
-│   │   ├── characters/              # Character development
-│   │   ├── conflicts/               # Conflict escalation
-│   │   └── revelations/             # Plot reveals
-│   ├── disc_03/                     # Disc 3 fiction
-│   │   ├── d3fiction.txt            # Disc 3 fiction text
-│   │   ├── characters/              # Character arcs
-│   │   ├── politics/                # Political intrigue
-│   │   └── battles/                 # Battle descriptions
-│   ├── disc_04/                     # Disc 4 fiction
-│   │   ├── d4fiction.txt            # Disc 4 fiction text
-│   │   ├── characters/              # Character climax
-│   │   ├── turning_points/          # Story turning points
-│   │   └── revelations/             # Major reveals
-│   ├── disc_05/                     # Disc 5 fiction
-│   │   ├── d5fiction.txt            # Disc 5 fiction text
-│   │   ├── characters/              # Character resolutions
-│   │   ├── conclusion/              # Story conclusion
-│   │   └── aftermath/               # Post-conflict aftermath
-│   ├── missions/                    # Mission-specific fiction
-│   │   ├── m01/                     # Mission 1 fiction
-│   │   │   ├── m1fiction.txt        # Mission 1 fiction text
-│   │   │   ├── background.txt       # Mission background
-│   │   │   ├── objectives.txt       # Mission objectives
-│   │   │   └── outcome.txt          # Expected outcomes
-│   │   ├── m02/                     # Mission 2 fiction
-│   │   │   ├── m2fiction.txt        # Mission 2 fiction text
-│   │   │   ├── background.txt       # Mission background
-│   │   │   ├── objectives.txt       # Mission objectives
-│   │   │   └── outcome.txt          # Expected outcomes
-│   │   └── ...                      # Additional missions
-│   └── characters/                  # Character-specific fiction
-│       ├── moran/                   # Captain Moran stories
-│       ├── sandman/                 # Sandman stories
-│       ├── honeybear/               # Honeybear stories
-│       └── ...                      # Additional characters
+/campaigns/hermes/fiction/           # Campaign fiction directory
+├── disc_01/                         # Disc 1 fiction
+│   ├── d1fiction.txt                # Disc 1 fiction text
+│   ├── characters/                  # Character introductions
+│   ├── setting/                     # Setting descriptions
+│   └── background/                  # Background information
+├── disc_02/                         # Disc 2 fiction
+│   ├── d2fiction.txt                # Disc 2 fiction text
+│   ├── characters/                  # Character development
+│   ├── conflicts/                   # Conflict escalation
+│   └── revelations/                 # Plot reveals
+├── disc_03/                         # Disc 3 fiction
+│   ├── d3fiction.txt                # Disc 3 fiction text
+│   ├── characters/                  # Character arcs
+│   ├── politics/                    # Political intrigue
+│   └── battles/                     # Battle descriptions
+├── disc_04/                         # Disc 4 fiction
+│   ├── d4fiction.txt                # Disc 4 fiction text
+│   ├── characters/                  # Character climax
+│   ├── turning_points/              # Story turning points
+│   └── revelations/                 # Major reveals
+├── disc_05/                         # Disc 5 fiction
+│   ├── d5fiction.txt                # Disc 5 fiction text
+│   ├── characters/                  # Character resolutions
+│   ├── conclusion/                  # Story conclusion
+│   └── aftermath/                   # Post-conflict aftermath
+├── missions/                        # Mission-specific fiction
+│   ├── m01/                         # Mission 1 fiction
+│   │   ├── m1fiction.txt            # Mission 1 fiction text
+│   │   ├── background.txt           # Mission background
+│   │   ├── objectives.txt           # Mission objectives
+│   │   └── outcome.txt              # Expected outcomes
+│   ├── m02/                         # Mission 2 fiction
+│   │   ├── m2fiction.txt            # Mission 2 fiction text
+│   │   ├── background.txt           # Mission background
+│   │   ├── objectives.txt           # Mission objectives
+│   │   └── outcome.txt              # Expected outcomes
+│   └── ...                          # Additional missions
+└── characters/                      # Character-specific fiction
+    ├── moran/                       # Captain Moran stories
+    ├── sandman/                     # Sandman stories
+    ├── honeybear/                   # Honeybear stories
+    └── ...                          # Additional characters
 
-/text/briefing/                      # Briefing text directory
-├── hermes/                          # Hermes campaign briefing
-│   ├── missions/                    # Mission briefings
-│   │   ├── m01/                     # Mission 1 briefing
-│   │   │   ├── objectives.txt       # Mission objectives
-│   │   │   ├── intel.txt            # Intelligence briefing
-│   │   │   ├── tactics.txt          # Tactical advice
-│   │   │   └── contingencies.txt    # Contingency plans
-│   │   ├── m02/                     # Mission 2 briefing
-│   │   │   ├── objectives.txt       # Mission objectives
-│   │   │   ├── intel.txt            # Intelligence briefing
-│   │   │   ├── tactics.txt          # Tactical advice
-│   │   │   └── contingencies.txt    # Contingency plans
-│   │   └── ...                      # Additional missions
-│   └── campaigns/                   # Campaign briefings
-│       ├── disc_01/                 # Disc 1 briefing
-│       ├── disc_02/                 # Disc 2 briefing
-│       ├── disc_03/                 # Disc 3 briefing
-│       ├── disc_04/                 # Disc 4 briefing
-│       └── disc_05/                 # Disc 5 briefing
+/campaigns/hermes/briefing/          # Campaign briefing directory
+├── missions/                        # Mission briefings
+│   ├── m01/                         # Mission 1 briefing
+│   │   ├── objectives.txt           # Mission objectives
+│   │   ├── intel.txt                # Intelligence briefing
+│   │   ├── tactics.txt              # Tactical advice
+│   │   └── contingencies.txt        # Contingency plans
+│   ├── m02/                         # Mission 2 briefing
+│   │   ├── objectives.txt           # Mission objectives
+│   │   ├── intel.txt                # Intelligence briefing
+│   │   ├── tactics.txt              # Tactical advice
+│   │   └── contingencies.txt        # Contingency plans
+│   └── ...                          # Additional missions
+└── campaigns/                       # Campaign briefings
+    ├── disc_01/                     # Disc 1 briefing
+    ├── disc_02/                     # Disc 2 briefing
+    ├── disc_03/                     # Disc 3 briefing
+    ├── disc_04/                     # Disc 4 briefing
+    └── disc_05/                     # Disc 5 briefing
 
 /audio/voice/fiction/                # Fiction voice acting directory
 ├── hermes/                          # Hermes campaign voices
@@ -277,15 +275,15 @@ Narrative music files:
 
 ## Example Mapping
 For Disc 1 Fiction:
-- d1fiction.txt → /text/fiction/hermes/disc_01/d1fiction.txt
+- d1fiction.txt → /campaigns/hermes/fiction/disc_01/d1fiction.txt
 - fiction_narrator.wav → /audio/voice/fiction/hermes/narrator/disc_01/narration.ogg
 - dramatic_underscore.ogg → /audio/music/fiction/hermes/moods/dramatic.ogg
 - disc1_intro.ani → /animations/cutscenes/hermes/intro/disc_intros/disc1_intro.png
 - fiction_reader_background.pcx → /ui/fiction_reader/hermes/backgrounds/disc1_background.webp
 
 For Mission 1 Fiction:
-- m1fiction.txt → /text/fiction/hermes/missions/m01/m1fiction.txt
-- m1_briefing.txt → /text/briefing/hermes/missions/m01/objectives.txt
+- m1fiction.txt → /campaigns/hermes/fiction/missions/m01/m1fiction.txt
+- m1_briefing.txt → /campaigns/hermes/briefing/missions/m01/objectives.txt
 - mission1_briefing_voice.wav → /audio/voice/fiction/hermes/missions/m01/briefing.ogg
 - m1_briefing_music.ogg → /audio/music/fiction/hermes/missions/m01/briefing.ogg
 - m1_intro_cutscene.ani → /animations/cutscenes/hermes/missions/m01/intro.png

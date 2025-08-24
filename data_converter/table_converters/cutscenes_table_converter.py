@@ -14,6 +14,11 @@ from .base_converter import BaseTableConverter, ParseState, TableType
 class CutscenesTableConverter(BaseTableConverter):
     """Converts WCS cutscenes.tbl files to Godot cutscene resources"""
 
+    # Metadata for auto-registration
+    TABLE_TYPE = TableType.CUTSCENES
+    FILENAME_PATTERNS = ["cutscenes.tbl"]
+    CONTENT_PATTERNS = ["cutscenes.tbl"]
+
     def _init_parse_patterns(self) -> Dict[str, re.Pattern]:
         """Initialize regex patterns for cutscenes.tbl parsing"""
         return {
@@ -134,9 +139,17 @@ class CutscenesTableConverter(BaseTableConverter):
 
     def _convert_cutscene_entry(self, entry: Dict[str, Any]) -> Dict[str, Any]:
         """Convert a single cutscene entry to the target Godot format."""
+        # Convert audio filename to proper Godot path
+        filename = entry.get("filename", "")
+        if filename:
+            # Convert .ogg extension to proper Godot audio path
+            audio_path = f"audio/cutscenes/{filename}"
+        else:
+            audio_path = ""
+        
         return {
             "name": entry.get("name"),
-            "filename": entry.get("filename"),
+            "filename": audio_path,
             "description": entry.get("description"),
             "cd": entry.get("cd"),
         }

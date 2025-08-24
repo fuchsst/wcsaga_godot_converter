@@ -28,10 +28,8 @@ from .pof_chunks import (
     ID_SOBJ,
     ID_SPCL,
     ID_TXTR,
-    PM_COMPATIBLE_VERSION,
-    PM_OBJFILE_MAJOR_VERSION,
     POF_HEADER_ID,
-    read_chunk_header,
+    get_chunk_name,
 )
 from .pof_docking_parser import read_dock_chunk
 from .pof_eye_parser import read_eye_chunk
@@ -49,11 +47,14 @@ from .pof_thruster_parser import read_fuel_chunk
 from .pof_weapon_points_parser import read_gpnt_chunk, read_mpnt_chunk
 
 # Import enhanced error handling and types
-from .pof_error_handler import POFErrorHandler, ErrorSeverity, ErrorCategory
-from .pof_enhanced_types import POFModelDataEnhanced, SubObject, SpecialPoint, dict_to_subobject, BSPNode, POFVersion, POFHeader, BoundingBox, Vector3D, BSPNodeType
+from .pof_error_handler import UnifiedPOFErrorHandler, ErrorSeverity, ErrorCategory
+from .pof_types import POFModelData, SubObject, SpecialPoint, BSPNode, POFVersion, POFHeader, BoundingBox, Vector3D, BSPNodeType
 
 # Import version handler for comprehensive version-specific parsing
 from .pof_version_handler import POFVersionHandler
+
+# Import unified binary reader
+from .pof_binary_reader import create_reader
 
 logger = logging.getLogger(__name__)
 
@@ -74,7 +75,7 @@ class POFParser:
         self._initialize_data_structure()
         self.bsp_data_cache: Dict[int, bytes] = {}
         self._current_file_handle: Optional[BinaryIO] = None
-        self.error_handler = POFErrorHandler()
+        self.error_handler = UnifiedPOFErrorHandler()
         self.version_handler = POFVersionHandler()
         self._current_chunk_id: Optional[int] = None
         self._current_chunk_name: Optional[str] = None
@@ -82,7 +83,7 @@ class POFParser:
     def _initialize_data_structure(self) -> None:
         """Initialize the POF data structure with enhanced types."""
         # Create empty enhanced data structure
-        self.pof_data = POFModelDataEnhanced(
+        self.pof_data = POFModelData(
             filename="",
             version=POFVersion.VERSION_2100,
             header=POFHeader(
@@ -341,7 +342,7 @@ class POFParser:
                 )
                 self.pof_data.header.debris_pieces[i] = -1
 
-    def parse(self, file_path: Path) -> Optional[POFModelDataEnhanced]:
+    def parse(self, file_path: Path) -> Optional[POFModelData]:
         """
         Parse POF file and return structured data.
 
@@ -438,9 +439,12 @@ class POFParser:
             current_pos = f.tell()
             self.error_handler.set_position(current_pos)
             
+            # Use unified binary reader
+            reader = create_reader(f)
+            
             # Read POF header
-            pof_id = struct.unpack("<I", f.read(4))[0]
-            pof_version = struct.unpack("<i", f.read(4))[0]
+            pof_id = reader.read_uint32()
+            pof_version = reader.read_int32()
 
             if pof_id != POF_HEADER_ID:
                 self.error_handler.add_error(
@@ -479,7 +483,7 @@ class POFParser:
             logger.debug(f"POF Version: {pof_version} - {version_info.get('name', 'Unknown')}")
             return True
 
-        except (struct.error, EOFError) as e:
+        except Exception as e:
             self.error_handler.add_error(
                 f"Failed to read POF header: {e}",
                 severity=ErrorSeverity.ERROR,
@@ -533,25 +537,6 @@ class POFParser:
             ID_SLDC: "shield_collision_tree",
         }
 
-        # Chunk ID to name mapping for error reporting
-        chunk_name_map = {
-            ID_OHDR: "OHDR",
-            ID_SOBJ: "SOBJ", 
-            ID_TXTR: "TXTR",
-            ID_SPCL: "SPCL",
-            ID_PATH: "PATH",
-            ID_GPNT: "GPNT",
-            ID_MPNT: "MPNT",
-            ID_DOCK: "DOCK",
-            ID_FUEL: "FUEL",
-            ID_SHLD: "SHLD",
-            ID_EYE: "EYE",
-            ID_INSG: "INSG",
-            ID_ACEN: "ACEN",
-            ID_GLOW: "GLOW",
-            ID_SLDC: "SLDC",
-        }
-
         # Read chunks until EOF
         while True:
             chunk_start_pos = f.tell()
@@ -564,13 +549,15 @@ class POFParser:
                     logger.debug("Reached end of file (insufficient data for header)")
                     break
 
-                chunk_id, chunk_len = read_chunk_header(f)
-                chunk_name = chunk_name_map.get(chunk_id, f"UNKNOWN_{chunk_id:08X}")
+                # Use unified binary reader
+                reader = create_reader(f)
+                chunk_id, chunk_len = reader.read_chunk_header()
+                chunk_name = get_chunk_name(chunk_id)
                 
                 self.error_handler.set_chunk_context(chunk_id, chunk_name)
                 logger.debug(f"Found chunk ID: {chunk_id:08X} ({chunk_name}), Length: {chunk_len}")
 
-            except (struct.error, EOFError) as e:
+            except Exception as e:
                 self.error_handler.add_error(
                     f"Failed to read chunk header: {e}",
                     severity=ErrorSeverity.WARNING,
@@ -578,14 +565,6 @@ class POFParser:
                     recovery_action="Assume end of file reached"
                 )
                 logger.debug("Reached end of file or failed to read chunk header")
-                break
-            except Exception as e:
-                self.error_handler.add_error(
-                    f"Unexpected error reading chunk header at pos {chunk_start_pos}: {e}",
-                    severity=ErrorSeverity.ERROR,
-                    category=ErrorCategory.PARSING,
-                    recovery_action="Skip to next chunk if possible"
-                )
                 break
 
             # Validate chunk length
@@ -601,7 +580,7 @@ class POFParser:
             next_chunk_pos = chunk_start_pos + 8 + chunk_len
 
             # Process chunk
-            self._process_chunk(f, chunk_id, chunk_len, chunk_readers, data_key_map, chunk_name_map)
+            self._process_chunk(f, chunk_id, chunk_len, chunk_readers, data_key_map)
 
             # Verify chunk position and seek to next chunk
             self._verify_chunk_position(
@@ -620,11 +599,10 @@ class POFParser:
         chunk_len: int,
         chunk_readers: Dict[int, Any],
         data_key_map: Dict[int, str],
-        chunk_name_map: Dict[int, str],
     ) -> None:
         """Process a single chunk with enhanced error handling."""
         reader_func = chunk_readers.get(chunk_id)
-        chunk_name = chunk_name_map.get(chunk_id, f"UNKNOWN_{chunk_id:08X}")
+        chunk_name = get_chunk_name(chunk_id)
 
         if reader_func:
             data_key = data_key_map.get(chunk_id)
@@ -664,7 +642,7 @@ class POFParser:
         try:
             if chunk_id == ID_OHDR:
                 # OHDR contains complete header data - convert from dict to POFHeader
-                from .pof_enhanced_types import dict_to_header
+                from .pof_types import dict_to_header
                 self.pof_data.header = dict_to_header(parsed_data, self.pof_data.version)
             
             elif chunk_id == ID_SOBJ:
@@ -698,7 +676,7 @@ class POFParser:
                 }
                 point_type = point_type_map.get(chunk_id, 'unknown')
                 
-                from .pof_enhanced_types import dict_to_special_point
+                from .pof_types import dict_to_special_point
                 
                 if isinstance(parsed_data, list):
                     for point_data in parsed_data:
@@ -715,7 +693,7 @@ class POFParser:
             
             elif chunk_id == ID_PATH:
                 # PATH returns AnimationPath instances - convert dictionaries
-                from .pof_enhanced_types import dict_to_animation_path
+                from .pof_types import dict_to_animation_path
                 
                 if isinstance(parsed_data, list):
                     for path_data in parsed_data:
@@ -732,7 +710,7 @@ class POFParser:
             
             elif chunk_id == ID_SHLD:
                 # SHLD returns ShieldMesh - convert dictionary
-                from .pof_enhanced_types import dict_to_shield_mesh
+                from .pof_types import dict_to_shield_mesh
                 
                 if isinstance(parsed_data, dict):
                     self.pof_data.shield_mesh = dict_to_shield_mesh(parsed_data)
@@ -742,7 +720,7 @@ class POFParser:
             
             elif chunk_id == ID_INSG:
                 # INSG returns InsigniaData instances - convert dictionaries
-                from .pof_enhanced_types import dict_to_insignia
+                from .pof_types import dict_to_insignia
                 
                 if isinstance(parsed_data, list):
                     for insignia_data in parsed_data:
@@ -759,7 +737,7 @@ class POFParser:
             
             elif chunk_id == ID_ACEN:
                 # ACEN returns Vector3D - convert list to Vector3D
-                from .pof_enhanced_types import list_to_vector3d
+                from .pof_types import list_to_vector3d
                 
                 if isinstance(parsed_data, list):
                     self.pof_data.autocenter = list_to_vector3d(parsed_data)
@@ -769,7 +747,7 @@ class POFParser:
             
             elif chunk_id == ID_GLOW:
                 # GLOW returns GlowBank instances - convert dictionaries
-                from .pof_enhanced_types import dict_to_glow_bank
+                from .pof_types import dict_to_glow_bank
                 
                 if isinstance(parsed_data, list):
                     for glow_data in parsed_data:

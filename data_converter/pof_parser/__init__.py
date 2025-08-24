@@ -8,6 +8,8 @@ geometry, materials, textures, and metadata for conversion to Godot-compatible f
 Follows EPIC-003 architecture for data migration and conversion tools.
 """
 
+# Import unified binary reader as the primary interface
+from .pof_binary_reader import POFBinaryReader, create_reader
 from .pof_chunks import (  # Constants needed by other modules; Chunk IDs
     ID_ACEN,
     ID_DOCK,
@@ -33,30 +35,20 @@ from .pof_chunks import (  # Constants needed by other modules; Chunk IDs
     MAX_SLOTS,
     MAX_SPLIT_PLANE,
     MAX_TFP,
-    parse_bsp_data,
-    read_byte,
-    read_chunk_header,
-    read_float,
-    read_int,
-    read_matrix,
-    read_short,
-    read_string,
-    read_string_len,
-    read_ubyte,
-    read_uint,
-    read_unknown_chunk,
-    read_ushort,
-    read_vector,
+    get_chunk_name,
+    is_valid_chunk_length,
 )
+from .pof_bsp_parser import parse_bsp_data
 from .pof_data_extractor import POFDataExtractor
 from .pof_docking_parser import read_dock_chunk
 from .pof_eye_parser import read_eye_chunk
 from .pof_format_analyzer import POFFormatAnalyzer
 from .pof_header_parser import read_ohdr_chunk
 from .pof_insignia_parser import read_insg_chunk
-from .pof_misc_parser import (  # read_unknown_chunk is in pof_chunks
+from .pof_misc_parser import (
     read_acen_chunk,
     read_glow_chunk,
+    read_unknown_chunk,
 )
 from .pof_parser import POFParser
 from .pof_path_parser import read_path_chunk
@@ -67,7 +59,7 @@ from .pof_texture_parser import read_txtr_chunk
 from .pof_thruster_parser import read_fuel_chunk
 from .pof_to_gltf import convert_pof_to_gltf
 from .pof_weapon_points_parser import read_gpnt_chunk, read_mpnt_chunk
-from .vector3d import Vector3D
+from .pof_types import Vector3D
 
 __all__ = [
     # Core classes/functions
@@ -76,6 +68,8 @@ __all__ = [
     "POFFormatAnalyzer",
     "POFDataExtractor",
     "convert_pof_to_gltf",
+    "POFBinaryReader",
+    "create_reader",
     # Chunk reading functions
     "read_chunk_header",
     "read_ohdr_chunk",
@@ -95,18 +89,9 @@ __all__ = [
     "read_sldc_chunk",
     "read_unknown_chunk",
     "parse_bsp_data",
-    # Helper reading functions (if needed externally, though maybe not)
-    "read_int",
-    "read_uint",
-    "read_short",
-    "read_ushort",
-    "read_float",
-    "read_byte",
-    "read_ubyte",
-    "read_vector",
-    "read_matrix",
-    "read_string",
-    "read_string_len",
+    # Utility functions
+    "get_chunk_name",
+    "is_valid_chunk_length",
     # Constants
     "MAX_NAME_LEN",
     "MAX_PROP_LEN",

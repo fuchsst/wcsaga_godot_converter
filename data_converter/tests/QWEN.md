@@ -76,15 +76,32 @@ The Table Data Converter tests validate the conversion of Wing Commander Saga (W
 
 ```
 data_converter/tests/
-├── test_table_parsing.py          # Core parsing functionality tests
-├── test_ship_converter.py         # Ship-specific converter tests
-├── test_weapon_converter.py       # Weapon-specific converter tests
-├── test_armor_converter.py        # Armor-specific converter tests
-├── test_species_converter.py      # Species-specific converter tests
-├── test_iff_converter.py          # IFF/faction converter tests
-├── test_integration.py            # Pipeline integration tests
-├── test_error_handling.py         # Error and edge case tests
-├── test_performance.py            # Performance benchmarking tests
+├── table_converters/              # Individual table converter tests
+│   ├── test_armor_table_converter.py
+│   ├── test_asteroid_converter.py
+│   ├── test_base_converter.py
+│   ├── test_cutscenes_converter.py
+│   ├── test_iff_table_converter.py
+│   ├── test_medals_ranks_converters.py
+│   ├── test_scripting_table_converter.py
+│   ├── test_ship_table_converter.py
+│   ├── test_sound_converters.py
+│   ├── test_species_defs_table_converter.py
+│   ├── test_species_iff_converters.py
+│   ├── test_stars_nebula_converters.py
+│   ├── test_text_converters.py
+│   └── test_weapon_table_converter.py
+├── core/                          # Core functionality tests
+│   ├── table_conversion_test.py   # Core parsing functionality tests
+│   └── test_asset_relationship_mapper.py
+├── migration/                     # Configuration migration tests
+│   ├── test_config_migration.py
+│   └── test_config_migration_core.py
+├── integration/                   # Integration tests
+│   ├── test_integration.py        # Pipeline integration tests
+│   └── test_import.py
+├── utils/                         # Utility function tests
+│   └── test_duplicate_detection.py
 └── conftest.py                    # Test configuration and fixtures
 ```
 

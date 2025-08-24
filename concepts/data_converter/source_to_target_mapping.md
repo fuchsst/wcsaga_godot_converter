@@ -159,7 +159,7 @@ This document maps specific source assets from the Wing Commander Saga Hermes ca
 **Target Structure**:
 ```
 /data/missions/hermes/m01_hermes.tres               # Mission data resource
-/missions/hermes/m01_hermes/
+/campaigns/hermes/missions/m01_hermes/
 ├── mission.tscn                                   # Mission scene
 ├── mission.tres                                   # Mission instance data
 ├── briefing.txt                                   # Briefing text (converted)

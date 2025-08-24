@@ -15,8 +15,8 @@ from pathlib import Path
 from typing import Any, BinaryIO, Dict, List, Optional, Set, Tuple
 
 from .pof_data_extractor import POFDataExtractor
-from .pof_misc_parser import parse_bsp_data
-from .vector3d import Vector3D
+from .pof_bsp_parser import parse_bsp_data
+from .pof_types import Vector3D
 
 logger = logging.getLogger(__name__)
 

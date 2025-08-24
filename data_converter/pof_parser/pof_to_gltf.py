@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
 # Import enhanced types for type safety
-from .pof_enhanced_types import POFModelDataEnhanced, SubObject
+from .pof_types import POFModelData, SubObject
 
 import numpy as np
 
@@ -34,7 +34,7 @@ except ImportError:
     PbrMetallicRoughness = TextureInfo = Texture = GltfImage = Sampler = Scene = None
     PYGLTFLIB_AVAILABLE = False
 
-from .pof_misc_parser import parse_bsp_data  # Import the BSP parser
+from .pof_bsp_parser import parse_bsp_data  # Import the BSP parser
 
 # NOTE: POFParser is used in the main pof_converter.py, not directly here usually.
 # If direct testing is needed, uncomment the POFParser import.
@@ -89,7 +89,7 @@ def _numpy_to_gltf_type(arr: np.ndarray) -> Tuple[int, str]:
 
 
 def convert_pof_to_gltf(
-    pof_data: POFModelDataEnhanced, pof_file_path: str, output_path: str, progress=None
+    pof_data: POFModelData, pof_file_path: str, output_path: str, progress=None
 ) -> bool:
     """
     Converts parsed POF data into a GLTF/GLB file.

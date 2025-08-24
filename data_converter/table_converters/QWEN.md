@@ -28,3 +28,4 @@ The Table Converters module handles the parsing and conversion of WCS table file
 - Provides input for resource generators to create Godot resources
 - Maintains entity registries for cross-reference during scene assembly
 - Supports both .tbl base files and .tbm modular override files
+- pytest are located in data_converter/tests/table_converters

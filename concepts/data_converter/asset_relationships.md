@@ -75,7 +75,7 @@ This document identifies closely related assets in Wing Commander Saga and speci
 
 **Integration Example**:
 ```
-/missions/hermes/m01_hermes/
+/campaigns/hermes/missions/m01_hermes/
 ├── mission.tscn             # Mission scene (converted from m01_hermes.fs2)
 ├── mission.tres             # Mission data (converted from m01_hermes.fs2)
 ├── briefing.txt             # Briefing text (converted from briefing.txt)

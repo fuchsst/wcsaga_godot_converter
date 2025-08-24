@@ -1,5 +1,7 @@
 # WCS Data Migration & Conversion Tools - Qwen Context
 
+Use `uv` to run tests
+
 ## Project Overview
 
 This project implements a comprehensive data migration and conversion pipeline for the Wing Commander Saga (WCS) mod, designed to convert original WCS assets into Godot-compatible formats through a modular, multi-stage process. The pipeline processes table files (.tbl) into structured Godot resources, while model files (.POF) are handled separately, with a final scene assembly step that combines both data streams into complete, game-ready Godot scenes.

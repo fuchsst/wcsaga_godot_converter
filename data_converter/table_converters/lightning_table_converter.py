@@ -14,6 +14,11 @@ from .base_converter import BaseTableConverter, ParseState, TableType
 class LightningTableConverter(BaseTableConverter):
     """Converts WCS lightning.tbl files to Godot lightning effect resources"""
 
+    # Metadata for auto-registration
+    TABLE_TYPE = TableType.LIGHTNING
+    FILENAME_PATTERNS = ["lightning.tbl"]
+    CONTENT_PATTERNS = ["#Bolts begin"]
+
     def _init_parse_patterns(self) -> Dict[str, re.Pattern]:
         """Initialize regex patterns for lightning.tbl parsing"""
         return {
@@ -181,8 +186,30 @@ class LightningTableConverter(BaseTableConverter):
 
     def _convert_bolt_entry(self, bolt: Dict[str, Any]) -> Dict[str, Any]:
         """Convert a single bolt entry to the target Godot format."""
-        return bolt
+        return {
+            "name": bolt.get("name", ""),
+            "scale": bolt.get("scale", 0.5),
+            "shrink": bolt.get("shrink", 0.3),
+            "poly_pct": bolt.get("poly_pct", 0.002),
+            "rand": bolt.get("rand", 0.24),
+            "add": bolt.get("add", 2.0),
+            "strikes": bolt.get("strikes", 2),
+            "lifetime": bolt.get("lifetime", 280),
+            "noise": bolt.get("noise", 0.015),
+            "emp": bolt.get("emp", [0.0, 0.0]),
+            "texture": bolt.get("texture", "lightning"),
+            "glow": bolt.get("glow", "beam-dblue"),
+            "bright": bolt.get("bright", 0.3),
+            "texture_path": f"res://textures/effects/lightning/{bolt.get('texture', 'lightning')}.webp",
+            "glow_path": f"res://textures/effects/lightning/{bolt.get('glow', 'beam-dblue')}.webp",
+        }
 
     def _convert_storm_entry(self, storm: Dict[str, Any]) -> Dict[str, Any]:
         """Convert a single storm entry to the target Godot format."""
-        return storm
+        return {
+            "name": storm.get("name", ""),
+            "bolts": storm.get("bolts", []),
+            "flavor": storm.get("flavor", [0.0, 0.0, 0.0]),
+            "random_freq": storm.get("random_freq", [1500, 1750]),
+            "random_count": storm.get("random_count", [1, 2]),
+        }

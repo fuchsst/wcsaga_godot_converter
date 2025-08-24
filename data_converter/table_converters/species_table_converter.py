@@ -15,6 +15,10 @@ from .base_converter import BaseTableConverter, ParseState, TableType
 class SpeciesTableConverter(BaseTableConverter):
     """Converts WCS Species.tbl files to Godot intel database resources"""
 
+    TABLE_TYPE = TableType.SPECIES_ENTRIES
+    FILENAME_PATTERNS = ["Species.tbl", "species.tbl"]
+    CONTENT_PATTERNS = ["$Entry:", "$Name: XSTR("]
+
     def _init_parse_patterns(self) -> Dict[str, re.Pattern]:
         """Initialize regex patterns for Species.tbl parsing"""
         return {
@@ -130,4 +134,5 @@ class SpeciesTableConverter(BaseTableConverter):
             "anim": entry.get("anim"),
             "always_in_tech_room": entry.get("always_in_tech_room", False),
             "description": entry.get("description"),
+            "animation_reference": entry.get("anim"),  # For asset discovery
         }

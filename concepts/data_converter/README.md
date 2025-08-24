@@ -121,12 +121,12 @@ Contains physical game objects as self-contained scenes with all related assets:
 - `/entities/effects/` - Effect entities
 - `/entities/environment/` - Environmental entities
 
-### Mission Organization (`/missions/`)
-Contains mission scenes and data organized by campaign:
-- `/missions/hermes/` - Hermes campaign missions
-  - `/missions/hermes/m01_briefing/`, `/missions/hermes/m01_mission/`, etc.
-- `/missions/brimstone/` - Brimstone campaign missions
-- `/missions/training/` - Training missions
+### Campaign Organization (`/campaigns/`)
+Contains campaign data, progression, and mission scenes organized by campaign:
+- `/campaigns/hermes/` - Hermes campaign
+  - `/campaigns/hermes/missions/m01_hermes/`, `/campaigns/hermes/fiction/`, etc.
+- `/campaigns/brimstone/` - Brimstone campaign
+- `/campaigns/training/` - Training campaign
 
 ### Media Organization
 - `/textures/` - All converted texture files (.webp/.png)

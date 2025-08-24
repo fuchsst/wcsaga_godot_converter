@@ -3,6 +3,8 @@
 ALWAYS use `uv` or `make` to run build tooling like liner, tests, formater etc.!!!
 You MUST use `uv run`  to run any Python code!!!
 
+If the user asks for refinements, ALWAYS look for existing files that cover that purpose. Edit the file. Do NOT create new a "enhanced" or "refined" version of the file!
+
 ## Build/Lint/Test Commands
 
 **Installation:**

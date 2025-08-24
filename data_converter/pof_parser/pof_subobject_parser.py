@@ -1,4 +1,11 @@
 #!/usr/bin/env python3
+"""
+POF Subobject Parser - Consolidated SOBJ/OBJ2 chunk parsing.
+
+This module provides unified parsing for the Subobject chunk using the
+enhanced binary reader with improved error handling and validation.
+"""
+
 import logging
 from typing import Any, BinaryIO, Dict, Optional
 
@@ -6,66 +13,117 @@ from typing import Any, BinaryIO, Dict, Optional
 from .pof_chunks import (
     MAX_NAME_LEN,
     MAX_PROP_LEN,
-    read_float,
-    read_int,
-    read_string_len,
-    read_vector,
 )
+from .pof_binary_reader import create_reader
+from .pof_error_handler import get_global_error_handler, ErrorSeverity, ErrorCategory
 
 # Import dataclass types
-from .pof_enhanced_types import SubObject, Vector3D, BoundingBox
-from .pof_enhanced_types import MovementType, MovementAxis
+from .pof_types import SubObject, Vector3D, BoundingBox
+from .pof_types import MovementType, MovementAxis
 
 logger = logging.getLogger(__name__)
 
 
 def read_sobj_chunk(f: BinaryIO, length: int) -> Optional[SubObject]:
-    """Parses a Subobject (SOBJ/OBJ2) chunk and returns SubObject dataclass."""
+    """
+    Parses a Subobject (SOBJ/OBJ2) chunk and returns SubObject dataclass.
+    
+    This function uses the enhanced binary reader for robust error handling
+    and validation, replacing the scattered reading functions.
+    """
+    reader = create_reader(f)
+    error_handler = get_global_error_handler()
+    
     start_pos = f.tell()
     bytes_read = 0
     
     try:
-        # Read basic subobject data
-        number = read_int(f)
+        # Read basic subobject data with validation
+        number = reader.read_int32()
         bytes_read += 4
-        radius = read_float(f)
+        
+        radius = reader.read_float32()
         bytes_read += 4
-        parent = read_int(f)
+        # Validate radius is non-negative
+        if radius < 0:
+            error_handler.add_data_integrity_warning(
+                f"Subobject {number} has negative radius: {radius}",
+                recovery_action="Using absolute value"
+            )
+            radius = abs(radius)
+
+        parent = reader.read_int32()
         bytes_read += 4
-        offset = read_vector(f)
-        bytes_read += 12
-        geometric_center = read_vector(f)
-        bytes_read += 12
-        min_bb = read_vector(f)
-        bytes_read += 12
-        max_bb = read_vector(f)
+        
+        offset = reader.read_vector3d()
         bytes_read += 12
         
-        # Create bounding box
+        geometric_center = reader.read_vector3d()
+        bytes_read += 12
+        
+        min_bb = reader.read_vector3d()
+        bytes_read += 12
+        
+        max_bb = reader.read_vector3d()
+        bytes_read += 12
+        
+        # Create bounding box with validation
         bounding_box = BoundingBox(min=min_bb, max=max_bb)
+        
+        # Validate bounding box
+        if (bounding_box.min.x > bounding_box.max.x or
+            bounding_box.min.y > bounding_box.max.y or
+            bounding_box.min.z > bounding_box.max.z):
+            error_handler.add_validation_error(
+                f"Invalid bounding box for subobject {number} (min > max)",
+                recovery_action="Recalculating from geometry"
+            )
 
         # Read name and properties
         name_start_pos = f.tell()
-        name = read_string_len(f, MAX_NAME_LEN)
+        name = reader.read_string(MAX_NAME_LEN)
         bytes_read += f.tell() - name_start_pos
 
         props_start_pos = f.tell()
-        properties = read_string_len(f, MAX_PROP_LEN)
+        properties = reader.read_string(MAX_PROP_LEN)
         bytes_read += f.tell() - props_start_pos
 
         # Read movement data
-        movement_type_val = read_int(f)
+        movement_type_val = reader.read_int32()
         bytes_read += 4
-        movement_axis_val = read_int(f)
+        movement_axis_val = reader.read_int32()
         bytes_read += 4
         
-        # Convert to enum types
-        movement_type = MovementType(movement_type_val)
-        movement_axis = MovementAxis(movement_axis_val)
+        # Validate and convert to enum types
+        try:
+            movement_type = MovementType(movement_type_val)
+        except ValueError:
+            error_handler.add_validation_error(
+                f"Invalid movement type {movement_type_val} for subobject {number}",
+                recovery_action="Using static movement type"
+            )
+            movement_type = MovementType.STATIC
+
+        try:
+            movement_axis = MovementAxis(movement_axis_val)
+        except ValueError:
+            error_handler.add_validation_error(
+                f"Invalid movement axis {movement_axis_val} for subobject {number}",
+                recovery_action="Using no axis"
+            )
+            movement_axis = MovementAxis.NONE
 
         # Read BSP data size
-        bsp_data_size = read_int(f)
+        bsp_data_size = reader.read_int32()
         bytes_read += 4
+        
+        # Validate BSP data size
+        if bsp_data_size < 0:
+            error_handler.add_validation_error(
+                f"Negative BSP data size {bsp_data_size} for subobject {number}",
+                recovery_action="Setting to zero"
+            )
+            bsp_data_size = 0
         
         if bsp_data_size > 0:
             bsp_data_offset = f.tell()
@@ -76,9 +134,23 @@ def read_sobj_chunk(f: BinaryIO, length: int) -> Optional[SubObject]:
 
         # Check if we read exactly the chunk length
         if bytes_read != length:
-            logger.warning(
-                f"SOBJ chunk length mismatch for subobject {number} ('{name}'). Expected {length}, read {bytes_read}. There might be extra reserved data."
+            error_message = (
+                f"SOBJ chunk length mismatch for subobject {number} ('{name}'). "
+                f"Expected {length}, read {bytes_read}."
             )
+            
+            if bytes_read < length:
+                error_message += " There might be extra reserved data."
+            else:
+                error_message += " Read past expected end of chunk!"
+            
+            error_handler.add_error(
+                error_message,
+                severity=ErrorSeverity.WARNING if bytes_read < length else ErrorSeverity.ERROR,
+                category=ErrorCategory.PARSING,
+                recovery_action="Attempting to recover chunk position"
+            )
+            
             # Attempt to seek to the expected end of the chunk if we read less
             if bytes_read < length:
                 f.seek(start_pos + 8 + length)  # Seek from start of chunk + header size
@@ -101,8 +173,16 @@ def read_sobj_chunk(f: BinaryIO, length: int) -> Optional[SubObject]:
         )
         
     except Exception as e:
-        logger.error(f"Failed to parse SOBJ chunk: {e}")
+        error_handler.add_error(
+            f"Failed to parse SOBJ chunk: {e}",
+            severity=ErrorSeverity.ERROR,
+            category=ErrorCategory.PARSING,
+            recovery_action="Skipping subobject and continuing"
+        )
         # Try to recover position
         if bytes_read < length:
-            f.seek(start_pos + 8 + length)
+            try:
+                f.seek(start_pos + 8 + length)
+            except Exception as seek_error:
+                logger.error(f"Failed to recover position after SOBJ parsing error: {seek_error}")
         return None

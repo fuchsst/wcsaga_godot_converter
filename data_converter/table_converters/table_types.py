@@ -19,4 +19,7 @@ class TableType(Enum):
     ARMOR = "armor"
     SPECIES = "species_defs"
     IFF = "iff_defs"
+    CREDITS = "credits"
+    HELP = "help"
+    TIPS = "tips"
     UNKNOWN = "unknown"

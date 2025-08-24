@@ -14,7 +14,7 @@ from converter.utils import generate_timestamp, setup_logging
 logger = setup_logging(__name__)
 
 
-class TestQualityGate:
+class QualityGate:
     """Quality gate for validating test completeness and rigor."""
 
     def __init__(self, min_coverage: float = 85.0, min_test_count: int = 5):

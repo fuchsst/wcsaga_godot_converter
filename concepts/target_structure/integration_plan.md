@@ -71,12 +71,12 @@ Convert to Godot resources (.tres) organized by feature:
 - Ship definitions to ShipData resources in `/data/ships/{faction}/{type}/`
 - Weapon definitions to WeaponData resources in `/data/weapons/{faction}/`
 - AI profiles to AIProfile resources in `/data/ai/profiles/`
-- Mission data to MissionData resources in `/data/missions/{campaign}/`
+- Mission data to MissionData resources in `/data/campaigns/{campaign}/missions/`
 - Use Godot's resource system for data-driven design with centralized management
 
 ### Mission Files (.fs2)
 Convert to Godot scenes (.tscn) organized by feature:
-- Missions as complete scenes with all entities in `/missions/{campaign}/{mission_name}/`
+- Missions as complete scenes with all entities in `/campaigns/{campaign}/missions/{mission_name}/`
 - Events as timeline sequences using Godot's animation system
 - Objectives as MissionObjective resources
 - Use Godot's scene system for composition with modular encounter templates

@@ -307,6 +307,9 @@ class TableTypeDetector:
         "sounds": {"filename": ["sounds"], "content": ["#sound entries"]},
         "stars": {"filename": ["stars"], "content": ["#star types"]},
         "strings": {"filename": ["strings"], "content": ["#string entries"]},
+        "credits": {"filename": ["credits"], "content": ["#Debriefing_info"]},
+        "help": {"filename": ["help"], "content": ["$ship", "$weapon", "$briefing"]},
+        "tips": {"filename": ["tips"], "content": ["+Tip:", "XSTR("]},
     }
 
     @staticmethod

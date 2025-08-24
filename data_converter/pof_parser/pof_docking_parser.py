@@ -6,33 +6,34 @@ from typing import Any, BinaryIO, Dict, List
 from .pof_chunks import (
     MAX_DOCK_SLOTS,
     MAX_PROP_LEN,
-    read_int,
-    read_string_len,
-    read_vector,
 )
 
+# Import unified binary reader
+from .pof_binary_reader import create_reader
+
 # Import Vector3D if needed for type hinting or direct use
-# from .vector3d import Vector3D
+# from .pof_types import Vector3D
 
 logger = logging.getLogger(__name__)
 
 
 def read_dock_chunk(f: BinaryIO, length: int) -> List[Dict[str, Any]]:
     """Parses the Docking Points (DOCK) chunk."""
+    reader = create_reader(f)
     logger.debug("Reading DOCK chunk...")
-    num_docks = read_int(f)
+    num_docks = reader.read_int32()
     docking_points = []
     for _ in range(num_docks):
         dock_data = {"points": []}
-        dock_data["properties"] = read_string_len(f, MAX_PROP_LEN)
-        num_spline_paths = read_int(f)
-        dock_data["spline_paths"] = [read_int(f) for _ in range(num_spline_paths)]
-        num_slots = read_int(f)
+        dock_data["properties"] = reader.read_length_prefixed_string(MAX_PROP_LEN)
+        num_spline_paths = reader.read_int32()
+        dock_data["spline_paths"] = [reader.read_int32() for _ in range(num_spline_paths)]
+        num_slots = reader.read_int32()
         dock_data["num_slots"] = num_slots
         # Ensure we read exactly MAX_DOCK_SLOTS (2) points, even if num_slots differs
         for slot_idx in range(MAX_DOCK_SLOTS):
-            pos = read_vector(f)
-            norm = read_vector(f)
+            pos = reader.read_vector3d()
+            norm = reader.read_vector3d()
             if slot_idx < num_slots:  # Only store valid slots read
                 dock_data["points"].append(
                     {"position": pos.to_list(), "normal": norm.to_list()}

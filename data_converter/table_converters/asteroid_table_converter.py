@@ -14,6 +14,11 @@ from .base_converter import BaseTableConverter, ParseState, TableType
 class AsteroidTableConverter(BaseTableConverter):
     """Converts WCS asteroid.tbl files to Godot asteroid resources"""
 
+    # Metadata for auto-registration
+    TABLE_TYPE = TableType.ASTEROID
+    FILENAME_PATTERNS = ["asteroid.tbl"]
+    CONTENT_PATTERNS = ["asteroid.tbl"]
+
     def _init_parse_patterns(self) -> Dict[str, re.Pattern]:
         """Initialize regex patterns for asteroid.tbl parsing"""
         return {
@@ -221,9 +226,9 @@ class AsteroidTableConverter(BaseTableConverter):
         if ";" in impact_explosion:
             impact_explosion = impact_explosion.split(";")[0].strip()
 
-        # Convert animation reference to Godot path
+        # Convert animation reference to Godot path using entities/effects/ structure
         if impact_explosion:
-            impact_explosion = f"campaigns/wing_commander_saga/effects/explosions/{impact_explosion.lower()}.tscn"
+            impact_explosion = f"entities/effects/explosions/{impact_explosion.lower()}.tscn"
 
         return {
             "impact_explosion": impact_explosion,
@@ -231,25 +236,25 @@ class AsteroidTableConverter(BaseTableConverter):
         }
 
     def _convert_pof_to_glb_path(self, pof_file: Optional[str]) -> Optional[str]:
-        """Convert POF file reference to GLB path following semantic organization."""
+        """Convert POF file reference to GLB path following Godot's feature-based structure."""
         if not pof_file or pof_file.lower() == "none":
             return None
 
         # Convert .pof extension to .glb
         base_name = pof_file.replace(".pof", "")
 
-        # Follow semantic organization: asteroids and debris go to environment/objects
+        # Follow Godot's feature-based structure: entities/environment/
         if "asteroid" in base_name.lower() or "ast" in base_name.lower():
-            return f"campaigns/wing_commander_saga/environments/objects/asteroids/{base_name}.glb"
+            return f"entities/environment/asteroids/{base_name}.glb"
         elif "debris" in base_name.lower():
-            # Organize debris by faction
+            # Organize debris by faction in environment/debris/
             if "cdebris" in base_name.lower() or "terran" in base_name.lower():
-                return f"campaigns/wing_commander_saga/environments/objects/debris/terran/{base_name}.glb"
+                return f"entities/environment/debris/terran/{base_name}.glb"
             elif "pdebris" in base_name.lower() or "pirate" in base_name.lower():
-                return f"campaigns/wing_commander_saga/environments/objects/debris/pirate/{base_name}.glb"
+                return f"entities/environment/debris/pirate/{base_name}.glb"
             elif "kdebris" in base_name.lower() or "kilrathi" in base_name.lower():
-                return f"campaigns/wing_commander_saga/environments/objects/debris/kilrathi/{base_name}.glb"
+                return f"entities/environment/debris/kilrathi/{base_name}.glb"
             else:
-                return f"campaigns/wing_commander_saga/environments/objects/debris/misc/{base_name}.glb"
+                return f"entities/environment/debris/misc/{base_name}.glb"
         else:
-            return f"campaigns/wing_commander_saga/environments/objects/misc/{base_name}.glb"
+            return f"entities/environment/misc/{base_name}.glb"

@@ -46,7 +46,7 @@ Mission-specific background music:
 
 ## Target Structure
 ```
-/data/missions/hermes/               # Mission data definitions
+/data/campaigns/hermes/missions/      # Mission data definitions
 ├── m01_hermes/
 │   ├── mission.tres                 # Mission definition
 │   ├── objectives.tres              # Mission objectives
@@ -59,7 +59,7 @@ Mission-specific background music:
 │   └── messages.tres
 └── ...                              # Additional missions
 
-/missions/hermes/                    # Mission scenes directory
+/campaigns/hermes/missions/          # Mission scenes directory
 ├── m01_hermes/
 │   ├── mission.tscn                 # Mission scene
 │   ├── briefing.txt                 # Briefing text (converted)
@@ -136,8 +136,8 @@ Mission-specific background music:
 
 ## Example Mapping
 For Mission 1:
-- M01-BG-Hermes.fs2 → /missions/hermes/m01_hermes/mission.tscn
-- m1fiction.txt → /text/fiction/hermes/m01_fiction.txt
+- M01-BG-Hermes.fs2 → /campaigns/hermes/missions/m01_hermes/mission.tscn
+- m1fiction.txt → /campaigns/hermes/fiction/missions/m01/m1fiction.txt
 - briefing_m01_*.ogg → /audio/voice/hermes/missions/m01/briefing.ogg
 - ambient_mission_failed.ogg → /audio/music/hermes/m01/ambient.ogg
 - intro_*.ani → /animations/cutscenes/hermes/m01/intro_*.png

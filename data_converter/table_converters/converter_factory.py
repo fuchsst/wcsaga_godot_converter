@@ -58,6 +58,18 @@ class ConverterFactory:
             from .iff_table_converter import IFFTableConverter
 
             return IFFTableConverter(source_dir, target_dir)
+        elif table_type == TableType.CREDITS:
+            from .credits_table_converter import CreditsTableConverter
+
+            return CreditsTableConverter(source_dir, target_dir)
+        elif table_type == TableType.HELP:
+            from .help_table_converter import HelpTableConverter
+
+            return HelpTableConverter(source_dir, target_dir)
+        elif table_type == TableType.TIPS:
+            from .tips_table_converter import TipsTableConverter
+
+            return TipsTableConverter(source_dir, target_dir)
         else:
             raise ValueError(f"Unsupported table type: {table_type}")
 

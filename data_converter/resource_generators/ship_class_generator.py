@@ -65,7 +65,16 @@ class ShipClassGenerator:
 
         # Extract ship properties with defaults
         ship_name = ship.get("name", "Unknown Ship")
-        max_velocity = ship.get("max_velocity", 75.0)
+        
+        # Handle max_velocity which can be a dictionary or single value
+        max_velocity_data = ship.get("max_velocity", 75.0)
+        if isinstance(max_velocity_data, dict):
+            # Use forward velocity from dictionary
+            max_velocity = max_velocity_data.get("forward", 75.0)
+        else:
+            # Use single value directly
+            max_velocity = max_velocity_data
+            
         max_hull_strength = ship.get("max_hull", 100.0)
         max_shield_strength = ship.get("max_shield", 50.0)
         mass = ship.get("mass", 1000.0)

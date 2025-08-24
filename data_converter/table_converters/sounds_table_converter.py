@@ -19,16 +19,21 @@ from .base_converter import BaseTableConverter, ParseState, TableType
 class SoundsTableConverter(BaseTableConverter):
     """Converts WCS sounds.tbl files to Godot audio resources"""
 
+    # Metadata for auto-registration
+    TABLE_TYPE = TableType.SOUNDS
+    FILENAME_PATTERNS = ["sounds.tbl"]
+    CONTENT_PATTERNS = ["sounds.tbl"]
+
     def _init_parse_patterns(self) -> Dict[str, re.Pattern]:
         """Initialize regex patterns for sounds table parsing"""
         return {
             "section_start": re.compile(r"^#\s*(\w+)\s+Sounds\s+Start", re.IGNORECASE),
             "section_end": re.compile(r"^#\s*(\w+)\s+Sounds\s+End", re.IGNORECASE),
             "sound_entry": re.compile(
-                r"^\$Name:\s*(\d+)\s+([^;]+)(?:;\s*(.*))?", re.IGNORECASE
+                r"^\$Name:\s*(\d+)\s+([^,]+),\s*(\d+),\s*([\d\.]+),\s*(\d+)(?:,\s*([\d\.]+),\s*([\d\.]+))?\s*;\s*(.*)", re.IGNORECASE
             ),
             "flyby_entry": re.compile(
-                r"^\$(\w+):\s*(\d+)\s+([^;]+)(?:;\s*(.*))?", re.IGNORECASE
+                r"^\$(\w+):\s*(\d+)\s+([^,]+),\s*(\d+),\s*([\d\.]+),\s*(\d+)(?:,\s*([\d\.]+),\s*([\d\.]+))?\s*;\s*\*\s*(.*)", re.IGNORECASE
             ),
         }
 
@@ -69,6 +74,9 @@ class SoundsTableConverter(BaseTableConverter):
 
             if entry and self.validate_entry(entry):
                 entries.append(entry)
+                self.logger.debug(f"Parsed sound entry: {entry['name']}")
+            elif line.strip() and not line.strip().startswith(';') and current_section != "unknown":
+                self.logger.debug(f"Skipped line in section '{current_section}': {line.strip()}")
 
         return entries
 
@@ -80,10 +88,19 @@ class SoundsTableConverter(BaseTableConverter):
         if not match:
             return None
 
-        sound_id, params_str, comment = match.groups()
+        sound_id, filename, preload, volume, sound_type, min_dist, max_dist, comment = match.groups()
         unique_name = f"{section}_{sound_id}"
 
-        return self._create_sound_data(unique_name, params_str, comment)
+        return {
+            "name": unique_name,
+            "filename": filename.strip(),
+            "preload": int(preload) > 0,
+            "default_volume": float(volume),
+            "is_3d": int(sound_type) > 0,
+            "min_distance": float(min_dist) if min_dist else 100.0,
+            "max_distance": float(max_dist) if max_dist else 1000.0,
+            "comment": comment.strip() if comment else "",
+        }
 
     def _parse_flyby_sound(self, line: str, section: str) -> Optional[Dict[str, Any]]:
         """Parse a flyby sound line with faction information."""
@@ -91,42 +108,86 @@ class SoundsTableConverter(BaseTableConverter):
         if not match:
             return None
 
-        faction, sound_id, params_str, comment = match.groups()
+        faction, sound_id, filename, preload, volume, sound_type, min_dist, max_dist, comment = match.groups()
         unique_name = f"{section}_{faction.lower()}_{sound_id}"
 
-        return self._create_sound_data(unique_name, params_str, comment)
-
-    def _create_sound_data(
-        self, name: str, params_str: str, comment: Optional[str]
-    ) -> Optional[Dict[str, Any]]:
-        """Create a sound data dictionary from the parsed parameter string."""
-        parts = [p.strip() for p in params_str.split(",") if p.strip()]
-        if not parts or parts[0].lower() == "none.wav":
-            return None
-
-        sound_data = {
-            "name": name,
-            "filename": parts[0],
+        return {
+            "name": unique_name,
+            "filename": filename.strip(),
+            "preload": int(preload) > 0,
+            "default_volume": float(volume),
+            "is_3d": int(sound_type) > 0,
+            "min_distance": float(min_dist) if min_dist else 100.0,
+            "max_distance": float(max_dist) if max_dist else 1000.0,
             "comment": comment.strip() if comment else "",
         }
 
-        try:
-            if len(parts) > 1:
-                sound_data["preload"] = self.parse_value(parts[1], int) > 0
-            if len(parts) > 2:
-                sound_data["default_volume"] = self.parse_value(parts[2], float)
-            if len(parts) > 3:
-                sound_data["is_3d"] = self.parse_value(parts[3], int) > 0
-            if len(parts) > 4:
-                sound_data["min_distance"] = self.parse_value(parts[4], float)
-            if len(parts) > 5:
-                sound_data["max_distance"] = self.parse_value(parts[5], float)
-        except (ValueError, IndexError) as e:
-            self.logger.warning(
-                f"Could not parse all parameters for sound '{name}': {e}"
-            )
-
-        return sound_data
+    def _convert_sound_entry(self, sound: Dict[str, Any]) -> Dict[str, Any]:
+        """Convert a single sound entry to the target Godot format."""
+        # Map to proper audio paths based on sound type and documentation
+        filename = sound.get("filename", "")
+        if filename.lower() == "none.wav":
+            return None
+        
+        # Determine audio type and target path based on documentation
+        audio_type = self._determine_audio_type(sound)
+        target_path = self._generate_target_path(filename, audio_type)
+        
+        return {
+            "display_name": sound.get("name", "Unknown Sound"),
+            "filename": filename,
+            "target_path": target_path,
+            "description": sound.get("comment", ""),
+            "default_volume": sound.get("default_volume", 0.8),
+            "preload": sound.get("preload", False),
+            "is_3d": sound.get("is_3d", False),
+            "min_distance": sound.get("min_distance", 100.0),
+            "max_distance": sound.get("max_distance", 1000.0),
+            "audio_type": audio_type,
+        }
+    
+    def _determine_audio_type(self, sound: Dict[str, Any]) -> str:
+        """Determine the audio type based on sound properties and documentation."""
+        name = sound.get("name", "").lower()
+        comment = sound.get("comment", "").lower()
+        
+        if "weapon" in name or "laser" in name or "missile" in name or "fire" in name:
+            return "weapon"
+        elif "explosion" in name or "explode" in name or "blast" in name:
+            return "explosion"
+        elif "engine" in name or "thrust" in name or "aburn" in name:
+            return "engine"
+        elif "ui" in name or "interface" in name or "menu" in name or "click" in name:
+            return "ui"
+        elif "voice" in name or "briefing" in name or "communication" in name:
+            return "voice"
+        elif "ambient" in name or "environment" in name or "space" in name:
+            return "ambient"
+        elif "flyby" in name:
+            return "flyby"
+        else:
+            return "sfx"
+    
+    def _generate_target_path(self, filename: str, audio_type: str) -> str:
+        """Generate target path based on audio type and documentation."""
+        base_name = filename.replace(".wav", ".ogg")
+        
+        if audio_type == "weapon":
+            return f"res://audio/sfx/weapons/{base_name}"
+        elif audio_type == "explosion":
+            return f"res://audio/sfx/explosions/{base_name}"
+        elif audio_type == "engine":
+            return f"res://audio/sfx/environment/engines/{base_name}"
+        elif audio_type == "ui":
+            return f"res://audio/sfx/ui/{base_name}"
+        elif audio_type == "voice":
+            return f"res://audio/voice/{base_name}"
+        elif audio_type == "ambient":
+            return f"res://audio/ambient/{base_name}"
+        elif audio_type == "flyby":
+            return f"res://audio/sfx/flyby/{base_name}"
+        else:
+            return f"res://audio/sfx/{base_name}"
 
     def validate_entry(self, entry: Dict[str, Any]) -> bool:
         """Validate a parsed sound entry."""

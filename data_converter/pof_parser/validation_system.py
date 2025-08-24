@@ -10,15 +10,15 @@ import logging
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, Set, Tuple
 
-from .pof_enhanced_types import (
+from .pof_types import (
     BSPNode,
     BSPNodeType,
-    POFModelDataEnhanced,
+    POFModelData,
     POFVersion,
     SubObject,
     Vector3D,
 )
-from .pof_error_handler import POFErrorHandler, ErrorSeverity, ErrorCategory
+from .pof_error_handler import UnifiedPOFErrorHandler, ErrorSeverity, ErrorCategory
 
 logger = logging.getLogger(__name__)
 
@@ -36,11 +36,13 @@ class ValidationResult:
 class POFValidator:
     """Comprehensive POF data validator based on Rust patterns."""
 
-    def __init__(self, error_handler: Optional[POFErrorHandler] = None):
-        """Initialize validator with optional error handler."""
-        self.error_handler = error_handler or POFErrorHandler()
+    def __init__(self, error_handler: Optional[UnifiedPOFErrorHandler] = None):
+        """Initialize validation system."""
+        self.error_handler = error_handler or UnifiedPOFErrorHandler()
 
-    def validate_model_data(self, model_data: POFModelDataEnhanced) -> ValidationResult:
+    def validate_model_data(self, 
+                          model_data: POFModelData,
+                          error_handler: Optional[UnifiedPOFErrorHandler] = None) -> ValidationResult:
         """
         Validate complete POF model data with Rust-like thoroughness.
         
@@ -185,7 +187,7 @@ class POFValidator:
                     recovery_action="Ignore BSP data"
                 )
 
-    def _validate_texture_references(self, model_data: POFModelDataEnhanced, 
+    def _validate_texture_references(self, model_data: POFModelData, 
                                    errors: List[str], warnings: List[str]) -> None:
         """Validate texture references throughout the model."""
         max_texture_index = len(model_data.textures) - 1
@@ -277,7 +279,7 @@ class POFValidator:
         if node.back_child:
             self._validate_bsp_node(node.back_child, context, errors, warnings)
 
-    def _validate_gameplay_elements(self, model_data: POFModelDataEnhanced, 
+    def _validate_gameplay_elements(self, model_data: POFModelData, 
                                   errors: List[str], warnings: List[str]) -> None:
         """Validate gameplay-related elements."""
         # Validate weapon points
@@ -300,7 +302,7 @@ class POFValidator:
                     recovery_action="Generate default name"
                 )
 
-    def _validate_spatial_consistency(self, model_data: POFModelDataEnhanced, 
+    def _validate_spatial_consistency(self, model_data: POFModelData, 
                                     errors: List[str], warnings: List[str]) -> None:
         """Validate spatial relationships and consistency."""
         # Check if subobject bounds are within main bounds
@@ -320,8 +322,8 @@ class POFValidator:
                 )
 
 
-def validate_pof_model(model_data: POFModelDataEnhanced, 
-                      error_handler: Optional[POFErrorHandler] = None) -> ValidationResult:
+def validate_pof_model(model_data: POFModelData, 
+                      error_handler: Optional[UnifiedPOFErrorHandler] = None) -> ValidationResult:
     """
     Convenience function for validating POF model data.
     

@@ -352,7 +352,7 @@ This document provides comprehensive specifications for converting Wing Commande
 #### Directory Organization
 - **Base Path**: `/text/`
 - **Subdirectories**:
-  - `/text/fiction/{campaign}/{mission}/`
+  - `/campaigns/{campaign}/fiction/missions/{mission}/`
   - `/text/technical/ships/{faction}/`
   - `/text/technical/weapons/{faction}/`
   - `/text/credits/`
@@ -525,7 +525,7 @@ All converted assets follow Godot's feature-based organization principles:
 ### Primary Relationships
 - **Ships**: Connect .pof models in `/entities/fighters/`, .tbl properties in `/data/ships/`, .pcx textures in `/textures/ships/`, and .wav sounds in `/audio/sfx/environment/space/`
 - **Weapons**: Connect .pof models in `/entities/weapons/`, .tbl properties in `/data/weapons/`, .ani effects in `/animations/weapons/`, and .wav sounds in `/audio/sfx/weapons/`
-- **Missions**: Reference .tbl ship/weapon data in `/data/`, .fs2 scripting in `/missions/`, and .txt fiction in `/text/fiction/`
+- **Missions**: Reference .tbl ship/weapon data in `/data/`, .fs2 scripting in `/campaigns/{campaign}/missions/`, and .txt fiction in `/campaigns/{campaign}/fiction/`
 - **Effects**: Combine .ani animations in `/animations/effects/`, .pcx textures in `/textures/effects/`, and .wav sounds in `/audio/sfx/explosions/`
 - **UI**: Use .pcx graphics in `/textures/ui/`, .ani animations in `/animations/ui/`, and .txt content in `/text/`
 

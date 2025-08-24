@@ -56,7 +56,7 @@ target-version = ['py39']
 
 
 [tool.pytest.ini_options]
-testpaths = ["converter/tests"]
+testpaths = ["converter/tests", "data_converter/tests"]
 python_files = "test_*.py"
 python_classes = "Test*"
 python_functions = "test_*"

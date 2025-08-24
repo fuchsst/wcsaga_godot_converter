@@ -19,7 +19,7 @@ from .pof_mesh_converter import POFMeshConverter
 from .pof_parser import POFParser
 
 # Import enhanced types for type safety
-from .pof_enhanced_types import POFModelDataEnhanced
+from .pof_types import POFModelData
 
 # Configure logging
 logging.basicConfig(

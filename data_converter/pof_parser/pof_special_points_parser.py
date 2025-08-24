@@ -6,28 +6,28 @@ from typing import Any, BinaryIO, Dict, List
 from .pof_chunks import (
     MAX_NAME_LEN,
     MAX_PROP_LEN,
-    read_float,
-    read_int,
-    read_string_len,
-    read_vector,
 )
 
+# Import unified binary reader
+from .pof_binary_reader import create_reader
+
 # Import Vector3D if needed for type hinting or direct use
-# from .vector3d import Vector3D
+# from .pof_types import Vector3D
 
 logger = logging.getLogger(__name__)
 
 
 def read_spcl_chunk(f: BinaryIO, length: int) -> List[Dict[str, Any]]:
     """Parses the Special Points (SPCL) chunk."""
+    reader = create_reader(f)
     logger.debug("Reading SPCL chunk...")
-    num_specials = read_int(f)
+    num_specials = reader.read_int32()
     specials = []
     for _ in range(num_specials):
-        name = read_string_len(f, MAX_NAME_LEN)
-        props = read_string_len(f, MAX_PROP_LEN)
-        pos = read_vector(f)
-        radius = read_float(f)
+        name = reader.read_length_prefixed_string(MAX_NAME_LEN)
+        props = reader.read_length_prefixed_string(MAX_PROP_LEN)
+        pos = reader.read_vector3d()
+        radius = reader.read_float32()
         specials.append(
             {
                 "name": name,

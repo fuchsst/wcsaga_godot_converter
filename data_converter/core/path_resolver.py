@@ -87,27 +87,27 @@ class TargetPathResolver:
         if entity_type == EntityType.SHIP:
             faction = self._determine_faction(entity_name)
             ship_class = self._determine_ship_class(entity_name)
-            return f"campaigns/wing_commander_saga/ships/{faction}/{ship_class}/{clean_name}.tscn"
+            return f"entities/ships/{faction}/{ship_class}/{clean_name}.tscn"
 
         elif entity_type == EntityType.WEAPON:
-            return f"campaigns/wing_commander_saga/weapons/{clean_name}.tscn"
+            return f"entities/weapons/{clean_name}.tscn"
 
         elif entity_type == EntityType.EFFECT:
-            return f"campaigns/wing_commander_saga/effects/{clean_name}.tscn"
+            return f"entities/effects/{clean_name}.tscn"
 
         elif entity_type == EntityType.INSTALLATION:
-            return f"campaigns/wing_commander_saga/installations/{clean_name}.tscn"
+            return f"entities/installations/{clean_name}.tscn"
 
         elif entity_type == EntityType.ASTEROID:
             return (
-                f"campaigns/wing_commander_saga/environment/asteroids/{clean_name}.tscn"
+                f"entities/environment/asteroids/{clean_name}.tscn"
             )
 
         elif entity_type == EntityType.DEBRIS:
-            return f"campaigns/wing_commander_saga/environment/debris/{clean_name}.tscn"
+            return f"entities/environment/debris/{clean_name}.tscn"
 
         else:
-            return f"scenes/misc/{clean_name}.tscn"
+            return f"entities/misc/{clean_name}.tscn"
 
     def _convert_file_format(self, file_stem: str, file_ext: str) -> str:
         """Convert source file format to target format"""
@@ -285,7 +285,7 @@ class TargetPathResolver:
             )
 
         else:
-            return f"campaigns/wing_commander_saga/misc/{target_filename}"
+            return f"entities/misc/{target_filename}"
 
     def _resolve_semantic_ship_path(
         self,
@@ -298,7 +298,7 @@ class TargetPathResolver:
     ) -> str:
         """Resolve semantic ship paths with faction-based organization"""
 
-        base_path = f"campaigns/wing_commander_saga/ships/{faction}/{subcategory}/{clean_entity}"
+        base_path = f"entities/ships/{faction}/{subcategory}/{clean_entity}"
 
         if asset_type == "model":
             return f"{base_path}/{clean_entity}.glb"
@@ -313,7 +313,7 @@ class TargetPathResolver:
                 return f"{base_path}/audio/{target_filename}"
             else:
                 # Shared audio goes to common location
-                return f"campaigns/wing_commander_saga/audio/sfx/{audio_category}/{target_filename}"
+                return f"audio/sfx/{audio_category}/{target_filename}"
 
         elif asset_type == "animation":
             return f"{base_path}/effects/{target_filename}"
@@ -326,7 +326,7 @@ class TargetPathResolver:
     ) -> str:
         """Resolve semantic weapon paths with faction organization"""
 
-        base_path = f"campaigns/wing_commander_saga/weapons/{faction}/{clean_entity}"
+        base_path = f"entities/weapons/{faction}/{clean_entity}"
 
         if asset_type == "model":
             return f"{base_path}/{clean_entity}.glb"
@@ -357,22 +357,22 @@ class TargetPathResolver:
             # Extract mission number for organization
             mission_num = self._extract_mission_number_from_filename(target_filename)
             if mission_num is not None:
-                return f"campaigns/wing_commander_saga/audio/voice/mission_{mission_num:02d}/{target_filename}"
+                return f"campaigns/hermes/audio/voice/mission_{mission_num:02d}/{target_filename}"
             else:
                 return (
-                    f"campaigns/wing_commander_saga/audio/voice/misc/{target_filename}"
+                    f"campaigns/hermes/audio/voice/misc/{target_filename}"
                 )
 
         elif audio_category == "control_tower":
             # Organize by location/ship
             location = self._extract_location_from_filename(target_filename)
             if location:
-                return f"campaigns/wing_commander_saga/audio/voice/control/{location}/{target_filename}"
+                return f"campaigns/hermes/audio/voice/control/{location}/{target_filename}"
             else:
-                return f"campaigns/wing_commander_saga/audio/voice/control/misc/{target_filename}"
+                return f"campaigns/hermes/audio/voice/control/misc/{target_filename}"
 
         else:
-            return f"campaigns/wing_commander_saga/audio/{audio_category}/{target_filename}"
+            return f"audio/{audio_category}/{target_filename}"
 
     def _detect_material_type(self, filename: str) -> str:
         """Detect material type from filename"""

@@ -15,6 +15,11 @@ from .base_converter import BaseTableConverter, ParseState, TableType
 class StarsTableConverter(BaseTableConverter):
     """Converts WCS stars.tbl files to Godot environment resources"""
 
+    # Metadata for auto-registration
+    TABLE_TYPE = TableType.STARS
+    FILENAME_PATTERNS = ["stars.tbl"]
+    CONTENT_PATTERNS = ["stars.tbl"]
+
     def _init_parse_patterns(self) -> Dict[str, re.Pattern]:
         """Initialize regex patterns for stars table parsing"""
         return {
@@ -202,7 +207,7 @@ class StarsTableConverter(BaseTableConverter):
             "bitmaps": {
                 b["name"]: {
                     "type": "Texture",
-                    "path": f"res://assets/bitmaps/{b['name']}.png",
+                    "path": f"res://textures/environment/stars/{b['name']}.webp",
                 }
                 for b in bitmaps
             },

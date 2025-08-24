@@ -1,5 +1,8 @@
 # POF Parser Component - Model Conversion
 
+- Write pytests in `data_converter/tests/pof_parser`.
+- Use `uv` to run Python scripts and pytest.
+
 ## Component Purpose
 
 This component provides comprehensive POF (Parallax Object Format) file analysis, parsing, mesh conversion, and optimization for the Wing Commander Saga to Godot conversion pipeline. It handles .POF model conversion to glTF 2.0 format with preservation of all visual, structural, and gameplay-relevant metadata.
@@ -9,6 +12,27 @@ The POF parser operates within the unified conversion architecture:
 - **Model Processing**: This component handles .POF to glTF conversion  
 - **Mission Processing**: Handles FS2 mission file conversion
 - **Scene Assembly**: Final phase combines all components into complete Godot scenes
+
+## Architecture Updates
+
+### Vector3D Consolidation
+**Key Improvement**: Eliminated duplicate Vector3D definitions to ensure type consistency across all modules.
+
+Previously, the codebase had two separate Vector3D definitions:
+1. One in `pof_types.py` 
+2. Another in `vector3d.py`
+
+This caused type mismatches and inconsistencies. **Solution**: 
+- Enhanced the Vector3D class in `pof_types.py` with all functionality from `vector3d.py`
+- Removed the redundant `vector3d.py` file entirely
+- Updated all imports to use the single unified Vector3D definition
+
+**Benefits**:
+- ✅ Single source of truth for Vector3D throughout codebase
+- ✅ Eliminated type mismatches between modules
+- ✅ Enhanced functionality with additional methods (`from_bytes`, `magnitude_squared`, etc.)
+- ✅ Full backward compatibility maintained
+- ✅ All existing tests passing (36/36)
 
 ## Original C++ Implementation
 
@@ -88,6 +112,12 @@ Optimized physics collision mesh generator.
 - **Purpose**: Create efficient collision shapes for physics interaction
 - **Key Methods**: `generate_collision_mesh()`, support for various collision shapes
 - **Features**: Subsystem collision preservation, performance-targeted optimization
+
+### Enhanced Unified Binary Reader
+Consolidated binary reading functionality with improved error handling.
+- **Purpose**: Provide unified interface for reading binary data from POF files
+- **Key Methods**: `read_int32()`, `read_uint32()`, `read_float32()`, `read_vector3d()`, `read_length_prefixed_string()`
+- **Features**: Enhanced error handling, validation, and context tracking
 
 ## Usage Examples
 
@@ -215,10 +245,10 @@ python -m pof_parser.cli convert models/ --output-dir glb_models/ --textures tex
 ### Unit Testing
 ```python
 # Run comprehensive test suite
-python -m pof_parser.test_pof_parser
+uv run pytest data_converter/tests/pof_parser
 
 # Test individual components
-python -m unittest pof_parser.test_pof_parser.TestPOFFormatAnalyzer
+uv run pytest data_converter/tests/pof_parser/test_pof_parser.TestPOFFormatAnalyzer
 ```
 
 ### Integration Testing

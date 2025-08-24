@@ -17,6 +17,11 @@ from .base_converter import BaseTableConverter, ParseState, TableType
 class ShipTableConverter(BaseTableConverter):
     """Converts WCS ships.tbl files to Godot ship resources"""
 
+    # Metadata for auto-registration
+    TABLE_TYPE = TableType.SHIPS
+    FILENAME_PATTERNS = ["ships.tbl", "Ships.tbl"]
+    CONTENT_PATTERNS = ["$Name:", "$Species:", "$POF file:"]
+
     def __init__(self, source_dir, target_dir):
         """Initialize ship table converter with statistics tracking."""
         super().__init__(source_dir, target_dir)
@@ -36,6 +41,12 @@ class ShipTableConverter(BaseTableConverter):
             "short_name": re.compile(r"^\$Short name:\s*(.+)$", re.IGNORECASE),
             "species": re.compile(r"^\$Species:\s*(.+)$", re.IGNORECASE),
             "type": re.compile(r"^\$Type:\s*(.+)$", re.IGNORECASE),
+            # Engine wash properties
+            "engine_wash_start": re.compile(r"^\$Name:\s*(.+)$", re.IGNORECASE),
+            "angle": re.compile(r"^\$Angle:\s*([\d\.]+)$", re.IGNORECASE),
+            "radius_mult": re.compile(r"^\$Radius Mult:\s*([\d\.]+)$", re.IGNORECASE),
+            "length": re.compile(r"^\$Length:\s*([\d\.]+)$", re.IGNORECASE),
+            "intensity": re.compile(r"^\$Intensity:\s*([\d\.]+)$", re.IGNORECASE),
             # Physics and performance
             "max_velocity": re.compile(
                 r"^\$Max velocity:\s*([\d\.\-\s,]+)$", re.IGNORECASE
@@ -46,7 +57,7 @@ class ShipTableConverter(BaseTableConverter):
             "hitpoints": re.compile(r"^\$Hitpoints:\s*([\d\.]+)$", re.IGNORECASE),
             "mass": re.compile(r"^\$Mass:\s*([\d\.]+)$", re.IGNORECASE),
             "density": re.compile(r"^\$Density:\s*([\d\.]+)$", re.IGNORECASE),
-            "max_shield": re.compile(r"^\$Shield:\s*([\d\.]+)$", re.IGNORECASE),
+            "max_shield": re.compile(r"^\$Shields?:\s*([\d\.]+)$", re.IGNORECASE),
             "power_output": re.compile(r"^\$Power Output:\s*([\d\.]+)$", re.IGNORECASE),
             "max_weapon_energy": re.compile(
                 r"^\$Max Weapon Energy:\s*([\d\.]+)$", re.IGNORECASE
@@ -116,10 +127,26 @@ class ShipTableConverter(BaseTableConverter):
             "thruster_loop_sound": re.compile(r"^\+LoopSnd:\s*(.+)$", re.IGNORECASE),
             "thruster_stop_sound": re.compile(r"^\+StopSnd:\s*(.+)$", re.IGNORECASE),
             # UI and HUD assets
-            "shield_icon": re.compile(r"^\$Shield Icon:\s*(.+)$", re.IGNORECASE),
+            "shield_icon": re.compile(r"^\$Shield_icon:\s*(.+)$", re.IGNORECASE),
             "ship_icon": re.compile(r"^\$Ship_icon:\s*(.+)$", re.IGNORECASE),
             "ship_anim": re.compile(r"^\$Ship_anim:\s*(.+)$", re.IGNORECASE),
             "ship_overhead": re.compile(r"^\$Ship_overhead:\s*(.+)$", re.IGNORECASE),
+            # Camera and viewport
+            "closeup_pos": re.compile(r"^\$Closeup_pos:\s*(.+)$", re.IGNORECASE),
+            "closeup_zoom": re.compile(r"^\$Closeup_zoom:\s*(.+)$", re.IGNORECASE),
+            # Thruster configuration
+            "thruster_radius_factor": re.compile(r"^\$Thruster.*Radius factor:\s*(.+)$", re.IGNORECASE),
+            "thruster_length_factor": re.compile(r"^\$Thruster.*Length factor:\s*(.+)$", re.IGNORECASE),
+            # Subsystem definitions
+            "subsystem": re.compile(r"^\$Subsystem:\s*(.+)$", re.IGNORECASE),
+            "alt_subsystem_name": re.compile(r"^\s*\$Alt Subsystem Name:\s*(.+)$", re.IGNORECASE),
+            "alt_damage_popup_name": re.compile(r"^\s*\$Alt Damage Popup Subsystem Name:\s*(.+)$", re.IGNORECASE),
+            # Weapon bank allocations
+            "allowed_pbanks": re.compile(r"^\$Allowed PBanks:\s*(.+)$", re.IGNORECASE),
+            "allowed_sbanks": re.compile(r"^\$Allowed SBanks:\s*(.+)$", re.IGNORECASE),
+            "default_pbanks": re.compile(r"^\$Default PBanks:\s*(.+)$", re.IGNORECASE),
+            "default_sbanks": re.compile(r"^\$Default SBanks:\s*(.+)$", re.IGNORECASE),
+            "sbank_capacity": re.compile(r"^\$SBank Capacity:\s*(.+)$", re.IGNORECASE),
             # Tech database assets
             "tech_model": re.compile(r"^\$Tech Model:\s*(.+)$", re.IGNORECASE),
             "tech_anim": re.compile(r"^\$Tech Anim:\s*(.+)$", re.IGNORECASE),
@@ -129,11 +156,51 @@ class ShipTableConverter(BaseTableConverter):
                 r"^\$Texture Replace:\s*(.+)$", re.IGNORECASE
             ),
             # Section termination
-            "section_end": re.compile(r"^\$end_multi_text\s*$", re.IGNORECASE),
+            "section_end": re.compile(r"^#End\s*$", re.IGNORECASE),
         }
 
     def get_table_type(self) -> TableType:
         return TableType.SHIPS
+
+    def parse_table(self, state: ParseState) -> List[Dict[str, Any]]:
+        """Parse the entire ships.tbl file, handling all sections"""
+        entries = []
+        
+        # First, skip to the #Ship Classes section
+        while state.has_more_lines():
+            line = state.peek_line()
+            if not line or self._should_skip_line(line, state):
+                state.skip_line()
+                continue
+                
+            # Look for the Ship Classes section
+            if "#Ship Classes" in line:
+                state.skip_line()  # Skip the section header
+                break
+            else:
+                state.skip_line()
+        
+        # Now parse all ship class entries
+        while state.has_more_lines():
+            line = state.peek_line()
+            if not line or self._should_skip_line(line, state):
+                state.skip_line()
+                continue
+
+            # Check for ship start
+            if self._parse_patterns["ship_start"].match(line.strip()):
+                entry = self.parse_entry(state)
+                if entry:
+                    entry["entry_type"] = "ship"
+                    entries.append(entry)
+            # Check for section end - this indicates the end of Ship Classes
+            elif self._parse_patterns["section_end"].match(line.strip()):
+                state.skip_line()
+                break
+            else:
+                state.skip_line()
+        
+        return entries
 
     def parse_entry(self, state: ParseState) -> Optional[Dict[str, Any]]:
         """Parse a single ship entry from the table and capture asset relationships"""
@@ -151,6 +218,10 @@ class ShipTableConverter(BaseTableConverter):
             # Check for ship start
             match = self._parse_patterns["ship_start"].match(line)
             if match:
+                if "name" in ship_data:
+                    # We already have a ship entry, this is the start of the next one
+                    state.current_line -= 1  # Rewind so next parse can catch this
+                    return ship_data
                 ship_data["name"] = match.group(1).strip()
                 continue
 
@@ -167,7 +238,71 @@ class ShipTableConverter(BaseTableConverter):
                     self._finalize_ship_asset_mapping(ship_data)
                     return ship_data if ship_data else None
 
+                # Check for start of next ship entry (dash comment line pattern)
+                if line.startswith(';---') and state.has_more_lines():
+                    # This is a separator line between ships, return current entry
+                    return ship_data if ship_data else None
+
         return ship_data if ship_data else None
+
+    def _parse_engine_wash_entry(self, state: ParseState) -> Optional[Dict[str, Any]]:
+        """Parse a single engine wash entry from the table"""
+        wash_data = {}
+
+        while state.has_more_lines():
+            line = state.next_line()
+            if not line:
+                continue
+
+            line = line.strip()
+            if not line or self._should_skip_line(line, state):
+                continue
+
+            # Check for engine wash start
+            match = self._parse_patterns["engine_wash_start"].match(line)
+            if match:
+                if "name" in wash_data:
+                    # We already have an entry, this is the start of the next one
+                    state.current_line -= 1  # Rewind so next parse can catch this
+                    return wash_data
+                wash_data["name"] = match.group(1).strip()
+                continue
+
+            # Parse engine wash properties
+            if "name" in wash_data:  # Only parse if we're in an engine wash section
+                if self._parse_engine_wash_property(line, wash_data):
+                    continue
+
+                # Check for section end
+                if self._parse_patterns["section_end"].match(line):
+                    return wash_data if wash_data else None
+
+                # If we reach here, it's an unexpected line - assume end of entry
+                state.current_line -= 1  # Rewind so this line can be processed again
+                return wash_data
+
+        return wash_data if wash_data else None
+
+    def _parse_engine_wash_property(self, line: str, wash_data: Dict[str, Any]) -> bool:
+        """Parse a single engine wash property line"""
+        engine_wash_properties = ["angle", "radius_mult", "length", "intensity"]
+
+        for property_name in engine_wash_properties:
+            pattern = self._parse_patterns.get(property_name)
+            if pattern:
+                match = pattern.match(line)
+                if match:
+                    value = match.group(1).strip()
+                    
+                    # Strip inline comments (semicolons)
+                    if ";" in value:
+                        value = value.split(";", 1)[0].strip()
+                    
+                    # Parse numeric values
+                    wash_data[property_name] = self.parse_value(value, float)
+                    return True
+
+        return False
 
     def _parse_ship_property(self, line: str, ship_data: Dict[str, Any]) -> bool:
         """Parse a single ship property line"""
@@ -178,6 +313,10 @@ class ShipTableConverter(BaseTableConverter):
             match = pattern.match(line)
             if match:
                 value = match.group(1).strip()
+                
+                # Strip inline comments (semicolons)
+                if ";" in value:
+                    value = value.split(";", 1)[0].strip()
 
                 # Handle special parsing for specific properties
                 if property_name == "max_velocity":
@@ -194,6 +333,19 @@ class ShipTableConverter(BaseTableConverter):
                     "detail_distance",
                 ]:
                     ship_data[property_name] = self.parse_value(value, float)
+                elif property_name == "closeup_pos":
+                    ship_data["closeup_pos"] = self._parse_position_vector(value)
+                elif property_name == "closeup_zoom":
+                    ship_data["closeup_zoom"] = self.parse_value(value, float)
+                elif property_name in ["thruster_radius_factor", "thruster_length_factor"]:
+                    # Handle thruster factors - store as float
+                    ship_data[property_name] = self.parse_value(value, float)
+                elif property_name in ["allowed_pbanks", "allowed_sbanks", "default_pbanks", "default_sbanks"]:
+                    # Handle weapon bank lists - parse as string lists
+                    ship_data[property_name] = self._parse_weapon_banks(value)
+                elif property_name == "sbank_capacity":
+                    # Handle secondary bank capacity as integer list
+                    ship_data["sbank_capacity"] = self._parse_integer_list(value)
                 else:
                     ship_data[property_name] = value
 
@@ -219,6 +371,77 @@ class ShipTableConverter(BaseTableConverter):
             self.logger.warning(f"Failed to parse velocity: {velocity_str}")
             return {"forward": 0.0, "reverse": 0.0, "side": 0.0}
 
+    def _parse_position_vector(self, position_str: str) -> Dict[str, float]:
+        """Parse position vector string like '0.0, 0.0, -14.94688'"""
+        try:
+            # Strip inline comments (semicolons)
+            if ";" in position_str:
+                position_str = position_str.split(";", 1)[0].strip()
+            
+            components = [float(x.strip()) for x in position_str.split(",")]
+            if len(components) == 3:
+                return {
+                    "x": components[0],
+                    "y": components[1],
+                    "z": components[2],
+                }
+            else:
+                self.logger.warning(f"Invalid position format: {position_str}")
+                return {"x": 0.0, "y": 0.0, "z": 0.0}
+        except (ValueError, IndexError):
+            self.logger.warning(f"Failed to parse position: {position_str}")
+            return {"x": 0.0, "y": 0.0, "z": 0.0}
+
+    def _parse_weapon_banks(self, bank_str: str) -> List[List[str]]:
+        """Parse weapon bank lists like '(\"Laser\") (\"Ion\")' or '(\"Pilum FF\" \"Spiculum IR\")'"""
+        try:
+            # Remove outer parentheses and split by individual bank groups
+            bank_str = bank_str.strip()
+            if not bank_str.startswith("(") or not bank_str.endswith(")"):
+                return []
+            
+            # Extract individual bank groups
+            banks = []
+            current_bank = []
+            in_quotes = False
+            current_token = ""
+            
+            for char in bank_str[1:-1]:  # Skip outer parentheses
+                if char == '"':
+                    in_quotes = not in_quotes
+                    if not in_quotes and current_token:
+                        current_bank.append(current_token)
+                        current_token = ""
+                elif char == ')' and not in_quotes:
+                    if current_bank:
+                        banks.append(current_bank)
+                        current_bank = []
+                elif char not in ' ()' or in_quotes:
+                    current_token += char
+            
+            # Add the last bank if any
+            if current_bank:
+                banks.append(current_bank)
+            
+            return banks
+            
+        except Exception as e:
+            self.logger.warning(f"Failed to parse weapon banks: {bank_str}, error: {e}")
+            return []
+
+    def _parse_integer_list(self, list_str: str) -> List[int]:
+        """Parse integer list like '(20, 20, 20, 20)'"""
+        try:
+            # Remove parentheses and split by commas
+            list_str = list_str.strip().strip("()")
+            if not list_str:
+                return []
+            
+            return [int(x.strip()) for x in list_str.split(",") if x.strip()]
+        except (ValueError, IndexError):
+            self.logger.warning(f"Failed to parse integer list: {list_str}")
+            return []
+
     def validate_entry(self, entry: Dict[str, Any]) -> bool:
         """Validate a parsed ship entry"""
         required_fields = ["name"]
@@ -238,6 +461,9 @@ class ShipTableConverter(BaseTableConverter):
             "max_weapon_energy",
             "afterburner_fuel",
             "detail_distance",
+            "closeup_zoom",
+            "thruster_radius_factor",
+            "thruster_length_factor",
         ]
         for field in numeric_fields:
             if field in entry and not isinstance(entry[field], (int, float)):
@@ -315,6 +541,16 @@ class ShipTableConverter(BaseTableConverter):
             "tech_anim",
             "tech_image",
             "texture_replace",
+            # New asset properties
+            "closeup_pos",
+            "closeup_zoom",
+            "thruster_radius_factor",
+            "thruster_length_factor",
+            "allowed_pbanks",
+            "allowed_sbanks",
+            "default_pbanks",
+            "default_sbanks",
+            "sbank_capacity",
         ]
 
         for prop_name in asset_properties:

@@ -33,11 +33,9 @@ from .pof_chunks import (
     PM_COMPATIBLE_VERSION,
     PM_OBJFILE_MAJOR_VERSION,
     POF_HEADER_ID,
-    read_chunk_header,
-    read_float,
-    read_int,
-    read_uint,
 )
+# Import unified binary reader
+from .pof_binary_reader import create_reader
 
 logger = logging.getLogger(__name__)
 
@@ -234,7 +232,8 @@ class POFFormatAnalyzer:
                     logger.debug("Reached end of file (insufficient data for header)")
                     break
 
-                chunk_id, chunk_len = read_chunk_header(f)
+                reader = create_reader(f)
+                chunk_id, chunk_len = reader.read_chunk_header()
 
                 # Create chunk info
                 chunk_info = ChunkInfo(
@@ -314,9 +313,10 @@ class POFFormatAnalyzer:
 
     def _analyze_ohdr_metadata(self, f: BinaryIO, chunk_info: ChunkInfo) -> None:
         """Analyze OHDR chunk metadata."""
-        max_radius = read_float(f)
-        obj_flags = read_uint(f)
-        num_subobjects = read_int(f)
+        reader = create_reader(f)
+        max_radius = reader.read_float32()
+        obj_flags = reader.read_uint32()
+        num_subobjects = reader.read_int32()
 
         chunk_info.metadata = {
             "max_radius": max_radius,
@@ -326,9 +326,10 @@ class POFFormatAnalyzer:
 
     def _analyze_sobj_metadata(self, f: BinaryIO, chunk_info: ChunkInfo) -> None:
         """Analyze SOBJ chunk metadata."""
-        subobject_number = read_int(f)
-        radius = read_float(f)
-        parent = read_int(f)
+        reader = create_reader(f)
+        subobject_number = reader.read_int32()
+        radius = reader.read_float32()
+        parent = reader.read_int32()
 
         chunk_info.metadata = {
             "subobject_number": subobject_number,

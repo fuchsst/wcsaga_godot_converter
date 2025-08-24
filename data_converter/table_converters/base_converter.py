@@ -51,7 +51,9 @@ class TableType(Enum):
     HUD_GAUGES = "hud_gauges"
     IFF = "iff_defs"
     LIGHTNING = "lightning"
+    NEBULA = "nebula"
     MEDALS = "medals"
+    MFLASH = "mflash"
     MUSIC = "music"
     RANK = "rank"
     SCRIPTING = "scripting"
@@ -63,6 +65,7 @@ class TableType(Enum):
     STRINGS = "strings"
     UNKNOWN = "unknown"
     WEAPONS = "weapons"
+    WEAPON_EXPL = "weapon_expl"
 
 
 @dataclass
@@ -220,25 +223,17 @@ class BaseTableConverter(IFileConverter, IValidatableConverter):
         return ParseState(lines=lines, filename=filename)
 
     def _parse_all_entries(self, state: ParseState) -> List[Dict[str, Any]]:
-        """Parse all entries from the table file"""
+        """Parse all entries from the table"""
         entries = []
-
         while state.has_more_lines():
-            line = state.peek_line()
-            if line is None:
-                break
-
-            # Skip comments and empty lines
-            if self._should_skip_line(line, state):
-                state.skip_line()
-                continue
-
-            # Try to parse entry
             entry = self.parse_entry(state)
             if entry:
                 entries.append(entry)
-
         return entries
+
+    def parse_table(self, state: ParseState) -> List[Dict[str, Any]]:
+        """Parse the entire table and return all entries"""
+        return self._parse_all_entries(state)
 
     def _validate_all_entries(
         self, entries: List[Dict[str, Any]]
@@ -310,17 +305,28 @@ class BaseTableConverter(IFileConverter, IValidatableConverter):
         return False
 
     def parse_value(self, value_str: str, expected_type: type = str) -> Any:
-        """Parse a value string to the expected type using common utilities"""
-        if expected_type == str:
-            return ConversionUtils.extract_string_value(value_str)
-        elif expected_type == int:
-            return ConversionUtils.extract_int_value(value_str)
-        elif expected_type == float:
-            return ConversionUtils.extract_float_value(value_str)
-        elif expected_type == bool:
-            return ConversionUtils.extract_bool_value(value_str)
-        else:
-            return ConversionUtils.extract_string_value(value_str)
+        """Parse a value string to the expected type"""
+        try:
+            if expected_type == str:
+                return value_str
+            elif expected_type == int:
+                return int(value_str)
+            elif expected_type == float:
+                return float(value_str)
+            elif expected_type == bool:
+                return value_str.lower() in ("true", "yes", "1", "on")
+            else:
+                return value_str
+        except (ValueError, TypeError):
+            # Return default values for failed conversions
+            if expected_type == int:
+                return 0
+            elif expected_type == float:
+                return 0.0
+            elif expected_type == bool:
+                return False
+            else:
+                return ""
 
     # Common utility methods that use the shared ConversionUtils
     def _extract_string_value(self, line: str) -> str:

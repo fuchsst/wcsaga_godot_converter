@@ -14,14 +14,19 @@ from .base_converter import BaseTableConverter, ParseState, TableType
 class RankTableConverter(BaseTableConverter):
     """Converts WCS rank.tbl files to Godot rank resources"""
 
+    # Metadata for auto-registration
+    TABLE_TYPE = TableType.RANK
+    FILENAME_PATTERNS = ["rank.tbl"]
+    CONTENT_PATTERNS = ["rank.tbl"]
+
     def _init_parse_patterns(self) -> Dict[str, re.Pattern]:
         """Initialize regex patterns for rank.tbl parsing"""
         return {
-            "name": re.compile(r"^\$Name:\s*(.+)$", re.IGNORECASE),
+            "name": re.compile(r"^\$Name:\s*([^\n]+)$", re.IGNORECASE),
             "points": re.compile(r"^\$Points:\s*(\d+)$", re.IGNORECASE),
-            "bitmap": re.compile(r"^\$Bitmap:\s*(.+)$", re.IGNORECASE),
+            "bitmap": re.compile(r"^\$Bitmap:\s*([^\n]+)$", re.IGNORECASE),
             "promo_voice": re.compile(
-                r"^\$Promotion Voice Base:\s*(.+)$", re.IGNORECASE
+                r"^\$Promotion Voice Base:\s*([^\n]+)$", re.IGNORECASE
             ),
             "promo_text_start": re.compile(r"^\$Promotion Text:$", re.IGNORECASE),
             "promo_text_line": re.compile(r'^XSTR\("(.+)",\s*-1\)$', re.IGNORECASE),

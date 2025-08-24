@@ -15,6 +15,10 @@ from .base_converter import BaseTableConverter, ParseState, TableType
 class SpeciesDefsTableConverter(BaseTableConverter):
     """Converts WCS Species_defs.tbl files to Godot species definition resources"""
 
+    TABLE_TYPE = TableType.SPECIES
+    FILENAME_PATTERNS = ["Species_defs.tbl", "species_defs.tbl"]
+    CONTENT_PATTERNS = ["$Species_Name:", "$NumSpecies:"]
+
     def _init_parse_patterns(self) -> Dict[str, re.Pattern]:
         """Initialize regex patterns for Species_defs.tbl parsing"""
         return {
@@ -33,6 +37,7 @@ class SpeciesDefsTableConverter(BaseTableConverter):
             "awacs_multiplier": re.compile(
                 r"^\$AwacsMultiplier:\s*([\d\.]+)$", re.IGNORECASE
             ),
+            "num_species": re.compile(r"^\$NumSpecies:\s*(\d+)$", re.IGNORECASE),
             "section_end": re.compile(r"^#END$", re.IGNORECASE),
         }
 
@@ -42,17 +47,16 @@ class SpeciesDefsTableConverter(BaseTableConverter):
     def parse_table(self, state: ParseState) -> List[Dict[str, Any]]:
         """Parse the entire Species_defs.tbl file."""
         entries = []
-        # Skip to the start of species definitions
-        while state.has_more_lines():
-            line = state.peek_line()
-            if line and "$NumSpecies:" in line:
-                state.skip_line()
-                break
-            state.skip_line()
-
+        
         while state.has_more_lines():
             line = state.peek_line()
             if not line or self._should_skip_line(line, state):
+                state.skip_line()
+                continue
+
+            # Check for NumSpecies declaration
+            match = self._parse_patterns["num_species"].match(line.strip())
+            if match:
                 state.skip_line()
                 continue
 
@@ -77,9 +81,11 @@ class SpeciesDefsTableConverter(BaseTableConverter):
             if not line or self._should_skip_line(line, state):
                 continue
 
+            # Check for section end
             if self._parse_patterns["section_end"].match(line):
                 break
 
+            # Check for next species entry
             if (
                 self._parse_patterns["species_start"].match(line)
                 and "name" in entry_data

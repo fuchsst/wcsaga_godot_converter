@@ -2,29 +2,30 @@
 import logging
 from typing import Any, BinaryIO, Dict, List
 
-# Import necessary helper functions and constants from pof_chunks
-from .pof_chunks import read_int, read_vector
+# Import unified binary reader
+from .pof_binary_reader import create_reader
 
 # Import Vector3D if needed for type hinting or direct use
-# from .vector3d import Vector3D
+# from .pof_types import Vector3D
 
 logger = logging.getLogger(__name__)
 
 
 def read_shld_chunk(f: BinaryIO, length: int) -> Dict[str, Any]:
     """Parses the Shield Mesh (SHLD) chunk."""
+    reader = create_reader(f)
     logger.debug("Reading SHLD chunk...")
     shield_data = {"vertices": [], "faces": []}
-    num_verts = read_int(f)
+    num_verts = reader.read_int32()
     # Read vertices first, store them in a temporary list
-    temp_verts = [read_vector(f) for _ in range(num_verts)]
+    temp_verts = [reader.read_vector3d() for _ in range(num_verts)]
     shield_data["vertices"] = [v.to_list() for v in temp_verts]  # Store as lists
 
-    num_tris = read_int(f)
+    num_tris = reader.read_int32()
     for _ in range(num_tris):
-        norm = read_vector(f).to_list()
-        vert_indices = [read_int(f) for _ in range(3)]
-        neighbor_indices = [read_int(f) for _ in range(3)]
+        norm = reader.read_vector3d().to_list()
+        vert_indices = [reader.read_int32() for _ in range(3)]
+        neighbor_indices = [reader.read_int32() for _ in range(3)]
         # Validate indices
         valid_indices = True
         for idx in vert_indices:

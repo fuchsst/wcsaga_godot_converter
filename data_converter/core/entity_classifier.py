@@ -582,7 +582,10 @@ class EntityClassifier:
         elif "armor" in filename:
             return TableType.ARMOR
         elif "species" in filename:
-            return TableType.SPECIES_DEFS
+            if "species_defs" in filename or "_defs" in filename:
+                return TableType.SPECIES_DEFS
+            else:
+                return TableType.SPECIES
         elif "iff" in filename:
             return TableType.IFF_DEFS
 

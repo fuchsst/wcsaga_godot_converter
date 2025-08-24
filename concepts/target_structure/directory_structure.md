@@ -12,8 +12,7 @@ wcsaga_godot/
 ├── entities/              # Physical game objects (ships, weapons, projectiles)
 ├── systems/               # Game logic systems (AI, mission control, weapon control)
 ├── ui/                    # User interface elements
-├── missions/              # Mission scenes and data
-├── campaigns/             # Campaign data and progression
+├── campaigns/             # Campaign data, progression, and mission scenes
 ├── docs/                  # Documentation
 ├── project.godot          # Godot project file
 └── README.md             # Project README
@@ -57,11 +56,18 @@ data/
 │   ├── tactics/           # Combat tactics
 │   ├── formations/        # Formation flying patterns
 │   └── goals/             # AI goals
-├── missions/              # Mission data resources
-│   ├── brimstone/         # Brimstone campaign missions
-│   ├── hermes/            # Hermes campaign missions
-│   └── training/          # Training missions
-├── campaigns/             # Campaign progression data
+├── campaigns/             # Campaign data resources
+│   ├── brimstone/         # Brimstone campaign data
+│   │   ├── missions/      # Mission data resources
+│   │   ├── progression/   # Campaign progression
+│   │   └── story/         # Story elements
+│   ├── hermes/            # Hermes campaign data
+│   │   ├── missions/      # Mission data resources
+│   │   ├── progression/   # Campaign progression
+│   │   └── story/         # Story elements
+│   └── training/          # Training campaign data
+│       ├── missions/      # Training mission data
+│       └── tutorials/     # Tutorial definitions
 ├── effects/               # Effect data resources
 └── config/                # Configuration data
     ├── difficulty/        # Difficulty settings
@@ -218,62 +224,59 @@ ui/
     └── light_theme.tres
 ```
 
-## Missions Directory Structure
-```
-missions/
-├── brimstone/             # Brimstone campaign
-│   ├── m01_brimstone/     # Mission 1
-│   │   ├── mission.tscn   # Mission scene
-│   │   ├── mission.tres   # Mission data resource
-│   │   ├── briefing.txt   # Briefing text
-│   │   ├── fiction.txt    # Fiction text
-│   │   └── objectives.tres # Mission objectives
-│   ├── m02_brimstone/     # Mission 2
-│   │   ├── mission.tscn
-│   │   ├── mission.tres
-│   │   ├── briefing.txt
-│   │   ├── fiction.txt
-│   │   └── objectives.tres
-│   └── campaign.tres      # Campaign definition
-├── hermes/                # Hermes campaign
-│   ├── m01_hermes/        # Mission 1
-│   │   ├── mission.tscn
-│   │   ├── mission.tres
-│   │   ├── briefing.txt
-│   │   ├── fiction.txt
-│   │   └── objectives.tres
-│   └── campaign.tres      # Campaign definition
-├── training/              # Training missions
-│   ├── intro_training/    # Introduction training
-│   │   ├── mission.tscn
-│   │   ├── mission.tres
-│   │   ├── briefing.txt
-│   │   └── objectives.tres
-│   └── advanced_training/ # Advanced training
-│       ├── mission.tscn
-│       ├── mission.tres
-│       ├── briefing.txt
-│       └── objectives.tres
-└── templates/             # Mission templates
-    ├── space_battle.tscn  # Space battle template
-    ├── asteroid_field.tscn # Asteroid field template
-    └── capital_ship.tscn  # Capital ship battle template
-```
-
-## Campaigns Directory Structure
+## Campaigns Directory Structure (Consolidated)
 ```
 campaigns/
 ├── brimstone/             # Brimstone campaign
 │   ├── campaign.tres      # Campaign definition
 │   ├── progression.tres   # Campaign progression data
-│   └── pilot_data.tres    # Pilot progression data
+│   ├── pilot_data.tres    # Pilot progression data
+│   └── missions/          # Mission scenes and data
+│       ├── m01_brimstone/ # Mission 1
+│       │   ├── mission.tscn # Mission scene
+│       │   ├── mission.tres # Mission data resource
+│       │   ├── briefing.txt # Briefing text
+│       │   ├── fiction.txt  # Fiction text
+│       │   └── objectives.tres # Mission objectives
+│       ├── m02_brimstone/ # Mission 2
+│       │   ├── mission.tscn
+│       │   ├── mission.tres
+│       │   ├── briefing.txt
+│       │   ├── fiction.txt
+│       │   └── objectives.tres
+│       └── templates/     # Mission templates
 ├── hermes/                # Hermes campaign
 │   ├── campaign.tres      # Campaign definition
 │   ├── progression.tres   # Campaign progression data
-│   └── pilot_data.tres    # Pilot progression data
+│   ├── pilot_data.tres    # Pilot progression data
+│   └── missions/          # Mission scenes and data
+│       ├── m01_hermes/    # Mission 1
+│       │   ├── mission.tscn
+│       │   ├── mission.tres
+│       │   ├── briefing.txt
+│       │   ├── fiction.txt
+│       │   └── objectives.tres
+│       ├── m02_hermes/    # Mission 2
+│       │   ├── mission.tscn
+│       │   ├── mission.tres
+│       │   ├── briefing.txt
+│       │   ├── fiction.txt
+│       │   └── objectives.tres
+│       └── templates/     # Mission templates
 ├── training/              # Training campaign
 │   ├── campaign.tres      # Campaign definition
-│   └── tutorials.tres     # Tutorial definitions
+│   ├── tutorials.tres     # Tutorial definitions
+│   └── missions/          # Training missions
+│       ├── intro_training/ # Introduction training
+│       │   ├── mission.tscn
+│       │   ├── mission.tres
+│       │   ├── briefing.txt
+│       │   └── objectives.tres
+│       └── advanced_training/ # Advanced training
+│           ├── mission.tscn
+│           ├── mission.tres
+│           ├── briefing.txt
+│           └── objectives.tres
 └── multiplayer/           # Multiplayer campaigns
     ├── coop.tres          # Cooperative campaign
     ├── teams.tres         # Team vs team campaign
@@ -327,6 +330,7 @@ This directory structure follows these key Godot best practices:
    - Physical game objects (`/entities/`)
    - The logic that governs them (`/systems/`)
    - User interface elements (`/ui/`)
+   - Campaign progression (`/campaigns/`)
 
 4. **Scalability**: Each feature folder is a self-contained, portable module that can be developed, tested, and maintained in isolation, enhancing team collaboration and simplifying long-term maintenance.
 

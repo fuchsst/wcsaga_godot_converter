@@ -14,6 +14,11 @@ from .base_converter import BaseTableConverter, ParseState, TableType
 class ScriptingTableConverter(BaseTableConverter):
     """Converts WCS scripting.tbl files to Godot script resources"""
 
+    # Metadata for auto-registration
+    TABLE_TYPE = TableType.SCRIPTING
+    FILENAME_PATTERNS = ["scripting.tbl"]
+    CONTENT_PATTERNS = ["$GameInit:", "$HUD:"]
+
     def _init_parse_patterns(self) -> Dict[str, re.Pattern]:
         """Initialize regex patterns for scripting.tbl parsing"""
         return {

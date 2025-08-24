@@ -125,6 +125,9 @@ class RelationshipBuilder:
                             required=True,
                         )
                         relationships[entry["name"]] = [sound_rel]
+                elif table_type in [TableType.SPECIES, TableType.SPECIES_DEFS, TableType.IFF_DEFS]:
+                    # Use the appropriate converter for species and IFF tables
+                    relationships = self._parse_species_iff_tables(table_file, table_type, context)
                 else:
                     # Generic table parsing for other types
                     relationships = self._parse_generic_table(table_file, context)
@@ -765,6 +768,63 @@ class RelationshipBuilder:
 
         except Exception as e:
             logger.error(f"Failed to parse asteroid table {asteroid_table}: {e}")
+            context.parsing_errors.append(f"Parse error: {e}")
+
+        return relationships
+
+    def _parse_species_iff_tables(
+        self, table_file: Path, table_type: TableType, context: TableParsingContext
+    ) -> Dict[str, List[AssetRelationship]]:
+        """Parse species and IFF definition tables using their converters"""
+        relationships = {}
+
+        try:
+            # Import converters dynamically to avoid circular imports
+            if table_type == TableType.SPECIES:
+                from ..table_converters.species_table_converter import SpeciesTableConverter
+                converter = SpeciesTableConverter()
+            elif table_type == TableType.SPECIES_DEFS:
+                from ..table_converters.species_defs_table_converter import SpeciesDefsTableConverter
+                converter = SpeciesDefsTableConverter()
+            elif table_type == TableType.IFF_DEFS:
+                from ..table_converters.iff_table_converter import IFFTableConverter
+                converter = IFFTableConverter()
+            else:
+                return relationships
+
+            with open(table_file, "r", encoding="utf-8", errors="ignore") as f:
+                content = f.read()
+
+            parse_state = ParseState(content.splitlines())
+            entries = converter.parse_table(parse_state)
+
+            # Convert entries to asset relationships
+            for entry in entries:
+                entity_name = entry.get("name")
+                if entity_name:
+                    relationships[entity_name] = []
+                    
+                    # Add animation references for species intel entries
+                    if table_type == TableType.SPECIES and "anim" in entry:
+                        anim_name = entry["anim"]
+                        if anim_name and anim_name.lower() != "none":
+                            # Look for .eff animation file
+                            anim_path = f"hermes_cbanims/{anim_name}.eff"
+                            anim_file = self.source_dir / anim_path
+                            if anim_file.exists():
+                                relationships[entity_name].append(
+                                    AssetRelationship(
+                                        source_path=anim_path,
+                                        target_path="",
+                                        asset_type="effect",
+                                        parent_entity=entity_name,
+                                        relationship_type="intel_animation",
+                                        required=False,
+                                    )
+                                )
+
+        except Exception as e:
+            logger.error(f"Failed to parse {table_type.value} table {table_file}: {e}")
             context.parsing_errors.append(f"Parse error: {e}")
 
         return relationships

@@ -42,12 +42,12 @@ This document explains how converted assets from different file types are integr
 
 ### 3. Mission Scenes
 **Component Assets**:
-- Mission resources (.tres) from `/missions/{campaign}/{mission_name}/`
+- Mission resources (.tres) from `/campaigns/{campaign}/missions/{mission_name}/`
 - Ship instances referencing ship scenes from `/entities/fighters/`
 - Weapon instances referencing weapon scenes from `/entities/weapons/`
 - Particle effects from `/animations/effects/` and `/textures/effects/`
 - Audio environments from `/audio/ambient/{environment_type}/`
-- Briefing text from `/text/fiction/{campaign}/{mission_name}/briefing.txt`
+- Briefing text from `/campaigns/{campaign}/briefing/missions/{mission_name}/briefing.txt`
 
 **Assembly Process**:
 - Create mission root node with mission data from mission directory
@@ -55,8 +55,8 @@ This document explains how converted assets from different file types are integr
 - Configure AI behaviors using mission scripting from `/data/ai/`
 - Set up event triggers and timeline using Godot's animation system
 - Configure environmental audio and effects from audio and animation directories
-- Create objective tracking components from `/data/missions/{campaign}/`
-- Link briefing UI to fiction text resources from `/text/fiction/`
+- Create objective tracking components from `/data/campaigns/{campaign}/missions/`
+- Link briefing UI to fiction text resources from `/campaigns/{campaign}/fiction/`
 
 ### 4. Effect Scenes
 **Component Assets**:

@@ -29,8 +29,8 @@ from ..table_converters.ai_table_converter import AITableConverter
 from ..table_converters.armor_table_converter import ArmorTableConverter
 from ..table_converters.asteroid_table_converter import AsteroidTableConverter
 from ..table_converters.base_converter import BaseTableConverter
-from ..table_converters.table_types import TableType
-from ..core.table_data_structures import ParseState
+from ..core.table_data_structures import TableType
+from ..table_converters.base_converter import ParseState
 from ..table_converters.fireball_table_converter import FireballTableConverter
 from ..table_converters.iff_table_converter import IFFTableConverter
 from ..table_converters.lightning_table_converter import LightningTableConverter
@@ -82,22 +82,21 @@ class TableConversionCLI:
 
         # Initialize converter mapping
         self.converter_map: Dict[TableType, Type[BaseTableConverter]] = {
-            TableType.ASTEROID: AsteroidTableConverter,
+            TableType.ASTEROIDS: AsteroidTableConverter,
             TableType.SHIPS: ShipTableConverter,
             TableType.WEAPONS: WeaponTableConverter,
             TableType.ARMOR: ArmorTableConverter,
             TableType.AI: AITableConverter,
             TableType.AI_PROFILES: AIProfilesTableConverter,
-            TableType.FIREBALL: FireballTableConverter,
+            TableType.FIREBALLS: FireballTableConverter,
             TableType.IFF: IFFTableConverter,
             TableType.LIGHTNING: LightningTableConverter,
             TableType.MEDALS: MedalsTableConverter,
             TableType.MUSIC: MusicTableConverter,
-            TableType.RANK: RankTableConverter,
+            TableType.RANKS: RankTableConverter,
             TableType.SCRIPTING: ScriptingTableConverter,
             TableType.SOUNDS: SoundsTableConverter,
-            TableType.SPECIES: SpeciesDefsTableConverter,
-            TableType.SPECIES_ENTRIES: SpeciesTableConverter,
+            TableType.SPECIES: SpeciesTableConverter,
             TableType.STARS: StarsTableConverter,
         }
 
@@ -124,22 +123,22 @@ class TableConversionCLI:
 
         # Direct filename matching
         type_mapping = {
-            "asteroid.tbl": TableType.ASTEROID,
+            "asteroid.tbl": TableType.ASTEROIDS,
             "ships.tbl": TableType.SHIPS,
             "weapons.tbl": TableType.WEAPONS,
             "armor.tbl": TableType.ARMOR,
             "ai.tbl": TableType.AI,
             "ai_profiles.tbl": TableType.AI_PROFILES,
-            "fireball.tbl": TableType.FIREBALL,
+            "fireball.tbl": TableType.FIREBALLS,
             "iff_defs.tbl": TableType.IFF,
             "lightning.tbl": TableType.LIGHTNING,
             "medals.tbl": TableType.MEDALS,
             "music.tbl": TableType.MUSIC,
-            "rank.tbl": TableType.RANK,
+            "rank.tbl": TableType.RANKS,
             "scripting.tbl": TableType.SCRIPTING,
             "sounds.tbl": TableType.SOUNDS,
             "species_defs.tbl": TableType.SPECIES,
-            "species.tbl": TableType.SPECIES_ENTRIES,
+            "species.tbl": TableType.SPECIES,
             "stars.tbl": TableType.STARS,
         }
 
@@ -148,7 +147,7 @@ class TableConversionCLI:
 
         # Pattern-based matching
         if "asteroid" in filename:
-            return TableType.ASTEROID
+            return TableType.ASTEROIDS
         elif "ship" in filename:
             return TableType.SHIPS
         elif "weapon" in filename:
@@ -160,7 +159,7 @@ class TableConversionCLI:
         elif "ai" in filename:
             return TableType.AI
         elif "fireball" in filename:
-            return TableType.FIREBALL
+            return TableType.FIREBALLS
         elif "iff" in filename:
             return TableType.IFF
         elif "lightning" in filename:
@@ -170,7 +169,7 @@ class TableConversionCLI:
         elif "music" in filename:
             return TableType.MUSIC
         elif "rank" in filename:
-            return TableType.RANK
+            return TableType.RANKS
         elif "script" in filename:
             return TableType.SCRIPTING
         elif "sound" in filename:
@@ -178,7 +177,7 @@ class TableConversionCLI:
         elif "species_defs" in filename:
             return TableType.SPECIES
         elif "species" in filename:
-            return TableType.SPECIES_ENTRIES
+            return TableType.SPECIES
         elif "star" in filename:
             return TableType.STARS
 
@@ -188,23 +187,23 @@ class TableConversionCLI:
                 first_lines = f.read(2000).lower()
 
             content_patterns = {
-                "#asteroid types": TableType.ASTEROID,
+                "#asteroid types": TableType.ASTEROIDS,
                 "#ship classes": TableType.SHIPS,
                 "#primary weapons": TableType.WEAPONS,
                 "#secondary weapons": TableType.WEAPONS,
                 "#armor type": TableType.ARMOR,
                 "#ai behavior": TableType.AI,
                 "#ai profiles": TableType.AI_PROFILES,
-                "#fireball": TableType.FIREBALL,
+                "#fireball": TableType.FIREBALLS,
                 "#iff": TableType.IFF,
                 "#lightning": TableType.LIGHTNING,
                 "#medal": TableType.MEDALS,
                 "#music": TableType.MUSIC,
-                "#rank": TableType.RANK,
+                "#rank": TableType.RANKS,
                 "#script": TableType.SCRIPTING,
                 "#sound": TableType.SOUNDS,
                 "#species defs": TableType.SPECIES,
-                "#species": TableType.SPECIES_ENTRIES,
+                "#species": TableType.SPECIES,
                 "#star": TableType.STARS,
             }
 
@@ -240,7 +239,7 @@ class TableConversionCLI:
 
             # Get appropriate converter
             converter_class = self.converter_map[table_type]
-            converter = converter_class()
+            converter = converter_class(self.source_dir, self.target_dir)
 
             # Read and parse the table file
             with open(table_file, "r", encoding="utf-8", errors="ignore") as f:
@@ -321,22 +320,22 @@ class TableConversionCLI:
         campaign_base = "campaigns/wing_commander_saga"
 
         type_to_dir = {
-            TableType.ASTEROID: f"{campaign_base}/environments/objects/asteroids",
+            TableType.ASTEROIDS: f"{campaign_base}/environments/objects/asteroids",
             TableType.SHIPS: f"{campaign_base}/ships",
             TableType.WEAPONS: f"{campaign_base}/weapons",
             TableType.ARMOR: f"{campaign_base}/armor",
             TableType.AI: f"{campaign_base}/ai",
             TableType.AI_PROFILES: f"{campaign_base}/ai",
-            TableType.FIREBALL: f"{campaign_base}/effects/fireballs",
+            TableType.FIREBALLS: f"{campaign_base}/effects/fireballs",
             TableType.IFF: f"{campaign_base}/factions",
             TableType.LIGHTNING: f"{campaign_base}/effects/lightning",
             TableType.MEDALS: f"{campaign_base}/ui/medals",
             TableType.MUSIC: f"{campaign_base}/audio/music",
-            TableType.RANK: f"{campaign_base}/ui/ranks",
+            TableType.RANKS: f"{campaign_base}/ui/ranks",
             TableType.SCRIPTING: f"{campaign_base}/missions/scripting",
             TableType.SOUNDS: f"{campaign_base}/audio/sounds",
             TableType.SPECIES: f"{campaign_base}/species",
-            TableType.SPECIES_ENTRIES: f"{campaign_base}/species",
+            TableType.SPECIES: f"{campaign_base}/species",
             TableType.STARS: f"{campaign_base}/environments/stars",
         }
 
@@ -366,7 +365,7 @@ class TableConversionCLI:
         # Determine resource class name
         if resource_class:
             godot_class = resource_class
-        elif table_type == TableType.ASTEROID:
+        elif table_type == TableType.ASTEROIDS:
             godot_class = "AsteroidData"
         else:
             godot_class = "Resource"
@@ -400,22 +399,22 @@ class TableConversionCLI:
 
         # Determine resource class name based on table type
         resource_class_map = {
-            TableType.ASTEROID: "WCSAsteroidDatabase",
+            TableType.ASTEROIDS: "WCSAsteroidDatabase",
             TableType.SHIPS: "WCSShipDatabase",
             TableType.WEAPONS: "WCSWeaponDatabase",
             TableType.ARMOR: "WCSArmorDatabase",
             TableType.AI: "WCSAIDatabase",
             TableType.AI_PROFILES: "WCSAIProfilesDatabase",
-            TableType.FIREBALL: "WCSFireballDatabase",
+            TableType.FIREBALLS: "WCSFireballDatabase",
             TableType.IFF: "WCSIFFDatabase",
             TableType.LIGHTNING: "WCSLightningDatabase",
             TableType.MEDALS: "WCSMedalsDatabase",
             TableType.MUSIC: "WCSMusicDatabase",
-            TableType.RANK: "WCSRankDatabase",
+            TableType.RANKS: "WCSRankDatabase",
             TableType.SCRIPTING: "WCSScriptingDatabase",
             TableType.SOUNDS: "WCSSoundsDatabase",
             TableType.SPECIES: "WCSSpeciesDefsDatabase",
-            TableType.SPECIES_ENTRIES: "WCSSpeciesDatabase",
+            TableType.SPECIES: "WCSSpeciesDatabase",
             TableType.STARS: "WCSStarsDatabase",
         }
 
