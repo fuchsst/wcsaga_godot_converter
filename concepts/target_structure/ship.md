@@ -15,18 +15,61 @@ The Ship Module manages all aspects of spacecraft entities in the Godot implemen
 - **Docking Support**: Ship docking and departure mechanics
 
 ## Dependencies
-- **Core Entity Module**: Ships are specialized entities
-- **Physics Module**: Ship movement and physics simulation
-- **Weapon Module**: Ship weapons and firing logic
-- **AI Module**: Each ship has associated AI data
-- **Model Module**: Ship models and subsystem positioning
-- **Visual Effects Module**: Particle effects and animations
+- **Core Entity Module** (/scripts/entities/): Ships are specialized entities
+- **Physics Module** (/scripts/physics/): Ship movement and physics simulation
+- **Weapon Module** (/features/weapons/): Ship weapons and firing logic
+- **AI Module** (/scripts/ai/): Each ship has associated AI data
+- **Model Module** (/features/fighters/): Ship models and subsystem positioning
+- **Visual Effects Module** (/features/effects/): Particle effects and animations
+
+## Directory Structure Implementation
+Following the feature-based organization principles, the Ship Module is organized as follows:
+
+### Features Directory (/features/)
+Ship entities are implemented as self-contained features in `/features/fighters/`:
+
+- `/features/fighters/confed_rapier/` - Raptor fighter
+  - `rapier.tscn` - Main scene file
+  - `rapier.gd` - Primary controller script
+  - `rapier.tres` - Ship data resource
+  - `rapier.glb` - 3D model
+  - `rapier.png` - Texture
+  - `rapier_engine.ogg` - Engine sound
+- `/features/fighters/kilrathi_dralthi/` - Dralthi fighter
+  - `dralthi.tscn` - Main scene file
+  - `dralthi.gd` - Primary controller script
+  - `dralthi.tres` - Ship data resource
+  - `dralthi.glb` - 3D model
+  - `dralthi.png` - Texture
+  - `dralthi_engine.ogg` - Engine sound
+- `/features/fighters/_shared/` - Shared fighter assets
+  - `/cockpits/` - Shared cockpit models
+    - `standard_cockpit.glb`
+    - `standard_cockpit_material.tres`
+  - `/effects/` - Shared fighter effects
+    - `engine_trail.png`
+    - `shield_effect.png`
+
+### Scripts Directory (/scripts/)
+Core ship logic is implemented as reusable scripts in `/scripts/entities/`:
+
+- `/scripts/entities/base_fighter.gd` - Base fighter controller
+- `/scripts/entities/ship_systems/weapon_system.gd` - Weapon system management
+- `/scripts/entities/ship_systems/subsystem.gd` - Subsystem component
+- `/scripts/entities/ship_systems/subsystem_template.gd` - Subsystem template resource
+
+### Assets Directory (/assets/)
+Shared ship-related assets are organized in `/assets/`:
+
+- `/assets/textures/effects/` - Particle textures for ship effects
+- `/assets/audio/sfx/` - Sound effects for ship operations
 
 ## Godot Implementation Details
 
 ### Native GDScript Classes
 ```gdscript
 # Ship class representing individual spacecraft instances
+# Location: /features/fighters/confed_rapier/rapier.gd
 class Ship extends Entity:
     # Reference to the ship class template
     var shipClass: ShipClass
@@ -213,6 +256,7 @@ class Ship extends Entity:
         dockedTo = null
 
 # Ship class template defining properties for ship types
+# Location: /scripts/entities/ship_systems/ship_class.gd
 class ShipClass extends Resource:
     # Basic identification
     @export var name: String
@@ -249,6 +293,7 @@ class ShipClass extends Resource:
         resource_name = name
 
 # Subsystem representing damageable ship components
+# Location: /scripts/entities/ship_systems/subsystem.gd
 class Subsystem:
     # Template this subsystem is based on
     var template: SubsystemTemplate
@@ -294,6 +339,7 @@ class Subsystem:
                 health = min(health + template.regenRate * delta, template.maxHealth)
 
 # Template for subsystem properties
+# Location: /scripts/entities/ship_systems/subsystem_template.gd
 class SubsystemTemplate extends Resource:
     @export var name: String
     @export var functionType: String  # ENGINE, WEAPON, SENSOR, etc.
@@ -304,6 +350,7 @@ class SubsystemTemplate extends Resource:
     @export var armorFactor: float = 1.0
 
 # Weapon system managing ship's weapons
+# Location: /scripts/entities/ship_systems/weapon_system.gd
 class WeaponSystem:
     var ship: Ship
     var primaryWeapons: Array[Weapon]
@@ -347,6 +394,7 @@ class WeaponSystem:
         return max_range
 
 # Visual effect for ship engines
+# Location: /features/effects/thruster/thruster.gd
 class EngineEffect extends Node3D:
     var thrust_level: float = 0.0
     var particle_system: GPUParticles3D
@@ -365,6 +413,7 @@ class EngineEffect extends Node3D:
         particle_system.emitting = is_active
 
 # Afterburner effect
+# Location: /features/effects/afterburner/afterburner.gd
 class AfterburnerEffect extends Node3D:
     var particle_system: GPUParticles3D
     
@@ -375,11 +424,12 @@ class AfterburnerEffect extends Node3D:
 
 ### TRES Resources
 ```ini
+# Location: /features/fighters/confed_rapier/rapier.tres
 [gd_resource type="Resource" load_steps=4 format=2]
 
-[ext_resource path="res://data/physics/physics_properties.tres" type="Resource" id=1]
-[ext_resource path="res://data/ships/templates/subsystem_template.tres" type="Resource" id=2]
-[ext_resource path="res://data/weapons/templates/weapon_hardpoint.tres" type="Resource" id=3]
+[ext_resource path="res://scripts/physics/fighter_physics.tres" type="Resource" id=1]
+[ext_resource path="res://scripts/entities/ship_systems/templates/subsystem_template.tres" type="Resource" id=2]
+[ext_resource path="res://features/weapons/templates/weapon_hardpoint.tres" type="Resource" id=3]
 
 [resource]
 resource_name = "F-27B_Arrow"
@@ -387,8 +437,8 @@ name = "F-27B Arrow"
 description = "Light Fighter"
 manufacturer = "Douglas Aerospace"
 ship_type = "FIGHTER"
-model_path = "res://entities/fighters/confed_rapier/rapier.glb"
-icon_path = "res://entities/fighters/confed_rapier/rapier_icon.png"
+model_path = "res://features/fighters/confed_rapier/rapier.glb"
+icon_path = "res://features/fighters/confed_rapier/rapier_icon.png"
 thruster_positions = [Vector3(0, 0, -10), Vector3(2, 0, -5), Vector3(-2, 0, -5)]
 max_hull_strength = 280.0
 max_shield_strength = 800.0
@@ -402,11 +452,12 @@ default_ai_profile = "CAPTAIN"
 
 ### TSCN Scenes
 ```ini
+# Location: /features/fighters/confed_rapier/rapier.tscn
 [gd_scene load_steps=4 format=2]
 
-[ext_resource path="res://entities/fighters/confed_rapier/rapier.gd" type="Script" id=1]
-[ext_resource path="res://data/ships/terran/fighters/arrow.tres" type="Resource" id=2]
-[ext_resource path="res://entities/fighters/confed_rapier/rapier.glb" type="PackedScene" id=3]
+[ext_resource path="res://features/fighters/confed_rapier/rapier.gd" type="Script" id=1]
+[ext_resource path="res://features/fighters/confed_rapier/rapier.tres" type="Resource" id=2]
+[ext_resource path="res://features/fighters/confed_rapier/rapier.glb" type="PackedScene" id=3]
 
 [node name="Arrow" type="Node3D"]
 script = ExtResource(1)
@@ -428,12 +479,19 @@ position = Vector3(-2, 0, -5)
 ### Implementation Notes
 The Ship Module in Godot leverages feature-based organization principles:
 
-1. **Inheritance**: Ships extend the base Entity class
-2. **Composition**: Complex systems (weapons, physics, AI) as separate components
-3. **Resources**: Ship classes and subsystem templates as data-driven configurations organized in `/data/ships/{faction}/{type}/`
-4. **Scene System**: Ships as self-contained scenes organized by feature in `/entities/fighters/{name}/`
+1. **Inheritance**: Ships extend the base Entity class located in `/scripts/entities/`
+2. **Composition**: Complex systems (weapons, physics, AI) as separate components organized in `/scripts/entities/ship_systems/`
+3. **Resources**: Ship classes and subsystem templates as data-driven configurations organized in feature directories
+4. **Scene System**: Ships as self-contained scenes organized by feature in `/features/fighters/{name}/`
 5. **Signals**: Event-driven communication between systems
 6. **Node Hierarchy**: Visual effects as child nodes for proper positioning
 7. **Pooling**: Efficient ship creation/destruction through EntityManager
 
 This replaces the C++ structure-based approach with Godot's node-based scene system while preserving the same gameplay functionality. The implementation uses Godot's built-in particle systems for engine effects and the resource system for ship class definitions, organized according to Godot's feature-based best practices where each ship type has its own self-contained directory with all related assets.
+
+Following the feature-based organization principles:
+- Ship entities are implemented as self-contained features in `/features/fighters/`
+- Core ship logic is implemented as reusable scripts in `/scripts/entities/`
+- Shared assets are organized in `/assets/`
+- Visual effects are implemented as features in `/features/effects/`
+- Ship systems are organized in `/scripts/entities/ship_systems/`

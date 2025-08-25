@@ -16,20 +16,67 @@ The Weapon Module handles all projectile and beam-based weapons in the Godot imp
 - **Countermeasures**: Chaff and other defensive systems
 
 ## Dependencies
-- **Core Entity Module**: Weapons are specialized entities
-- **Ship Module**: Weapons are fired by ships and affect ships
-- **Model Module**: Weapon models and firing point positioning
-- **Physics Module**: Weapon movement and trajectory
-- **AI Module**: AI targeting and weapon selection
-- **Visual Effects Module**: Particle effects and animations
-- **Audio Module**: Weapon firing sounds and effects
+- **Core Entity Module** (/scripts/entities/): Weapons are specialized entities
+- **Ship Module** (/features/fighters/): Weapons are fired by ships and affect ships
+- **Model Module** (/features/weapons/): Weapon models and firing point positioning
+- **Physics Module** (/scripts/physics/): Weapon movement and trajectory
+- **AI Module** (/scripts/ai/): AI targeting and weapon selection
+- **Visual Effects Module** (/features/effects/): Particle effects and animations
+- **Audio Module** (/autoload/audio_manager.gd): Weapon firing sounds and effects
+
+## Directory Structure Implementation
+Following the feature-based organization principles, the Weapon Module is organized as follows:
+
+### Features Directory (/features/weapons/)
+Weapons are implemented as self-contained features in `/features/weapons/`:
+
+- `/features/weapons/laser_cannon/` - Laser cannon weapon
+  - `laser_cannon.tscn` - Main weapon scene
+  - `laser_cannon.gd` - Primary controller script
+  - `laser_cannon.tres` - Weapon data resource
+  - `laser_cannon.glb` - 3D model
+  - `laser_cannon.png` - Texture
+  - `laser_fire.ogg` - Firing sound
+
+- `/features/weapons/projectiles/` - Projectile entities
+  - `/features/weapons/projectiles/laser_bolt/` - Laser bolt projectile
+    - `laser_bolt.tscn` - Projectile scene
+    - `laser_bolt.gd` - Projectile controller script
+    - `laser_bolt.tres` - Projectile data resource
+  - `/features/weapons/projectiles/missile/` - Missile projectile
+    - `missile.tscn` - Projectile scene
+    - `missile.gd` - Projectile controller script
+    - `missile.tres` - Projectile data resource
+
+- `/features/weapons/_shared/` - Shared weapon assets
+  - `/features/weapons/_shared/muzzle_flashes/` - Shared muzzle flash effects
+  - `/features/weapons/_shared/impact_effects/` - Shared impact effects
+
+- `/features/weapons/templates/` - Weapon templates
+  - Template scenes for creating new weapons
+
+### Scripts Directory (/scripts/)
+Reusable weapon logic and components:
+
+- `/scripts/entities/base_weapon.gd` - Base weapon controller (extends base entity)
+- `/scripts/weapons/` - Weapon system scripts
+  - `weapon_system.gd` - Weapon system management
+  - `projectile_controller.gd` - Projectile behavior logic
+  - `beam_controller.gd` - Beam weapon logic
+  - `homing_system.gd` - Homing behavior implementations
+
+### Assets Directory (/assets/)
+Shared weapon assets used across multiple features:
+
+- `/assets/audio/sfx/weapons/` - Weapon sound effects
+- `/assets/textures/effects/` - Particle textures used by multiple weapon effects
 
 ## Godot Implementation Details
 
 ### Native GDScript Classes
 ```gdscript
 # Weapon class representing individual weapon instances
-class Weapon extends Entity:
+class Weapon extends "res://scripts/entities/base_entity.gd":
     # Reference to the weapon class template
     var weaponClass: WeaponClass
     
@@ -132,7 +179,8 @@ class Weapon extends Entity:
         
     func create_projectile(target_entity: Node3D):
         # Create projectile instance based on weapon class
-        var projectile = Projectile.new()
+        var projectile_scene = load(weaponClass.projectileScenePath)
+        var projectile = projectile_scene.instantiate()
         projectile.weaponClass = weaponClass
         projectile.owner = owner
         projectile.target = target_entity
@@ -156,7 +204,8 @@ class Weapon extends Entity:
             
     func create_beam_effect(target_entity: Node3D):
         # Create beam visualization and apply damage over time
-        var beam = BeamEffect.new()
+        var beam_scene = load("res://features/weapons/templates/beam_effect.tscn")
+        var beam = beam_scene.instantiate()
         beam.start_position = global_position
         beam.end_position = target_entity.global_position if target_entity != null else global_position + global_transform.basis.z * 1000
         beam.duration = weaponClass.beamDuration
@@ -186,8 +235,9 @@ class WeaponClass extends Resource:
     # Visual properties
     @export var modelPath: String
     @export var iconPath: String
-    @export var muzzleFlashEffect: MuzzleFlashEffect
-    @export var trailEffect: TrailEffect
+    @export var muzzleFlashEffectPath: String
+    @export var trailEffectPath: String
+    @export var projectileScenePath: String
     
     # Combat properties
     @export var damage: float
@@ -215,14 +265,14 @@ class WeaponClass extends Resource:
     @export var dragCoefficient: float = 0.01
     
     # Audio properties
-    @export var fireSound: String = ""
-    @export var impactSound: String = ""
+    @export var fireSoundPath: String = ""
+    @export var impactSoundPath: String = ""
     
     func _init():
         resource_name = name
 
 # Projectile representing fired weapon projectiles
-class Projectile extends Entity:
+class Projectile extends "res://scripts/entities/base_entity.gd":
     # Weapon class that created this projectile
     var weaponClass: WeaponClass
     
@@ -310,13 +360,17 @@ class Projectile extends Entity:
         
     func create_impact_effects():
         # Create explosion or impact effects
-        var explosion = ExplosionEffect.new(global_position, 50.0, 0.5)
+        var explosion_scene = load("res://features/effects/explosion/explosion.tscn")
+        var explosion = explosion_scene.instantiate()
+        explosion.global_position = global_position
+        get_tree().root.add_child(explosion)
         
     func spawn_spawn_weapon(spawn_info: SpawnWeaponInfo):
         # Create spawned weapon at impact location
-        var spawn_weapon = Weapon.new()
-        spawn_weapon.weaponClass = spawn_info.weaponClass
+        var spawn_weapon_scene = load(spawn_info.weaponScenePath)
+        var spawn_weapon = spawn_weapon_scene.instantiate()
         spawn_weapon.global_position = global_position
+        get_tree().root.add_child(spawn_weapon)
         spawn_weapon.fire()
         
     func expire():
@@ -369,7 +423,7 @@ class BeamEffect extends Node3D:
         
         # Create material
         beam_material = ShaderMaterial.new()
-        beam_material.shader = preload("res://shaders/beam_shader.gdshader")
+        beam_material.shader = load("res://assets/shaders/beam_shader.gdshader")
         beam_mesh.material_override = beam_material
         
         add_child(beam_mesh)
@@ -472,7 +526,7 @@ class TrailEffect extends Node3D:
 
 # Information for spawn weapons
 class SpawnWeaponInfo extends Resource:
-    @export var weaponClass: WeaponClass
+    @export var weaponClassPath: String
     @export var count: int = 1
     @export var spreadAngle: float = 30.0
 
@@ -538,39 +592,40 @@ class WeaponSystem:
 ```ini
 [gd_resource type="Resource" load_steps=3 format=2]
 
-[ext_resource path="res://data/effects/muzzle_flash_effect.tres" type="Resource" id=1]
-[ext_resource path="res://data/effects/trail_effect.tres" type="Resource" id=2]
+[ext_resource path="res://features/weapons/_shared/muzzle_flashes/laser_muzzle.tres" type="Resource" id=1]
+[ext_resource path="res://features/weapons/_shared/trail_effects/laser_trail.tres" type="Resource" id=2]
 
 [resource]
 resource_name = "MkII_Laser_Cannon"
 name = "Mk.II Laser Cannon"
 description = "Standard laser cannon"
 weapon_type = "LASER"
-model_path = "res://entities/weapons/laser_cannon/laser_cannon.glb"
-icon_path = "res://entities/weapons/laser_cannon/laser_cannon_icon.png"
+model_path = "res://features/weapons/laser_cannon/laser_cannon.glb"
+icon_path = "res://features/weapons/laser_cannon/laser_cannon_icon.png"
+projectile_scene_path = "res://features/weapons/projectiles/laser_bolt/laser_bolt.tscn"
 damage = 25.0
 speed = 500.0
 fire_rate = 0.25  # Four shots per second
 ammo_capacity = -1  # Infinite ammo
 max_range = 1000.0
 homing_type = "NONE"
-muzzle_flash_effect = ExtResource(1)
-trail_effect = ExtResource(2)
-fire_sound = "laser_fire_01"
-impact_sound = "laser_impact_01"
+muzzle_flash_effect_path = "res://features/weapons/_shared/muzzle_flashes/laser_muzzle.tscn"
+trail_effect_path = "res://features/weapons/_shared/trail_effects/laser_trail.tscn"
+fire_sound_path = "res://assets/audio/sfx/weapons/laser_fire_01.ogg"
+impact_sound_path = "res://assets/audio/sfx/weapons/laser_impact_01.ogg"
 ```
 
 ### TSCN Scenes
 ```ini
 [gd_scene load_steps=4 format=2]
 
-[ext_resource path="res://entities/weapons/laser_cannon/laser_cannon.gd" type="Script" id=1]
-[ext_resource path="res://data/weapons/terran/lasers/laser_cannon.tres" type="Resource" id=2]
-[ext_resource path="res://entities/weapons/laser_cannon/laser_cannon.glb" type="PackedScene" id=3]
+[ext_resource path="res://features/weapons/laser_cannon/laser_cannon.gd" type="Script" id=1]
+[ext_resource path="res://features/weapons/laser_cannon/laser_cannon.tres" type="Resource" id=2]
+[ext_resource path="res://features/weapons/laser_cannon/laser_cannon.glb" type="PackedScene" id=3]
 
 [node name="LaserCannon" type="Node3D"]
 script = ExtResource(1)
-weapon_class = ExtResource(2)
+weapon_class_path = "res://features/weapons/laser_cannon/laser_cannon.tres"
 
 [node name="Model" type="Node3D" parent="."]
 instance = ExtResource(3)
@@ -582,16 +637,33 @@ position = Vector3(0, 0, 2)
 ### Implementation Notes
 The Weapon Module in Godot leverages feature-based organization principles:
 
-1. **Inheritance**: Weapons extend the base Entity class
-2. **Resources**: Weapon classes as data-driven configurations organized in `/data/weapons/{faction}/{type}/`
-3. **Scene Composition**: Complex weapons with multiple components as self-contained scenes organized by feature in `/entities/weapons/{name}/`
-4. **Component System**: Effects, homing behavior, and special properties as separate components
-5. **Timers**: Built-in timer functionality for cooldown management
-6. **PhysicsBody3D**: For collision detection with other entities
-7. **Particles**: GPUParticles3D for visual effects like muzzle flashes and trails
-8. **Tweening**: For smooth light and effect animations
-9. **ImmediateMesh**: For dynamic trail effects
-10. **Signals**: For event-driven weapon behavior
+1. **Feature-Based Organization**: All files related to a single weapon type are grouped together in a self-contained directory. For example, all assets, scripts, and data for a "Laser Cannon" reside within `/features/weapons/laser_cannon/`.
+
+2. **Inheritance**: Weapons extend the base Entity class from `/scripts/entities/base_entity.gd`
+
+3. **Resources**: Weapon classes as data-driven configurations organized in feature directories
+
+4. **Scene Composition**: Complex weapons with multiple components as self-contained scenes organized by feature in `/features/weapons/{name}/`
+
+5. **Shared Assets**: Common weapon effects are organized in `/features/weapons/_shared/`
+
+6. **Templates**: Reusable templates are available in `/features/weapons/templates/`
+
+7. **Global Assets**: Truly generic weapon assets are placed in `/assets/audio/sfx/weapons/` and `/assets/textures/effects/`
+
+8. **Component System**: Effects, homing behavior, and special properties as separate components
+
+9. **Timers**: Built-in timer functionality for cooldown management
+
+10. **PhysicsBody3D**: For collision detection with other entities
+
+11. **Particles**: GPUParticles3D for visual effects like muzzle flashes and trails
+
+12. **Tweening**: For smooth light and effect animations
+
+13. **ImmediateMesh**: For dynamic trail effects
+
+14. **Signals**: For event-driven weapon behavior
 
 This replaces the C++ structure-based approach with Godot's node-based scene system while preserving the same gameplay functionality. Beam weapons are implemented as continuous effects rather than persistent entities, and the particle system uses Godot's optimized GPU-based particles rather than CPU-based particle management.
 

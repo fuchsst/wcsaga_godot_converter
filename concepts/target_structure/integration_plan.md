@@ -1,7 +1,7 @@
 # Wing Commander Saga to Godot Integration Plan
 
 ## Overview
-This document outlines the integration plan for converting Wing Commander Saga from its original C++ engine to the Godot engine. The conversion focuses on preserving gameplay while leveraging Godot's modern features and architecture, following a feature-based organizational approach as recommended by Godot best practices.
+This document outlines the integration plan for converting Wing Commander Saga from its original C++ engine to the Godot engine. The conversion focuses on preserving gameplay while leveraging Godot's modern features and architecture, following a feature-based organizational approach as recommended by Godot best practices and the hybrid model defined in our project structure.
 
 ## Conversion Approach
 The conversion will follow a hybrid approach that preserves core gameplay logic while replacing low-level systems with Godot equivalents:
@@ -26,71 +26,117 @@ The conversion will follow a hybrid approach that preserves core gameplay logic 
 
 ## Module Conversion Strategy
 
-### 1. Core Systems (/core/)
-Implement engine-agnostic core logic using Godot's built-in systems:
-- State machine base class for AI and game flow
-- Event bus for decoupled communication between systems
-- Resource loading utilities for data-driven design
-- Generic object pooling system for efficient memory management
+### 1. Autoload System (/autoload/)
+Implement global singleton systems using Godot's autoload system, following the "Is this state or service truly global and required everywhere?" principle:
+- Game state management singleton (`/autoload/game_state.gd`)
+- Event bus for decoupled communication between systems (`/autoload/event_bus.gd`)
+- Resource loading utilities for data-driven design (`/autoload/resource_loader.gd`)
+- Audio manager for sound effects and music (`/autoload/audio_manager.gd`)
+- Save/load system for player progression (`/autoload/save_manager.gd`)
 
-### 2. Data System (/data/)
-Convert all configuration data to Godot resources following feature-based organization:
-- Ship definitions to ShipData resources organized by faction and type
-- Weapon definitions to WeaponData resources organized by faction and type
-- AI profiles to AIProfile resources organized by behavior type
-- Mission data to MissionData resources organized by campaign
-- Use Godot's resource system for data-driven design with Flyweight pattern benefits
+### 2. Data System (/assets/)
+Convert all configuration data to Godot resources following the "Global Litmus Test": "If I delete three random features, is this asset still needed?":
+- Ship definitions to ShipData resources in `/assets/data/ships/`
+- Weapon definitions to WeaponData resources in `/assets/data/weapons/`
+- AI profiles to AIProfile resources in `/assets/data/ai/`
+- Species and IFF relationship definitions in `/assets/data/species/` and `/assets/data/iff/`
+- Armor type damage modifiers in `/assets/data/armor/`
+- Effect system parameters in `/assets/data/effects/`
+- Generic UI sounds in `/assets/audio/ui/`
+- Generic particle textures in `/assets/textures/effects/`
+- Global fonts in `/assets/textures/fonts/`
+- Use Godot's resource system for data-driven design with centralized management
 
-### 3. Entity System (/entities/)
-Convert game objects to feature-based Godot scenes:
-- Ships as self-contained scenes with model, components, and scripts in dedicated folders
-- Weapons as reusable scenes with effects and behavior
-- Projectiles using Godot physics for movement
-- Effects using particle systems and shaders
-- Environmental objects organized by type
+### 3. Feature System (/features/)
+Convert game objects to feature-based Godot scenes organized by category, following the co-location principle where all files related to a single feature are grouped together:
 
-### 4. Systems Logic (/systems/)
-Implement game logic using Godot's node-based architecture:
-- AI decision-making using behavior trees and state machines
-- Mission control with event triggers and objective management
-- Weapon control with damage calculations and special effects
-- Physics integration with custom space-specific behaviors
-- Audio system with 3D positioning and effects
+#### Fighter Features
+- Fighters as self-contained scenes in `/features/fighters/{faction}_{ship_name}/` with model, components, scripts, and specific assets
+- Shared cockpit models in `/features/fighters/_shared/cockpits/`
+- Shared effects in `/features/fighters/_shared/effects/`
 
-### 5. UI System (/ui/)
-Replace with Godot's UI system using feature-based organization:
-- UI screens as self-contained scenes organized by function
-- HUD elements as canvas layers with modular components
-- Menus using Godot's control nodes with consistent theming
-- Preserve layout and visual design while leveraging Godot's flexibility
+#### Capital Ship Features
+- Capital ships as self-contained scenes in `/features/capital_ships/{faction}_{ship_name}/`
+- Shared bridge components in `/features/capital_ships/_shared/bridge_models/`
+- Shared turret models in `/features/capital_ships/_shared/turret_models/`
+
+#### Weapon Features
+- Weapons as reusable scenes in `/features/weapons/{weapon_name}/` with effects and behavior
+- Projectiles using Godot physics for movement in `/features/weapons/projectiles/{projectile_name}/`
+- Shared muzzle flashes in `/features/weapons/_shared/muzzle_flashes/`
+- Shared impact effects in `/features/weapons/_shared/impact_effects/`
+
+#### Effect Features
+- Effects using particle systems and shaders in `/features/effects/{effect_name}/`
+- Shared particle textures in `/features/effects/_shared/particle_textures/`
+- Shared shader effects in `/features/effects/_shared/shader_effects/`
+
+#### Environment Features
+- Environmental objects organized by type in `/features/environment/{prop_name}/`
+- Shared space debris in `/features/environment/_shared/debris/`
+- Shared environmental textures in `/features/environment/_shared/environment/`
+
+#### UI Features
+- UI components organized by function in `/features/ui/{component_name}/` following the same self-contained approach:
+  - Main menu in `/features/ui/main_menu/`
+  - HUD in `/features/ui/hud/`
+  - Briefing in `/features/ui/briefing/`
+  - Debriefing in `/features/ui/debriefing/`
+  - Options in `/features/ui/options/`
+  - Tech database in `/features/ui/tech_database/`
+- Shared UI assets in `/features/ui/_shared/`:
+  - Fonts in `/features/ui/_shared/fonts/`
+  - Icons in `/features/ui/_shared/icons/`
+  - Themes in `/features/ui/_shared/themes/`
+  - Reusable components in `/features/ui/_shared/components/`
+
+### 4. Campaign System (/campaigns/)
+Organize mission content and narrative progression following the campaign-centric mission organization:
+- Missions organized by campaign in `/campaigns/{campaign}/missions/{mission_id}_{mission_name}/`
+- Mission scenes with integrated entity instances
+- Fiction and briefing text integrated with missions
+- Campaign progression tracking and player data in `/campaigns/{campaign}/`
+
+### 5. Script System (/scripts/)
+Implement reusable game logic and base classes, following the separation of concerns principle where nothing in this folder should be a complete, instantiable game object:
+- Base entity scripts for fighters, capital ships, weapons, and effects in `/scripts/entities/`
+- AI behavior scripts for decision-making and tactics in `/scripts/ai/`
+- Mission system scripts for event handling and objective tracking in `/scripts/mission/`
+- Physics system scripts for space-specific behaviors in `/scripts/physics/`
+- Audio system scripts for sound management in `/scripts/audio/`
+- Utility scripts for common functionality in `/scripts/utilities/`
 
 ## Data Conversion Strategy
 
 ### Configuration Files (.tbl)
 Convert to Godot resources (.tres) organized by feature:
-- Ship definitions to ShipData resources in `/data/ships/{faction}/{type}/`
-- Weapon definitions to WeaponData resources in `/data/weapons/{faction}/`
-- AI profiles to AIProfile resources in `/data/ai/profiles/`
-- Mission data to MissionData resources in `/data/campaigns/{campaign}/missions/`
+- Ship definitions to ShipData resources in `/assets/data/ships/`
+- Weapon definitions to WeaponData resources in `/assets/data/weapons/`
+- AI profiles to AIProfile resources in `/assets/data/ai/`
+- Mission data to MissionData resources in `/campaigns/{campaign}/missions/{mission_id}_{mission_name}/`
+- Species and IFF relationship definitions in `/assets/data/species/` and `/assets/data/iff/`
+- Armor type damage modifiers in `/assets/data/armor/`
+- Effect system parameters in `/assets/data/effects/`
 - Use Godot's resource system for data-driven design with centralized management
 
 ### Mission Files (.fs2)
 Convert to Godot scenes (.tscn) organized by feature:
-- Missions as complete scenes with all entities in `/campaigns/{campaign}/missions/{mission_name}/`
+- Missions as complete scenes with all entities in `/campaigns/{campaign}/missions/{mission_id}_{mission_name}/`
 - Events as timeline sequences using Godot's animation system
-- Objectives as MissionObjective resources
+- Objectives as MissionObjective resources in `/campaigns/{campaign}/missions/{mission_id}_{mission_name}/`
 - Use Godot's scene system for composition with modular encounter templates
 
 ### Fiction Files (.txt)
 Convert to Godot text resources with formatting:
-- Narrative content as formatted text resources
+- Narrative content as formatted text resources in `/campaigns/{campaign}/missions/{mission_id}_{mission_name}/`
+- Technical database entries in `/features/ui/tech_database/`
 - Preserve formatting with BBCode for rich text display
 - Use Godot's RichTextLabel for presentation
 
 ### Campaign Files (.fc2)
 Convert to campaign management system:
-- Mission sequencing using Godot's resource system in `/campaigns/{campaign_name}/`
-- Player progression using save games with persistent data
+- Mission sequencing using Godot's resource system in `/campaigns/{campaign}/`
+- Player progression using save games with persistent data in `/campaigns/{campaign}/`
 - Use Godot's save system for cross-platform persistence
 
 ## Asset Conversion Pipeline
@@ -111,9 +157,13 @@ Convert to Godot-supported formats:
 
 ### Audio
 Convert to Godot-supported formats:
-- WAV/OGG to OGG conversion maintaining audio quality
+- WAV/OGG to Ogg Vorbis conversion maintaining audio quality
 - Preserve metadata and audio characteristics
-- Organize by type (SFX, music, voice) in feature-based folders
+- Organize truly global audio by type in `/assets/audio/` directories: 
+  - SFX in `/assets/audio/sfx/`
+  - Music in `/assets/audio/music/`
+  - UI sounds in `/assets/audio/ui/`
+- Feature-specific audio organized with their respective features in `/features/{category}/{feature_name}/`
 - Maintain consistent naming conventions for easy asset linking
 
 ### Fonts
@@ -121,12 +171,14 @@ Convert to Godot font resources:
 - Vector fonts to Godot font resources with proper kerning
 - Support multiple resolutions with scalable font sizes
 - Maintain Unicode support for international characters
-- Create theme resources for consistent UI appearance
+- Create theme resources for consistent UI appearance in `/features/ui/_shared/themes/`
 
 ## Implementation Phases
 
 ### Phase 1: Foundation (Months 1-2)
-1. Set up Godot project structure following feature-based organization
+1. Set up Godot project structure following feature-based organization with proper directory structure:
+   - Create `/addons/`, `/assets/`, `/autoload/`, `/campaigns/`, `/features/`, `/scripts/` directories
+   - Implement proper subdirectory structure for each top-level directory as defined in the directory structure
 2. Implement core systems (state machine, event bus, resource loader)
 3. Create data conversion pipeline for configuration files
 4. Set up asset conversion tools and pipelines
@@ -203,4 +255,4 @@ Convert to Godot font resources:
 - Responsive UI with intuitive menus and clear information display
 
 ## Conclusion
-This integration plan provides a roadmap for converting Wing Commander Saga to Godot while preserving the core gameplay experience and leveraging modern engine capabilities. By following Godot's feature-based organizational approach and data-driven design principles, we can create a faithful port that benefits from contemporary engine features while maintaining the modularity and extensibility that made the original FreeSpace engine so successful. The phased approach ensures steady progress with regular milestones and validation points, leading to a high-quality, maintainable implementation that honors the legacy of the Wing Commander series.
+This integration plan provides a roadmap for converting Wing Commander Saga to Godot while preserving the core gameplay experience and leveraging modern engine capabilities. By following Godot's feature-based organizational approach and data-driven design principles, we can create a faithful port that benefits from contemporary engine features while maintaining the modularity and extensibility that made the original FreeSpace engine so successful. The phased approach ensures steady progress with regular milestones and validation points, leading to a high-quality, maintainable implementation that honors the legacy of the Wing Commander series. The directory structure follows our established hybrid model that combines the scalability and modularity of feature-based organization with a clean repository for generic, reusable assets, ensuring optimal maintainability and team collaboration.

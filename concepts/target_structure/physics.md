@@ -17,15 +17,59 @@ The Physics Module handles movement, rotation, acceleration, and all physical be
 - **Collision Response**: Physics reactions to collisions with other objects
 
 ## Dependencies
-- **Core Entity Module**: Physics properties are part of entity data
-- **Math Module**: Vector and matrix mathematics for calculations (using Godot's built-in math)
-- **Ship Module**: Ship-specific physics properties and behaviors
+- **Core Entity Module** (/scripts/entities/): Physics properties are part of entity data
+- **Math Module** (/scripts/utilities/): Vector and matrix mathematics for calculations (using Godot's built-in math)
+- **Ship Module** (/features/fighters/): Ship-specific physics properties and behaviors
+
+## Directory Structure Implementation
+Following the feature-based organization principles, the Physics Module is organized as follows:
+
+### Scripts Directory (/scripts/physics/)
+The core physics logic is implemented as reusable scripts in `/scripts/physics/`:
+
+- `/scripts/physics/physics_controller.gd` - Main physics controller class
+- `/scripts/physics/physics_properties.gd` - Physics properties resource class
+- `/scripts/physics/collision_handler.gd` - Collision response handling
+- `/scripts/physics/space_environment.gd` - Global space effects controller
+- `/scripts/physics/gravity_well.gd` - Gravity well area effect
+- `/scripts/physics/nebula_field.gd` - Nebula field area effect
+- `/scripts/physics/physics_manager.gd` - Global physics manager singleton
+- `/scripts/physics/physics_debugger.gd` - Debug visualization tools
+
+### Features Directory (/features/)
+Physics-related visual effects and feature-specific implementations are organized in `/features/`:
+
+- `/features/effects/thruster/` - Thruster visual effects
+  - `thruster.tscn` - Thruster effect scene
+  - `thruster.gd` - Thruster effect script
+  - `thruster.tres` - Thruster effect properties
+- `/features/environment/gravity_well/` - Gravity well environmental effect
+  - `gravity_well.tscn` - Gravity well scene
+  - `gravity_well.gd` - Gravity well script
+  - `gravity_well.tres` - Gravity well properties
+- `/features/environment/nebula/` - Nebula environmental effect
+  - `nebula.tscn` - Nebula field scene
+  - `nebula.gd` - Nebula field script
+  - `nebula.tres` - Nebula field properties
+
+### Autoload Directory (/autoload/)
+Global physics systems are implemented as singletons in `/autoload/`:
+
+- `/autoload/physics_manager.gd` - Global physics manager
+- `/autoload/space_environment.gd` - Global space environment controller
+
+### Assets Directory (/assets/)
+Shared physics-related assets are organized in `/assets/`:
+
+- `/assets/textures/effects/` - Particle textures for thruster effects
+- `/assets/audio/sfx/` - Sound effects for thruster operations
 
 ## Godot Implementation Details
 
 ### Native GDScript Classes
 ```gdscript
 # Physics controller that handles movement and forces for entities
+# Location: /scripts/physics/physics_controller.gd
 class PhysicsController extends Node:
     # Reference to the entity this controller manages
     var entity: Entity
@@ -221,6 +265,7 @@ class PhysicsController extends Node:
         return velocity
 
 # Physics properties defining behavior for different entity types
+# Location: /scripts/physics/physics_properties.gd
 class PhysicsProperties extends Resource:
     # Basic physical properties
     @export var mass: float = 10.0  # Mass in arbitrary units
@@ -268,6 +313,7 @@ class PhysicsProperties extends Resource:
         return rotationalAcceleration
 
 # Thruster effect for visual feedback
+# Location: /features/effects/thruster/thruster.gd
 class ThrusterEffect extends Node3D:
     var particle_system: GPUParticles3D
     var light: OmniLight3D
@@ -304,6 +350,7 @@ class ThrusterEffect extends Node3D:
         particle_system.scale = Vector3(size, size, size)
 
 # Collision handler for physics responses
+# Location: /scripts/physics/collision_handler.gd
 class CollisionHandler extends Node:
     var entity: Entity
     var physics_controller: PhysicsController
@@ -351,6 +398,7 @@ class CollisionHandler extends Node:
             physics_controller.properties.dragCoefficient *= 2.0
 
 # Space environment controller for global physics effects
+# Location: /autoload/space_environment.gd
 class SpaceEnvironment extends Node:
     var gravity_wells: Array[GravityWell] = []
     var nebula_fields: Array[NebulaField] = []
@@ -407,6 +455,7 @@ class SpaceEnvironment extends Node:
         return max_density
 
 # Gravity well affecting physics in an area
+# Location: /scripts/physics/gravity_well.gd
 class GravityWell extends Area3D:
     @export var strength: float = 1000.0
     @export var radius: float = 1000.0
@@ -434,6 +483,7 @@ class GravityWell extends Area3D:
         return direction * (strength / (distance * distance))
 
 # Nebula field affecting physics and visibility
+# Location: /scripts/physics/nebula_field.gd
 class NebulaField extends Area3D:
     @export var density: float = 0.5
     @export var radius: float = 2000.0
@@ -463,6 +513,7 @@ class NebulaField extends Area3D:
         return 0.0
 
 # Physics debugger for development and tuning
+# Location: /scripts/physics/physics_debugger.gd
 class PhysicsDebugger extends Node:
     var debug_labels: Dictionary = {}
     var target_entity: Entity = null
@@ -518,6 +569,7 @@ class PhysicsDebugger extends Node:
         target_entity = entity
 
 # Physics manager for global physics operations
+# Location: /autoload/physics_manager.gd
 class PhysicsManager extends Node:
     static var instance: PhysicsManager
     
@@ -577,6 +629,7 @@ class PhysicsInfluence:
         return gravity  # Simplified for this example
 
 # Extension to ship class for physics integration
+# Location: /features/fighters/ship_physics_extension.gd
 class ShipPhysicsExtension extends Node:
     var ship: Ship
     var physics_controller: PhysicsController
@@ -642,6 +695,7 @@ class ShipPhysicsExtension extends Node:
 
 ### TRES Resources
 ```ini
+# Location: /features/fighters/confed_rapier/rapier_physics.tres
 [gd_resource type="Resource" load_steps=2 format=2]
 
 [resource]
@@ -665,6 +719,7 @@ gliding_multiplier = 1.5
 has_warp = true
 collision_response_multiplier = 1.0
 
+# Location: /features/capital_ships/tcs_tigers_claw/tigers_claw_physics.tres
 [gd_resource type="Resource" load_steps=2 format=2]
 
 [resource]
@@ -691,11 +746,12 @@ collision_response_multiplier = 0.1
 
 ### TSCN Scenes
 ```ini
+# Location: /features/fighters/confed_rapier/rapier.tscn
 [gd_scene load_steps=4 format=2]
 
-[ext_resource path="res://scripts/physics_controller.gd" type="Script" id=1]
-[ext_resource path="res://resources/fighter_physics.tres" type="Resource" id=2]
-[ext_resource path="res://models/thruster_effect.tscn" type="PackedScene" id=3]
+[ext_resource path="res://scripts/physics/physics_controller.gd" type="Script" id=1]
+[ext_resource path="res://features/fighters/confed_rapier/rapier_physics.tres" type="Resource" id=2]
+[ext_resource path="res://features/effects/thruster/thruster.tscn" type="PackedScene" id=3]
 
 [node name="Fighter" type="Node3D"]
 
@@ -721,11 +777,11 @@ The Physics Module in Godot leverages:
 
 1. **Newtonian Physics**: Implements realistic space movement with momentum and inertia
 2. **Component Architecture**: Physics controllers as separate components attached to entities
-3. **Resources**: Physics properties as data-driven configurations
-4. **Scene System**: Thruster effects as scene components
-5. **Area3D**: For spatial effects like gravity wells and nebula fields
+3. **Resources**: Physics properties as data-driven configurations organized in feature directories
+4. **Scene System**: Thruster effects as scene components in `/features/effects/`
+5. **Area3D**: For spatial effects like gravity wells and nebula fields organized in `/features/environment/`
 6. **Signals**: For physics event notifications
-7. **Autoload**: PhysicsManager as a global singleton
+7. **Autoload**: PhysicsManager as a global singleton in `/autoload/`
 8. **Custom Integration**: Rather than using Godot's built-in physics bodies, implements custom space physics
 
 This replaces the C++ physics simulation with Godot's node-based approach while preserving the same space flight dynamics. The implementation uses a custom physics controller to handle space-specific behaviors like Newtonian movement, which differs from Godot's default physics that includes gravity.
@@ -735,3 +791,10 @@ The physics system is designed to be modular, allowing different entities to hav
 Collision detection uses Godot's Area3D system for detecting overlaps, while actual collision response is handled through custom physics calculations that preserve momentum and apply realistic forces.
 
 The system supports global environmental effects through the SpaceEnvironment node, which can apply gravity wells and nebula effects to all entities in the scene. This approach provides a flexible framework for implementing complex space physics while maintaining good performance through the use of Godot's optimized spatial partitioning systems.
+
+Following the feature-based organization principles:
+- Core physics logic resides in `/scripts/physics/` as reusable components
+- Visual effects are implemented as features in `/features/effects/` and `/features/environment/`
+- Global systems are implemented as singletons in `/autoload/`
+- Feature-specific physics properties are co-located with their respective features in `/features/`
+- Shared assets are organized in `/assets/`

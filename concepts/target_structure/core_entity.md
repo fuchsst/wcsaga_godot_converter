@@ -1,7 +1,7 @@
 # Core Entity Module (Godot Implementation)
 
 ## Purpose
-The Core Entity Module forms the foundational layer of the Godot implementation, providing a flexible and extensible base for all game objects. Unlike the original C++ implementation which used a custom object system, this module leverages Godot's node-based architecture to create a robust entity-component system following feature-based organization principles.
+The Core Entity Module forms the foundational layer of the Godot implementation, providing a flexible and extensible base for all game objects. Unlike the original C++ implementation which used a custom object system, this module leverages Godot's node-based architecture to create a robust entity-component system following feature-based organization principles with the hybrid model approach.
 
 ## Components
 - **Entity Base Class**: Inheriting from Godot's Node3D for 3D spatial functionality
@@ -192,22 +192,22 @@ class EntityClass extends Resource:
 resource_name = "Generic_Entity_Class"
 name = "GenericEntity"
 entity_type = "GENERIC"
-scene_path = "res://entities/templates/generic_entity.tscn"
+scene_path = "res://features/templates/generic_entity.tscn"
 max_pool_size = 25
 max_health = 100.0
 max_shield = 0.0
 mass = 1.0
 max_velocity = Vector3(100, 100, 100)
-model_path = "res://entities/templates/generic_entity.glb"
-icon_path = "res://entities/templates/generic_entity_icon.png"
+model_path = "res://features/templates/generic_entity.glb"
+icon_path = "res://features/templates/generic_entity_icon.png"
 ```
 
 ### TSCN Scenes
 ```ini
 [gd_scene load_steps=3 format=2]
 
-[ext_resource path="res://core/entity.gd" type="Script" id=1]
-[ext_resource path="res://data/entities/generic_entity.tres" type="Resource" id=2]
+[ext_resource path="res://scripts/entities/entity.gd" type="Script" id=1]
+[ext_resource path="res://features/templates/generic_entity.tres" type="Resource" id=2]
 
 [node name="GenericEntity" type="Node3D"]
 script = ExtResource(1)
@@ -218,14 +218,22 @@ entity_class = ExtResource(2)
 ```
 
 ### Implementation Notes
-The Core Entity Module in Godot leverages several key features following feature-based organization:
+The Core Entity Module in Godot leverages several key features following feature-based organization with the hybrid model approach:
 
 1. **Node3D Inheritance**: All entities inherit from Node3D, providing built-in 3D transformation capabilities
-2. **Singleton Pattern**: EntityManager uses Godot's singleton/autoload system for global access
-3. **Resource System**: EntityClass definitions use Godot's resource system for data-driven design, organized in `/data/entities/`
-4. **Scene System**: Entities are implemented as Godot scenes organized by feature in `/entities/{type}/{name}/`
+2. **Singleton Pattern**: EntityManager uses Godot's singleton/autoload system for global access, located in `/autoload/` as `entity_manager.gd`
+3. **Resource System**: EntityClass definitions use Godot's resource system for data-driven design, stored as .tres files in feature-specific directories following the self-contained feature organization principle
+4. **Scene System**: Entities are implemented as Godot scenes organized by feature in `/features/templates/` for generic templates, with each feature having its own self-contained directory
 5. **Signal System**: Lifecycle events use Godot's built-in signal system for decoupled communication
 6. **Object Pooling**: Efficient memory management through entity pooling
 7. **Component Architecture**: Components can be added as child nodes or scripts for modular functionality
 
-This approach replaces the C++ linked list management with Godot's scene tree and the custom object system with Godot's node-based architecture, while maintaining the same core functionality of entity creation, management, and destruction. The implementation follows Godot's best practices for feature-based organization where each entity type has its own self-contained directory with all related assets.
+This approach replaces the C++ linked list management with Godot's scene tree and the custom object system with Godot's node-based architecture, while maintaining the same core functionality of entity creation, management, and destruction. The implementation follows Godot's best practices for feature-based organization using the hybrid model where:
+
+- Truly global assets are organized in `/assets/` (following the "Global Litmus Test": "If I delete three random features, is this asset still needed?")
+- Feature-specific assets are co-located within `/features/` directories in self-contained modules
+- Reusable base scripts are located in `/scripts/entities/` as abstract components
+- Singleton managers are located in `/autoload/` for global access
+- Generic templates are stored in `/features/templates/` for reuse across different entity types
+
+Each feature folder treats each feature as a self-contained module or component, aligning perfectly with Godot's design philosophy of creating self-contained scenes that encapsulate their own logic and resources. This modularity enhances team collaboration and simplifies long-term maintenance by ensuring all files related to a single feature are grouped together in a single, predictable place.

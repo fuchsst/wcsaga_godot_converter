@@ -59,13 +59,60 @@ The `target_structure/` directory contains detailed documentation for each modul
 - `final_summary.md` - Comprehensive system overview
 
 ## Godot Implementation Approach
-All documentation follows Godot's recommended best practices:
+All documentation follows Godot's recommended best practices as defined in `Godot_Project_Structure_Refinement.md`:
 
-1. **Feature-Based Organization**: Modules are organized by game feature rather than by asset type, with all files related to a single conceptual unit grouped together in a self-contained directory.
+1. **Feature-Based Organization**: Modules are organized by game feature rather than by asset type, with all files related to a single conceptual unit grouped together in a self-contained directory within `/features/`. This approach treats each feature folder as a self-contained module or component, aligning perfectly with Godot's design philosophy.
 
-2. **Data-Driven Design**: Game-defining statistics are stored in external .tres files using Godot's Resource system, enabling rapid iteration and community modding.
+2. **Hybrid Asset Organization**: This structure follows a hybrid model where truly global, context-agnostic assets are organized in `/assets/`, while semi-global assets shared by a specific category of features use `/_shared/` directories within their parent category. The guiding principle is: "If I delete three random features, is this asset still needed?" If yes, it belongs in `/assets/`; if only needed by a specific feature category, it belongs in that category's `/_shared/` directory.
 
-3. **Idiomatic Godot Patterns**: Implementation leverages engine-native solutions like node-based Finite State Machines, Signal/Event Bus patterns, and MultiMeshInstance3D for performance.
+3. **Data-Driven Design**: Game-defining statistics are stored in external .tres files using Godot's Resource system, enabling rapid iteration and community modding. Configuration data is organized in `/assets/` while mission-specific data is stored with missions in `/campaigns/{campaign}/missions/{mission_id}_{mission_name}/`.
+
+4. **Idiomatic Godot Patterns**: Implementation leverages engine-native solutions like node-based Finite State Machines, Signal/Event Bus patterns, and MultiMeshInstance3D for performance. Reusable code is organized in `/scripts/` while global singletons reside in `/autoload/`.
+
+## Directory Structure Implementation
+Following the feature-based organization principles defined in `directory_structure.md`, the Godot project will be structured as follows:
+
+### Root Directory Structure
+```
+wcsaga_godot/
+├── addons/                # Third-party plugins and extensions
+├── assets/                # Global asset library (truly shared assets)
+├── autoload/              # Singleton scripts (auto-loaded)
+├── campaigns/             # Campaign data and mission scenes
+├── features/              # Self-contained game features organized by category
+├── scripts/               # Reusable GDScript code and custom resources
+├── project.godot          # Godot project file
+└── README.md             # Project README
+```
+
+### Feature Organization
+Game features are organized within `/features/` by category:
+- `/features/fighters/` - Fighter ship entities
+- `/features/capital_ships/` - Capital ship entities
+- `/features/weapons/` - Weapon systems and projectiles
+- `/features/effects/` - Visual and audio effects
+- `/features/environment/` - Environmental objects and props
+- `/features/ui/` - User interface elements
+
+Each feature is a self-contained directory with all related assets, scripts, and data.
+
+### Script Organization
+Reusable code is organized in `/scripts/` by functionality:
+- `/scripts/entities/` - Base entity scripts
+- `/scripts/ai/` - AI behavior scripts
+- `/scripts/mission/` - Mission system scripts
+- `/scripts/physics/` - Physics system scripts
+- `/scripts/audio/` - Audio system scripts
+- `/scripts/utilities/` - Utility functions and helpers
+
+### Asset Organization
+Assets are organized using a hybrid approach:
+- `/assets/` - Truly global, context-agnostic assets
+- `/features/{category}/_shared/` - Semi-global assets shared by a specific category of features
+
+### Campaign Organization
+Campaign data is organized in `/campaigns/` with all mission data stored together:
+- `/campaigns/{campaign_name}/missions/{mission_id}_{mission_name}/` - Mission-specific data and scenes
 
 ## Usage
 These documents provide a roadmap for converting the Wing Commander Saga codebase to Godot while preserving gameplay functionality and extending it with modern engine capabilities. Each module document includes:

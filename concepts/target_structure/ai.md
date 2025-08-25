@@ -68,7 +68,7 @@ class AIController extends Node:
     func _init(owner_ship: Ship):
         ship = owner_ship
         # Load default behavior tree
-        behaviorTree = preload("res://ai/default_behavior_tree.tres").duplicate()
+        behaviorTree = preload("res://scripts/ai/default_behavior_tree.tres").duplicate()
         
     func _ready():
         # Initialize AI profile
@@ -628,10 +628,10 @@ class AIProfileDatabase:
         # Return list of profile file paths
         # This would typically scan a directory for .tres files
         return [
-            "res://ai/profiles/aggressive.tres",
-            "res://ai/profiles/defensive.tres",
-            "res://ai/profiles/tactical.tres",
-            "res://ai/profiles/default.tres"
+            "res://assets/data/ai/aggressive.tres",
+            "res://assets/data/ai/defensive.tres",
+            "res://assets/data/ai/tactical.tres",
+            "res://assets/data/ai/default.tres"
         ]
 
 # Wing AI controller for coordinating groups of ships
@@ -736,9 +736,9 @@ evasionThreshold = 400.0
 ```ini
 [gd_scene load_steps=4 format=2]
 
-[ext_resource path="res://scripts/ship.gd" type="Script" id=1]
-[ext_resource path="res://scripts/ai_controller.gd" type="Script" id=2]
-[ext_resource path="res://resources/aggressive_ai_profile.tres" type="Resource" id=3]
+[ext_resource path="res://scripts/entities/base_fighter.gd" type="Script" id=1]
+[ext_resource path="res://scripts/ai/ai_controller.gd" type="Script" id=2]
+[ext_resource path="res://assets/data/ai/aggressive.tres" type="Resource" id=3]
 
 [node name="EnemyFighter" type="Node3D"]
 script = ExtResource(1)
@@ -748,7 +748,53 @@ script = ExtResource(2)
 ai_profile = ExtResource(3)
 ```
 
-### Implementation Notes
+## Feature Organization
+
+Following the feature-based organization principles defined in `directory_structure.md` and `Godot_Project_Structure_Refinement.md`, AI-related components are organized as follows:
+
+### Scripts
+AI-related scripts are organized in `/scripts/ai/` with base classes and behavior definitions:
+- `/scripts/ai/ai_controller.gd` - Main AI controller implementation
+- `/scripts/ai/ai_state.gd` - AI state management
+- `/scripts/ai/ai_goal.gd` - AI goal system
+- `/scripts/ai/behavior_tree/` - Behavior tree system implementations
+  - `/scripts/ai/behavior_tree/bt_node.gd` - Base behavior tree node
+  - `/scripts/ai/behavior_tree/bt_sequence.gd` - Sequence composite node
+  - `/scripts/ai/behavior_tree/bt_selector.gd` - Selector composite node
+  - `/scripts/ai/behavior_tree/bt_decorator.gd` - Decorator node
+  - `/scripts/ai/behavior_tree/bt_condition.gd` - Condition leaf node
+  - `/scripts/ai/behavior_tree/bt_action.gd` - Action leaf node
+  - `/scripts/ai/behavior_tree/specific_behaviors/` - Specific AI behaviors
+    - `/scripts/ai/behavior_tree/specific_behaviors/bt_attack.gd` - Attack behavior
+    - `/scripts/ai/behavior_tree/specific_behaviors/bt_evade.gd` - Evade behavior
+    - `/scripts/ai/behavior_tree/specific_behaviors/bt_patrol.gd` - Patrol behavior
+
+### Assets
+AI profile data resources are stored in `/assets/data/ai/` for easy access and modification, following the hybrid model approach where truly global assets are organized in `/assets/`:
+- `/assets/data/ai/aggressive.tres` - Aggressive AI profile
+- `/assets/data/ai/defensive.tres` - Defensive AI profile
+- `/assets/data/ai/tactical.tres` - Tactical AI profile
+- `/assets/data/ai/default.tres` - Default AI profile
+
+### Features
+The AI controller is designed to be attached to ship entities in `/features/fighters/` or `/features/capital_ships/` as needed. Each ship feature includes its own AI controller instance as a child node, following the self-contained feature organization principle where all files related to a single feature are grouped together.
+
+For example, in the `/features/fighters/confed_rapier/` directory:
+- `rapier.tscn` - Scene file that includes an AIController node as a child
+- `rapier.gd` - Script file
+- `rapier.tres` - Ship data resource
+- `rapier.glb` - 3D model
+- `rapier.png` - Texture
+- `rapier_engine.ogg` - Engine sound
+
+### Shared Assets
+For shared AI-related assets that might be used across multiple ship types, the `_shared` directory pattern is used within the appropriate feature category, following the hybrid model approach for semi-global assets:
+- `/features/fighters/_shared/ai/` - Shared AI assets for fighters
+- `/features/capital_ships/_shared/ai/` - Shared AI assets for capital ships
+
+This follows the guiding principle: "If I delete three random features, is this asset still needed?" If yes, it belongs in `/assets/`; if only needed by a specific feature category, it belongs in that category's `/_shared/` directory.
+
+## Implementation Notes
 The AI Module in Godot leverages:
 
 1. **Behavior Trees**: For complex, modular AI decision-making using a hierarchical structure
@@ -764,3 +810,5 @@ This replaces the C++ goal-based system with a more flexible behavior tree appro
 The implementation uses Godot's node-based architecture to attach AI controllers to ships, with the behavior tree system providing modular decision-making capabilities. Formation flying is implemented through coordinated position calculations relative to a leader ship.
 
 The wing AI controller demonstrates how individual ship AIs can be coordinated for group behavior, while still allowing for individual tactical decisions within the overall formation context.
+
+This structure aligns with Godot's best practices for feature-based organization using a hybrid model, where all files related to a single conceptual feature are grouped together in a self-contained directory within `/features/`, while maintaining truly global assets in `/assets/` and using `/_shared/` directories for semi-global assets specific to feature categories.
