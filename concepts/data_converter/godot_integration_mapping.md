@@ -1,89 +1,101 @@
 # Godot Integration Mapping for Converted Assets
 
 ## Overview
-This document provides a clear mapping between converted assets from the data converter and their integration into the Godot project structure, ensuring seamless transition from legacy formats to modern Godot implementation.
+This document provides a clear mapping between converted assets from the data converter and their integration into the Godot project structure, ensuring seamless transition from legacy formats to modern Godot implementation. The mapping follows the feature-based organizational approach and hybrid model defined in our project structure.
 
 ## Asset Type Integration Mapping
 
 ### 1. Table Data Files (.tbl/.tbm → .tres)
-**Data Converter Output**: `/data/{type}/{faction}/{subtype}/{entity}.tres`
-**Godot Target Structure**: `/data/{type}/{faction}/{subtype}/{entity}.tres`
+**Data Converter Output**: `/assets/data/{type}/{subtype}/{entity}.tres`
+**Godot Target Structure**: `/assets/data/{type}/{subtype}/{entity}.tres`
 
 **Integration Points**:
-- ShipClass resources → `/entities/fighters/{faction}/{ship}/` entity scenes
-- WeaponClass resources → `/entities/weapons/{weapon}/` entity scenes
-- AIProfile resources → `/systems/ai/profiles/` behavior definitions
-- Mission data resources → `/missions/{campaign}/{mission}/` scene resources
+- ShipClass resources → `/assets/data/ships/{ship_class}.tres` referenced by ship entity scenes
+- WeaponClass resources → `/assets/data/weapons/{weapon_class}.tres` referenced by weapon entity scenes
+- AIProfile resources → `/assets/data/ai/profiles/{profile_name}.tres` referenced by AI system scripts
+- Mission data resources → `/campaigns/{campaign}/missions/{mission_id}_{mission_name}/mission_data.tres`
+- Species definitions → `/assets/data/species/{species_name}.tres`
+- IFF definitions → `/assets/data/iff/{iff_name}.tres`
+- Armor type definitions → `/assets/data/armor/{armor_type}.tres`
+- Effect system parameters → `/assets/data/effects/{effect_name}.tres`
 
 ### 2. Model Files (.pof → .glb/.gltf)
-**Data Converter Output**: `/entities/{type}/{entity}/{entity}.glb`
-**Godot Target Structure**: `/entities/{type}/{entity}/{entity}.glb`
+**Data Converter Output**: `/features/{category}/{entity}/{entity}.glb`
+**Godot Target Structure**: `/features/{category}/{entity}/{entity}.glb`
 
 **Integration Points**:
-- 3D models with hardpoint metadata → Entity scenes in `/entities/`
+- 3D models with hardpoint metadata → Entity scenes in `/features/`
 - Subsystem positions → Damage modeling in ship entities
 - Thruster locations → Engine effects in ship entities
 - Weapon hardpoints → Weapon mounting in ship entities
 
-### 3. Texture Files (.pcx → WebP/PNG)
-**Data Converter Output**: `/textures/{type}/{subtype}/{texture}.{webp|png}`
-**Godot Target Structure**: `/textures/{type}/{subtype}/{texture}.{webp|png}`
+### 3. Texture Files (.pcx/.dds → WebP)
+**Data Converter Output**: `/features/{category}/{entity}/{texture}.webp` or `/assets/textures/{type}/{subtype}/{texture}.webp`
+**Godot Target Structure**: 
+  - Feature-specific: `/features/{category}/{entity}/{texture}.webp`
+  - Global assets: `/assets/textures/{type}/{subtype}/{texture}.webp`
 
 **Integration Points**:
-- Ship textures → 3D model materials in `/entities/fighters/`
-- UI graphics → Interface elements in `/ui/`
-- Effect textures → Particle systems in `/animations/`
-- Font graphics → Text rendering in `/ui/`
+- Ship textures → 3D model materials in `/features/fighters/{ship}/` or `/features/capital_ships/{ship}/`
+- UI graphics → Interface elements in `/features/ui/{component}/`
+- Effect textures → Particle systems in `/features/effects/{effect}/` or `/assets/textures/effects/`
+- Font graphics → Text rendering in `/features/ui/_shared/fonts/` or `/assets/textures/fonts/`
 
-### 4. Audio Files (.wav → Ogg Vorbis)
-**Data Converter Output**: `/audio/{type}/{subtype}/{sound}.ogg`
-**Godot Target Structure**: `/audio/{type}/{subtype}/{sound}.ogg`
+### 4. Audio Files (.wav/.ogg → Ogg Vorbis)
+**Data Converter Output**: `/features/{category}/{entity}/{sound}.ogg` or `/assets/audio/{type}/{subtype}/{sound}.ogg`
+**Godot Target Structure**: 
+  - Feature-specific: `/features/{category}/{entity}/{sound}.ogg`
+  - Global assets: `/assets/audio/{type}/{subtype}/{sound}.ogg`
 
 **Integration Points**:
-- Engine sounds → Ship entities in `/entities/fighters/`
-- Weapon sounds → Weapon entities in `/entities/weapons/`
-- Explosion sounds → Effect entities in `/entities/effects/`
-- Voice acting → Mission scenes in `/missions/`
+- Engine sounds → Ship entities in `/features/fighters/{ship}/` or `/features/capital_ships/{ship}/`
+- Weapon sounds → Weapon entities in `/features/weapons/{weapon}/`
+- Explosion sounds → Effect entities in `/features/effects/{effect}/`
+- Voice acting → Mission scenes in `/campaigns/{campaign}/missions/{mission_id}_{mission_name}/`
 - Music tracks → Campaign and mission scenes
+- UI sounds → `/assets/audio/ui/` referenced by UI components
 
-### 5. Animation Files (.ani → Sprite Sheets)
-**Data Converter Output**: `/animations/{type}/{subtype}/{animation}/`
-**Godot Target Structure**: `/animations/{type}/{subtype}/{animation}/`
+### 5. Animation Files (.ani → Sprite Sheets/WebP)
+**Data Converter Output**: `/features/{category}/{entity}/{animation}/` or `/assets/animations/{type}/{subtype}/{animation}/`
+**Godot Target Structure**: 
+  - Feature-specific: `/features/{category}/{entity}/{animation}/`
+  - Global assets: `/assets/animations/{type}/{subtype}/{animation}/`
 
 **Integration Points**:
-- Explosion effects → Effect entities in `/entities/effects/`
-- UI animations → Interface elements in `/ui/`
-- Weapon effects → Weapon entities in `/entities/weapons/`
-- Particle effects → Visual systems in `/systems/graphics/`
+- Explosion effects → Effect entities in `/features/effects/{effect}/`
+- UI animations → Interface elements in `/features/ui/{component}/`
+- Weapon effects → Weapon entities in `/features/weapons/{weapon}/`
+- Particle effects → Visual systems in game logic
 
 ### 6. Mission Files (.fs2 → .tscn/.tres)
-**Data Converter Output**: `/missions/{campaign}/{mission}/{mission}.tscn`
-**Godot Target Structure**: `/missions/{campaign}/{mission}/{mission}.tscn`
+**Data Converter Output**: `/campaigns/{campaign}/missions/{mission_id}_{mission_name}/{mission}.tscn`
+**Godot Target Structure**: `/campaigns/{campaign}/missions/{mission_id}_{mission_name}/{mission}.tscn`
 
 **Integration Points**:
-- Mission scenes → Gameplay execution in `/missions/`
-- Event timelines → Mission control in `/systems/mission_control/`
+- Mission scenes → Gameplay execution in `/campaigns/{campaign}/missions/{mission_id}_{mission_name}/`
+- Event timelines → Mission control logic using Godot's animation system
 - Entity placements → Scene composition using converted entities
-- Scripting logic → Mission behavior using Godot's animation system
+- Scripting logic → Mission behavior using Godot's node system
 
-### 7. Text Files (.txt → BBCode)
-**Data Converter Output**: `/text/{type}/{subtype}/{content}.txt`
-**Godot Target Structure**: `/text/{type}/{subtype}/{content}.txt`
+### 7. Text Files (.txt → BBCode/.tres)
+**Data Converter Output**: `/campaigns/{campaign}/missions/{mission_id}_{mission_name}/{content}.txt`
+**Godot Target Structure**: `/campaigns/{campaign}/missions/{mission_id}_{mission_name}/{content}.txt`
 
 **Integration Points**:
-- Fiction text → Briefing screens in `/ui/briefing/`
-- Technical entries → Tech database in `/ui/tech_database/`
-- Credits → Credits display in `/ui/`
-- Documentation → Help systems in `/ui/`
+- Fiction text → Mission scenes in `/campaigns/{campaign}/missions/{mission_id}_{mission_name}/`
+- Technical entries → Tech database in `/features/ui/tech_database/`
+- Credits → Credits display in `/features/ui/`
+- Documentation → Help systems in `/features/ui/`
 
 ## Cross-Reference Integration
 
 ### Resource References
 - **Data Resources** (.tres) are referenced by:
-  - Entity scenes in `/entities/`
-  - Mission scenes in `/missions/`
-  - UI components in `/ui/`
-  - System components in `/systems/`
+  - Entity scenes in `/features/`
+  - Mission scenes in `/campaigns/`
+  - UI components in `/features/ui/`
+  - System components in `/scripts/`
+  - Autoload systems in `/autoload/`
 
 ### Asset References
 - **Media Assets** are referenced by:
@@ -94,15 +106,15 @@ This document provides a clear mapping between converted assets from the data co
 
 ## Directory Structure Alignment
 
-| Data Converter Output | Godot Target Structure | Purpose |
-|----------------------|------------------------|---------|
-| `/data/` | `/data/` | Game data definitions |
-| `/entities/` | `/entities/` | Physical game objects |
-| `/textures/` | `/textures/` | Texture and UI graphics |
-| `/audio/` | `/audio/` | Audio files |
-| `/animations/` | `/animations/` | Animation sequences |
-| `/missions/` | `/missions/` | Mission scenes and data |
-| `/text/` | `/text/` | Narrative text and documentation |
+| Data Type | Data Converter Output | Godot Target Structure | Purpose |
+|-----------|----------------------|------------------------|---------|
+| Table Data | `/assets/data/{type}/` | `/assets/data/{type}/` | Configuration data resources |
+| 3D Models | `/features/{category}/{entity}/` | `/features/{category}/{entity}/` | Self-contained game features with models |
+| Textures | `/features/{category}/{entity}/` or `/assets/textures/` | `/features/{category}/{entity}/` or `/assets/textures/` | Feature-specific or shared textures |
+| Audio | `/features/{category}/{entity}/` or `/assets/audio/` | `/features/{category}/{entity}/` or `/assets/audio/` | Feature-specific or shared audio |
+| Animations | `/features/{category}/{entity}/` or `/assets/animations/` | `/features/{category}/{entity}/` or `/assets/animations/` | Feature-specific or shared animations |
+| Missions | `/campaigns/{campaign}/missions/` | `/campaigns/{campaign}/missions/` | Campaign data and mission scenes |
+| Text | `/campaigns/{campaign}/missions/` | `/campaigns/{campaign}/missions/` | Narrative content and UI text |
 
 ## Validation Integration Points
 
@@ -121,27 +133,28 @@ This document provides a clear mapping between converted assets from the data co
 ## Migration Workflow
 
 ### Phase 1: Data Foundation
-1. Convert .tbl/.tbm files to .tres resources
-2. Place in `/data/` directory structure
+1. Convert .tbl/.tbm files to .tres resources following the "Global Litmus Test"
+2. Place data resources in `/assets/data/` directory structure organized by type
 3. Validate cross-references and data integrity
+4. Create relationships between data resources and feature entities
 
 ### Phase 2: Media Assets
-1. Convert .pof files to .glb/.gltf models
-2. Convert .pcx files to WebP/PNG textures
-3. Convert .wav files to Ogg Vorbis audio
-4. Convert .ani files to sprite sheet animations
-5. Place in respective directory structures
+1. Convert .pof files to .glb/.gltf models preserving model hierarchy
+2. Convert .pcx/.dds files to WebP textures maintaining visual quality
+3. Convert .wav/.ogg files to Ogg Vorbis audio preserving characteristics
+4. Convert .ani files to sprite sheet animations or particle effects
+5. Place assets in respective directory structures following feature-based organization
 
 ### Phase 3: Content Integration
-1. Convert .txt files to BBCode text resources
-2. Convert .fs2 files to Godot mission scenes
-3. Integrate all assets into entity and mission scenes
-4. Validate gameplay functionality
+1. Convert .txt files to BBCode text resources preserving formatting
+2. Convert .fs2 files to Godot mission scenes in `/campaigns/{campaign}/missions/`
+3. Integrate all assets into entity and mission scenes following co-location principle
+4. Validate gameplay functionality and cross-references
 
 ### Phase 4: Quality Assurance
-1. Test cross-reference integrity
-2. Verify performance metrics
-3. Validate platform compatibility
-4. Confirm gameplay balance and presentation
+1. Test cross-reference integrity between all assets and resources
+2. Verify performance metrics meet targets
+3. Validate platform compatibility across target hardware
+4. Confirm gameplay balance and presentation match original experience
 
-This mapping ensures a smooth transition from legacy asset formats to the modern Godot implementation while maintaining all gameplay relationships and functionality.
+This mapping ensures a smooth transition from legacy asset formats to the modern Godot implementation while maintaining all gameplay relationships and functionality, following the feature-based organizational approach and hybrid model that combines scalability with a clean repository for generic, reusable assets.

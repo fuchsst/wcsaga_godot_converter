@@ -1,7 +1,7 @@
 # WAV Files Conversion Requirements
 
 ## Overview
-WAV files contain sound effects, music, and voice acting used throughout Wing Commander Saga. These audio files need to be converted to Ogg Vorbis format for better compression and compatibility with Godot's audio system, following Godot's feature-based organization principles.
+WAV files contain sound effects, music, and voice acting used throughout Wing Commander Saga. These audio files need to be converted to Ogg Vorbis format for better compression and compatibility with Godot's audio system, following Godot's feature-based organization principles and the hybrid model defined in our project structure.
 
 ## File Types and Conversion Requirements
 
@@ -79,98 +79,235 @@ WAV files contain sound effects, music, and voice acting used throughout Wing Co
 - Preserve timing and synchronization data
 - Generate resource definitions for Godot integration
 
-## Feature-Based Directory Structure
-Following Godot's recommended directory structure:
+## Directory Structure Alignment
+Following the Godot project structure defined in directory_structure.md and the hybrid organizational model:
+
+### Assets Directory Structure (Global Assets)
+Global audio assets that follow the "Global Litmus Test" principle: "If I delete three random features, is this asset still needed?"
+
 ```
-/audio/
-├── sfx/                   # Sound effects
-│   ├── weapons/           # Weapon sounds
-│   │   ├── lasers/
-│   │   ├── missiles/
-│   │   ├── beams/
-│   │   └── countermeasures/
-│   ├── explosions/         # Explosion effects
-│   │   ├── small/
-│   │   ├── medium/
-│   │   └── large/
-│   ├── ui/                # UI feedback sounds
-│   │   ├── buttons/
-│   │   ├── menus/
-│   │   └── alerts/
-│   └── environment/       # Environmental sounds
-│       ├── space/
-│       ├── nebula/
-│       └── planetary/
-├── music/                 # Music tracks
-│   ├── menu/              # Menu music
-│   │   ├── main_theme.ogg
-│   │   ├── options_theme.ogg
-│   │   └── campaign_select.ogg
-│   ├── mission/           # Mission music
-│   │   ├── combat_theme.ogg
-│   │   ├── stealth_theme.ogg
-│   │   └── boss_theme.ogg
-│   └── cutscene/          # Cutscene music
-│       ├── dramatic.ogg
-│       ├── heroic.ogg
-│       └── tragic.ogg
-├── voice/                 # Voice acting
-│   ├── briefings/         # Mission briefings
-│   │   ├── hermes/
-│   │   ├── brimstone/
-│   │   └── training/
-│   ├── inmission/         # In-mission communications
-│   │   ├── wingmen/
-│   │   ├── enemies/
-│   │   └── command/
-│   └── characters/        # Character dialogue
-│       ├── protagonist/
-│       ├── allies/
-│       └── antagonists/
-└── ambient/               # Ambient sounds
-    ├── space/             # Deep space ambience
-    ├── nebula/            # Nebula field sounds
-    └── planetary/          # Planetary atmospheres
+assets/
+├── audio/                 # Shared audio files
+│   ├── sfx/               # Generic sound effects
+│   │   ├── weapons/       # Weapon sound effects
+│   │   │   ├── firing/    # Weapon firing sounds
+│   │   │   ├── impacts/   # Weapon impact sounds
+│   │   │   ├── explosions/ # Explosion sounds
+│   │   │   └── flyby/     # Projectile flyby sounds
+│   │   ├── ui/            # UI sound effects
+│   │   │   ├── buttons/   # Button interaction sounds
+│   │   │   ├── menus/     # Menu navigation sounds
+│   │   │   └── alerts/    # Alert and notification sounds
+│   │   ├── environment/   # Environmental sounds
+│   │   │   ├── space/     # Space ambient sounds
+│   │   │   ├── cockpit/   # Cockpit sounds
+│   │   │   └── ui/        # User interface sounds
+│   │   ├── ships/         # Generic ship sounds
+│   │   │   ├── engines/   # Generic engine sounds
+│   │   │   ├── movement/  # Ship movement sounds
+│   │   │   └── destruction/ # Generic destruction sounds
+│   │   └── effects/       # Generic effect sounds
+│   ├── music/             # Background music tracks
+│   │   ├── ambient/       # Ambient background music
+│   │   ├── combat/        # Combat music tracks
+│   │   ├── briefing/      # Mission briefing music
+│   │   ├── debriefing/    # Mission debriefing music
+│   │   ├── credits/       # Credits sequence music
+│   │   └── cutscenes/     # Cutscene music
+│   └── voice/             # Voice acting files
+│       ├── mission_briefings/ # Mission briefing voice files
+│       ├── character_dialogue/ # Character dialogue files
+│       ├── system_announcements/ # System announcement voice files
+│       ├── mission_debriefings/ # Mission debriefing voice files
+│       ├── ai/            # AI voice commands and responses
+│       │   ├── terran/    # Terran AI voices
+│       │   ├── kilrathi/  # Kilrathi AI voices
+│       │   └── pirate/    # Pirate AI voices
+│       └── cutscenes/     # Cutscene voice acting
+├── behavior_trees/        # Shared LimboAI behavior trees
+│   ├── ai/                # AI behavior trees
+│   │   ├── combat/        # Combat-related behavior trees
+│   │   ├── navigation/    # Navigation behavior trees
+│   │   └── tactical/      # Tactical behavior trees
+│   └── mission/           # Mission-specific behavior trees
+├── data/                  # Shared data resources
+│   ├── ai/                # AI data resources
+│   │   └── profiles/      # AI profile definitions
+│   ├── ships/             # Ship data resources
+│   ├── weapons/           # Weapon data resources
+│   ├── species/           # Species data resources
+│   ├── iff/               # IFF relationship data
+│   ├── armor/             # Armor type data
+│   ├── effects/           # Effect data resources
+│   └── mission/           # Mission data resources
+├── textures/              # Shared texture files
+│   ├── ui/                # Generic UI elements
+│   ├── effects/           # Particle textures used by multiple effects
+│   └── fonts/             # Font textures
+└── animations/            # Shared animation files
+    ├── ui/                # UI animations
+    └── effects/           # Generic effect animations
 ```
 
-## Entity Integration
-Audio files integrate with entity scenes in `/entities/` directories:
-- Ship entities reference engine sounds from `/audio/sfx/environment/space/`
-- Weapon entities reference firing sounds from `/audio/sfx/weapons/`
-- Explosion entities reference impact sounds from `/audio/sfx/explosions/`
-- Effect entities reference special effect sounds from `/audio/sfx/environment/`
+### Features Directory Structure (Feature-Specific Assets)
+Feature-specific audio assets that are closely tied to particular features and follow the co-location principle:
 
-## System Integration
-Audio files integrate with Godot systems in `/systems/` directories:
-- `/systems/audio/` - Audio management and playback
-- `/systems/weapon_control/` - Weapon firing sounds
-- `/systems/mission_control/` - Mission-specific audio triggers
-- `/systems/ai/` - AI communication sounds
-- `/systems/physics/` - Physics-based audio effects
+```
+features/
+├── fighters/              # Fighter ship entities
+│   ├── confed_rapier/     # F-44B Raptor fighter
+│   │   ├── rapier.tscn    # Scene file
+│   │   ├── rapier.gd      # Script file
+│   │   ├── rapier.tres    # Ship data resource
+│   │   ├── rapier.glb     # 3D model
+│   │   ├── rapier.png     # Texture
+│   │   └── assets/        # Feature-specific assets
+│   │       └── sounds/    # Ship-specific sounds
+│   │           ├── engine_loop.ogg # Engine loop sound
+│   │           ├── maneuver.ogg    # Maneuvering thrusters
+│   │           └── afterburner.ogg # Afterburner sound
+│   ├── kilrathi_dralthi/  # Dralthi fighter
+│   │   ├── dralthi.tscn   # Scene file
+│   │   ├── dralthi.gd     # Script file
+│   │   ├── dralthi.tres   # Ship data resource
+│   │   ├── dralthi.glb    # 3D model
+│   │   ├── dralthi.png    # Texture
+│   │   └── assets/        # Feature-specific assets
+│   │       └── sounds/    # Ship-specific sounds
+│   │           └── engine_loop.ogg # Engine loop sound
+│   └── _shared/           # Shared fighter assets
+├── capital_ships/         # Capital ship entities
+│   ├── tcs_behemoth/      # TCS Behemoth capital ship
+│   │   ├── behemoth.tscn  # Scene file
+│   │   ├── behemoth.gd    # Script file
+│   │   ├── behemoth.tres  # Ship data resource
+│   │   ├── behemoth.glb   # 3D model
+│   │   ├── behemoth.png   # Texture
+│   │   └── assets/        # Feature-specific assets
+│   │       └── sounds/    # Ship-specific sounds
+│   │           └── engine_loop.ogg # Engine loop sound
+│   └── _shared/           # Shared capital ship assets
+├── weapons/               # Weapon entities
+│   ├── ion_cannon/        # Ion cannon weapon
+│   │   ├── ion_cannon.tscn    # Scene
+│   │   ├── ion_cannon.gd      # Script
+│   │   ├── ion_cannon.tres    # Weapon data
+│   │   ├── ion_cannon.glb     # Model
+│   │   ├── ion_cannon.png     # Texture
+│   │   └── assets/        # Feature-specific assets
+│   │       └── sounds/    # Weapon-specific sounds
+│   │           ├── fire_sound.ogg # Firing sound
+│   │           └── impact_sound.ogg # Impact sound
+│   ├── javelin_missile/   # Javelin missile weapon
+│   │   ├── javelin_missile.tscn   # Scene
+│   │   ├── javelin_missile.gd     # Script
+│   │   ├── javelin_missile.tres   # Weapon data
+│   │   ├── javelin_missile.glb    # Model
+│   │   ├── javelin_missile.png    # Texture
+│   │   └── assets/        # Feature-specific assets
+│   │       └── sounds/    # Weapon-specific sounds
+│   │           ├── fire_sound.ogg # Firing sound
+│   │           └── impact_sound.ogg # Impact sound
+│   └── _shared/           # Shared weapon assets
+├── effects/               # Effect entities
+│   ├── explosion/         # Explosion effect
+│   │   ├── explosion.tscn # Scene file
+│   │   ├── explosion.gd   # Script file
+│   │   ├── explosion.tres # Effect data resource
+│   │   ├── explosion_fire.png # Texture
+│   │   └── assets/        # Feature-specific assets
+│   │       └── sounds/    # Effect-specific sounds
+│   │           └── explosion_sound.ogg # Explosion sound
+│   ├── fireball/          # Fireball effect
+│   │   ├── fireball.tscn  # Scene file
+│   │   ├── fireball.gd    # Script file
+│   │   ├── fireball.tres  # Effect data resource
+│   │   ├── fireball_texture.png # Texture
+│   │   └── assets/        # Feature-specific assets
+│   │       └── sounds/    # Effect-specific sounds
+│   │           └── fireball_sound.ogg # Fireball sound
+│   └── _shared/           # Shared effect assets
+├── environment/           # Environmental objects and props
+│   ├── asteroid/          # Asteroid object
+│   │   ├── asteroid.tscn  # Scene file
+│   │   ├── asteroid.gd    # Script file
+│   │   ├── asteroid.tres  # Data resource
+│   │   ├── asteroid.glb   # 3D model
+│   │   ├── asteroid.png   # Texture
+│   │   └── assets/        # Feature-specific assets
+│   │       └── sounds/    # Environment-specific sounds
+│   │           └── collision_sound.ogg # Collision sound
+│   └── _shared/           # Shared environment assets
+└── ui/                    # UI feature elements
+    ├── main_menu/         # Main menu interface
+    │   ├── main_menu.tscn # Scene file
+    │   ├── main_menu.gd   # Script file
+    │   ├── background.png # Background texture
+    │   └── assets/        # Feature-specific assets
+    │       └── sounds/    # UI-specific sounds
+    │           ├── click.ogg      # Button click sound
+    │           ├── hover.ogg      # Button hover sound
+    │           └── transition.ogg # Menu transition sound
+    ├── hud/               # Heads-up display
+    │   ├── player_hud.tscn # Scene file
+    │   ├── player_hud.gd  # Script file
+    │   └── assets/        # Feature-specific assets
+    │       └── sounds/    # UI-specific sounds
+    │           ├── warning.ogg        # Warning sound
+    │           ├── target_acquired.ogg # Target acquired sound
+    │           └── system_status.ogg  # System status sound
+    └── _shared/           # Shared UI assets
+```
 
-## UI Integration
-Audio files integrate with UI components in `/ui/` directories:
-- `/ui/main_menu/` - Menu navigation sounds
-- `/ui/hud/` - HUD feedback sounds
-- `/ui/briefing/` - Briefing audio cues
-- `/ui/debriefing/` - Debriefing audio feedback
+## Integration Points
 
-## Closely Related Assets
-- Mission files (.fs2) that reference specific audio events and are converted to `/missions/` directories
-- Table files (.tbl) that define sound effect mappings and are converted to `/data/` directories
-- Animation files (.ani) that synchronize with audio and are converted to `/animations/` directories
-- Particle effect definitions that trigger associated sounds from `/data/effects/`
+### Data Converter Output Mapping
+- Sound effects → Converted to Ogg Vorbis and placed in `/assets/audio/sfx/` or `/features/{category}/{entity}/assets/sounds/`
+- Music tracks → Converted to Ogg Vorbis and placed in `/assets/audio/music/`
+- Voice acting → Converted to Ogg Vorbis and placed in `/assets/audio/voice/`
+- Ambient sounds → Converted to Ogg Vorbis and placed in `/assets/audio/sfx/environment/`
 
-## Entity Asset Organization
-Each entity in `/entities/` contains references to relevant audio files:
-- Ships reference engine sounds from `/audio/sfx/environment/space/`
-- Weapons reference firing sounds from `/audio/sfx/weapons/`
-- Effects reference impact sounds from `/audio/sfx/explosions/`
-- UI components reference interface sounds from `/audio/sfx/ui/`
+### Resource References
+- **Global audio assets** in `/assets/audio/` are referenced by multiple features and systems
+- **Feature-specific audio** in `/features/{category}/{entity}/assets/sounds/` are referenced directly by their entity scenes
+- **Audio managers** in `/autoload/audio_manager.gd` handle playback of both global and feature-specific audio
+- **Game events** trigger specific audio files through signal connections
 
-## Common Shared Assets
-- Standard UI sound effects used across different interfaces from `/audio/sfx/ui/buttons/`
-- Common weapon and explosion sound effects from `/audio/sfx/weapons/` and `/audio/sfx/explosions/`
-- Shared ambient background tracks for similar environments from `/audio/ambient/`
-- Standard voice prompts and system messages from `/audio/voice/characters/`
-- Common transition and menu navigation sounds from `/audio/sfx/ui/menus/`
+## Relationship to Other Assets
+
+### Entity Integration
+Audio files integrate with entity scenes following the feature-based organization and hybrid model:
+- Ship entities reference engine sounds from `/features/fighters/{faction}_{ship_name}/assets/sounds/` or use shared sounds from `/assets/audio/sfx/ships/engines/`
+- Weapon entities reference firing sounds from `/features/weapons/{weapon_name}/assets/sounds/` or use shared sounds from `/assets/audio/sfx/weapons/firing/`
+- Explosion entities reference impact sounds from `/features/effects/{effect_name}/assets/sounds/` or use shared sounds from `/assets/audio/sfx/explosions/`
+- UI components reference interface sounds from `/features/ui/{component_name}/assets/sounds/` or use shared sounds from `/assets/audio/sfx/ui/`
+
+### System Integration
+Audio files integrate with Godot systems in `/scripts/` directories following the separation of concerns:
+- `/scripts/audio/sound_manager.gd` - Sound effect management
+- `/scripts/audio/music_player.gd` - Music playback system
+- `/scripts/audio/voice_system.gd` - Voice acting system
+- `/scripts/weapons/weapon_system.gd` - Weapon firing sounds
+- `/scripts/mission/mission_manager.gd` - Mission-specific audio triggers
+
+### Campaign Integration
+Audio files integrate with campaign content in `/campaigns/` directories following the campaign-centric organization:
+- Mission-specific voice acting organized by campaign and mission in `/campaigns/{campaign}/missions/{mission_id}_{mission_name}/assets/audio/`
+- Campaign-specific music tracks for intro/outro sequences referenced in `/campaigns/{campaign}/campaign.tres`
+- Briefing and debriefing audio files stored with mission data in `/campaigns/{campaign}/missions/{mission_id}_{mission_name}/assets/audio/`
+
+### Closely Related Assets
+- Mission files (.fs2) that reference specific audio events and are converted to `/campaigns/{campaign}/missions/{mission_id}_{mission_name}/`
+- Table files (.tbl) that define sound effect mappings in `/assets/data/`
+- Animation files (.ani) that synchronize with audio and are converted to sprite sheets in `/assets/animations/` or feature directories
+- Particle effect definitions that trigger associated sounds from `/assets/data/effects/`
+
+### Common Shared Assets
+Following the "Global Litmus Test" principle for assets that belong in `/assets/`:
+- Standard UI sound effects used across different interfaces from `/assets/audio/sfx/ui/`
+- Common weapon and explosion sound effects from `/assets/audio/sfx/weapons/` and `/assets/audio/sfx/explosions/`
+- Shared ambient background tracks for similar environments from `/assets/audio/sfx/environment/`
+- Standard voice prompts and system messages from `/assets/audio/voice/system_announcements/`
+- Common transition and menu navigation sounds from `/assets/audio/sfx/ui/`
+
+This structure follows the hybrid approach where truly global, context-agnostic audio assets are organized in `/assets/audio/`, while feature-specific audio assets are co-located with their respective features in `/features/{category}/{entity}/assets/sounds/`. The guiding principle is: "If I delete three random features, is this asset still needed?" If yes, it belongs in `/assets/audio/`; if only needed by specific features, it belongs in those feature directories. The organization aligns with the target directory structure defined in `directory_structure.md` and follows the integration plan outlined in `integration_plan.md`.

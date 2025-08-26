@@ -1,7 +1,7 @@
 # POF Files Conversion Requirements
 
 ## Overview
-POF (Parallax Object Format) files contain 3D model data for all ships, weapons, space stations, and other visual elements in Wing Commander Saga. These binary files need to be converted to glTF 2.0 format (.glb/.gltf) for compatibility with Godot's modern renderer, following Godot's feature-based organization principles.
+POF (Parallax Object Format) files contain 3D model data for all ships, weapons, space stations, and other visual elements in Wing Commander Saga. These binary files need to be converted to glTF 2.0 format (.glb/.gltf) for compatibility with Godot's modern renderer, following Godot's feature-based organization principles and the hybrid model defined in our project structure.
 
 ## File Structure and Components
 
@@ -93,12 +93,16 @@ POF (Parallax Object Format) files contain 3D model data for all ships, weapons,
 - Create named nodes for hardpoints and subsystems
 - Export to .glb (binary) or .gltf (JSON) format
 
-## Feature-Based Directory Structure
-Following Godot's recommended directory structure:
+## Directory Structure Alignment
+Following the Godot project structure defined in directory_structure.md and the hybrid organizational model:
+
+### Features Directory Structure
+3D models are organized within feature directories following the co-location principle where all files related to a single feature are grouped together:
+
 ```
-/entities/
-├── fighters/              # Fighter ship entities
-│   ├── confed_rapier/     # Raptor fighter
+features/
+├── fighters/              # Fighter ship entities (primary player and AI ships)
+│   ├── confed_rapier/     # Raptor fighter - all files together
 │   │   ├── rapier.tscn    # Scene file
 │   │   ├── rapier.gd      # Script file
 │   │   ├── rapier.tres    # Ship data resource
@@ -112,6 +116,7 @@ Following Godot's recommended directory structure:
 │   │   ├── dralthi.glb
 │   │   ├── dralthi.png
 │   │   └── dralthi_engine.ogg
+│   ├── _shared/           # Shared fighter assets
 │   └── templates/         # Fighter templates
 ├── capital_ships/         # Capital ship entities
 │   ├── tcs_tigers_claw/   # Tigers Claw carrier
@@ -120,77 +125,99 @@ Following Godot's recommended directory structure:
 │   │   ├── tigers_claw.tres
 │   │   ├── tigers_claw.glb
 │   │   └── tigers_claw.png
+│   ├── _shared/           # Shared capital ship assets
 │   └── templates/         # Capital ship templates
-├── projectiles/           # Projectile entities
-│   ├── laser_bolt/        # Laser bolt projectile
-│   │   ├── laser_bolt.tscn
-│   │   ├── laser_bolt.gd
-│   │   └── laser_bolt.tres
-│   ├── missile/           # Missile projectile
-│   │   ├── missile.tscn
-│   │   ├── missile.gd
-│   │   └── missile.tres
-│   └── templates/         # Projectile templates
-├── weapons/               # Weapon entities
-│   ├── laser_cannon/      # Laser cannon weapon
-│   │   ├── laser_cannon.tscn
-│   │   ├── laser_cannon.gd
-│   │   └── laser_cannon.tres
+├── weapons/               # Weapon entities (self-contained)
+│   ├── ion_cannon/        # Ion cannon weapon
+│   │   ├── ion_cannon.tscn    # Scene
+│   │   ├── ion_cannon.gd      # Script
+│   │   ├── ion_cannon.tres    # Weapon data
+│   │   ├── ion_cannon.glb     # 3D model
+│   │   ├── ion_cannon.png     # Texture
+│   │   └── ion_fire.ogg       # Sound
+│   ├── projectiles/       # Projectile entities
+│   │   ├── ion_bolt/      # Ion bolt projectile
+│   │   │   ├── ion_bolt.tscn
+│   │   │   ├── ion_bolt.gd
+│   │   │   └── ion_bolt.tres
+│   │   ├── missile/       # Missile projectile
+│   │   │   ├── missile.tscn
+│   │   │   ├── missile.gd
+│   │   │   └── missile.tres
+│   │   └── templates/     # Projectile templates
+│   ├── _shared/           # Shared weapon assets
 │   └── templates/         # Weapon templates
 ├── effects/               # Effect entities
 │   ├── explosion/         # Explosion effect
 │   │   ├── explosion.tscn
 │   │   ├── explosion.gd
-│   │   └── explosion.tres
+│   │   ├── explosion.tres
+│   │   ├── explosion.glb  # 3D model (if applicable)
+│   │   ├── explosion_fire.png
+│   │   └── explosion_sound.ogg
 │   ├── fireball/          # Fireball effect
 │   │   ├── fireball.tscn
 │   │   ├── fireball.gd
-│   │   └── fireball.tres
+│   │   ├── fireball.tres
+│   │   ├── fireball.glb   # 3D model (if applicable)
+│   │   ├── fireball_texture.png
+│   │   └── fireball_sound.ogg
+│   ├── _shared/           # Shared effect assets
 │   └── templates/         # Effect templates
-├── environment/           # Environmental entities
+├── environment/           # Environmental objects and props
 │   ├── asteroid/          # Asteroid object
 │   │   ├── asteroid.tscn
 │   │   ├── asteroid.gd
-│   │   └── asteroid.tres
+│   │   ├── asteroid.tres
+│   │   ├── asteroid.glb
+│   │   └── asteroid.png
 │   ├── nebula/            # Nebula effect
 │   │   ├── nebula.tscn
 │   │   ├── nebula.gd
-│   │   └── nebula.tres
+│   │   ├── nebula.tres
+│   │   ├── nebula.glb
+│   │   └── nebula.png
+│   ├── _shared/           # Shared environment assets
 │   └── templates/         # Environment templates
-└── templates/             # Entity templates
+└── templates/             # Feature templates
 ```
 
-## Data Integration
-Converted POF models integrate with data resources in `/data/` directories:
-- ShipClass resources in `/data/ships/{faction}/{type}/` link to model files
-- WeaponClass resources in `/data/weapons/{faction}/` link to model files
-- Effect resources in `/data/effects/` link to model files
+## Integration Points
 
-## System Integration
-Models integrate with various Godot systems:
-- `/systems/physics/` - Physics properties and collision shapes
-- `/systems/graphics/` - Rendering materials and shaders
-- `/systems/audio/` - Audio emitters for engine sounds
-- `/systems/ai/` - Hardpoint data for weapon mounting
-- `/systems/weapon_control/` - Weapon hardpoint positioning
+### Data Converter Output Mapping
+- Ship models → Converted to glTF and placed in `/features/fighters/{ship}/` or `/features/capital_ships/{ship}/`
+- Weapon models → Converted to glTF and placed in `/features/weapons/{weapon}/`
+- Projectile models → Converted to glTF and placed in `/features/weapons/projectiles/{projectile}/`
+- Effect models → Converted to glTF and placed in `/features/effects/{effect}/`
+- Environment models → Converted to glTF and placed in `/features/environment/{prop}/`
 
-## Closely Related Assets
-- Texture files (.pcx) referenced in TXTR chunks and converted to `/textures/` directories
-- Animation files (.ani) that affect model components and converted to `/animations/` directories
-- Particle effect definitions used with model hardpoints from `/data/effects/`
-- Sound files (.wav/.ogg) associated with model events and converted to `/audio/` directories
+### Resource References
+- **Entity scenes** in `/features/` reference their respective .glb model files
+- **Data resources** in `/assets/data/` reference model paths for instantiation
+- **Hardpoint information** is preserved as named nodes in the glTF structure
+- **Subsystem locations** are maintained for damage modeling integration
 
-## Entity Asset Organization
-Each entity in `/entities/` contains all related assets:
-- `.glb` model files with embedded metadata
-- Hardpoint information preserved as named nodes
-- Subsystem locations maintained for damage modeling
-- Thruster positions for engine effects
-- Weapon mounting points for armament
+## Relationship to Other Assets
 
-## Common Shared Assets
-- Standard engine thruster effects used across multiple ship classes from `/entities/effects/engine/`
+### Closely Related Assets
+- Texture files (.pcx/.dds) referenced in TXTR chunks and converted to WebP/PNG in feature directories or `/assets/textures/`
+- Animation files (.ani) that affect model components and converted to sprite sheets in `/assets/animations/` or feature directories
+- Particle effect definitions used with model hardpoints from `/assets/data/effects/`
+- Sound files (.wav/.ogg) associated with model events and converted to Ogg Vorbis in feature directories or `/assets/audio/`
+
+### Entity Asset Organization
+Each entity in `/features/` contains all related assets following the co-location principle:
+- `.glb` model files with embedded metadata and named hardpoint nodes
+- Hardpoint information preserved as named nodes for weapon mounting and effects
+- Subsystem locations maintained for damage modeling integration
+- Thruster positions for engine effects and audio emitters
+- Weapon mounting points for armament attachment
+
+### Common Shared Assets
+- Standard engine thruster effects used across multiple ship classes from `/features/fighters/_shared/effects/`
 - Common weapon mounting point configurations shared between similar weapon types
-- Shared debris models for destruction effects from `/entities/environment/debris/`
-- Standard shield mesh templates for similar ship types from `/data/ships/templates/`
-- Common cockpit and interior model components from `/entities/fighters/templates/cockpit/`
+- Shared debris models for destruction effects from `/features/environment/_shared/debris/`
+- Standard cockpit models shared between fighter classes from `/features/fighters/_shared/cockpits/`
+- Shared turret models for capital ships from `/features/capital_ships/_shared/turret_models/`
+
+This organization follows the feature-based approach where each entity is a self-contained feature with all its related assets, while shared assets are properly organized in `_shared` directories within their respective categories following the hybrid model. The structure maintains clear separation of concerns between different systems while ensuring easy access to all assets needed for each feature.

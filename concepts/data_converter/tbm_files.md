@@ -1,7 +1,7 @@
 # TBM Files Conversion Requirements
 
 ## Overview
-TBM (Table Modular) files contain modular overrides and extensions to base TBL files in Wing Commander Saga. These files need to be parsed and integrated with their base table counterparts during the conversion process, following Godot's feature-based organization principles.
+TBM (Table Modular) files contain modular overrides and extensions to base TBL files in Wing Commander Saga. These files need to be parsed and integrated with their base table counterparts during the conversion process, following Godot's feature-based organization principles and the hybrid model defined in our project structure.
 
 ## File Types and Conversion Requirements
 
@@ -59,7 +59,7 @@ TBM (Table Modular) files contain modular overrides and extensions to base TBL f
 - Check for circular dependencies
 
 ### 2. Merge Processing Phase
-- Load base table data from converted resources in `/data/` directories
+- Load base table data from converted resources in `/assets/data/` directories
 - Parse TBM override sections
 - Apply modifications to base properties
 - Handle property additions and deletions
@@ -79,120 +79,112 @@ TBM (Table Modular) files contain modular overrides and extensions to base TBL f
 - Generate updated metadata and indices
 - Validate resource compatibility
 
-## Feature-Based Directory Structure
-Following Godot's recommended directory structure:
+## Directory Structure Alignment
+Following the Godot project structure defined in directory_structure.md and the hybrid organizational model:
+
+### Assets Directory Structure (Global Data)
+Global data resources that follow the "Global Litmus Test" principle: "If I delete three random features, is this asset still needed?"
+
 ```
-/data/
-├── ships/                 # Ship data resources
-│   ├── terran/            # Terran ship data
-│   │   ├── fighters/
-│   │   │   ├── base.tres   # Base ship definitions
-│   │   │   └── overrides/   # TBM override files
-│   │   │       ├── expansion_pack.tbm
-│   │   │       └── mod_override.tbm
-│   │   ├── bombers/
-│   │   │   ├── base.tres
-│   │   │   └── overrides/
-│   │   ├── capitals/
-│   │   │   ├── base.tres
-│   │   │   └── overrides/
-│   │   └── support/
-│   │       ├── base.tres
-│   │       └── overrides/
-│   ├── kilrathi/          # Kilrathi ship data
-│   │   ├── fighters/
-│   │   │   ├── base.tres
-│   │   │   └── overrides/
-│   │   ├── bombers/
-│   │   │   ├── base.tres
-│   │   │   └── overrides/
-│   │   └── capitals/
-│   │       ├── base.tres
-│   │       └── overrides/
-│   ├── pirate/            # Pirate ship data
-│   │   ├── fighters/
-│   │   │   ├── base.tres
-│   │   │   └── overrides/
-│   │   └── capitals/
-│   │       ├── base.tres
-│   │       └── overrides/
-│   └── templates/         # Ship data templates
-│       ├── base.tres
-│       └── overrides/
-├── weapons/               # Weapon data resources
-│   ├── terran/            # Terran weapon data
-│   │   ├── base.tres
-│   │   └── overrides/
-│   ├── kilrathi/          # Kilrathi weapon data
-│   │   ├── base.tres
-│   │   └── overrides/
-│   ├── pirate/            # Pirate weapon data
-│   │   ├── base.tres
-│   │   └── overrides/
-│   └── templates/         # Weapon data templates
-│       ├── base.tres
-│       └── overrides/
-├── ai/                    # AI behavior data
-│   ├── profiles/          # AI behavior profiles
-│   │   ├── base.tres
-│   │   └── overrides/
-│   ├── behaviors/         # AI behavior trees
-│   │   ├── base.tres
-│   │   └── overrides/
-│   ├── tactics/           # Combat tactics
-│   │   ├── base.tres
-│   │   └── overrides/
-│   ├── formations/        # Formation flying patterns
-│   │   ├── base.tres
-│   │   └── overrides/
-│   └── goals/             # AI goals
-│       ├── base.tres
-│       └── overrides/
-├── species/               # Species data
-│   ├── base.tres
-│   └── overrides/
-├── iff/                   # IFF relationship data
-│   ├── base.tres
-│   └── overrides/
-├── armor/                 # Armor type data
-│   ├── base.tres
-│   └── overrides/
-└── effects/               # Effect data resources
-    ├── base.tres
-    └── overrides/
+assets/
+├── audio/                         # Shared audio files
+│   ├── sfx/                       # Generic sound effects
+│   │   ├── weapons/               # Weapon sound effects
+│   │   ├── explosions/            # Explosion sound effects
+│   │   └── ui/                    # UI sound effects
+│   ├── music/                     # Background music tracks
+│   └── voice/                     # Voice acting files
+├── behavior_trees/                # Shared LimboAI behavior trees
+│   ├── ai/                        # AI behavior trees
+│   │   ├── combat/                # Combat-related behavior trees
+│   │   ├── navigation/            # Navigation behavior trees
+│   │   └── tactical/              # Tactical behavior trees
+│   └── mission/                  # Mission-specific behavior trees
+├── data/                          # Shared data resources
+│   ├── ai/                        # AI data resources
+│   │   └── profiles/              # AI profile definitions
+│   │       ├── base.tres          # Base AI profiles
+│   │       └── overrides/         # TBM override files
+│   ├── ships/                     # Ship data resources
+│   │   ├── base.tres              # Base ship definitions
+│   │   └── overrides/            # TBM override files
+│   ├── weapons/                   # Weapon data resources
+│   │   ├── base.tres              # Base weapon definitions
+│   │   └── overrides/             # TBM override files
+│   ├── species/                   # Species data resources
+│   │   ├── base.tres              # Base species definitions
+│   │   └── overrides/            # TBM override files
+│   ├── iff/                       # IFF relationship data
+│   │   ├── base.tres              # Base IFF definitions
+│   │   └── overrides/             # TBM override files
+│   ├── armor/                     # Armor type data
+│   │   ├── base.tres              # Base armor definitions
+│   │   └── overrides/            # TBM override files
+│   └── effects/                   # Effect data resources
+│       ├── base.tres              # Base effect definitions
+│       └── overrides/             # TBM override files
+├── textures/                      # Shared texture files
+│   ├── ui/                        # Generic UI elements
+│   ├── effects/                   # Particle textures used by multiple effects
+│   └── fonts/                     # Font textures
+└── animations/                    # Shared animation files
+    ├── ui/                        # UI animations
+    └── effects/                   # Generic effect animations
 ```
 
-## Entity Integration
-TBM-modified data integrates with entity scenes in `/entities/` directories:
-- Modified ship classes link to `/entities/fighters/{faction}/{ship_name}/` directories
-- Updated weapon classes link to `/entities/weapons/{weapon_name}/` directories
-- Changed AI profiles are referenced by ship entities
-- Modified effect resources are used by visual effect entities
+## Integration Points
 
-## System Integration
-TBM data integrates with Godot systems in `/systems/` directories:
-- `/systems/ai/` - AI behavior adjusted by modified profiles
-- `/systems/weapon_control/` - Weapon behavior adjusted by modified properties
-- `/systems/physics/` - Physics behavior adjusted by modified ship properties
-- `/systems/mission_control/` - Mission behavior adjusted by modified data
+### Data Converter Output Mapping
+- ShipClass overrides → Merged with base resources in `/assets/data/ships/`
+- WeaponClass overrides → Merged with base resources in `/assets/data/weapons/`
+- AIProfile overrides → Merged with base resources in `/assets/data/ai/profiles/`
+- Species overrides → Merged with base resources in `/assets/data/species/`
+- IFF overrides → Merged with base resources in `/assets/data/iff/`
+- ArmorType overrides → Merged with base resources in `/assets/data/armor/`
+- Effect overrides → Merged with base resources in `/assets/data/effects/`
 
-## Closely Related Assets
-- Base TBL files that are being extended or modified and converted to `/data/` directories
-- Mission files that reference the modified table data from `/missions/` directories
-- Ship and weapon models affected by property changes from `/entities/` directories
-- AI behavior files that depend on modified profiles from `/systems/ai/` directories
+### Resource References
+- **Entity scenes** in `/features/` reference updated data resources from `/assets/data/`
+- **Mission scenes** in `/campaigns/{campaign}/missions/` reference updated data resources
+- **AI systems** in `/scripts/ai/` reference updated AIProfile resources
+- **Weapon systems** in `/scripts/weapons/` reference updated WeaponClass resources
 
-## Entity Asset Organization
-Each entity in `/entities/` references data resources from `/data/` directories:
-- Ship entities reference modified ShipClass resources from `/data/ships/{faction}/{type}/`
-- Weapon entities reference updated WeaponClass resources from `/data/weapons/{faction}/`
-- Effect entities reference modified Effect resources from `/data/effects/`
-- AI-controlled entities reference adjusted AIProfile resources from `/data/ai/profiles/`
+## Relationship to Other Assets
 
-## Common Shared Assets
-- Standard override processing logic used across all table types in `/core/` directories
-- Shared validation rules for data integrity in `/core/validation/`
-- Common property inheritance patterns from `/data/templates/`
-- Standard conflict resolution mechanisms in `/core/conflict_resolution/`
-- Shared metadata for tracking modifications in `/core/metadata/`
-- Universal data processing utilities from `/core/utils/`
+### Entity Integration
+TBM-modified data integrates with entity scenes following the feature-based organization:
+- Modified ship classes are referenced by ship entity scenes in `/features/fighters/{faction}_{ship_name}/{ship_name}.tres`
+- Updated weapon classes are referenced by weapon entity scenes in `/features/weapons/{weapon_name}/{weapon_name}.tres`
+- Changed AI profiles are referenced by AI behavior scripts in `/scripts/ai/`
+- Modified effect resources are used by visual effect entities in `/features/effects/{effect_name}/{effect_name}.tres`
+
+### System Integration
+TBM data integrates with Godot systems in `/scripts/` directories following the separation of concerns:
+- `/scripts/ai/ai_behavior.gd` - AI behavior adjusted by modified profiles
+- `/scripts/weapons/weapon_system.gd` - Weapon behavior adjusted by modified properties
+- `/scripts/physics/flight_model.gd` - Physics behavior adjusted by modified ship properties
+- `/scripts/mission/mission_manager.gd` - Mission behavior adjusted by modified data
+
+### Closely Related Assets
+- Base TBL files that are being extended or modified and converted to `/assets/data/` directories
+- Mission files that reference the modified table data from `/campaigns/` directories
+- Ship and weapon models affected by property changes from `/features/` directories
+- AI behavior files that depend on modified profiles from `/scripts/ai/` directories
+
+### Entity Asset Organization
+Each entity in `/features/` references data resources from `/assets/data/` directories:
+- Ship entities reference modified ShipClass resources from `/assets/data/ships/{ship_class}.tres`
+- Weapon entities reference updated WeaponClass resources from `/assets/data/weapons/{weapon_class}.tres`
+- Effect entities reference modified Effect resources from `/assets/data/effects/{effect_name}.tres`
+- AI-controlled entities reference adjusted AIProfile resources from `/assets/data/ai/profiles/{profile_name}.tres`
+
+### Common Shared Assets
+Following the "Global Litmus Test" principle for assets that belong in `/assets/data/`:
+- Standard override processing logic used across all table types
+- Shared validation rules for data integrity
+- Common property inheritance patterns from base resources
+- Standard conflict resolution mechanisms for TBM merging
+- Shared metadata for tracking modifications
+- Universal data processing utilities
+
+This structure follows the hybrid approach where truly global, context-agnostic data assets are organized in `/assets/` following the "Global Litmus Test" principle: "If I delete three random features, is this asset still needed?". The structure maintains clear separation of concerns between different data types while ensuring easy access to all data resources needed for game features, with TBM overrides properly integrated into the base data resources. The organization aligns with the target directory structure defined in `directory_structure.md` and follows the integration plan outlined in `integration_plan.md`.

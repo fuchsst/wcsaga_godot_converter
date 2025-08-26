@@ -1,7 +1,9 @@
 # ANI Files Conversion Requirements
 
 ## Overview
-ANI files contain animation sequences for effects, UI elements, and sprite-based animations in Wing Commander Saga. These custom format files need to be converted to Godot's animation system using sprite sheets and animation resources, following Godot's feature-based organization principles.
+ANI files contain animation sequences for effects, UI elements, and sprite-based animations in Wing Commander Saga. These custom format files need to be converted to Godot's animation system using sprite sheets and animation resources, following Godot's feature-based organization principles as defined in the project's directory structure and integration plan.
+
+The conversion process will transform approximately 544 ANI files from the WCS Hermes campaign into Godot-compatible assets, organized according to the hybrid model that groups truly global assets in `/assets/` and feature-specific assets within their respective `/features/` directories.
 
 ## File Types and Conversion Requirements
 
@@ -10,161 +12,239 @@ ANI files contain animation sequences for effects, UI elements, and sprite-based
 **Source Format**: ANI format with frame sequences
 **Target Format**: Sprite sheet textures with animation data
 **Conversion Requirements**:
-- Extract individual animation frames
-- Convert frames to sprite sheet format
-- Generate timing and frame sequence data
-- Handle loop properties and playback modes
-- Maintain transparency and blending modes
+- Extract individual animation frames preserving original timing
+- Convert frames to WebP sprite sheet format for optimal performance
+- Generate timing and frame sequence data as Godot Animation resources
+- Handle loop properties and playback modes according to original behavior
+- Maintain transparency and blending modes for visual fidelity
 
 ### User Interface Animations
-**Purpose**: Animated menu elements and HUD effects
+**Purpose**: Animated menu elements and HUD effects (prefixed with "2_" in source)
 **Source Format**: ANI format with UI-specific properties
 **Target Format**: Animated texture resources with UI properties
 **Conversion Requirements**:
-- Preserve exact pixel positioning and sizing
-- Convert UI-specific timing and triggers
-- Handle different UI states and transitions
-- Maintain crisp edges for interface clarity
-- Integrate with Godot's UI animation system
+- Preserve exact pixel positioning and sizing for pixel-perfect UI
+- Convert UI-specific timing and triggers to match original interactions
+- Handle different UI states and transitions with proper event integration
+- Maintain crisp edges for interface clarity using appropriate filtering
+- Integrate with Godot's UI animation system through AnimationPlayer nodes
 
 ### Particle Effect Animations
-**Purpose**: Animated textures for particle systems
+**Purpose**: Animated textures for particle systems (explosions, engine effects)
 **Source Format**: ANI format with particle properties
 **Target Format**: Animated texture atlases for particle systems
 **Conversion Requirements**:
-- Convert to efficient texture atlas format
-- Generate particle emission timing data
-- Handle additive and blend mode properties
-- Maintain frame rate compatibility with particle systems
-- Optimize for real-time particle rendering
+- Convert to efficient texture atlas format optimized for GPU rendering
+- Generate particle emission timing data synchronized with visual effects
+- Handle additive and blend mode properties for correct visual compositing
+- Maintain frame rate compatibility with particle systems for smooth playback
+- Optimize for real-time particle rendering with appropriate compression
 
 ### Character Animation Sequences
-**Purpose**: Pilot portraits and character expressions
+**Purpose**: Pilot portraits and character expressions (prefixed with "Head-" in source)
 **Source Format**: ANI format with character-specific data
 **Target Format**: Sprite sheet with character animation data
 **Conversion Requirements**:
-- Extract character-specific animation frames
-- Convert facial expression sequences
-- Generate timing data for dialogue synchronization
-- Handle different character states and emotions
-- Maintain consistent sizing and positioning
+- Extract character-specific animation frames maintaining facial details
+- Convert facial expression sequences preserving emotional context
+- Generate timing data for dialogue synchronization in cutscenes
+- Handle different character states and emotions with appropriate transitions
+- Maintain consistent sizing and positioning for UI integration
+
+### Engine Animations
+**Purpose**: Thruster and engine glow effects (prefixed with "thruster" in source)
+**Source Format**: ANI format with engine-specific properties
+**Target Format**: Animated texture resources for engine effects
+**Conversion Requirements**:
+- Extract engine glow and particle effects maintaining visual intensity
+- Convert thruster animations to match ship-specific engine characteristics
+- Generate timing data synchronized with engine audio
+- Handle different engine states (idle, acceleration, afterburner)
+- Maintain proper scaling for different ship classes
 
 ## Conversion Process
 
 ### 1. Format Analysis Phase
-- Validate ANI file structure and headers
-- Extract animation properties and metadata
-- Identify frame count and sequence information
-- Determine animation type and intended use
-- Check for special properties or effects
+- Validate ANI file structure and headers for data integrity
+- Extract animation properties and metadata including frame dimensions
+- Identify frame count and sequence information for timing calculations
+- Determine animation type and intended use based on naming conventions
+- Check for special properties or effects like additive blending
 
 ### 2. Frame Extraction Phase
-- Parse individual animation frames
-- Extract frame timing and sequence data
-- Handle frame compression and encoding
-- Convert palette and color information
-- Maintain transparency and special effects
+- Parse individual animation frames preserving original palette information
+- Extract frame timing and sequence data for accurate playback
+- Handle frame compression and encoding maintaining visual quality
+- Convert palette and color information to RGBA format
+- Maintain transparency and special effects like glow maps
 
 ### 3. Sprite Sheet Generation Phase
-- Combine frames into efficient sprite sheets
-- Generate texture atlas metadata
-- Apply appropriate compression and quality settings
-- Handle different frame sizes and layouts
-- Optimize for GPU texture memory usage
+- Combine frames into efficient sprite sheets minimizing texture memory usage
+- Generate texture atlas metadata for frame lookup in Godot
+- Apply appropriate compression and quality settings (WebP format)
+- Handle different frame sizes and layouts with proper padding
+- Optimize for GPU texture memory usage with power-of-two dimensions
 
 ### 4. Animation Data Generation Phase
-- Create Godot Animation resources
-- Generate frame sequence and timing data
-- Handle loop and playback properties
-- Integrate with Godot's animation system
-- Create material definitions for special effects
+- Create Godot Animation resources (.tres) with frame sequence data
+- Generate frame sequence and timing data matching original playback
+- Handle loop and playback properties according to source behavior
+- Integrate with Godot's animation system using AnimationPlayer nodes
+- Create material definitions for special effects like additive blending
 
-## Feature-Based Directory Structure
-Following Godot's recommended directory structure:
+## Directory Structure Alignment
+Following the Godot project's hybrid organizational model defined in directory_structure.md:
+
+### Assets Directory Structure
+Truly global, context-agnostic animations organized in `/assets/` following the "Global Litmus Test":
+
 ```
-/animations/
-├── effects/               # Effect animations
-│   ├── explosions/        # Explosion animations
-│   │   ├── small/
-│   │   ├── medium/
-│   │   └── large/
-│   ├── weapons/            # Weapon effect animations
-│   │   ├── lasers/
-│   │   ├── missiles/
-│   │   └── beams/
-│   └── engine/             # Engine animations
-│       ├── thrusters/
-│       ├── afterburners/
-│       └── glides/
-├── ui/                    # UI animations
-│   ├── menus/             # Menu animations
-│   │   ├── transitions/
-│   │   ├── buttons/
-│   │   └── sliders/
-│   ├── hud/                # HUD animations
-│   │   ├── gauges/
-│   │   ├── indicators/
-│   │   └── alerts/
-│   └── transitions/        # UI transition animations
-│       ├── fades/
-│       ├── slides/
-│       └── wipes/
-├── characters/            # Character animations
-│   ├── portraits/          # Pilot portraits
-│   │   ├── blair/
-│   │   ├── manor/
-│   │   └── angel/
-│   └── expressions/        # Character expressions
-│       ├── happy/
-│       ├── sad/
-│       └── angry/
-└── particles/             # Particle animations
-    ├── explosions/        # Particle explosion effects
-    ├── weapons/            # Particle weapon effects
-    └── environment/       # Environmental particle effects
+assets/
+├── animations/            # Shared animation files
+│   ├── effects/           # Generic effect animations
+│   │   ├── explosions/    # Explosion animations (explode1.ani, exploAeA.ani, etc.)
+│   │   ├── weapons/       # Weapon effect animations (lasermine.ani, etc.)
+│   │   └── particles/     # Particle animations (thrusterparticle.ani, etc.)
+│   └── ui/                # UI animations
+│       ├── hud/           # HUD animations (2_targhit1.ani, 2_damage1.ani, etc.)
+│       ├── menus/         # Menu animations (2_weapons1.ani, etc.)
+│       └── transitions/   # UI transition animations
+└── textures/              # Shared texture files
+    └── effects/           # Particle textures used by multiple effects
+```
+
+### Features Directory Structure
+Feature-specific animations organized within `/features/` directories following the co-location principle:
+
+```
+features/
+├── effects/               # Effect entities
+│   ├── explosion/         # Explosion effect
+│   │   ├── assets/        # Feature-specific assets
+│   │   │   └── animations/ # Converted explosion animations
+│   │   │       └── {effect_name}.webp # Sprite sheets
+│   │   └── {effect_name}.tres # Animation data resources
+│   └── _shared/           # Shared effect assets
+│       └── particle_textures/ # Shared particle effects
+├── weapons/               # Weapon entities
+│   ├── _shared/           # Shared weapon assets
+│   │   └── animations/    # Shared weapon animations
+│   │       ├── muzzle_flashes/ # Muzzle flash animations
+│   │       └── impact_effects/ # Impact effect animations
+│   └── {weapon_name}/     # Specific weapon
+│       └── assets/        # Feature-specific assets
+│           └── animations/ # Weapon-specific animations
+├── fighters/              # Fighter ship entities
+│   ├── _shared/           # Shared fighter assets
+│   │   └── effects/       # Shared fighter effects
+│   │       └── engine/    # Engine animations
+│   │           ├── thrusters/ # Thruster animations
+│   │           └── glows/ # Engine glow animations
+│   └── {ship_name}/       # Specific fighter
+│       └── assets/        # Feature-specific assets
+│           └── animations/ # Ship-specific animations
+└── ui/                    # UI feature elements
+    ├── _shared/           # Shared UI assets
+    │   └── animations/    # Shared UI animations
+    └── {component}/       # Specific UI component
+        └── animations/    # Component-specific animations
 ```
 
 ## Entity Integration
-Animations integrate with entity scenes in `/entities/` directories:
-- Effect entities reference animations from `/animations/effects/`
-- Weapon entities reference animations from `/animations/weapons/`
-- Ship entities reference engine animations from `/animations/engine/`
-- UI components reference animations from `/animations/ui/`
+Animations integrate with entity scenes following the feature-based organization:
+
+### Effect Entities
+- Reference converted animations from `/assets/animations/effects/` for generic effects
+- Use feature-specific animations from `/features/effects/{effect}/assets/animations/`
+- Example: Explosion effects reference converted explode1.ani sprite sheets and animation data
+
+### Weapon Entities
+- Reference shared animations from `/features/weapons/_shared/animations/`
+- Use weapon-specific animations from `/features/weapons/{weapon}/assets/animations/`
+- Example: Laser weapons reference lasermine.ani converted assets
+
+### Ship Entities
+- Reference shared engine animations from `/features/fighters/_shared/effects/engine/`
+- Use ship-specific animations from their respective feature directories
+- Example: Fighters reference thruster01.ani converted assets for engine effects
+
+### UI Components
+- Reference shared UI animations from `/assets/animations/ui/`
+- Use component-specific animations from `/features/ui/{component}/animations/`
+- Example: HUD elements reference 2_targhit1.ani and 2_damage1.ani converted assets
 
 ## System Integration
-Animations integrate with Godot systems in `/systems/` directories:
-- `/systems/graphics/` - Visual effect animations
-- `/systems/weapon_control/` - Weapon effect animations
-- `/systems/audio/` - Audio-synchronized animations
-- `/systems/ai/` - AI behavior animations
-- `/systems/mission_control/` - Mission-specific animations
+Animations integrate with Godot systems in `/scripts/` directories following the separation of concerns:
 
-## UI Integration
-Animations integrate with UI components in `/ui/` directories:
-- `/ui/main_menu/` - Menu transition animations
-- `/ui/hud/` - HUD element animations
-- `/ui/briefing/` - Briefing transition animations
-- `/ui/debriefing/` - Debriefing feedback animations
+- `/scripts/entities/base_effect.gd` - Visual effect animation playback
+- `/scripts/entities/base_weapon.gd` - Weapon effect animation synchronization
+- `/scripts/audio/sound_manager.gd` - Audio-synchronized animation triggering
+- `/scripts/mission/event_system.gd` - Mission event-triggered animations
+- `/scripts/ui/ui_element.gd` - UI animation control and state management
+
+## Campaign Integration
+Animations integrate with campaign content in `/campaigns/` directories:
+
+- Mission-specific cutscene animations stored with mission data
+- Campaign intro/outro animations organized by campaign
+- Dialogue-synchronized character animations integrated with voice acting
 
 ## Closely Related Assets
-- Particle effect definitions that use animated textures from `/data/effects/`
-- Mission events that trigger specific animations from `/missions/{campaign}/{mission}/`
-- UI layout files that reference animated elements from `/ui/{component}/`
-- Sound files that synchronize with animation timing from `/audio/`
+Animations have dependencies on other asset types requiring coordinated conversion:
 
-## Entity Asset Organization
-Each entity in `/entities/` contains references to relevant animations:
-- Effect entities reference textures from `/animations/effects/`
-- Weapon entities reference textures from `/animations/weapons/`
-- Ship entities reference engine animations from `/animations/engine/`
-- UI components reference animations from `/animations/ui/`
+- Particle effect definitions that use animated textures from `/assets/textures/effects/`
+- Mission events that trigger specific animations from `/campaigns/{campaign}/missions/{mission}/`
+- UI layout files that reference animated elements from `/features/ui/{component}/`
+- Sound files that synchronize with animation timing from `/assets/audio/sfx/`
 
-## Common Shared Assets
-- Standard explosion and impact effect animations from `/animations/effects/explosions/`
-- Common UI transition and feedback animations from `/animations/ui/transitions/`
-- Shared engine glow and thruster animations from `/animations/engine/thrusters/`
-- Standard weapon firing and impact effects from `/animations/weapons/`
-- Common HUD element animations for status feedback from `/animations/ui/hud/`
-- Shared debris animations for destruction effects from `/animations/particles/explosions/`
-- Standard shield and hull damage animations from `/animations/effects/`
-- Common cockpit and interior animations from `/animations/characters/portraits/`
+## Asset Conversion Categories
+Based on analysis of the 544 ANI files in the source assets, animations are categorized as:
+
+### Weapon Effects (~50 files)
+- Laser, missile, and projectile impact animations
+- Muzzle flash and firing effect animations
+- Weapon-specific visual feedback effects
+
+### Explosions (~100 files)
+- Ship destruction and damage effect animations
+- Projectile impact and detonation effects
+- Environmental explosion animations
+
+### Engine Effects (~20 files)
+- Thruster animations for different ship classes
+- Engine glow and particle effects
+- Afterburner and special propulsion effects
+
+### UI Animations (~100 files)
+- HUD element animations (targeting, damage indicators)
+- Menu transition and feedback animations
+- Technical database and loadout screen animations
+
+### Character Portraits (~50 files)
+- Pilot head animations for cutscenes
+- Character expression and emotion animations
+- Dialogue-synchronized facial animations
+
+### Generic Effects (~200 files)
+- Shield hit and damage effect animations
+- Environmental and atmospheric effects
+- Miscellaneous visual feedback animations
+
+## Conversion Pipeline Integration
+The ANI conversion process integrates with the overall asset conversion pipeline:
+
+1. **ANI Parser**: Custom parser to extract animation frame sequences and timing
+2. **Image Converter**: Convert extracted frames to WebP format maintaining visual quality
+3. **Sprite Sheet Generator**: Combine frames into optimized texture atlases
+4. **Animation Data Generator**: Create Godot .tres files with converted animation data
+5. **Resource Integration**: Link converted animations with appropriate entity features
+6. **Validation**: Verify converted animations match original behavior and appearance
+
+## Quality Assurance
+Converted animations must maintain fidelity to original source material:
+
+- Frame timing accuracy within 16ms tolerance (1 frame at 60fps)
+- Visual quality preservation with proper transparency and blending
+- Playback behavior matching original loop and trigger conditions
+- Performance optimization for real-time playback on target hardware
+- Consistent integration with corresponding audio and gameplay events
