@@ -27,6 +27,16 @@ assets/
 │   ├── sfx/               # Generic sound effects
 │   ├── music/             # Background music tracks
 │   └── ui/                # UI sound effects
+├── behavior_trees/        # Shared LimboAI behavior trees
+│   ├── ai/                # AI behavior trees
+│   │   ├── combat/        # Combat-related behavior trees
+│   │   ├── navigation/    # Navigation behavior trees
+│   │   └── tactical/      # Tactical behavior trees
+│   └── mission/           # Mission-specific behavior trees
+├── data/                  # Shared data resources
+│   ├── ai/                # AI data resources
+│   │   └── profiles/      # AI profile definitions
+│   └── mission/           # Mission data resources
 ├── textures/              # Shared texture files
 │   ├── ui/                # Generic UI elements
 │   ├── effects/           # Particle textures used by multiple effects

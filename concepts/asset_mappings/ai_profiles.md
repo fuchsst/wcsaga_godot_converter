@@ -1,244 +1,133 @@
 # AI Profiles Asset Mapping
 
 ## Overview
-This document maps the AI profile definitions from ai_profiles.tbl to their corresponding behavioral assets in the Wing Commander Saga Hermes campaign.
+This document maps the AI profile definitions from ai_profiles.tbl to their corresponding behavioral assets in the Wing Commander Saga Hermes campaign, organized according to the Godot feature-based directory structure defined in `directory_structure.md` and following the principles in `Godot_Project_Structure_Refinement.md`. The implementation uses LimboAI behavior trees for modular AI decision-making.
 
-## Asset Types
+## Actual AI Profiles from Hermes Campaign
+The Hermes campaign defines a "SAGA RETAIL" AI profile with the following parameters:
 
-### AI Behavior Definitions (.tbl)
-AI_profiles.tbl defines different AI behavior profiles:
-- Aggressive - High aggression, low caution
-- Cowardly - Low aggression, high caution
-- Intelligent - Balanced with smart tactics
-- Random - Unpredictable behavior patterns
-- Evasive - Prioritizes avoidance over engagement
-- Hunter - Focuses on taking down enemies systematically
-- Bomber - Specialized for bombing runs
-- Escort - Protective of assigned charges
-- Patroller - Regular patrol patterns
-- Sentry - Stationary defensive positioning
+### Difficulty-Related Values
+Each parameter has five values corresponding to skill levels (Very Easy, Easy, Medium, Hard, Insane):
 
-Each AI profile contains parameters:
-- Aggression level (0-100)
-- Courage level (0-100)
-- Caution level (0-100)
-- Accuracy modifiers
-- Tactical preference weights
-- Formation flying behavior
-- Evasion patterns
-- Target selection priorities
-- Weapon usage preferences
-- Communication behavior
+- Player Afterburner Recharge Scale: 2.0, 1.5, 1.0, 1.0, 1.0
+- Max Beam Friendly Fire Damage: 0.0, 5.0, 10.0, 20.0, 30.0
+- Player Countermeasure Life Scale: 2.0, 1.5, 1.0, 1.0, 1.0
+- AI Countermeasure Firing Chance: 0.2, 0.3, 0.5, 0.9, 1.1
+- AI In Range Time: 1.5, 0.75, 0.0, 0.0, -1.0
+- AI Always Links Ammo Weapons: 95.0, 80.0, 60.0, 40.0, 20.0
+- AI Maybe Links Ammo Weapons: 90.0, 60.0, 40.0, 20.0, 10.0
+- Primary Ammo Burst Multiplier: 0, 0, 0, 0, 0
+- AI Always Links Energy Weapons: 50.0, 33.0, 25.0, 10.0, 10.0
+- AI Maybe Links Energy Weapons: 33.0, 25.0, 10.0, 10.0, 5.0
+- Max Missiles Locked on Player: 2, 3, 4, 7, 99
+- Max Player Attackers: 999, 999, 999, 999, 999
+- Max Incoming Asteroids: 3, 4, 5, 7, 10
+- Player Damage Factor: 0.25, 0.5, 0.65, 0.85, 1.0
+- Player Subsys Damage Factor: 0.2, 0.4, 0.6, 0.8, 1.0
+- Predict Position Delay: 2.0, 1.5, 1.0, 0.5, 0.0
+- AI Shield Manage Delay: 6.0, 4.0, 2.0, 1.0, 0.1
+- Friendly AI Fire Delay Scale: 2.0, 1.5, 1.0, 1.0, 1.0
+- Hostile AI Fire Delay Scale: 4.0, 2.0, 1.0, 1.0, 1.0
+- Friendly AI Secondary Fire Delay Scale: 15.0, 15.0, 30.0, 45.0, 60.0
+- Hostile AI Secondary Fire Delay Scale: 1.4, 1.2, 1.0, 0.8, 0.6
+- AI Turn Time Scale: 3.0, 2.0, 1.5, 1.25, 1.0
+- Glide Attack Percent: 10.0, 10.0, 10.0, 10.0, 10.0
+- Circle Strafe Percent: 0, 0, 0, 0, 0
+- Glide Strafe Percent: 10.0, 10.0, 10.0, 10.0, 10.0
+- Stalemate Time Threshold: 15.0, 15.0, 15.0, 15.0, 15.0
+- Stalemate Distance Threshold: 500.0, 500.0, 500.0, 500.0, 500.0
+- Player Shield Recharge Scale: 4.0, 2.0, 1.5, 1.25, 1.0
+- Player Weapon Recharge Scale: 2.5, 2.5, 2.5, 2.5, 2.5
+- Max Turret Target Ownage: 999, 999, 999, 999, 999
+- Max Turret Player Ownage: 999, 999, 999, 999, 999
+- Percentage Required For Kill Scale: 0.5, 0.5, 0.5, 0.5, 0.5
+- Percentage Required For Assist Scale: 0.25, 0.25, 0.25, 0.25, 0.25
+- Percentage Awarded For Capship Assist: 0.5, 0.5, 0.5, 0.5, 0.5
+- Repair Penalty: 10, 20, 35, 50, 60
+- Delay Before Allowing Bombs to Be Shot Down: 1.5, 1.5, 1.5, 1.5, 1.5
+- Chance AI Has to Fire Missiles at Player: 0, 1, 2, 3, 4
+- Max Aim Update Delay: 0, 0, 0, 0, 0
 
-### AI Script Logic (.tbl)
-ai.tbl contains AI scripting logic:
-- Decision trees for tactical choices
-- Conditional behavior triggers
-- Formation flying algorithms
-- Combat maneuver libraries
-- Evasion technique catalogs
-- Target acquisition patterns
-- Weapon selection logic
-- Communication protocols
-- Mission role behaviors
-- Special circumstance responses
-
-### AI Sound Effects (.wav)
-AI-related audio files:
-- Combat chatter during engagements
-- Formation commands and acknowledgments
-- Distress calls when damaged
-- Victory declarations after kills
-- Request for assistance
-- Status reports to command
-- Pilot personality lines
-- Species-specific vocalizations
-- Weapon callouts and warnings
-- Environmental awareness comments
-
-### AI Voice Acting (.wav)
-Character-specific AI voices:
-- Species-appropriate vocalizations
-- Personality-specific speech patterns
-- Role-appropriate communication styles
-- Situation-specific dialogue variations
-- Command hierarchy voice differences
-- Skill level vocal variations
-- Faction-specific terminology
-- Mission context dialogue
+### General AI-Related Flags
+- big ships can attack beam turrets on untargeted ships: NO
+- smart primary weapon selection: YES
+- smart secondary weapon selection: YES
+- smart shield management: YES
+- smart afterburner management: YES
+- allow rapid secondary dumbfire: NO
+- huge turret weapons ignore bombs: YES
+- don't insert random turret fire delay: NO
+- hack improve non-homing swarm turret fire accuracy: NO
+- shockwaves damage small ship subsystems: NO
+- navigation subsystem governs warpout capability: NO
+- ignore lower bound for minimum speed of docked ship: NO
+- disable linked fire penalty: YES
+- disable weapon damage scaling: YES
+- use additive weapon velocity: NO
+- use newtonian dampening: YES
+- include beams for kills and assists: NO
+- score kills based on damage caused: NO
+- score assists based on damage caused: NO
+- allow event and goal scoring in multiplayer: NO
+- fix linked primary weapon decision bug: YES
+- prevent turrets targeting too distant bombs: YES
+- smart subsystem targeting for turrets: YES
+- fix heat seekers homing on stealth ships bug: YES
+- multi allow empty primaries: NO
+- multi allow empty secondaries: YES
+- allow turrets target weapons freely: NO
+- use only single fov for turrets: YES
+- allow vertical dodge: NO
+- disarm or disable cause global ai goal effects: NO
+- fix AI class bug: YES
+- do capship vs capship collisions: NO
 
 ## Target Structure
-```
-/data/ai/                            # AI data definitions
-├── profiles/                        # AI behavior profiles
-│   ├── aggressive.tres             # Aggressive profile
-│   ├── cowardly.tres               # Cowardly profile
-│   ├── intelligent.tres            # Intelligent profile
-│   ├── random.tres                 # Random profile
-│   ├── evasive.tres                # Evasive profile
-│   ├── hunter.tres                 # Hunter profile
-│   ├── bomber.tres                 # Bomber profile
-│   ├── escort.tres                 # Escort profile
-│   ├── patroller.tres              # Patroller profile
-│   └── sentry.tres                 # Sentry profile
-├── behaviors/                       # AI behavior definitions
-│   ├── combat/                      # Combat behaviors
-│   │   ├── offensive.tres           # Offensive tactics
-│   │   ├── defensive.tres           # Defensive tactics
-│   │   ├── evasive.tres             # Evasive maneuvers
-│   │   └── aggressive.tres          # Aggressive attacks
-│   ├── navigation/                  # Navigation behaviors
-│   │   ├── patrolling.tres          # Patrol patterns
-│   │   ├── escorting.tres           # Escort behaviors
-│   │   ├── intercepting.tres        # Intercept behaviors
-│   │   └── fleeing.tres             # Flee behaviors
-│   └── communication/               # Communication behaviors
-│       ├── chatter.tres             # Combat chatter
-│       ├── commands.tres            # Command issuance
-│       ├── acknowledgments.tres     # Response acknowledgment
-│       └── distress_calls.tres      # Distress communication
-├── tactics/                         # Tactical decision trees
-│   ├── formations/                  # Formation flying
-│   │   ├── v_shape.tres             # V-shaped formation
-│   │   ├── line_abreast.tres        # Line abreast formation
-│   │   ├── echelon.tres             # Echelon formation
-│   │   └── diamond.tres             # Diamond formation
-│   ├── combat_manuevers/            # Combat maneuvers
-│   │   ├── strafing_runs.tres       # Strafing attack runs
-│   │   ├── bombing_runs.tres        # Bombing attack runs
-│   │   ├── dogfighting.tres         # Dogfighting patterns
-│   │   └── evasive_action.tres      # Evasive actions
-│   └── target_selection/            # Target selection logic
-│       ├── priority.tres            # Priority-based selection
-│       ├── threat_level.tres        # Threat-based selection
-│       ├── weapon_type.tres         # Weapon-based selection
-│       └── random.tres              # Random selection
-├── formations/                      # Formation definitions
-│   ├── wing_formations/             # Wing-level formations
-│   ├── squadron_formations/         # Squadron formations
-│   ├── group_formations/            # Group formations
-│   └── fleet_formations/            # Fleet formations
-└── goals/                           # AI goals and objectives
-    ├── mission_goals/               # Mission-specific goals
-    ├── tactical_goals/              # Tactical situation goals
-    ├── survival_goals/              # Survival-based goals
-    └── strategic_goals/             # Strategic mission goals
+Following the feature-based organization principles and hybrid model approach defined in `Godot_Project_Structure_Refinement.md`, the AI system components are organized as follows:
 
-/audio/sfx/ai/                       # AI sound effects directory
-├── combat/                          # Combat-related sounds
-│   ├── chatter/                     # Combat chatter
-│   │   ├── attacking/
-│   │   ├── defending/
-│   │   ├── pursuing/
-│   │   └── evading/
-│   ├── commands/                    # Command issuance
-│   │   ├── formation/
-│   │   ├── attack/
-│   │   ├── retreat/
-│   │   └── regroup/
-│   ├── acknowledgments/             # Response sounds
-│   │   ├── affirmative/
-│   │   ├── negative/
-│   │   ├── confused/
-│   │   └── busy/
-│   └── status_reports/              # Status updates
-│       ├── damage/
-│       ├── weapons/
-│       ├── fuel/
-│       └── position/
-├── communication/                   # Communication sounds
-│   ├── distress_calls/              # Emergency calls
-│   │   ├── requesting_help/
-│   │   ├── under_attack/
-│   │   ├── critical_damage/
-│   │   └── abandoning_ship/
-│   ├── victory_calls/               # Victory declarations
-│   │   ├── enemy_destroyed/
-│   │   ├── mission_success/
-│   │   ├── objective_complete/
-│   │   └── wave_cleared/
-│   ├── personality_lines/           # Character-specific lines
-│   │   ├── humorous/
-│   │   ├── serious/
-│   │   ├── sarcastic/
-│   │   └── professional/
-│   └── environmental_awareness/     # Environmental comments
-│       ├── asteroid_field/
-│       ├── nebula_detected/
-│       ├── jump_point_found/
-│       └── sensor_contact/
-└── species_specific/                # Species-specific sounds
-    ├── terran/                      # Terran AI sounds
-    │   ├── english/
-    │   ├── german/
-    │   └── french/
-    ├── kilrathi/                    # Kilrathi AI sounds
-    │   ├── standard/
-    │   ├── noble/
-    │   └── warrior/
-    └── pirate/                      # Pirate AI sounds
-        ├── rough/
-        ├── educated/
-        └── military/
+### Scripts
+AI-related scripts are organized in `/scripts/ai/` with base classes and behavior definitions:
+- `/scripts/ai/ai_controller.gd` - Main AI controller implementation
+- `/scripts/ai/ai_state.gd` - AI state management
+- `/scripts/ai/ai_goal.gd` - AI goal system
+- `/scripts/ai/ai_profile.gd` - AI profile resource definition
+- `/scripts/ai/ai_profile_database.gd` - AI profile database
 
-/audio/voice/ai/                     # AI voice acting directory
-├── terran/                          # Terran AI voices
-│   ├── pilots/                      # Pilot voices
-│   │   ├── male/
-│   │   ├── female/
-│   │   └── gender_neutral/
-│   ├── commanders/                  # Command voices
-│   │   ├── military/
-│   │   ├── civilian/
-│   │   └── diplomatic/
-│   └── specialists/                 # Specialist voices
-│       ├── engineer/
-│       ├── medic/
-│       └── scientist/
-├── kilrathi/                        # Kilrathi AI voices
-│   ├── pilots/                      # Pilot voices
-│   │   ├── warrior/
-│   │   ├── noble/
-│   │   └── cunning/
-│   ├── commanders/                  # Command voices
-│   │   ├── imperial/
-│   │   ├── clan/
-│   │   └── war_party/
-│   └── specialists/                 # Specialist voices
-│       ├── shaman/
-│       ├── technician/
-│       └── elder/
-└── pirate/                          # Pirate AI voices
-    ├── pilots/                      # Pilot voices
-    │   ├── rough/
-    │   ├── educated/
-    │   └── military_defector/
-    ├── commanders/                  # Command voices
-    │   ├── captain/
-    │   ├── admiral/
-    │   └── warlord/
-    └── specialists/                 # Specialist voices
-        ├── engineer/
-        ├── hacker/
-        └── mercenary/
+### LimboAI Behavior Trees
+Behavior tree definitions for LimboAI are organized in `/assets/behavior_trees/ai/` following the directory structure in `directory_structure.md`:
+- `/assets/behavior_trees/ai/combat/bt_attack.lbt` - Attack behavior tree (see concepts/assets/behavior_trees/ai/combat/bt_attack.lbt)
+- `/assets/behavior_trees/ai/combat/bt_evade.lbt` - Evade behavior tree (see concepts/assets/behavior_trees/ai/combat/bt_evade.lbt)
+- `/assets/behavior_trees/ai/navigation/bt_patrol.lbt` - Patrol behavior tree
+- `/assets/behavior_trees/ai/tactical/bt_formation.lbt` - Formation flying behavior tree
+- `/assets/behavior_trees/ai/tactical/bt_strafe.lbt` - Strafing behavior tree
 
-/systems/ai/                         # AI system components
-├── behavior_controller.gd           # AI behavior controller script
-├── decision_maker.gd                # AI decision-making system
-├── tactical_analyzer.gd             # Tactical situation analysis
-├── target_selector.gd               # Target selection system
-├── formation_manager.gd             # Formation flying manager
-├── communication_handler.gd         # AI communication system
-├── personality_engine.gd            # AI personality system
-└── profile_manager.gd               # AI profile management system
-```
+### Assets
+AI profile data resources are stored in `/assets/data/ai/profiles/` for easy access and modification, following the hybrid model approach where truly global assets are organized in `/assets/`:
+- `/assets/data/ai/profiles/saga_retail.tres` - SAGA RETAIL profile from Hermes campaign (see concepts/assets/data/ai/profiles/saga_retail.tres)
+- `/assets/data/ai/profiles/aggressive.tres` - Aggressive AI profile
+- `/assets/data/ai/profiles/defensive.tres` - Defensive AI profile
+- `/assets/data/ai/profiles/tactical.tres` - Tactical AI profile
+- `/assets/data/ai/profiles/default.tres` - Default AI profile
+
+AI-related audio assets are organized in the global audio directory following the structure in `directory_structure.md`:
+- `/assets/audio/sfx/ai/combat/` - Combat-related sounds
+- `/assets/audio/sfx/ai/commands/` - Command issuance sounds
+- `/assets/audio/sfx/ai/acknowledgments/` - Response sounds
+- `/assets/audio/sfx/ai/status_reports/` - Status update sounds
+- `/assets/audio/voice/ai/terran/` - Terran AI voices
+- `/assets/audio/voice/ai/kilrathi/` - Kilrathi AI voices
+- `/assets/audio/voice/ai/pirate/` - Pirate AI voices
 
 ## Example Mapping
-For Aggressive AI profile:
-- ai_profiles.tbl entry → /data/ai/profiles/aggressive.tres
-- aggression parameter (85) → aggression_level = 85 in resource
-- courage parameter (90) → courage_level = 90 in resource
-- caution parameter (20) → caution_level = 20 in resource
-- accuracy modifier (+10%) → accuracy_bonus = 0.10 in resource
-- combat_chatter.wav → /audio/sfx/ai/combat/chatter/attacking/combat_chatter.ogg
-- aggressive_voice.wav → /audio/voice/ai/terran/pilots/male/aggressive_voice.ogg
+For the SAGA RETAIL AI profile from ai_profiles.tbl:
+- ai_profiles.tbl entry → /assets/data/ai/profiles/saga_retail.tres
+- Player Damage Factor (0.25, 0.5, 0.65, 0.85, 1.0) → player_damage_factor = [0.25, 0.5, 0.65, 0.85, 1.0] in resource
+- AI Turn Time Scale (3.0, 2.0, 1.5, 1.25, 1.0) → ai_turn_time_scale = [3.0, 2.0, 1.5, 1.25, 1.0] in resource
+- smart primary weapon selection (YES) → smart_primary_weapon_selection = true in resource
+- smart shield management (YES) → smart_shield_management = true in resource
+
+This structure follows the "Global Litmus Test" for placing assets in `/assets/`: "If I delete three random features from the game, would this asset still be essential for the remaining features?" The AI profile is essential for any AI-controlled ship, regardless of the specific feature, so it belongs in `/assets/data/ai/profiles/`.
+
+Sound effects and voice acting are also global assets that would be needed regardless of which specific ships are in the game, so they belong in `/assets/audio/sfx/ai/` and `/assets/audio/voice/ai/` respectively.
+
+Behavior trees are global assets that define reusable AI behaviors, so they belong in `/assets/behavior_trees/ai/` rather than being duplicated in each feature directory. This follows the same principle as other shared assets in the `/assets/` directory.
