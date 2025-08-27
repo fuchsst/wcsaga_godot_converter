@@ -23,8 +23,8 @@ echo "========================================"
 echo ""
 echo "--- Phase 1: Planning ---"
 echo "Creating implementation plan for: $USER_STORY"
-qwen /workflow:plan "$USER_STORY" > plan.json
-python parse_plan.py plan.json  # Helper to create task files
+qwen -p "/workflow:plan $USER_STORY - IMPORTANT: Output ONLY valid JSON format as an array of task objects with fields: id, title, dependencies, files_to_modify. No markdown, no explanations, just JSON." > plan.json
+uv run python parse_plan.py plan.json  # Helper to create task files
 
 # Get the list of task IDs to process
 TASK_IDS=$(grep -o 'TASK-[0-9]*' PROJECT_STATUS.md | head -n 5)  # Limit to first 5 tasks for demo
@@ -42,11 +42,11 @@ for TASK_ID in $TASK_IDS; do
     for ((i=1; i<=MAX_ATTEMPTS; i++)); do
         echo ""
         echo "--- Phase 2: Implementation (Attempt $i) ---"
-        qwen /workflow:implement "$TASK_ID"
+        qwen -p "/workflow:implement $TASK_ID"
         
         echo ""
         echo "--- Phase 3: Validation ---"
-        if qwen /workflow:validate "$TASK_ID"; then
+        if qwen -p "/workflow:validate $TASK_ID"; then
             echo "✅ Validation successful for $TASK_ID"
             break  # Exit the loop on success
         else

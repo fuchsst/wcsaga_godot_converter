@@ -1,5 +1,5 @@
 ---
-id: TASK-001
+id: TEMPLATE
 title: "Sample Task Template"
 status: pending
 dependencies: []

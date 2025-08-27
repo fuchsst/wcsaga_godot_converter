@@ -5,12 +5,80 @@ Helper script to parse JSON plan and create task files
 import json
 import sys
 import os
+import re
 from datetime import datetime
+
+def convert_text_to_json(content):
+    """Convert text work package breakdown to JSON format"""
+    tasks = []
+    task_counter = 1
+    
+    # Extract work packages using regex
+    work_package_pattern = r'### Work Package \d+: (.+?)\n\*\*Priority: (.+?)\*\*\n(.*?)(?=### Work Package|\n## |$)'
+    matches = re.findall(work_package_pattern, content, re.DOTALL)
+    
+    for title, priority, description in matches:
+        # Extract individual tasks from bullet points
+        bullet_points = re.findall(r'^- (.+?)$', description, re.MULTILINE)
+        
+        if bullet_points:
+            # Create a task for the work package
+            task_id = f"TASK-{task_counter:03d}"
+            task = {
+                "id": task_id,
+                "title": title.strip(),
+                "dependencies": [],
+                "files_to_modify": []
+            }
+            tasks.append(task)
+            task_counter += 1
+        else:
+            # If no bullet points, create a single task from the title
+            task_id = f"TASK-{task_counter:03d}"
+            task = {
+                "id": task_id,
+                "title": title.strip(),
+                "dependencies": [],
+                "files_to_modify": []
+            }
+            tasks.append(task)
+            task_counter += 1
+    
+    # If no work packages found, try to extract from any numbered or bulleted list
+    if not tasks:
+        lines = content.split('\n')
+        for line in lines:
+            line = line.strip()
+            if re.match(r'^\d+\.', line) or line.startswith('- '):
+                title = re.sub(r'^\d+\.?\s*|\-\s*', '', line).strip()
+                if title and len(title) > 3:  # Skip very short titles
+                    task_id = f"TASK-{task_counter:03d}"
+                    task = {
+                        "id": task_id,
+                        "title": title,
+                        "dependencies": [],
+                        "files_to_modify": []
+                    }
+                    tasks.append(task)
+                    task_counter += 1
+    
+    return tasks if tasks else None
 
 def parse_plan_and_create_tasks(plan_file):
     """Parse the JSON plan and create individual task files"""
     with open(plan_file, 'r') as f:
-        plan = json.load(f)
+        content = f.read().strip()
+    
+    # Try to parse as JSON first
+    try:
+        plan = json.loads(content)
+    except json.JSONDecodeError as e:
+        print(f"JSON parsing failed: {e}")
+        print("Attempting to convert text output to JSON format...")
+        plan = convert_text_to_json(content)
+        if not plan:
+            print("Failed to convert text to JSON. Exiting.")
+            sys.exit(1)
     
     # Create tasks directory if it doesn't exist
     tasks_dir = ".qwen_workflow/tasks"
@@ -84,28 +152,21 @@ def update_project_status(task_list):
         return
     
     # Find the end of the task summary table
-    task_summary_end = task_summary_start
+    task_summary_end = len(lines)
     for i in range(task_summary_start + 1, len(lines)):
         if lines[i].startswith("## "):
             task_summary_end = i
             break
-    else:
-        task_summary_end = len(lines)
     
     # Generate new task summary table
     task_table = ["\n| Task ID | Title | Status | Assignee |\n",
                   "| ------- | ----- | ------ | -------- |\n"]
     
-    # Add existing tasks (except template)
-    for i in range(task_summary_start + 3, task_summary_end):
-        if i < len(lines) and "TEMPLATE" not in lines[i]:
-            task_table.append(lines[i])
-    
     # Add new tasks
     for task in task_list:
         task_table.append(f"| {task['id']} | {task['title']} | {task['status']} | {task['assignee']} |\n")
     
-    # Replace the task summary section
+    # Replace the task summary section (keep only the header and new tasks)
     new_lines = lines[:task_summary_start + 3] + task_table + lines[task_summary_end:]
     
     # Write updated content
