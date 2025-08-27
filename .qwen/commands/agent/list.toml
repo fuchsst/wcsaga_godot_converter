@@ -1,0 +1,25 @@
+description = "Lists all available agent commands for the Wing Commander Saga to Godot migration."
+prompt = """
+Here are all the available agent commands for the Wing Commander Saga to Godot migration:
+
+**Individual Agent Commands:**
+- `/agent:migration-architect` - Triggers the Migration Architect agent to create a strategic plan for the C++ to Godot migration
+- `/agent:cpp-code-analyst` - Triggers the C++ Code Analyst agent to perform deep structural static analysis of the C++ codebase
+- `/agent:godot-systems-designer` - Triggers the Godot Systems Designer agent to design the target architecture for the Godot project
+- `/agent:gdscript-engineer` - Triggers the GDScript Engineer agent to implement the complete GDScript codebase for the game
+- `/agent:asset-pipeline-engineer` - Triggers the Asset Pipeline Engineer agent to design and implement an automated asset pipeline for Godot
+- `/agent:lead-developer` - Triggers the Lead Developer agent to provide oversight and technical guidance for the migration project
+
+**Workflow Command:**
+- `/agent:workflow` - Triggers the complete multi-agent workflow for the Wing Commander Saga to Godot migration
+
+Each agent has specific responsibilities in the migration process:
+1. Migration Architect - Strategic Planning & Data Architecture
+2. C++ Code Analyst - Source Code Analysis & Translation Specification
+3. Godot Systems Designer - Target Architecture Design
+4. GDScript Engineer - GDScript Implementation & Testing
+5. Asset Pipeline Engineer - Asset Conversion & Integration
+6. Lead Developer - Oversight and Technical Guidance
+
+Use the individual commands to trigger specific agents, or use the workflow command to execute the complete multi-agent process.
+"""

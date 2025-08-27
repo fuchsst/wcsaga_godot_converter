@@ -1,0 +1,523 @@
+[
+  {
+    "id": "task-001",
+    "title": "Implement Core Asset Catalog System",
+    "dependencies": [],
+    "files_to_modify": [
+      "/home/fuchsst/projects/personal/wcsaga_godot_converter/data_converter/core/catalog/asset_catalog.py"
+    ]
+  },
+  {
+    "id": "task-002",
+    "title": "Enhance Relationship Builder with Table Parsing",
+    "dependencies": [
+      "task-001"
+    ],
+    "files_to_modify": [
+      "/home/fuchsst/projects/personal/wcsaga_godot_converter/data_converter/core/relationship_builder.py"
+    ]
+  },
+  {
+    "id": "task-003",
+    "title": "Implement Ship Table Converter",
+    "dependencies": [
+      "task-002"
+    ],
+    "files_to_modify": [
+      "/home/fuchsst/projects/personal/wcsaga_godot_converter/data_converter/table_converters/ship_table_converter.py"
+    ]
+  },
+  {
+    "id": "task-004",
+    "title": "Implement Weapon Table Converter",
+    "dependencies": [
+      "task-002"
+    ],
+    "files_to_modify": [
+      "/home/fuchsst/projects/personal/wcsaga_godot_converter/data_converter/table_converters/weapon_table_converter.py"
+    ]
+  },
+  {
+    "id": "task-005",
+    "title": "Implement Armor Table Converter",
+    "dependencies": [
+      "task-002"
+    ],
+    "files_to_modify": [
+      "/home/fuchsst/projects/personal/wcsaga_godot_converter/data_converter/table_converters/armor_table_converter.py"
+    ]
+  },
+  {
+    "id": "task-006",
+    "title": "Implement Species Table Converter",
+    "dependencies": [
+      "task-002"
+    ],
+    "files_to_modify": [
+      "/home/fuchsst/projects/personal/wcsaga_godot_converter/data_converter/table_converters/species_defs_table_converter.py"
+    ]
+  },
+  {
+    "id": "task-007",
+    "title": "Implement IFF Table Converter",
+    "dependencies": [
+      "task-002"
+    ],
+    "files_to_modify": [
+      "/home/fuchsst/projects/personal/wcsaga_godot_converter/data_converter/table_converters/iff_table_converter.py"
+    ]
+  },
+  {
+    "id": "task-008",
+    "title": "Implement POF Parser and Analyzer",
+    "dependencies": [
+      "task-001"
+    ],
+    "files_to_modify": [
+      "/home/fuchsst/projects/personal/wcsaga_godot_converter/data_converter/pof_parser/pof_format_analyzer.py",
+      "/home/fuchsst/projects/personal/wcsaga_godot_converter/data_converter/pof_parser/pof_data_extractor.py"
+    ]
+  },
+  {
+    "id": "task-009",
+    "title": "Implement POF to OBJ Converter",
+    "dependencies": [
+      "task-008"
+    ],
+    "files_to_modify": [
+      "/home/fuchsst/projects/personal/wcsaga_godot_converter/data_converter/pof_parser/pof_obj_converter.py"
+    ]
+  },
+  {
+    "id": "task-010",
+    "title": "Implement OBJ to GLB Converter with Blender Integration",
+    "dependencies": [
+      "task-009"
+    ],
+    "files_to_modify": [
+      "/home/fuchsst/projects/personal/wcsaga_godot_converter/data_converter/pof_parser/blender_converter.py"
+    ]
+  },
+  {
+    "id": "task-011",
+    "title": "Implement Godot Import File Generator",
+    "dependencies": [
+      "task-010"
+    ],
+    "files_to_modify": [
+      "/home/fuchsst/projects/personal/wcsaga_godot_converter/data_converter/pof_parser/godot_import_generator.py"
+    ]
+  },
+  {
+    "id": "task-012",
+    "title": "Implement Complete POF Mesh Converter Pipeline",
+    "dependencies": [
+      "task-008",
+      "task-009",
+      "task-010",
+      "task-011"
+    ],
+    "files_to_modify": [
+      "/home/fuchsst/projects/personal/wcsaga_godot_converter/data_converter/pof_parser/pof_mesh_converter.py"
+    ]
+  },
+  {
+    "id": "task-013",
+    "title": "Implement Ship Resource Generator",
+    "dependencies": [
+      "task-003"
+    ],
+    "files_to_modify": [
+      "/home/fuchsst/projects/personal/wcsaga_godot_converter/data_converter/resource_generators/ship_class_generator.py"
+    ]
+  },
+  {
+    "id": "task-014",
+    "title": "Implement Weapon Resource Generator",
+    "dependencies": [
+      "task-004"
+    ],
+    "files_to_modify": [
+      "/home/fuchsst/projects/personal/wcsaga_godot_converter/data_converter/resource_generators/weapon_resource_generator.py"
+    ]
+  },
+  {
+    "id": "task-015",
+    "title": "Implement Armor Resource Generator",
+    "dependencies": [
+      "task-005"
+    ],
+    "files_to_modify": [
+      "/home/fuchsst/projects/personal/wcsaga_godot_converter/data_converter/resource_generators/armor_type_generator.py"
+    ]
+  },
+  {
+    "id": "task-016",
+    "title": "Implement Species Resource Generator",
+    "dependencies": [
+      "task-006"
+    ],
+    "files_to_modify": [
+      "/home/fuchsst/projects/personal/wcsaga_godot_converter/data_converter/resource_generators/species_generator.py"
+    ]
+  },
+  {
+    "id": "task-017",
+    "title": "Implement IFF Resource Generator",
+    "dependencies": [
+      "task-007"
+    ],
+    "files_to_modify": [
+      "/home/fuchsst/projects/personal/wcsaga_godot_converter/data_converter/resource_generators/iff_generator.py"
+    ]
+  },
+  {
+    "id": "task-018",
+    "title": "Implement File Structure Creator",
+    "dependencies": [
+      "task-001",
+      "task-002"
+    ],
+    "files_to_modify": [
+      "/home/fuchsst/projects/personal/wcsaga_godot_converter/data_converter/file_structure_creator/file_structure_creator.py"
+    ]
+  },
+  {
+    "id": "task-019",
+    "title": "Implement Integration Orchestrator",
+    "dependencies": [
+      "task-001",
+      "task-002",
+      "task-018"
+    ],
+    "files_to_modify": [
+      "/home/fuchsst/projects/personal/wcsaga_godot_converter/data_converter/integration_orchestrator.py"
+    ]
+  },
+  {
+    "id": "task-020",
+    "title": "Implement Weapon Scene Generator",
+    "dependencies": [
+      "task-014"
+    ],
+    "files_to_modify": [
+      "/home/fuchsst/projects/personal/wcsaga_godot_converter/data_converter/scene_generators/weapon_scene_generator.py"
+    ]
+  },
+  {
+    "id": "task-021",
+    "title": "Implement Ship Scene Generator",
+    "dependencies": [
+      "task-013",
+      "task-020"
+    ],
+    "files_to_modify": [
+      "/home/fuchsst/projects/personal/wcsaga_godot_converter/data_converter/scene_generators/ship_scene_generator.py"
+    ]
+  },
+  {
+    "id": "task-022",
+    "title": "Implement Effect Scene Generator",
+    "dependencies": [
+      "task-015"
+    ],
+    "files_to_modify": [
+      "/home/fuchsst/projects/personal/wcsaga_godot_converter/data_converter/scene_generators/effect_scene_generator.py"
+    ]
+  },
+  {
+    "id": "task-023",
+    "title": "Implement Scene Assembly System",
+    "dependencies": [
+      "task-021",
+      "task-022"
+    ],
+    "files_to_modify": [
+      "/home/fuchsst/projects/personal/wcsaga_godot_converter/data_converter/scene_generators/scene_assembly_system.py"
+    ]
+  },
+  {
+    "id": "task-024",
+    "title": "Implement Asset Discovery Engine",
+    "dependencies": [
+      "task-001"
+    ],
+    "files_to_modify": [
+      "/home/fuchsst/projects/personal/wcsaga_godot_converter/data_converter/core/asset_discovery.py"
+    ]
+  },
+  {
+    "id": "task-025",
+    "title": "Implement Entity Classifier",
+    "dependencies": [
+      "task-001"
+    ],
+    "files_to_modify": [
+      "/home/fuchsst/projects/personal/wcsaga_godot_converter/data_converter/core/entity_classifier.py"
+    ]
+  },
+  {
+    "id": "task-026",
+    "title": "Implement Path Resolver",
+    "dependencies": [
+      "task-001"
+    ],
+    "files_to_modify": [
+      "/home/fuchsst/projects/personal/wcsaga_godot_converter/data_converter/core/path_resolver.py"
+    ]
+  },
+  {
+    "id": "task-027",
+    "title": "Implement Converter Factory",
+    "dependencies": [
+      "task-003",
+      "task-004",
+      "task-005",
+      "task-006",
+      "task-007"
+    ],
+    "files_to_modify": [
+      "/home/fuchsst/projects/personal/wcsaga_godot_converter/data_converter/table_converters/converter_factory.py"
+    ]
+  },
+  {
+    "id": "task-028",
+    "title": "Implement Table Data Converter Orchestrator",
+    "dependencies": [
+      "task-027"
+    ],
+    "files_to_modify": [
+      "/home/fuchsst/projects/personal/wcsaga_godot_converter/data_converter/table_data_converter.py"
+    ]
+  },
+  {
+    "id": "task-029",
+    "title": "Implement CLI Tools for Asset Conversion",
+    "dependencies": [
+      "task-028",
+      "task-012"
+    ],
+    "files_to_modify": [
+      "/home/fuchsst/projects/personal/wcsaga_godot_converter/data_converter/tools/table_conversion_cli.py",
+      "/home/fuchsst/projects/personal/wcsaga_godot_converter/data_converter/tools/vp_extractor.py"
+    ]
+  },
+  {
+    "id": "task-030",
+    "title": "Implement Validation and Quality Assurance System",
+    "dependencies": [
+      "task-001",
+      "task-019"
+    ],
+    "files_to_modify": [
+      "/home/fuchsst/projects/personal/wcsaga_godot_converter/data_converter/validation/validation_engine.py"
+    ]
+  },
+  {
+    "id": "task-031",
+    "title": "Implement Game Logic: Ship Controller System",
+    "dependencies": [
+      "task-013",
+      "task-021"
+    ],
+    "files_to_modify": [
+      "/home/fuchsst/projects/personal/wcsaga_godot_converter/scripts/entities/ship_controller.gd"
+    ]
+  },
+  {
+    "id": "task-032",
+    "title": "Implement Game Logic: Weapon System",
+    "dependencies": [
+      "task-014",
+      "task-020"
+    ],
+    "files_to_modify": [
+      "/home/fuchsst/projects/personal/wcsaga_godot_converter/scripts/entities/weapon_system.gd"
+    ]
+  },
+  {
+    "id": "task-033",
+    "title": "Implement Game Logic: Physics System",
+    "dependencies": [
+      "task-013"
+    ],
+    "files_to_modify": [
+      "/home/fuchsst/projects/personal/wcsaga_godot_converter/scripts/physics/flight_model.gd"
+    ]
+  },
+  {
+    "id": "task-034",
+    "title": "Implement Game Logic: AI System",
+    "dependencies": [
+      "task-016",
+      "task-017"
+    ],
+    "files_to_modify": [
+      "/home/fuchsst/projects/personal/wcsaga_godot_converter/scripts/ai/ai_behavior.gd"
+    ]
+  },
+  {
+    "id": "task-035",
+    "title": "Implement Game Logic: Damage System",
+    "dependencies": [
+      "task-015"
+    ],
+    "files_to_modify": [
+      "/home/fuchsst/projects/personal/wcsaga_godot_converter/scripts/physics/damage_system.gd"
+    ]
+  },
+  {
+    "id": "task-036",
+    "title": "Implement Game Logic: Mission System",
+    "dependencies": [
+      "task-031",
+      "task-032"
+    ],
+    "files_to_modify": [
+      "/home/fuchsst/projects/personal/wcsaga_godot_converter/scripts/mission/mission_manager.gd"
+    ]
+  },
+  {
+    "id": "task-037",
+    "title": "Implement Game Logic: Audio System",
+    "dependencies": [
+      "task-024"
+    ],
+    "files_to_modify": [
+      "/home/fuchsst/projects/personal/wcsaga_godot_converter/scripts/audio/sound_manager.gd"
+    ]
+  },
+  {
+    "id": "task-038",
+    "title": "Implement Game Logic: HUD System",
+    "dependencies": [
+      "task-031",
+      "task-032"
+    ],
+    "files_to_modify": [
+      "/home/fuchsst/projects/personal/wcsaga_godot_converter/features/ui/hud/player_hud.gd"
+    ]
+  },
+  {
+    "id": "task-039",
+    "title": "Implement Game Logic: Effects System",
+    "dependencies": [
+      "task-022"
+    ],
+    "files_to_modify": [
+      "/home/fuchsst/projects/personal/wcsaga_godot_converter/scripts/entities/effect_system.gd"
+    ]
+  },
+  {
+    "id": "task-040",
+    "title": "Implement Game Logic: Game State Manager",
+    "dependencies": [
+      "task-036"
+    ],
+    "files_to_modify": [
+      "/home/fuchsst/projects/personal/wcsaga_godot_converter/autoload/game_state.gd"
+    ]
+  },
+  {
+    "id": "task-041",
+    "title": "Implement Game Logic: Entity Manager",
+    "dependencies": [
+      "task-031",
+      "task-032"
+    ],
+    "files_to_modify": [
+      "/home/fuchsst/projects/personal/wcsaga_godot_converter/autoload/entity_manager.gd"
+    ]
+  },
+  {
+    "id": "task-042",
+    "title": "Implement Game Logic: Event Bus System",
+    "dependencies": [
+      "task-040"
+    ],
+    "files_to_modify": [
+      "/home/fuchsst/projects/personal/wcsaga_godot_converter/autoload/event_bus.gd"
+    ]
+  },
+  {
+    "id": "task-043",
+    "title": "Implement Game Logic: Save/Load System",
+    "dependencies": [
+      "task-040"
+    ],
+    "files_to_modify": [
+      "/home/fuchsst/projects/personal/wcsaga_godot_converter/autoload/save_manager.gd"
+    ]
+  },
+  {
+    "id": "task-044",
+    "title": "Implement Game Logic: Resource Loader",
+    "dependencies": [
+      "task-001"
+    ],
+    "files_to_modify": [
+      "/home/fuchsst/projects/personal/wcsaga_godot_converter/scripts/utilities/resource_loader.gd"
+    ]
+  },
+  {
+    "id": "task-045",
+    "title": "Implement Game Logic: Main Menu System",
+    "dependencies": [
+      "task-044"
+    ],
+    "files_to_modify": [
+      "/home/fuchsst/projects/personal/wcsaga_godot_converter/features/ui/main_menu/main_menu.gd"
+    ]
+  },
+  {
+    "id": "task-046",
+    "title": "Implement Game Logic: Campaign System",
+    "dependencies": [
+      "task-036"
+    ],
+    "files_to_modify": [
+      "/home/fuchsst/projects/personal/wcsaga_godot_converter/scripts/mission/campaign_manager.gd"
+    ]
+  },
+  {
+    "id": "task-047",
+    "title": "Implement Game Logic: Cutscene System",
+    "dependencies": [
+      "task-036"
+    ],
+    "files_to_modify": [
+      "/home/fuchsst/projects/personal/wcsaga_godot_converter/scripts/mission/cutscene_manager.gd"
+    ]
+  },
+  {
+    "id": "task-048",
+    "title": "Implement Game Logic: Briefing System",
+    "dependencies": [
+      "task-036"
+    ],
+    "files_to_modify": [
+      "/home/fuchsst/projects/personal/wcsaga_godot_converter/features/ui/briefing/briefing_screen.gd"
+    ]
+  },
+  {
+    "id": "task-049",
+    "title": "Implement Game Logic: Debriefing System",
+    "dependencies": [
+      "task-036"
+    ],
+    "files_to_modify": [
+      "/home/fuchsst/projects/personal/wcsaga_godot_converter/features/ui/debriefing/debriefing_screen.gd"
+    ]
+  },
+  {
+    "id": "task-050",
+    "title": "Implement Game Logic: Tech Database System",
+    "dependencies": [
+      "task-013",
+      "task-014"
+    ],
+    "files_to_modify": [
+      "/home/fuchsst/projects/personal/wcsaga_godot_converter/features/ui/tech_database/tech_database.gd"
+    ]
+  }
+]

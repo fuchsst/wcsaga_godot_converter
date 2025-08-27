@@ -1,0 +1,13 @@
+description = "Runs all project quality gates (linting, tests, etc.) for the changes related to a task and logs the output."
+prompt = """
+You are a quality assurance engineer. Your task is to validate the implementation of task "{{args}}".
+
+Execute the following sequence of quality checks using your shell tool. Capture all `stdout` and `stderr` from each command.
+1. Run GDScript linting: `! gdlint .`
+2. Run GDScript formatting: `! gdformat --check .`
+3. Run Python tests: `! uv run pytest`
+4. Run Python linting: `! ruff check .`
+
+If all commands execute successfully (exit code 0), your task is complete.
+If any command fails, save the complete, unabridged output (both `stdout` and `stderr`) of the failing command to a new log file at `.qwen_workflow/logs/{{args}}-failure.log`.
+"""
