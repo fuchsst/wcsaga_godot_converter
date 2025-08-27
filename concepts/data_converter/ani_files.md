@@ -101,14 +101,14 @@ Truly global, context-agnostic animations organized in `/assets/` following the 
 ```
 assets/
 ├── animations/            # Shared animation files
-│   ├── effects/           # Generic effect animations
-│   │   ├── explosions/    # Explosion animations (explode1.ani, exploAeA.ani, etc.)
-│   │   ├── weapons/       # Weapon effect animations (lasermine.ani, etc.)
-│   │   └── particles/     # Particle animations (thrusterparticle.ani, etc.)
-│   └── ui/                # UI animations
-│       ├── hud/           # HUD animations (2_targhit1.ani, 2_damage1.ani, etc.)
-│       ├── menus/         # Menu animations (2_weapons1.ani, etc.)
-│       └── transitions/   # UI transition animations
+│   ├── effects/           # Generic effect animations (shared across multiple features)
+│   │   ├── explosions/    # Generic explosion animations (explode1.ani, exploAeA.ani, etc.)
+│   │   ├── weapons/       # Generic weapon effect animations (lasermine.ani, etc.)
+│   │   └── particles/     # Generic particle animations (thrusterparticle.ani, etc.)
+│   └── ui/                # Shared UI animations
+│       ├── hud/           # Generic HUD animations (2_targhit1.ani, 2_damage1.ani, etc.)
+│       ├── menus/         # Generic menu animations (2_weapons1.ani, etc.)
+│       └── transitions/   # Generic UI transition animations
 └── textures/              # Shared texture files
     └── effects/           # Particle textures used by multiple effects
 ```
@@ -120,57 +120,95 @@ Feature-specific animations organized within `/features/` directories following 
 features/
 ├── effects/               # Effect entities
 │   ├── explosion/         # Explosion effect
-│   │   ├── assets/        # Feature-specific assets
-│   │   │   └── animations/ # Converted explosion animations
-│   │   │       └── {effect_name}.webp # Sprite sheets
-│   │   └── {effect_name}.tres # Animation data resources
-│   └── _shared/           # Shared effect assets
-│       └── particle_textures/ # Shared particle effects
+│   │   ├── explosion.tscn # Main explosion scene
+│   │   ├── explosion.gd   # Explosion controller script
+│   │   ├── explosion.tres # Explosion data resource
+│   │   └── textures/      # Effect-specific textures
+│   │       └── {effect_name}_*.webp # Converted animation frames
+│   ├── fireball/          # Fireball effect
+│   │   ├── fireball.tscn  # Fireball scene
+│   │   ├── fireball.gd    # Fireball controller script
+│   │   ├── fireball.tres  # Fireball data resource
+│   │   └── textures/      # Fireball textures
+│   │       └── {effect_name}_*.webp # Converted animation frames
+│   ├── weapon_impact/     # Weapon impact effect
+│   │   ├── weapon_impact.tscn # Weapon impact scene
+│   │   ├── weapon_impact.gd   # Weapon impact controller script
+│   │   ├── weapon_impact.tres # Weapon impact data resource
+│   │   └── textures/          # Impact textures
+│   │       └── {effect_name}_*.webp # Converted animation frames
+│   ├── _shared/           # Shared effect assets
+│   │   └── particle_textures/ # Shared particle textures
+│   │       └── generic_*.webp # Generic particle textures
+│   └── templates/         # Effect templates
 ├── weapons/               # Weapon entities
+│   ├── laser_cannon/      # Laser cannon weapon
+│   │   ├── laser_cannon.tscn # Weapon scene
+│   │   ├── laser_cannon.gd   # Weapon controller script
+│   │   ├── laser_cannon.tres # Weapon data resource
+│   │   └── textures/         # Weapon-specific textures
+│   │       └── {effect_name}_*.webp # Converted animation frames
 │   ├── _shared/           # Shared weapon assets
-│   │   └── animations/    # Shared weapon animations
-│   │       ├── muzzle_flashes/ # Muzzle flash animations
-│   │       └── impact_effects/ # Impact effect animations
-│   └── {weapon_name}/     # Specific weapon
-│       └── assets/        # Feature-specific assets
-│           └── animations/ # Weapon-specific animations
+│   │   └── textures/      # Shared weapon textures
+│   │       ├── muzzle_flashes/ # Shared muzzle flash animations
+│   │       └── impact_effects/ # Shared impact effect animations
+│   └── templates/         # Weapon templates
 ├── fighters/              # Fighter ship entities
+│   ├── confed_rapier/     # Rapier fighter
+│   │   ├── rapier.tscn    # Fighter scene
+│   │   ├── rapier.gd      # Fighter controller script
+│   │   ├── rapier.tres    # Fighter data resource
+│   │   └── textures/      # Fighter-specific textures
+│   │       └── {effect_name}_*.webp # Converted animation frames
 │   ├── _shared/           # Shared fighter assets
 │   │   └── effects/       # Shared fighter effects
 │   │       └── engine/    # Engine animations
-│   │           ├── thrusters/ # Thruster animations
-│   │           └── glows/ # Engine glow animations
-│   └── {ship_name}/       # Specific fighter
-│       └── assets/        # Feature-specific assets
-│           └── animations/ # Ship-specific animations
+│   │           ├── thrusters/ # Thruster animations (thruster01.ani, etc.)
+│   │           └── glows/    # Engine glow animations
+│   └── templates/         # Fighter templates
 └── ui/                    # UI feature elements
+    ├── main_menu/         # Main menu interface
+    │   ├── main_menu.tscn # Main menu scene
+    │   ├── main_menu.gd   # Main menu script
+    │   └── animations/    # Menu-specific animations
+    │       └── {animation_name}.webp # Converted UI animations
+    ├── hud/               # Heads-up display
+    │   ├── player_hud.tscn # HUD scene
+    │   ├── player_hud.gd   # HUD script
+    │   └── animations/     # HUD-specific animations
+    │       └── {animation_name}.webp # Converted UI animations
+    ├── briefing/          # Briefing interface
+    │   ├── briefing_screen.tscn # Briefing scene
+    │   ├── briefing_screen.gd   # Briefing script
+    │   └── animations/          # Briefing-specific animations
+    │       └── {animation_name}.webp # Converted UI animations
     ├── _shared/           # Shared UI assets
     │   └── animations/    # Shared UI animations
-    └── {component}/       # Specific UI component
-        └── animations/    # Component-specific animations
+    │       └── {animation_name}.webp # Converted shared UI animations
+    └── templates/         # UI templates
 ```
 
 ## Entity Integration
 Animations integrate with entity scenes following the feature-based organization:
 
 ### Effect Entities
-- Reference converted animations from `/assets/animations/effects/` for generic effects
-- Use feature-specific animations from `/features/effects/{effect}/assets/animations/`
+- Reference converted animations from `/assets/animations/effects/` for truly global, shared effects
+- Use feature-specific animations from `/features/effects/{effect}/textures/` for effect-specific animations
 - Example: Explosion effects reference converted explode1.ani sprite sheets and animation data
 
 ### Weapon Entities
-- Reference shared animations from `/features/weapons/_shared/animations/`
-- Use weapon-specific animations from `/features/weapons/{weapon}/assets/animations/`
-- Example: Laser weapons reference lasermine.ani converted assets
+- Reference shared animations from `/features/weapons/_shared/textures/` for shared weapon effects
+- Use weapon-specific animations from `/features/weapons/{weapon}/textures/` for weapon-specific animations
+- Example: Laser weapons reference lasermine.ani converted assets in weapon-specific directories
 
 ### Ship Entities
-- Reference shared engine animations from `/features/fighters/_shared/effects/engine/`
-- Use ship-specific animations from their respective feature directories
+- Reference shared engine animations from `/features/fighters/_shared/effects/engine/` for common engine effects
+- Use ship-specific animations from `/features/fighters/{ship}/textures/` for ship-specific animations
 - Example: Fighters reference thruster01.ani converted assets for engine effects
 
 ### UI Components
-- Reference shared UI animations from `/assets/animations/ui/`
-- Use component-specific animations from `/features/ui/{component}/animations/`
+- Reference shared UI animations from `/assets/animations/ui/` for truly global UI animations
+- Use component-specific animations from `/features/ui/{component}/animations/` for UI-specific animations
 - Example: HUD elements reference 2_targhit1.ani and 2_damage1.ani converted assets
 
 ## System Integration
@@ -194,7 +232,7 @@ Animations have dependencies on other asset types requiring coordinated conversi
 
 - Particle effect definitions that use animated textures from `/assets/textures/effects/`
 - Mission events that trigger specific animations from `/campaigns/{campaign}/missions/{mission}/`
-- UI layout files that reference animated elements from `/features/ui/{component}/`
+- UI layout files that reference animated elements from `/features/ui/{component}/animations/`
 - Sound files that synchronize with animation timing from `/assets/audio/sfx/`
 
 ## Asset Conversion Categories

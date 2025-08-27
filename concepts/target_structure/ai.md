@@ -1,11 +1,11 @@
 # AI Module (Godot Implementation)
 
 ## Purpose
-The AI Module handles all non-player ship behavior in the Godot implementation, including combat tactics, navigation, movement, and decision-making. It provides different behavioral models for various ship types and handles both individual ship AI and coordinated wing tactics, leveraging Godot's node-based architecture and behavior tree patterns.
+The AI Module handles all non-player ship behavior in the Godot implementation, including combat tactics, navigation, movement, and decision-making. It provides different behavioral models for various ship types and handles both individual ship AI and coordinated wing tactics, leveraging Godot's node-based architecture and LimboAI behavior trees for modular decision-making.
 
 ## Components
 - **AI Controller**: Main AI brain managing behavior for ships
-- **Behavior Tree System**: Modular decision-making using behavior trees
+- **LimboAI Behavior Tree System**: Modular decision-making using LimboAI behavior trees
 - **AI Profiles**: Templates defining personality and skill levels
 - **Goal System**: Prioritized objectives for AI entities
 - **Pathfinding**: Navigation and waypoint following
@@ -33,7 +33,7 @@ class AIController extends Node:
     
     # Current AI state and behavior
     var currentState: AIState
-    var behaviorTree: BehaviorTree
+    var behaviorTree: LimboBehaviorTree
     var aiProfile: AIProfile
     
     # Goal management
@@ -68,7 +68,8 @@ class AIController extends Node:
     func _init(owner_ship: Ship):
         ship = owner_ship
         # Load default behavior tree
-        behaviorTree = preload("res://scripts/ai/default_behavior_tree.tres").duplicate()
+        behaviorTree = LimboBehaviorTree.new()
+        behaviorTree.resource = preload("res://assets/behavior_trees/ai/combat/bt_attack.lbt")
         
     func _ready():
         # Initialize AI profile
@@ -132,6 +133,9 @@ class AIController extends Node:
             attackGoal.priority = 100
             add_goal(attackGoal)
             
+            # Switch to attack behavior tree
+            behaviorTree.resource = preload("res://assets/behavior_trees/ai/combat/bt_attack.lbt")
+            
     func clear_target():
         # Clear current target
         if currentTarget != null:
@@ -161,6 +165,9 @@ class AIController extends Node:
         navGoal.priority = 50
         add_goal(navGoal)
         
+        # Switch to patrol behavior tree
+        behaviorTree.resource = preload("res://assets/behavior_trees/ai/navigation/bt_patrol.lbt")
+        
     func calculate_path(start: Vector3, end: Vector3) -> Array[Vector3]:
         # Simplified path calculation
         # In a full implementation, this would use a navigation system
@@ -181,6 +188,9 @@ class AIController extends Node:
         formationGoal.target = leader
         formationGoal.priority = 75
         add_goal(formationGoal)
+        
+        # Switch to formation behavior tree
+        behaviorTree.resource = preload("res://assets/behavior_trees/ai/tactical/bt_formation.lbt")
         
     func get_preferred_weapon() -> Weapon:
         # Select preferred weapon based on target and range
@@ -444,139 +454,6 @@ class AIGoal:
                     
         return isCompleted
 
-# Behavior Tree for complex AI decision making
-class BehaviorTree:
-    var root: BTNode
-    
-    func execute(ai_controller: AIController, delta: float):
-        if root != null:
-            root.execute(ai_controller, delta)
-
-# Base Behavior Tree Node
-class BTNode:
-    func execute(ai_controller: AIController, delta: float) -> bool:
-        # Return true if behavior succeeded, false if failed
-        return false
-
-# Composite node that executes children in sequence
-class BTSequence extends BTNode:
-    var children: Array[BTNode] = []
-    
-    func execute(ai_controller: AIController, delta: float) -> bool:
-        for child in children:
-            if not child.execute(ai_controller, delta):
-                return false  # Stop on first failure
-        return true  # All children succeeded
-
-# Selector node that tries children until one succeeds
-class BTSelector extends BTNode:
-    var children: Array[BTNode] = []
-    
-    func execute(ai_controller: AIController, delta: float) -> bool:
-        for child in children:
-            if child.execute(ai_controller, delta):
-                return true  # Stop on first success
-        return false  # All children failed
-
-# Decorator node that modifies child behavior
-class BTDecorator extends BTNode:
-    var child: BTNode
-    
-    func execute(ai_controller: AIController, delta: float) -> bool:
-        if child != null:
-            return child.execute(ai_controller, delta)
-        return false
-
-# Condition node that checks a condition
-class BTCondition extends BTNode:
-    var condition_function: Callable
-    
-    func execute(ai_controller: AIController, delta: float) -> bool:
-        if condition_function.is_valid():
-            return condition_function.call(ai_controller)
-        return false
-
-# Action node that performs an action
-class BTAction extends BTNode:
-    var action_function: Callable
-    
-    func execute(ai_controller: AIController, delta: float) -> bool:
-        if action_function.is_valid():
-            return action_function.call(ai_controller, delta)
-        return false
-
-# Specific AI behaviors
-
-# Behavior for attacking a target
-class BTAttack extends BTAction:
-    func execute(ai_controller: AIController, delta: float) -> bool:
-        if ai_controller.currentTarget == null:
-            return false
-            
-        # Navigate to target
-        var distance = ai_controller.ship.global_position.distance_to(
-            ai_controller.currentTarget.global_position)
-            
-        if distance > ai_controller.ship.weaponSystem.get_max_range():
-            # Move closer to target
-            var direction = (ai_controller.currentTarget.global_position - 
-                           ai_controller.ship.global_position).normalized()
-            ai_controller.ship.physicsController.forward_thrust = 1.0
-            ai_controller.ship.look_at(ai_controller.currentTarget.global_position, Vector3.UP)
-        else:
-            # Face target and fire weapons
-            ai_controller.ship.look_at(ai_controller.currentTarget.global_position, Vector3.UP)
-            ai_controller.ship.weaponSystem.fire_primary()
-            
-        return true
-
-# Behavior for evading threats
-class BTEvade extends BTAction:
-    func execute(ai_controller: AIController, delta: float) -> bool:
-        # Find nearest threat
-        var nearest_threat = find_nearest_threat(ai_controller)
-        if nearest_threat == null:
-            return false
-            
-        # Move away from threat
-        var direction = (ai_controller.ship.global_position - 
-                        nearest_threat.global_position).normalized()
-        ai_controller.ship.physicsController.forward_thrust = 1.0
-        ai_controller.ship.look_at(ai_controller.ship.global_position + direction, Vector3.UP)
-        
-        return true
-        
-    func find_nearest_threat(ai_controller: AIController) -> Node3D:
-        # Simplified threat detection
-        # In reality, this would check for nearby enemies within a certain range
-        return ai_controller.currentTarget
-
-# Behavior for patrolling waypoints
-class BTPatrol extends BTAction:
-    func execute(ai_controller: AIController, delta: float) -> bool:
-        # Check if we have a navigation path
-        if ai_controller.navigationPath.is_empty():
-            return false
-            
-        # Check if we've reached current waypoint
-        if ai_controller.currentPathIndex < ai_controller.navigationPath.size():
-            var waypoint = ai_controller.navigationPath[ai_controller.currentPathIndex]
-            var distance = ai_controller.ship.global_position.distance_to(waypoint)
-            
-            if distance < ai_controller.waypointTolerance:
-                # Move to next waypoint
-                ai_controller.currentPathIndex += 1
-                if ai_controller.currentPathIndex >= ai_controller.navigationPath.size():
-                    # Reached end of path
-                    return true
-                    
-            # Navigate to current waypoint
-            var direction = (waypoint - ai_controller.ship.global_position).normalized()
-            ai_controller.ship.physicsController.forward_thrust = 1.0
-            ai_controller.ship.look_at(waypoint, Vector3.UP)
-            
-        return true
-
 # AI Profile defining personality and skill levels
 class AIProfile extends Resource:
     @export var name: String
@@ -628,10 +505,10 @@ class AIProfileDatabase:
         # Return list of profile file paths
         # This would typically scan a directory for .tres files
         return [
-            "res://assets/data/ai/aggressive.tres",
-            "res://assets/data/ai/defensive.tres",
-            "res://assets/data/ai/tactical.tres",
-            "res://assets/data/ai/default.tres"
+            "res://assets/data/ai/profiles/aggressive.tres",
+            "res://assets/data/ai/profiles/defensive.tres",
+            "res://assets/data/ai/profiles/tactical.tres",
+            "res://assets/data/ai/profiles/default.tres"
         ]
 
 # Wing AI controller for coordinating groups of ships
@@ -738,7 +615,7 @@ evasionThreshold = 400.0
 
 [ext_resource path="res://scripts/entities/base_fighter.gd" type="Script" id=1]
 [ext_resource path="res://scripts/ai/ai_controller.gd" type="Script" id=2]
-[ext_resource path="res://assets/data/ai/aggressive.tres" type="Resource" id=3]
+[ext_resource path="res://assets/data/ai/profiles/aggressive.tres" type="Resource" id=3]
 
 [node name="EnemyFighter" type="Node3D"]
 script = ExtResource(1)
@@ -754,27 +631,23 @@ Following the feature-based organization principles defined in `directory_struct
 
 ### Scripts
 AI-related scripts are organized in `/scripts/ai/` with base classes and behavior definitions:
-- `/scripts/ai/ai_controller.gd` - Main AI controller implementation
-- `/scripts/ai/ai_state.gd` - AI state management
-- `/scripts/ai/ai_goal.gd` - AI goal system
-- `/scripts/ai/behavior_tree/` - Behavior tree system implementations
-  - `/scripts/ai/behavior_tree/bt_node.gd` - Base behavior tree node
-  - `/scripts/ai/behavior_tree/bt_sequence.gd` - Sequence composite node
-  - `/scripts/ai/behavior_tree/bt_selector.gd` - Selector composite node
-  - `/scripts/ai/behavior_tree/bt_decorator.gd` - Decorator node
-  - `/scripts/ai/behavior_tree/bt_condition.gd` - Condition leaf node
-  - `/scripts/ai/behavior_tree/bt_action.gd` - Action leaf node
-  - `/scripts/ai/behavior_tree/specific_behaviors/` - Specific AI behaviors
-    - `/scripts/ai/behavior_tree/specific_behaviors/bt_attack.gd` - Attack behavior
-    - `/scripts/ai/behavior_tree/specific_behaviors/bt_evade.gd` - Evade behavior
-    - `/scripts/ai/behavior_tree/specific_behaviors/bt_patrol.gd` - Patrol behavior
+- `/scripts/ai/ai_behavior.gd` - Base AI behavior class
+- `/scripts/ai/combat_tactics.gd` - Combat behavior logic
+- `/scripts/ai/navigation.gd` - Navigation and pathfinding
 
 ### Assets
 AI profile data resources are stored in `/assets/data/ai/` for easy access and modification, following the hybrid model approach where truly global assets are organized in `/assets/`:
-- `/assets/data/ai/aggressive.tres` - Aggressive AI profile
-- `/assets/data/ai/defensive.tres` - Defensive AI profile
-- `/assets/data/ai/tactical.tres` - Tactical AI profile
-- `/assets/data/ai/default.tres` - Default AI profile
+- `/assets/data/ai/profiles/aggressive.tres` - Aggressive AI profile
+- `/assets/data/ai/profiles/defensive.tres` - Defensive AI profile
+- `/assets/data/ai/profiles/tactical.tres` - Tactical AI profile
+- `/assets/data/ai/profiles/default.tres` - Default AI profile
+
+Behavior tree definitions for LimboAI are organized in `/assets/behavior_trees/ai/`:
+- `/assets/behavior_trees/ai/combat/bt_attack.lbt` - Attack behavior tree
+- `/assets/behavior_trees/ai/combat/bt_evade.lbt` - Evade behavior tree
+- `/assets/behavior_trees/ai/navigation/bt_patrol.lbt` - Patrol behavior tree
+- `/assets/behavior_trees/ai/tactical/bt_formation.lbt` - Formation flying behavior tree
+- `/assets/behavior_trees/ai/tactical/bt_strafe.lbt` - Strafing behavior tree
 
 ### Features
 The AI controller is designed to be attached to ship entities in `/features/fighters/` or `/features/capital_ships/` as needed. Each ship feature includes its own AI controller instance as a child node, following the self-contained feature organization principle where all files related to a single feature are grouped together.
@@ -797,7 +670,7 @@ This follows the guiding principle: "If I delete three random features, is this 
 ## Implementation Notes
 The AI Module in Godot leverages:
 
-1. **Behavior Trees**: For complex, modular AI decision-making using a hierarchical structure
+1. **LimboAI Behavior Trees**: For complex, modular AI decision-making using a hierarchical structure with XML-based behavior tree definitions
 2. **State Machines**: For managing different behavioral modes with enter/execute/exit patterns
 3. **Resources**: AI profiles as data-driven configurations for easy balancing
 4. **Signals**: For communication between AI and other systems
@@ -807,7 +680,7 @@ The AI Module in Godot leverages:
 
 This replaces the C++ goal-based system with a more flexible behavior tree approach while preserving the same tactical gameplay functionality. The AI profiles as resources allow for easy balancing and customization without code changes.
 
-The implementation uses Godot's node-based architecture to attach AI controllers to ships, with the behavior tree system providing modular decision-making capabilities. Formation flying is implemented through coordinated position calculations relative to a leader ship.
+The implementation uses Godot's node-based architecture to attach AI controllers to ships, with the LimboAI behavior tree system providing modular decision-making capabilities. Formation flying is implemented through coordinated position calculations relative to a leader ship.
 
 The wing AI controller demonstrates how individual ship AIs can be coordinated for group behavior, while still allowing for individual tactical decisions within the overall formation context.
 

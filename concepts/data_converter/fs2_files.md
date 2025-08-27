@@ -98,6 +98,8 @@ campaigns/
 │   ├── campaign.tres                # Campaign definition
 │   ├── progression.tres             # Campaign progression data
 │   ├── pilot_data.tres              # Pilot progression data
+│   ├── campaign_intro.tscn          # Campaign intro cutscene scene
+│   ├── campaign_credits.tscn        # Campaign end credits scene
 │   └── missions/                    # Mission scenes with integrated data
 │       ├── m01_hermes/              # Mission 1 - all files together
 │       │   ├── mission.tscn         # Main mission scene
@@ -106,7 +108,18 @@ campaigns/
 │       │   ├── fiction.txt          # Fiction text
 │       │   ├── objectives.tres      # Mission objectives
 │       │   ├── events.tres          # Mission events
-│       │   └── messages.tres        # Mission messages
+│       │   ├── messages.tres        # Mission messages
+│       │   ├── cutscenes/           # Mission-specific cutscenes
+│       │   │   ├── intro.tscn       # Intro cutscene scene
+│       │   │   └── outro.tscn       # Outro cutscene scene
+│       │   └── assets/              # Mission-specific assets
+│       │       ├── audio/           # Mission audio
+│       │       │   ├── briefing.ogg # Briefing voice audio
+│       │       │   ├── music.ogg    # Mission background music
+│       │       │   └── ambient.ogg  # Ambient mission sounds
+│       │       └── visuals/         # Mission visuals
+│       │           ├── cutscene_frames/ # Cutscene animation frames
+│       │           └── briefing_background.png # Briefing background
 │       ├── m02_hermes/              # Mission 2
 │       │   ├── mission.tscn
 │       │   ├── mission_data.tres
@@ -114,7 +127,13 @@ campaigns/
 │       │   ├── fiction.txt
 │       │   ├── objectives.tres
 │       │   ├── events.tres
-│       │   └── messages.tres
+│       │   ├── messages.tres
+│       │   ├── cutscenes/
+│       │   │   ├── intro.tscn
+│       │   │   └── outro.tscn
+│       │   └── assets/
+│       │       ├── audio/
+│       │       └── visuals/
 │       └── templates/               # Mission templates
 ├── brimstone/                       # Brimstone campaign
 │   ├── campaign.tres                # Campaign definition
@@ -126,32 +145,26 @@ campaigns/
 │       │   ├── mission_data.tres
 │       │   ├── briefing.txt
 │       │   ├── fiction.txt
-│       │   ├── objectives.tres
-│       │   ├── events.tres
-│       │   └── messages.tres
-│       ├── m02_brimstone/           # Mission 2
+│       │   └── objectives.tres
+│       └── templates/               # Mission templates
+├── training/                        # Training campaign
+│   ├── campaign.tres                # Campaign definition
+│   ├── tutorials.tres               # Tutorial definitions
+│   └── missions/                    # Training missions
+│       ├── intro_training/          # Introduction training
 │       │   ├── mission.tscn
 │       │   ├── mission_data.tres
 │       │   ├── briefing.txt
-│       │   ├── fiction.txt
-│       │   ├── objectives.tres
-│       │   ├── events.tres
-│       │   └── messages.tres
-│       └── templates/               # Mission templates
-└── training/                        # Training campaign
-    ├── campaign.tres                # Campaign definition
-    ├── tutorials.tres               # Tutorial definitions
-    └── missions/                    # Training missions
-        ├── intro_training/          # Introduction training
-        │   ├── mission.tscn
-        │   ├── mission_data.tres
-        │   ├── briefing.txt
-        │   └── objectives.tres
-        └── advanced_training/       # Advanced training
-            ├── mission.tscn
-            ├── mission_data.tres
-            ├── briefing.txt
-            └── objectives.tres
+│       │   └── objectives.tres
+│       └── advanced_training/       # Advanced training
+│           ├── mission.tscn
+│           ├── mission_data.tres
+│           ├── briefing.txt
+│           └── objectives.tres
+└── multiplayer/                     # Multiplayer campaigns
+    ├── coop.tres                    # Cooperative campaign
+    ├── teams.tres                   # Team vs team campaign
+    └── dogfight.tres                # Dogfight campaign
 ```
 
 ## System Integration

@@ -13,50 +13,23 @@ This directory contains comprehensive documentation analyzing the Wing Commander
 The `target_structure/` directory contains detailed documentation for each module in the planned Godot implementation, organized by system categories:
 
 ### Core Systems
-- `core_entity.md` - Foundation entity system
-- `physics.md` - Physics simulation and movement
-- `ship.md` - Ship management and behavior
-- `weapon.md` - Weapon systems and effects
-- `ai.md` - Artificial intelligence and behavior
-- `mission.md` - Mission parsing and execution
+- `core_entity.md` - Foundation entity system and component architecture
+- `physics.md` - Physics simulation and movement systems
+- `ship.md` - Ship management and behavior systems
+- `weapon.md` - Weapon systems and projectile management
+- `ai.md` - Artificial intelligence and behavior systems
+- `mission.md` - Mission parsing and execution framework
 - `game_state.md` - Game state and flow management
 
-### UI Systems
-- `ui.md` - General UI framework
-- `hud.md` - Heads-up display
-- `radar.md` - Radar and tactical display
-- `missionui.md` - Mission-specific UI
-- `menuui.md` - Menu and options UI
-
-### Specialized Systems
-- `asteroid.md` - Asteroid fields and interactions
-- `debris.md` - Debris and destruction effects
-- `fireball.md` - Explosion effects
-- `particle.md` - Particle effects system
-- `nebula.md` - Nebula rendering and effects
-- `starfield.md` - Starfield backgrounds
-- `jumpnode.md` - Hyperspace jump points
-- `autopilot.md` - Automated navigation
-- `cmeasure.md` - Countermeasure systems
-- `species_defs.md` - Species definitions
-- `iff_defs.md` - Identification, Friend or Foe systems
-
-### Supporting Systems
-- `playerman.md` - Player management
-- `network.md` - Multiplayer functionality
-- `sound.md` - Audio system
-- `graphics.md` - Graphics rendering
-- `model.md` - 3D model handling
-- `anim.md` - Animation system
-- `cutscene.md` - Cutscene playback
-- `stats.md` - Statistics tracking
+### User Interface Systems
+- `ui.md` - User interface framework and component systems
 
 ### Implementation Planning
-- `integration_plan.md` - Overall conversion strategy
+- `integration_plan.md` - Overall conversion strategy and system integration
 - `directory_structure.md` - Proposed Godot project structure following feature-based organization
-- `conversion_roadmap.md` - Detailed timeline and milestones
+- `conversion_roadmap.md` - Detailed timeline and implementation milestones
 - `module_relationships.md` - System dependencies and integration points
-- `final_summary.md` - Comprehensive system overview
+- `final_summary.md` - Comprehensive system overview and architecture summary
 
 ## Godot Implementation Approach
 All documentation follows Godot's recommended best practices as defined in `Godot_Project_Structure_Refinement.md`:
@@ -87,12 +60,12 @@ wcsaga_godot/
 
 ### Feature Organization
 Game features are organized within `/features/` by category:
-- `/features/fighters/` - Fighter ship entities
-- `/features/capital_ships/` - Capital ship entities
-- `/features/weapons/` - Weapon systems and projectiles
-- `/features/effects/` - Visual and audio effects
-- `/features/environment/` - Environmental objects and props
-- `/features/ui/` - User interface elements
+- `/features/fighters/` - Fighter ship entities (e.g., confed_arrow, kilrathi_dralthi)
+- `/features/capital_ships/` - Capital ship entities (e.g., tcs_behemoth, tcs_prowler_d)
+- `/features/weapons/` - Weapon systems and projectiles (e.g., ion_cannon, javelin_missile)
+- `/features/effects/` - Visual and audio effects (e.g., explosion, shield_hit, thruster)
+- `/features/environment/` - Environmental objects and props (e.g., asteroid, nebula)
+- `/features/ui/` - User interface elements (e.g., main_menu, hud, briefing)
 
 Each feature is a self-contained directory with all related assets, scripts, and data.
 

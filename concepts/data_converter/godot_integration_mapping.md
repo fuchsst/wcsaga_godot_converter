@@ -24,7 +24,7 @@ This document provides a clear mapping between converted assets from the data co
 **Godot Target Structure**: `/features/{category}/{entity}/{entity}.glb`
 
 **Integration Points**:
-- 3D models with hardpoint metadata → Entity scenes in `/features/`
+- 3D models with hardpoint metadata → Entity scenes in `/features/fighters/{ship}/` or `/features/capital_ships/{ship}/`
 - Subsystem positions → Damage modeling in ship entities
 - Thruster locations → Engine effects in ship entities
 - Weapon hardpoints → Weapon mounting in ship entities
@@ -91,9 +91,9 @@ This document provides a clear mapping between converted assets from the data co
 
 ### Resource References
 - **Data Resources** (.tres) are referenced by:
-  - Entity scenes in `/features/`
-  - Mission scenes in `/campaigns/`
-  - UI components in `/features/ui/`
+  - Entity scenes in `/features/fighters/{ship}/`, `/features/capital_ships/{ship}/`, `/features/weapons/{weapon}/`, `/features/effects/{effect}/`
+  - Mission scenes in `/campaigns/{campaign}/missions/{mission_id}_{mission_name}/`
+  - UI components in `/features/ui/{component}/`
   - System components in `/scripts/`
   - Autoload systems in `/autoload/`
 
@@ -156,5 +156,38 @@ This document provides a clear mapping between converted assets from the data co
 2. Verify performance metrics meet targets
 3. Validate platform compatibility across target hardware
 4. Confirm gameplay balance and presentation match original experience
+
+## Integration Examples
+
+### Ship Integration Example (F-27B Arrow Fighter)
+- **Legacy**: tcf_arrow.pof, arrow.pcx, arrow_normals.pcx, engine sounds
+- **Converted**: `/features/fighters/confed_arrow/arrow.glb`, `/features/fighters/confed_arrow/arrow_diffuse.webp`, `/features/fighters/confed_arrow/arrow_normal.webp`, `/features/fighters/confed_arrow/assets/sounds/engine_loop.ogg`
+- **Data**: `/assets/data/ships/confed_arrow.tres` (from ships.tbl)
+- **Scene**: `/features/fighters/confed_arrow/arrow.tscn`
+
+### Weapon Integration Example (Ion Cannon)
+- **Legacy**: weapons.tbl entry, Ion_Bitmap.DDS, Ion_Glow.DDS, snd_80.wav, snd_85.wav
+- **Converted**: `/assets/data/weapons/weapon_definitions/ion_cannon.tres`, `/features/weapons/ion_cannon/ion_cannon.webp`, `/features/weapons/ion_cannon/ion_glow.webp`, `/features/weapons/ion_cannon/ion_fire.ogg`, `/features/weapons/ion_cannon/ion_impact.ogg`
+- **Scene**: `/features/weapons/ion_cannon/ion_cannon.tscn`
+
+### AI Profile Integration Example (SAGA RETAIL)
+- **Legacy**: ai_profiles.tbl entry
+- **Converted**: `/assets/data/ai/profiles/saga_retail.tres`
+- **Behavior Trees**: `/assets/behavior_trees/ai/combat/bt_attack.lbt`, `/assets/behavior_trees/ai/combat/bt_evade.lbt`
+
+## Shared Directory Integration
+
+### Feature-Specific Shared Assets
+- **Fighters**: `/features/fighters/_shared/cockpits/`, `/features/fighters/_shared/effects/`
+- **Capital Ships**: `/features/capital_ships/_shared/bridge_models/`, `/features/capital_ships/_shared/turret_models/`
+- **Weapons**: `/features/weapons/_shared/muzzle_flashes/`, `/features/weapons/_shared/impact_effects/`
+- **Effects**: `/features/effects/_shared/particle_textures/`, `/features/effects/_shared/shader_effects/`
+- **UI**: `/features/ui/_shared/fonts/`, `/features/ui/_shared/icons/`, `/features/ui/_shared/themes/`
+
+### Global Shared Assets
+- **Audio**: `/assets/audio/sfx/weapons/`, `/assets/audio/sfx/ai/`, `/assets/audio/voice/ai/`
+- **Textures**: `/assets/textures/effects/weapons/`, `/assets/textures/fonts/`, `/assets/textures/ui/`
+- **Behavior Trees**: `/assets/behavior_trees/ai/combat/`, `/assets/behavior_trees/ai/navigation/`, `/assets/behavior_trees/ai/tactical/`
+- **Data**: `/assets/data/ai/profiles/`, `/assets/data/weapons/weapon_definitions/`, `/assets/data/species/`, `/assets/data/iff/`
 
 This mapping ensures a smooth transition from legacy asset formats to the modern Godot implementation while maintaining all gameplay relationships and functionality, following the feature-based organizational approach and hybrid model that combines scalability with a clean repository for generic, reusable assets.

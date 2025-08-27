@@ -1,20 +1,20 @@
 # Closely Related Assets and Directory Organization
 
 ## Overview
-This document identifies closely related assets in Wing Commander Saga and specifies how they should be organized according to the Godot project's hybrid organizational model defined in directory_structure.md and following the principles in Godot_Project_Structure_Refinement.md. The approach groups all files related to a single conceptual feature into a single, self-contained directory within `/features/`, while maintaining truly global assets in `/assets/` and using `/_shared/` directories for semi-global assets specific to feature categories.
+This document identifies closely related assets in Wing Commander Saga and specifies how they should be organized according to the Godot project's hybrid organizational model defined in directory_structure.md. The approach groups all files related to a single conceptual feature into a single, self-contained directory within `/features/`, while maintaining truly global assets in `/assets/` and using `/_shared/` directories for semi-global assets specific to feature categories.
 
 ## Asset Relationship Groups
 
 ### 1. Ship Entities
-**Primary Directory**: `/features/fighters/{faction}_{ship_name}/`
+**Primary Directory**: `/features/fighters/{faction}_{ship_name}/` for fighters, `/features/capital_ships/{faction}_{ship_name}/` for capital ships
 
 **Closely Related Assets**:
-- ShipClass data resource (.tres) from `/assets/data/ships/{ship_name}.tres`
+- ShipClass data resource (.tres) from `/features/{ship_type}/{ship_name}/{ship_name}.tres`
 - 3D model (.glb) converted from .pof file
 - Ship textures (.webp) converted from .pcx/.dds files
 - Engine sound effects (.ogg) converted from .wav files
 - Weapon hardpoint metadata from .pof conversion
-- Thruster effect animations from `/assets/animations/effects/particles/`
+- Thruster effect animations from `/features/fighters/_shared/effects/` or `/features/capital_ships/_shared/effects/`
 - Damage effect textures from `/assets/textures/effects/`
 - Cockpit UI graphics from `/features/fighters/_shared/cockpits/`
 
@@ -23,7 +23,7 @@ This document identifies closely related assets in Wing Commander Saga and speci
 /features/fighters/confed_rapier/
 ├── rapier.tscn              # Ship entity scene
 ├── rapier.gd                # Ship script
-├── rapier.tres              # ShipClass resource (from /assets/data/ships/)
+├── rapier.tres              # ShipClass resource (converted from ships.tbl)
 ├── rapier.glb               # 3D model (converted from tcf_rapier.pof)
 ├── rapier_diffuse.webp      # Diffuse texture (converted from rapier.pcx)
 ├── rapier_normal.webp       # Normal map (converted from rapier_normals.pcx)
@@ -40,32 +40,34 @@ This document identifies closely related assets in Wing Commander Saga and speci
 ```
 
 ### 2. Weapon Entities
-**Primary Directory**: `/features/weapons/{weapon_name}/`
+**Primary Directory**: `/features/weapons/{weapon_name}/` for weapons, `/features/weapons/projectiles/{projectile_name}/` for projectiles
 
 **Closely Related Assets**:
-- WeaponClass data resource (.tres) from `/assets/data/weapons/{weapon_name}.tres`
+- WeaponClass data resource (.tres) from `/assets/data/weapons/weapon_definitions/{weapon_name}.tres`
 - Weapon 3D model (.glb) converted from .pof file (for projectiles)
 - Firing sound effects (.ogg) converted from .wav files
 - Muzzle flash animations from `/features/weapons/_shared/muzzle_flashes/`
-- Projectile textures from `/assets/textures/effects/particles/`
+- Projectile textures from `/assets/textures/effects/weapons/`
 - Impact effect animations from `/features/weapons/_shared/impact_effects/`
 - Impact sound effects (.ogg) from `/assets/audio/sfx/weapons/impacts/`
 
 **Integration Example**:
 ```
-/features/weapons/laser_cannon/
-├── laser_cannon.tscn        # Weapon entity scene
-├── laser_cannon.gd          # Weapon script
-├── laser_cannon.tres        # WeaponClass resource (from /assets/data/weapons/)
+/features/weapons/ion_cannon/
+├── ion_cannon.tscn          # Weapon entity scene
+├── ion_cannon.gd            # Weapon script
+├── ion_cannon.tres          # WeaponClass resource (from /assets/data/weapons/weapon_definitions/)
 ├── assets/                  # Feature-specific assets
 │   └── sounds/              # Weapon-specific sounds
-│       ├── fire_sound.ogg   # Firing sound (converted from snd_weapon_fire.wav)
-│       └── impact_sound.ogg # Impact sound (converted from snd_impact.wav)
-└── laser_bolt/              # Projectile subdirectory
-    ├── laser_bolt.tscn      # Projectile scene
-    ├── laser_bolt.gd        # Projectile script
-    ├── laser_bolt.tres      # Projectile resource
-    └── laser_bolt.glb       # 3D model (converted from tcm_laser.pof)
+│       ├── ion_fire.ogg     # Firing sound (converted from snd_weapon_fire.wav)
+│       └── ion_impact.ogg   # Impact sound (converted from snd_impact.wav)
+└── projectiles/             # Projectile subdirectory
+    ├── ion_bolt/            # Ion bolt projectile
+    │   ├── ion_bolt.tscn    # Projectile scene
+    │   ├── ion_bolt.gd      # Projectile script
+    │   ├── ion_bolt.tres    # Projectile data resource
+    │   └── ion_bolt.webp    # Projectile texture
+    └── templates/           # Projectile templates
 ```
 
 ### 3. Mission Packages
@@ -111,7 +113,7 @@ This document identifies closely related assets in Wing Commander Saga and speci
 - Effect data resource (.tres) from `/assets/data/effects/{effect_name}.tres`
 - Effect 3D model (.glb) if applicable
 - Particle textures (.webp) converted from .dds/.pcx files
-- Animation sequences from `/assets/animations/effects/{effect_type}/`
+- Animation sequences from `/assets/animations/effects/`
 - Sound effects (.ogg) converted from .wav files
 - Shader definitions if applicable
 
@@ -136,7 +138,7 @@ This document identifies closely related assets in Wing Commander Saga and speci
 **Closely Related Assets**:
 - UI layout scenes (.tscn)
 - Interface graphics (.webp) converted from .pcx/.dds files
-- UI animation sequences from `/assets/animations/ui/{component}/`
+- UI animation sequences from `/assets/animations/ui/`
 - Font resources from `/features/ui/_shared/fonts/`
 - Audio feedback (.ogg) converted from .wav files
 - Theme resources (.tres) from `/features/ui/_shared/themes/`
@@ -167,34 +169,64 @@ This document identifies closely related assets in Wing Commander Saga and speci
 └── player_hud.tres          # HUD configuration resource
 ```
 
+### 6. Environmental Objects
+**Primary Directory**: `/features/environment/{object_name}/`
+
+**Closely Related Assets**:
+- Object data resource (.tres) from `/features/environment/{object_name}/{object_name}.tres`
+- 3D model (.glb) converted from .pof file
+- Textures (.webp) converted from .pcx/.dds files
+- Physics collision data
+- Environmental effects from `/features/effects/`
+
+**Integration Example**:
+```
+/features/environment/asteroid/
+├── asteroid.tscn            # Asteroid scene
+├── asteroid.gd              # Asteroid script
+├── asteroid.tres            # Asteroid data resource
+├── asteroid.glb             # 3D model
+├── asteroid_diffuse.webp    # Diffuse texture
+├── asteroid_normal.webp     # Normal map
+└── assets/                  # Feature-specific assets
+    └── sounds/              # Asteroid collision sounds
+        └── asteroid_impact.ogg # Impact sound
+```
+
 ## Shared Asset Organization
 
 ### Common Visual Effects
 **Directory**: `/assets/animations/effects/`
 
 **Used By**:
-- Ship destruction effects in `/features/fighters/`
+- Ship destruction effects in `/features/fighters/` and `/features/capital_ships/`
 - Weapon impact effects in `/features/weapons/`
 - Projectile explosions in `/features/weapons/projectiles/`
 - Environmental effects in `/features/environment/`
+- General visual effects in `/features/effects/`
 
 ### Common Audio Resources
-**Directory**: `/assets/audio/sfx/ui/`
+**Directory**: `/assets/audio/sfx/`
 
 **Used By**:
 - Main menu in `/features/ui/main_menu/`
 - Options menu in `/features/ui/options/`
 - Briefing screens in `/features/ui/briefing/`
 - Debriefing screens in `/features/ui/debriefing/`
+- Generic UI sounds across all UI components
+- Shared weapon sounds in `/assets/audio/sfx/weapons/`
+- Shared ship sounds in `/assets/audio/sfx/ships/`
 
 ### Common Textures
-**Directory**: `/assets/textures/ui/`
+**Directory**: `/assets/textures/`
 
 **Used By**:
 - Player HUD in `/features/ui/hud/`
 - Targeting displays in `/features/ui/hud/`
 - Weapon status in `/features/ui/hud/`
 - System indicators in `/features/ui/hud/`
+- Generic UI elements across all UI components
+- Shared effect textures in `/assets/textures/effects/`
 
 ### Shared Fighter Assets
 **Directory**: `/features/fighters/_shared/`
@@ -203,6 +235,7 @@ This document identifies closely related assets in Wing Commander Saga and speci
 - Shared cockpit models in `/cockpits/`
 - Shared effects in `/effects/`
 - Shared sounds in `/sounds/`
+- Shared templates in `/templates/`
 
 ### Shared Weapon Assets
 **Directory**: `/features/weapons/_shared/`
@@ -210,6 +243,27 @@ This document identifies closely related assets in Wing Commander Saga and speci
 **Contains**:
 - Shared muzzle flashes in `/muzzle_flashes/`
 - Shared impact effects in `/impact_effects/`
+- Shared explosion effects in `/explosion_effects/`
+- Shared templates in `/templates/`
+
+### Shared Capital Ship Assets
+**Directory**: `/features/capital_ships/_shared/`
+
+**Contains**:
+- Shared bridge models in `/bridge_models/`
+- Shared turret models in `/turret_models/`
+- Shared effects in `/effects/`
+- Shared templates in `/templates/`
+
+### Shared UI Assets
+**Directory**: `/features/ui/_shared/`
+
+**Contains**:
+- Shared fonts in `/fonts/`
+- Shared icons in `/icons/`
+- Shared themes in `/themes/`
+- Shared cursors in `/cursors/`
+- Shared components in `/components/` (buttons, sliders, checkboxes, etc.)
 
 ## Cross-Reference Management
 
@@ -218,11 +272,13 @@ This document identifies closely related assets in Wing Commander Saga and speci
 - Mission scenes reference entity scenes and data resources via instance() calls
 - UI components reference font and theme resources through theme properties
 - Effect systems reference particle and animation resources through AnimationPlayer nodes
+- Scripts reference reusable components through Godot's class system
 
 ### Path-Based Organization
 - Shared assets are placed in common directories following the "Global Litmus Test" principle
 - Cross-references use relative paths within the Godot project structure (res://)
 - Asset bundles group related resources for efficient loading through ResourceLoader
+- Feature directories are self-contained with minimal external dependencies
 
 ## Validation Requirements
 
@@ -230,19 +286,22 @@ This document identifies closely related assets in Wing Commander Saga and speci
 - Verify that all closely related assets are properly linked through exported variables
 - Check that cross-references resolve to valid resources using ResourceLoader
 - Ensure that asset dependencies are correctly ordered in the loading sequence
+- Validate that mission scenes can properly instantiate all required entity scenes
 
 ### Directory Structure Compliance
 - Confirm that assets are organized according to feature-based principles with co-location
 - Validate that shared assets are placed in appropriate common directories following the hybrid model
 - Check that directory naming follows snake_case conventions for files and directories
 - Ensure that node names within scenes use PascalCase as per Godot conventions
+- Verify that truly global assets are in `/assets/` and semi-global assets are in `/_shared/` directories
 
 ### Integration with TBL Files
-- Ship definitions from ships.tbl map to ShipData resources in `/assets/data/ships/`
-- Weapon definitions from weapons.tbl map to WeaponData resources in `/assets/data/weapons/`
+- Ship definitions from ships.tbl map to ShipData resources in `/features/{ship_type}/{ship_name}/{ship_name}.tres`
+- Weapon definitions from weapons.tbl map to WeaponData resources in `/assets/data/weapons/weapon_definitions/`
 - AI profiles from ai_profiles.tbl map to AIProfile resources in `/assets/data/ai/profiles/`
 - Species definitions from Species_defs.tbl map to SpeciesData resources in `/assets/data/species/`
 - IFF definitions from iff_defs.tbl map to IFFData resources in `/assets/data/iff/`
 - Effect definitions from fireball.tbl and weapon_expl.tbl map to EffectData resources in `/assets/data/effects/`
+- Armor type definitions map to ArmorData resources in `/assets/data/armor/`
 
 This organization ensures that closely related assets maintain clear relationships between different gameplay systems while following Godot's best practices for feature-based organization and the hybrid model that groups truly global assets in `/assets/` while keeping feature-specific assets co-located within `/features/` directories.

@@ -101,85 +101,121 @@ Following the Godot project structure defined in directory_structure.md and the 
 
 ```
 features/
-├── fighters/              # Fighter ship entities (primary player and AI ships)
-│   ├── confed_rapier/     # Raptor fighter - all files together
-│   │   ├── rapier.tscn    # Scene file
-│   │   ├── rapier.gd      # Script file
-│   │   ├── rapier.tres    # Ship data resource
-│   │   ├── rapier.glb     # 3D model
-│   │   ├── rapier.png     # Texture
-│   │   └── rapier_engine.ogg # Engine sound
-│   ├── kilrathi_dralthi/  # Dralthi fighter
-│   │   ├── dralthi.tscn
-│   │   ├── dralthi.gd
-│   │   ├── dralthi.tres
-│   │   ├── dralthi.glb
-│   │   ├── dralthi.png
-│   │   └── dralthi_engine.ogg
-│   ├── _shared/           # Shared fighter assets
-│   └── templates/         # Fighter templates
-├── capital_ships/         # Capital ship entities
-│   ├── tcs_tigers_claw/   # Tigers Claw carrier
-│   │   ├── tigers_claw.tscn
-│   │   ├── tigers_claw.gd
-│   │   ├── tigers_claw.tres
-│   │   ├── tigers_claw.glb
-│   │   └── tigers_claw.png
-│   ├── _shared/           # Shared capital ship assets
-│   └── templates/         # Capital ship templates
-├── weapons/               # Weapon entities (self-contained)
-│   ├── ion_cannon/        # Ion cannon weapon
-│   │   ├── ion_cannon.tscn    # Scene
-│   │   ├── ion_cannon.gd      # Script
-│   │   ├── ion_cannon.tres    # Weapon data
-│   │   ├── ion_cannon.glb     # 3D model
-│   │   ├── ion_cannon.png     # Texture
-│   │   └── ion_fire.ogg       # Sound
-│   ├── projectiles/       # Projectile entities
-│   │   ├── ion_bolt/      # Ion bolt projectile
-│   │   │   ├── ion_bolt.tscn
-│   │   │   ├── ion_bolt.gd
-│   │   │   └── ion_bolt.tres
-│   │   ├── missile/       # Missile projectile
-│   │   │   ├── missile.tscn
-│   │   │   ├── missile.gd
-│   │   │   └── missile.tres
-│   │   └── templates/     # Projectile templates
-│   ├── _shared/           # Shared weapon assets
-│   └── templates/         # Weapon templates
-├── effects/               # Effect entities
-│   ├── explosion/         # Explosion effect
-│   │   ├── explosion.tscn
-│   │   ├── explosion.gd
-│   │   ├── explosion.tres
-│   │   ├── explosion.glb  # 3D model (if applicable)
-│   │   ├── explosion_fire.png
-│   │   └── explosion_sound.ogg
-│   ├── fireball/          # Fireball effect
-│   │   ├── fireball.tscn
-│   │   ├── fireball.gd
-│   │   ├── fireball.tres
-│   │   ├── fireball.glb   # 3D model (if applicable)
-│   │   ├── fireball_texture.png
-│   │   └── fireball_sound.ogg
-│   ├── _shared/           # Shared effect assets
-│   └── templates/         # Effect templates
-├── environment/           # Environmental objects and props
-│   ├── asteroid/          # Asteroid object
+├── fighters/                      # Fighter ship entities (primary player and AI ships)
+│   ├── confed_arrow/              # F-27B Arrow fighter - all files together
+│   │   ├── arrow.tscn             # Ship scene file
+│   │   ├── arrow.gd               # Ship controller script
+│   │   ├── arrow.tres             # Ship data resource
+│   │   ├── arrow.glb              # 3D model
+│   │   ├── arrow_diffuse.webp     # Diffuse texture
+│   │   ├── arrow_normal.webp      # Normal map
+│   │   ├── arrow_engine.ogg       # Engine sound
+│   │   └── assets/                # Feature-specific assets
+│   │       ├── sounds/            # Ship-specific sounds
+│   │       │   ├── engine_loop.ogg # Engine loop sound
+│   │       │   ├── maneuver.ogg    # Maneuvering thrusters
+│   │       │   └── afterburner.ogg # Afterburner sound
+│   │       └── effects/           # Ship-specific visual effects
+│   │           ├── thruster_particles.tscn # Thruster particle effect
+│   │           └── shield_effect.png       # Shield visual effect
+│   ├── confed_rapier/             # F-44B Raptor fighter
+│   │   ├── rapier.tscn            # Scene file
+│   │   ├── rapier.gd              # Script file
+│   │   ├── rapier.tres            # Ship data resource
+│   │   ├── rapier.glb             # 3D model
+│   │   ├── rapier_diffuse.webp    # Diffuse texture
+│   │   ├── rapier_normal.webp     # Normal map
+│   │   └── rapier_engine.ogg      # Engine sound
+│   ├── _shared/                   # Shared fighter assets
+│   │   ├── cockpits/              # Shared cockpit models
+│   │   │   ├── standard_cockpit.glb
+│   │   │   └── standard_cockpit_material.tres
+│   │   └── effects/               # Shared fighter effects
+│   │       ├── engine_trail.png
+│   │       └── shield_effect.png
+│   └── templates/                 # Fighter templates
+├── capital_ships/                 # Capital ship entities
+│   ├── tcs_behemoth/              # TCS Behemoth capital ship
+│   │   ├── behemoth.tscn          # Ship scene file
+│   │   ├── behemoth.gd            # Ship controller script
+│   │   ├── behemoth.tres          # Ship data resource
+│   │   ├── behemoth.glb           # 3D model
+│   │   ├── behemoth_diffuse.webp  # Diffuse texture
+│   │   ├── behemoth_normal.webp   # Normal map
+│   │   ├── behemoth_engine.ogg    # Engine sound
+│   │   └── assets/                # Feature-specific assets
+│   │       ├── sounds/            # Ship-specific sounds
+│   │       └── effects/           # Ship-specific visual effects
+│   ├── _shared/                   # Shared capital ship assets
+│   │   ├── bridge_models/         # Shared bridge components
+│   │   └── turret_models/         # Shared turret models
+│   └── templates/                 # Capital ship templates
+├── weapons/                       # Weapon entities (self-contained)
+│   ├── ion_cannon/                # Ion cannon weapon
+│   │   ├── ion_cannon.tscn        # Weapon scene
+│   │   ├── ion_cannon.gd          # Weapon script
+│   │   ├── ion_cannon.tres        # Weapon data resource
+│   │   ├── ion_cannon.glb         # 3D model (if applicable)
+│   │   ├── ion_cannon.webp        # Weapon texture
+│   │   ├── ion_fire.ogg           # Firing sound
+│   │   ├── ion_impact.ogg         # Impact sound
+│   │   ├── ion_muzzle.webp        # Muzzle flash texture
+│   │   └── ion_trail.webp         # Projectile trail texture
+│   ├── javelin_missile/           # Javelin missile weapon
+│   │   ├── javelin_missile.tscn   # Weapon scene
+│   │   ├── javelin_missile.gd     # Weapon script
+│   │   ├── javelin_missile.tres   # Weapon data resource
+│   │   ├── javelin_missile.glb    # 3D model
+│   │   ├── javelin_missile.webp   # Weapon texture
+│   │   ├── javelin_fire.ogg       # Firing sound
+│   │   ├── javelin_impact.ogg     # Impact sound
+│   │   └── javelin_trail.webp     # Projectile trail texture
+│   ├── projectiles/               # Projectile entities
+│   │   ├── ion_bolt/              # Ion bolt projectile
+│   │   │   ├── ion_bolt.tscn      # Projectile scene
+│   │   │   ├── ion_bolt.gd        # Projectile script
+│   │   │   ├── ion_bolt.tres      # Projectile data resource
+│   │   │   └── ion_bolt.webp      # Projectile texture
+│   │   ├── javelin_projectile/    # Javelin projectile
+│   │   │   ├── javelin_projectile.tscn # Projectile scene
+│   │   │   ├── javelin_projectile.gd   # Projectile script
+│   │   │   ├── javelin_projectile.tres # Projectile data resource
+│   │   │   └── javelin_projectile.glb  # 3D model
+│   │   └── templates/             # Projectile templates
+│   ├── _shared/                   # Shared weapon assets
+│   │   ├── muzzle_flashes/        # Shared muzzle flash effects
+│   │   ├── impact_effects/        # Shared impact effects
+│   │   └── explosion_effects/     # Shared explosion effects
+│   └── templates/                 # Weapon templates
+├── effects/                       # Effect entities
+│   ├── explosion/                 # Explosion effect
+│   │   ├── explosion.tscn         # Effect scene
+│   │   ├── explosion.gd           # Effect script
+│   │   ├── explosion.tres         # Effect data resource
+│   │   ├── explosion_fire.webp    # Fire texture
+│   │   └── explosion_sound.ogg    # Explosion sound
+│   ├── _shared/                   # Shared effect assets
+│   │   ├── particle_textures/     # Shared particle effects
+│   │   └── shader_effects/        # Shared shader effects
+│   └── templates/                 # Effect templates
+├── environment/                   # Environmental objects and props
+│   ├── asteroid/                  # Asteroid object
 │   │   ├── asteroid.tscn
 │   │   ├── asteroid.gd
 │   │   ├── asteroid.tres
 │   │   ├── asteroid.glb
-│   │   └── asteroid.png
-│   ├── nebula/            # Nebula effect
+│   │   └── asteroid.webp
+│   ├── nebula/                    # Nebula effect
 │   │   ├── nebula.tscn
 │   │   ├── nebula.gd
 │   │   ├── nebula.tres
 │   │   ├── nebula.glb
-│   │   └── nebula.png
-│   ├── _shared/           # Shared environment assets
-│   └── templates/         # Environment templates
-└── templates/             # Feature templates
+│   │   └── nebula.webp
+│   ├── _shared/                   # Shared environment assets
+│   │   ├── debris/                # Space debris models
+│   │   └── environment/           # Environmental textures
+│   └── templates/                 # Environment templates
+└── templates/                     # Feature templates
 ```
 
 ## Integration Points
@@ -193,16 +229,16 @@ features/
 
 ### Resource References
 - **Entity scenes** in `/features/` reference their respective .glb model files
-- **Data resources** in `/assets/data/` reference model paths for instantiation
+- **Data resources** in feature directories reference model paths for instantiation
 - **Hardpoint information** is preserved as named nodes in the glTF structure
 - **Subsystem locations** are maintained for damage modeling integration
 
 ## Relationship to Other Assets
 
 ### Closely Related Assets
-- Texture files (.pcx/.dds) referenced in TXTR chunks and converted to WebP/PNG in feature directories or `/assets/textures/`
-- Animation files (.ani) that affect model components and converted to sprite sheets in `/assets/animations/` or feature directories
-- Particle effect definitions used with model hardpoints from `/assets/data/effects/`
+- Texture files (.pcx/.dds) referenced in TXTR chunks and converted to WebP format in feature directories or `/assets/textures/`
+- Animation files (.ani) that affect model components and converted to sprite sheets in feature directories or `/assets/animations/`
+- Particle effect definitions used with model hardpoints from feature directories or `/assets/textures/effects/`
 - Sound files (.wav/.ogg) associated with model events and converted to Ogg Vorbis in feature directories or `/assets/audio/`
 
 ### Entity Asset Organization

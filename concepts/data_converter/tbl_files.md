@@ -6,7 +6,9 @@ TBL (Table) files contain structured data definitions for various game elements 
 The TBL files found in the source assets include:
 - `ships.tbl` - Ship class definitions with physics, weapons, and visual properties
 - `weapons.tbl` - Weapon definitions with damage, firing rates, and effects
+- `ai.tbl` - AI behavior characteristics and combat parameters
 - `ai_profiles.tbl` - AI behavior profiles with difficulty scaling parameters
+- `Species.tbl` - Species definitions and relationships
 - `Species_defs.tbl` - Species definitions with thruster animations and debris behavior
 - `iff_defs.tbl` - IFF (Identification Friend or Foe) relationship definitions
 - `fireball.tbl` - Fireball/explosion effect definitions
@@ -16,6 +18,28 @@ The TBL files found in the source assets include:
 - `sounds.tbl` - Sound effect definitions with file references
 - `music.tbl` - Music track definitions for campaign events
 - `cutscenes.tbl` - Cutscene definitions with audio file references
+- `asteroid.tbl` - Asteroid field definitions and properties
+- `autopilot.tbl` - Autopilot navigation and behavior settings
+- `credits.tbl` - Credits sequence definitions and timing
+- `fonts.tbl` - Font definitions and character mappings
+- `help.tbl` - In-game help system definitions
+- `hud_gauges.tbl` - HUD gauge definitions and visual properties
+- `icons.tbl` - Icon definitions for radar and interface
+- `launchhelp.tbl` - Launch sequence help definitions
+- `lightning.tbl` - Lightning/electrical effect definitions
+- `mainhall.tbl` - Main menu/hall interface definitions
+- `menu.tbl` - Menu system definitions and layouts
+- `messages.tbl` - Message system definitions and templates
+- `mflash.tbl` - Muzzle flash effect definitions
+- `nebula.tbl` - Nebula cloud definitions and properties
+- `pixels.tbl` - Pixel shader effect definitions
+- `scripting.tbl` - Scripting system definitions and hooks
+- `ssm.tbl` - Subspace missile definitions and behaviors
+- `stars.tbl` - Starfield and background definitions
+- `strings.tbl` - String table and localization definitions
+- `tips.tbl` - Loading screen tips and hints
+- `traitor.tbl` - Traitor/defection event definitions
+- `tstrings.tbl` - Technical string definitions
 
 ## File Types and Conversion Requirements
 
@@ -31,7 +55,8 @@ The TBL files found in the source assets include:
 - Preserve IFF (Identification Friend or Foe) settings
 - Maintain 3D model references for later POF conversion
 - Handle modular TBM overrides
-- Map to `/assets/data/ships/{ship_name}.tres` following the Global Litmus Test
+- Map to `/features/fighters/{faction}/{ship_name}/{ship_name}.tres` for fighters
+- Map to `/features/capital_ships/{faction}/{ship_name}/{ship_name}.tres` for capital ships
 
 ### Weapon Definitions (weapons.tbl)
 **Purpose**: Defines all weapon types with their characteristics
@@ -45,7 +70,7 @@ The TBL files found in the source assets include:
 - Preserve 3D model references for later POF conversion
 - Handle beam weapon properties (duration, width)
 - Maintain audio references for firing/impact sounds
-- Map to `/assets/data/weapons/{weapon_name}.tres` following the Global Litmus Test
+- Map to `/features/weapons/{weapon_name}/{weapon_name}.tres` for self-contained weapon features
 
 ### AI Profiles (ai_profiles.tbl)
 **Purpose**: Defines AI behavior characteristics and difficulty settings
@@ -58,7 +83,7 @@ The TBL files found in the source assets include:
 - Map weapon selection preferences
 - Maintain difficulty scaling factors
 - Map to `/assets/data/ai/profiles/{profile_name}.tres` following the Global Litmus Test
-- Reference related assets in `/assets/audio/sfx/ai/` and `/assets/audio/voice/ai/`
+- Reference related assets in `/assets/audio/sfx/` and `/assets/audio/voice/`
 
 ### Species Definitions (species_defs.tbl)
 **Purpose**: Defines alien species properties and characteristics
@@ -70,8 +95,8 @@ The TBL files found in the source assets include:
 - Convert debris behavior properties
 - Map species-specific visual effects
 - Maintain IFF relationship mappings
-- Map to `/assets/data/species/{species_name}.tres` following the Global Litmus Test
-- Reference related animations in `/assets/animations/effects/` and textures in `/assets/textures/effects/`
+- Map to `/features/fighters/_shared/species/{species_name}.tres` for species-specific assets
+- Reference related animations in `/features/fighters/_shared/effects/` and textures in `/features/fighters/_shared/textures/`
 
 ### IFF Definitions (iff_defs.tbl)
 **Purpose**: Defines faction relationships and identification properties
@@ -83,8 +108,8 @@ The TBL files found in the source assets include:
 - Convert relationship matrices (friendly, hostile, neutral)
 - Map species affiliations
 - Maintain team assignments
-- Map to `/assets/data/iff/{iff_name}.tres` following the Global Litmus Test
-- Reference related UI assets in `/assets/textures/ui/hud/radar/` and `/assets/textures/ui/hud/iff/`
+- Map to `/features/ui/hud/_shared/iff/{iff_name}.tres` for HUD display elements
+- Reference related UI assets in `/features/ui/hud/_shared/radar/` and `/features/ui/hud/_shared/iff/`
 
 ### Fireball Effects (fireball.tbl)
 **Purpose**: Defines fireball/explosion effect properties and behaviors
@@ -94,8 +119,8 @@ The TBL files found in the source assets include:
 - Parse effect names and descriptions
 - Extract effect properties (LOD settings)
 - Map to visual assets for conversion
-- Map to `/assets/data/effects/{effect_name}.tres` following the Global Litmus Test
-- Reference related assets in `/features/effects/` for feature-specific implementations
+- Map to `/features/effects/{effect_name}/{effect_name}.tres` for self-contained effect features
+- Reference related assets in `/features/effects/_shared/` for shared effect components
 
 ### Weapon Impact Effects (weapon_expl.tbl)
 **Purpose**: Defines weapon impact explosion effects
@@ -105,8 +130,8 @@ The TBL files found in the source assets include:
 - Parse effect names and descriptions
 - Extract effect properties
 - Map to visual assets for conversion
-- Map to `/assets/data/effects/{effect_name}.tres` following the Global Litmus Test
-- Reference related assets in `/features/weapons/_shared/impact_effects/` and `/features/effects/`
+- Map to `/features/weapons/_shared/impact_effects/{effect_name}.tres` for shared impact effects
+- Reference related assets in `/features/effects/` for effect implementations
 
 ### Medals (medals.tbl)
 **Purpose**: Defines military decoration and award definitions
@@ -116,8 +141,8 @@ The TBL files found in the source assets include:
 - Parse medal names and descriptions
 - Extract visual representation references (bitmap files)
 - Map number of modifications/variations
-- Map to `/assets/data/ui/medals/{medal_name}.tres` following the Global Litmus Test
-- Reference related assets in `/features/ui/medals_display/assets/icons/`
+- Map to `/features/ui/debriefing/_shared/medals/{medal_name}.tres` for debriefing screen elements
+- Reference related assets in `/features/ui/debriefing/_shared/icons/`
 
 ### Ranks (rank.tbl)
 **Purpose**: Defines military rank structure and progression
@@ -129,8 +154,8 @@ The TBL files found in the source assets include:
 - Map promotion requirements (points)
 - Extract promotion voice references
 - Map promotion text
-- Map to `/assets/data/ui/ranks/{rank_name}.tres` following the Global Litmus Test
-- Reference related assets in `/features/ui/rank_display/assets/insignia/`
+- Map to `/features/ui/debriefing/_shared/ranks/{rank_name}.tres` for debriefing screen elements
+- Reference related assets in `/features/ui/debriefing/_shared/insignia/`
 
 ### Sounds (sounds.tbl)
 **Purpose**: Defines sound effect properties and file references
@@ -167,6 +192,270 @@ The TBL files found in the source assets include:
 - Map to `/assets/data/cutscenes/{cutscene_name}.tres` following the Global Litmus Test
 - Reference related audio assets in `/assets/audio/cutscenes/`
 
+### AI Behavior (ai.tbl)
+**Purpose**: Defines general AI behavior characteristics and combat parameters
+**Source Format**: Custom TBL format with AI behavior sections
+**Target Format**: AIBehavior resources (.tres)
+**Conversion Requirements**:
+- Parse AI behavior names and combat styles
+- Extract combat parameters (attack ranges, evasion patterns)
+- Convert weapon usage preferences and tactics
+- Map to `/assets/data/ai/behaviors/{behavior_name}.tres` following the Global Litmus Test
+- Reference related AI assets in `/assets/data/ai/`
+
+### Species Relationships (Species.tbl)
+**Purpose**: Defines species relationships and diplomatic settings
+**Source Format**: Custom TBL format with species relationship sections
+**Target Format**: SpeciesRelationship resources (.tres)
+**Conversion Requirements**:
+- Parse species names and diplomatic status
+- Extract relationship matrices and alliance settings
+- Convert diplomatic event triggers
+- Map to `/assets/data/species/relationships/{relationship_name}.tres` following the Global Litmus Test
+- Reference related species assets in `/features/fighters/_shared/species/`
+
+### Asteroid Fields (asteroid.tbl)
+**Purpose**: Defines asteroid field properties and generation parameters
+**Source Format**: Custom TBL format with asteroid field sections
+**Target Format**: AsteroidField resources (.tres)
+**Conversion Requirements**:
+- Parse asteroid field names and descriptions
+- Extract generation parameters (density, size ranges)
+- Convert movement patterns and rotation speeds
+- Map to `/features/environment/asteroid_fields/{field_name}.tres` for environmental features
+- Reference related asteroid models in `/features/environment/_shared/asteroids/`
+
+### Autopilot Systems (autopilot.tbl)
+**Purpose**: Defines autopilot navigation and behavior settings
+**Source Format**: Custom TBL format with autopilot sections
+**Target Format**: AutopilotProfile resources (.tres)
+**Conversion Requirements**:
+- Parse autopilot profile names and descriptions
+- Extract navigation parameters (approach distances, docking speeds)
+- Convert emergency behavior settings
+- Map to `/assets/data/ai/autopilot/{profile_name}.tres` following the Global Litmus Test
+- Reference related navigation assets in `/scripts/ai/navigation/`
+
+### Credits Sequence (credits.tbl)
+**Purpose**: Defines credits sequence timing and content
+**Source Format**: Custom TBL format with credits entries
+**Target Format**: CreditsSequence resources (.tres)
+**Conversion Requirements**:
+- Parse credits timing and scroll speeds
+- Extract credit text and formatting
+- Convert special effect triggers
+- Map to `/assets/data/ui/credits/{sequence_name}.tres` following the Global Litmus Test
+- Reference related UI assets in `/features/ui/credits/`
+
+### Font Definitions (fonts.tbl)
+**Purpose**: Defines font properties and character mappings
+**Source Format**: Custom TBL format with font sections
+**Target Format**: FontDefinition resources (.tres)
+**Conversion Requirements**:
+- Parse font names and character set definitions
+- Extract spacing and kerning information
+- Convert special character mappings
+- Map to `/assets/data/ui/fonts/{font_name}.tres` following the Global Litmus Test
+- Reference related font assets in `/features/ui/_shared/fonts/`
+
+### Help System (help.tbl)
+**Purpose**: Defines in-game help system content and structure
+**Source Format**: Custom TBL format with help entries
+**Target Format**: HelpTopic resources (.tres)
+**Conversion Requirements**:
+- Parse help topic names and categories
+- Extract help text and formatting
+- Convert cross-reference links
+- Map to `/assets/data/ui/help/{topic_name}.tres` following the Global Litmus Test
+- Reference related UI assets in `/features/ui/help/`
+
+### HUD Gauges (hud_gauges.tbl)
+**Purpose**: Defines HUD gauge visual properties and behaviors
+**Source Format**: Custom TBL format with gauge sections
+**Target Format**: HUDGauge resources (.tres)
+**Conversion Requirements**:
+- Parse gauge names and display properties
+- Extract visual representation parameters
+- Convert animation and behavior settings
+- Map to `/features/ui/hud/_shared/gauges/{gauge_name}.tres` for HUD components
+- Reference related gauge assets in `/features/ui/hud/_shared/`
+
+### Icons (icons.tbl)
+**Purpose**: Defines icon properties for radar and interface
+**Source Format**: Custom TBL format with icon entries
+**Target Format**: IconDefinition resources (.tres)
+**Conversion Requirements**:
+- Parse icon names and descriptions
+- Extract visual properties and color mappings
+- Convert radar display settings
+- Map to `/features/ui/hud/_shared/icons/{icon_name}.tres` for HUD components
+- Reference related icon assets in `/features/ui/hud/_shared/icons/`
+
+### Launch Help (launchhelp.tbl)
+**Purpose**: Defines launch sequence help content and timing
+**Source Format**: Custom TBL format with launch help entries
+**Target Format**: LaunchHelp resources (.tres)
+**Conversion Requirements**:
+- Parse help message timing and triggers
+- Extract help text and formatting
+- Convert sequence step dependencies
+- Map to `/assets/data/ui/launch_help/{help_name}.tres` following the Global Litmus Test
+- Reference related UI assets in `/features/ui/hud/`
+
+### Lightning Effects (lightning.tbl)
+**Purpose**: Defines lightning/electrical effect properties
+**Source Format**: Custom TBL format with lightning effect sections
+**Target Format**: LightningEffect resources (.tres)
+**Conversion Requirements**:
+- Parse effect names and descriptions
+- Extract electrical properties and damage values
+- Convert visual effect parameters
+- Map to `/features/effects/lightning/{effect_name}.tres` for electrical effects
+- Reference related effect assets in `/features/effects/_shared/`
+
+### Main Menu (mainhall.tbl)
+**Purpose**: Defines main menu/hall interface properties
+**Source Format**: Custom TBL format with menu sections
+**Target Format**: MainMenuDefinition resources (.tres)
+**Conversion Requirements**:
+- Parse menu layout and navigation settings
+- Extract background and theme properties
+- Convert menu item definitions
+- Map to `/features/ui/main_menu/_shared/menu_definition.tres` for menu components
+- Reference related UI assets in `/features/ui/main_menu/`
+
+### Menu System (menu.tbl)
+**Purpose**: Defines menu system layouts and behaviors
+**Source Format**: Custom TBL format with menu system sections
+**Target Format**: MenuSystem resources (.tres)
+**Conversion Requirements**:
+- Parse menu system structure and hierarchy
+- Extract navigation flow and state transitions
+- Convert input handling settings
+- Map to `/assets/data/ui/menus/{system_name}.tres` following the Global Litmus Test
+- Reference related UI assets in `/features/ui/`
+
+### Message System (messages.tbl)
+**Purpose**: Defines message system templates and delivery rules
+**Source Format**: Custom TBL format with message entries
+**Target Format**: MessageTemplate resources (.tres)
+**Conversion Requirements**:
+- Parse message templates and formatting
+- Extract delivery conditions and priorities
+- Convert voice acting references
+- Map to `/assets/data/communications/messages/{template_name}.tres` following the Global Litmus Test
+- Reference related audio assets in `/assets/audio/voice/`
+
+### Muzzle Flash Effects (mflash.tbl)
+**Purpose**: Defines muzzle flash effect properties
+**Source Format**: Custom TBL format with muzzle flash sections
+**Target Format**: MuzzleFlashEffect resources (.tres)
+**Conversion Requirements**:
+- Parse effect names and descriptions
+- Extract visual properties and timing
+- Convert weapon association mappings
+- Map to `/features/weapons/_shared/muzzle_flashes/{effect_name}.tres` for shared weapon effects
+- Reference related effect assets in `/features/effects/`
+
+### Nebula Clouds (nebula.tbl)
+**Purpose**: Defines nebula cloud properties and effects
+**Source Format**: Custom TBL format with nebula sections
+**Target Format**: NebulaCloud resources (.tres)
+**Conversion Requirements**:
+- Parse nebula names and descriptions
+- Extract visual properties and density settings
+- Convert environmental effects (sensor interference, damage)
+- Map to `/features/environment/nebulas/{nebula_name}.tres` for environmental features
+- Reference related effect assets in `/features/environment/_shared/`
+
+### Pixel Shaders (pixels.tbl)
+**Purpose**: Defines pixel shader effect properties
+**Source Format**: Custom TBL format with shader sections
+**Target Format**: PixelShader resources (.tres)
+**Conversion Requirements**:
+- Parse shader names and descriptions
+- Extract shader parameters and uniforms
+- Convert performance optimization settings
+- Map to `/assets/data/shaders/pixel/{shader_name}.tres` following the Global Litmus Test
+- Reference related shader assets in `/assets/shaders/`
+
+### Scripting System (scripting.tbl)
+**Purpose**: Defines scripting system hooks and event handlers
+**Source Format**: Custom TBL format with scripting sections
+**Target Format**: ScriptingHook resources (.tres)
+**Conversion Requirements**:
+- Parse script hook names and event types
+- Extract parameter definitions and return types
+- Convert event handler mappings
+- Map to `/assets/data/scripting/hooks/{hook_name}.tres` following the Global Litmus Test
+- Reference related script assets in `/scripts/mission/`
+
+### Subspace Missiles (ssm.tbl)
+**Purpose**: Defines subspace missile properties and behaviors
+**Source Format**: Custom TBL format with missile sections
+**Target Format**: SubspaceMissile resources (.tres)
+**Conversion Requirements**:
+- Parse missile names and descriptions
+- Extract subspace travel properties
+- Convert damage and effect parameters
+- Map to `/features/weapons/subspace_missiles/{missile_name}.tres` for specialized weapons
+- Reference related weapon assets in `/features/weapons/_shared/`
+
+### Starfield Backgrounds (stars.tbl)
+**Purpose**: Defines starfield and background properties
+**Source Format**: Custom TBL format with starfield sections
+**Target Format**: StarfieldDefinition resources (.tres)
+**Conversion Requirements**:
+- Parse starfield names and descriptions
+- Extract star density and distribution patterns
+- Convert parallax and movement settings
+- Map to `/assets/data/environment/starfields/{starfield_name}.tres` following the Global Litmus Test
+- Reference related environment assets in `/features/environment/_shared/`
+
+### String Tables (strings.tbl)
+**Purpose**: Defines string table for localization and text content
+**Source Format**: Custom TBL format with string entries
+**Target Format**: StringTable resources (.tres)
+**Conversion Requirements**:
+- Parse string identifiers and translations
+- Extract formatting and placeholder definitions
+- Convert language-specific variations
+- Map to `/assets/data/localization/strings/{language_code}.tres` following the Global Litmus Test
+- Reference related localization assets in `/assets/data/localization/`
+
+### Loading Tips (tips.tbl)
+**Purpose**: Defines loading screen tips and hints
+**Source Format**: Custom TBL format with tip entries
+**Target Format**: LoadingTip resources (.tres)
+**Conversion Requirements**:
+- Parse tip categories and display conditions
+- Extract tip text and formatting
+- Convert display timing and rotation settings
+- Map to `/assets/data/ui/tips/{category_name}.tres` following the Global Litmus Test
+- Reference related UI assets in `/features/ui/loading/`
+
+### Traitor Events (traitor.tbl)
+**Purpose**: Defines traitor/defection event conditions and outcomes
+**Source Format**: Custom TBL format with traitor event sections
+**Target Format**: TraitorEvent resources (.tres)
+**Conversion Requirements**:
+- Parse event names and trigger conditions
+- Extract defection consequences and dialogue
+- Convert loyalty check parameters
+- Map to `/assets/data/events/traitor/{event_name}.tres` following the Global Litmus Test
+- Reference related event assets in `/scripts/mission/events/`
+
+### Technical Strings (tstrings.tbl)
+**Purpose**: Defines technical string definitions for system messages
+**Source Format**: Custom TBL format with technical string entries
+**Target Format**: TechnicalString resources (.tres)
+**Conversion Requirements**:
+- Parse technical message identifiers
+- Extract system-specific formatting
+- Convert error code mappings
+- Map to `/assets/data/localization/technical/{system_name}.tres` following the Global Litmus Test
+- Reference related system assets in `/scripts/utilities/`
+
 ## Conversion Process
 
 ### 1. Parsing Phase
@@ -202,16 +491,7 @@ Global data resources that follow the "Global Litmus Test" principle: "If I dele
 assets/
 ├── audio/                         # Shared audio files
 │   ├── sfx/                       # Generic sound effects
-│   │   ├── weapons/               # Weapon sound effects
-│   │   ├── explosions/            # Explosion sound effects
-│   │   ├── ui/                    # UI sound effects
-│   │   ├── ai/                    # AI sound effects
-│   │   └── environment/           # Environmental sound effects
-│   ├── music/                     # Background music tracks
-│   └── voice/                     # Voice acting files
-│       ├── mission_briefings/     # Mission briefing voice files
-│       ├── character_dialogue/    # Character dialogue files
-│       └── ai/                    # AI voice files
+│   └── music/                     # Background music tracks
 ├── behavior_trees/                # Shared LimboAI behavior trees
 │   ├── ai/                        # AI behavior trees
 │   │   ├── combat/                # Combat-related behavior trees
@@ -221,77 +501,37 @@ assets/
 ├── data/                          # Shared data resources
 │   ├── ai/                        # AI data resources
 │   │   └── profiles/              # AI profile definitions
-│   ├── ships/                     # Ship data resources
-│   ├── weapons/                   # Weapon data resources
-│   ├── species/                   # Species data resources
-│   ├── iff/                       # IFF relationship data
-│   ├── effects/                   # Effect data resources
-│   ├── ui/                        # UI data resources
-│   │   ├── medals/                # Medal definitions
-│   │   └── ranks/                 # Rank definitions
-│   ├── audio/                     # Audio data resources
-│   │   ├── sounds/                # Sound definitions
-│   │   └── music/                 # Music definitions
-│   └── cutscenes/                 # Cutscene definitions
+│   └── mission/                   # Mission data resources
 ├── textures/                      # Shared texture files
-│   ├── effects/                   # Particle textures used by multiple effects
 │   ├── ui/                        # Generic UI elements
-│   │   ├── hud/                   # HUD display elements
-│   │   │   ├── radar/             # Radar display elements
-│   │   │   └── iff/               # IFF-specific HUD elements
-│   │   └── medals/                # Medal UI elements
+│   ├── effects/                   # Particle textures used by multiple effects
 │   └── fonts/                     # Font textures
 └── animations/                    # Shared animation files
-    ├── effects/                   # Generic effect animations
-    │   ├── weapons/               # Weapon effect animations
-    │   ├── explosions/            # Explosion animations
-    │   └── thrusters/             # Thruster animations
-    └── ui/                        # UI animations
+    ├── ui/                        # UI animations
+    └── effects/                   # Generic effect animations
 ```
 
 ## Integration Points
 
 ### Data Converter Output Mapping
-- ShipClass resources → `/assets/data/ships/{ship_name}.tres`
-- WeaponClass resources → `/assets/data/weapons/{weapon_name}.tres`
 - AIProfile resources → `/assets/data/ai/profiles/{profile_name}.tres`
-- Species resources → `/assets/data/species/{species_name}.tres`
-- IFF resources → `/assets/data/iff/{iff_name}.tres`
-- Effect resources → `/assets/data/effects/{effect_name}.tres`
-- Medal resources → `/assets/data/ui/medals/{medal_name}.tres`
-- Rank resources → `/assets/data/ui/ranks/{rank_name}.tres`
 - Sound resources → `/assets/data/audio/sounds/{sound_name}.tres`
 - Music resources → `/assets/data/audio/music/{music_name}.tres`
 - Cutscene resources → `/assets/data/cutscenes/{cutscene_name}.tres`
 
 ### Resource References
-- **Ship entities** in `/features/fighters/{faction}/{ship_name}/` reference ShipClass resources from `/assets/data/ships/`
-- **Weapon entities** in `/features/weapons/{weapon_name}/` reference WeaponClass resources from `/assets/data/weapons/`
 - **AI systems** in `/scripts/ai/` reference AIProfile resources from `/assets/data/ai/profiles/`
 - **Mission scenes** in `/campaigns/{campaign}/missions/` reference data resources for entity instantiation
 - **UI components** in `/features/ui/` reference data resources for display information
-- **Effect systems** in `/features/effects/` reference Effect resources from `/assets/data/effects/`
-- **Medal displays** in `/features/ui/medals_display/` reference Medal resources from `/assets/data/ui/medals/`
-- **Rank displays** in `/features/ui/rank_display/` reference Rank resources from `/assets/data/ui/ranks/`
 
 ## Relationship to Other Assets
 
 ### Entity Integration
 Converted TBL data integrates with entity scenes following the feature-based organization:
-- ShipClass resources are referenced by ship entity scenes in `/features/fighters/{faction}/{ship_name}/`
-- WeaponClass resources are referenced by weapon entity scenes in `/features/weapons/{weapon_name}/`
 - AIProfile resources are referenced by AI behavior scripts in `/scripts/ai/`
-- Effect resources are used by visual effect entities in `/features/effects/{effect_name}/`
-- Medal resources are used by UI components in `/features/ui/medals_display/`
-- Rank resources are used by UI components in `/features/ui/rank_display/`
 
 ### Common Shared Assets
-- Cross-faction weapon definitions (shared between Terran and Kilrathi) in `/assets/data/weapons/`
-- Standard particle effects used across multiple systems in `/assets/data/effects/`
-- Shared IFF color definitions for radar display in `/assets/data/iff/`
 - Universal AI behavior templates in `/assets/data/ai/profiles/`
-- Common species properties in `/assets/data/species/`
-- Shared UI elements for medals and ranks in `/assets/textures/ui/medals/`
 - Shared audio assets organized by type in `/assets/audio/`
 
 This structure follows the hybrid approach where truly global, context-agnostic data assets are organized in `/assets/data/`, following the "Global Litmus Test" principle. The structure maintains clear separation of concerns between different data types while ensuring easy access to all data resources needed for game features. Each TBL file type maps to appropriate locations in the target directory structure, maintaining the relationships to other assets as documented in the asset mapping documents.

@@ -83,33 +83,33 @@ Each parameter has five values corresponding to skill levels (Very Easy, Easy, M
 - do capship vs capship collisions: NO
 
 ## Target Structure
-Following the feature-based organization principles and hybrid model approach defined in `Godot_Project_Structure_Refinement.md`, the AI system components are organized as follows:
+Following the feature-based organization principles and hybrid model approach defined in the Godot project directory structure, the AI system components are organized as follows:
 
 ### Scripts
 AI-related scripts are organized in `/scripts/ai/` with base classes and behavior definitions:
-- `/scripts/ai/ai_controller.gd` - Main AI controller implementation
-- `/scripts/ai/ai_state.gd` - AI state management
-- `/scripts/ai/ai_goal.gd` - AI goal system
+- `/scripts/ai/ai_behavior.gd` - Base AI behavior class
+- `/scripts/ai/combat_tactics.gd` - Combat behavior logic
+- `/scripts/ai/navigation.gd` - Navigation and pathfinding
 - `/scripts/ai/ai_profile.gd` - AI profile resource definition
 - `/scripts/ai/ai_profile_database.gd` - AI profile database
 
 ### LimboAI Behavior Trees
-Behavior tree definitions for LimboAI are organized in `/assets/behavior_trees/ai/` following the directory structure in `directory_structure.md`:
-- `/assets/behavior_trees/ai/combat/bt_attack.lbt` - Attack behavior tree (see concepts/assets/behavior_trees/ai/combat/bt_attack.lbt)
-- `/assets/behavior_trees/ai/combat/bt_evade.lbt` - Evade behavior tree (see concepts/assets/behavior_trees/ai/combat/bt_evade.lbt)
+Behavior tree definitions for LimboAI are organized in `/assets/behavior_trees/ai/` following the directory structure:
+- `/assets/behavior_trees/ai/combat/bt_attack.lbt` - Attack behavior tree
+- `/assets/behavior_trees/ai/combat/bt_evade.lbt` - Evade behavior tree
 - `/assets/behavior_trees/ai/navigation/bt_patrol.lbt` - Patrol behavior tree
 - `/assets/behavior_trees/ai/tactical/bt_formation.lbt` - Formation flying behavior tree
 - `/assets/behavior_trees/ai/tactical/bt_strafe.lbt` - Strafing behavior tree
 
 ### Assets
 AI profile data resources are stored in `/assets/data/ai/profiles/` for easy access and modification, following the hybrid model approach where truly global assets are organized in `/assets/`:
-- `/assets/data/ai/profiles/saga_retail.tres` - SAGA RETAIL profile from Hermes campaign (see concepts/assets/data/ai/profiles/saga_retail.tres)
+- `/assets/data/ai/profiles/saga_retail.tres` - SAGA RETAIL profile from Hermes campaign
 - `/assets/data/ai/profiles/aggressive.tres` - Aggressive AI profile
 - `/assets/data/ai/profiles/defensive.tres` - Defensive AI profile
 - `/assets/data/ai/profiles/tactical.tres` - Tactical AI profile
 - `/assets/data/ai/profiles/default.tres` - Default AI profile
 
-AI-related audio assets are organized in the global audio directory following the structure in `directory_structure.md`:
+AI-related audio assets are organized in the global audio directory following the structure:
 - `/assets/audio/sfx/ai/combat/` - Combat-related sounds
 - `/assets/audio/sfx/ai/commands/` - Command issuance sounds
 - `/assets/audio/sfx/ai/acknowledgments/` - Response sounds
@@ -130,4 +130,4 @@ This structure follows the "Global Litmus Test" for placing assets in `/assets/`
 
 Sound effects and voice acting are also global assets that would be needed regardless of which specific ships are in the game, so they belong in `/assets/audio/sfx/ai/` and `/assets/audio/voice/ai/` respectively.
 
-Behavior trees are global assets that define reusable AI behaviors, so they belong in `/assets/behavior_trees/ai/` rather than being duplicated in each feature directory. This follows the same principle as other shared assets in the `/assets/` directory.
+Behavior trees are global assets that define reusable AI behaviors, so they belong in `/assets/behavior_trees/ai/` rather than being duplicated in each feature directory. This follows the same principle as other shared assets in the `/assets/` directory and aligns with the hybrid model approach defined in the Godot project directory structure.

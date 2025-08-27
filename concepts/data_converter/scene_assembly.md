@@ -10,7 +10,7 @@ This document explains how converted assets from different file types are integr
 - ShipClass resources (.tres) from `/features/fighters/{faction}_{ship_name}/{ship_name}.tres`
 - 3D model (.glb) from `/features/fighters/{faction}_{ship_name}/{ship_name}.glb`
 - Textures (.webp) from `/features/fighters/{faction}_{ship_name}/{ship_name}_diffuse.webp`
-- Engine sounds (.ogg) from `/features/fighters/{faction}_{ship_name}/assets/sounds/engine_loop.ogg`
+- Engine sounds (.ogg) from `/features/fighters/{faction}_{ship_name}/{ship_name}_engine.ogg`
 - Weapon hardpoint data from POF metadata
 - AI profile resources from `/assets/data/ai/profiles/`
 
@@ -28,7 +28,7 @@ This document explains how converted assets from different file types are integr
 **Component Assets**:
 - WeaponClass resources (.tres) from `/features/weapons/{weapon_name}/{weapon_name}.tres`
 - 3D model (.glb) from `/features/weapons/{weapon_name}/{weapon_name}.glb`
-- Firing sounds (.ogg) from `/features/weapons/{weapon_name}/assets/sounds/fire_sound.ogg`
+- Firing sounds (.ogg) from `/features/weapons/{weapon_name}/{weapon_name}_fire.ogg`
 - Muzzle flash effects from `/features/effects/muzzle_flash/`
 - Projectile trail textures from `/assets/textures/effects/particles/`
 - Impact effects from `/features/weapons/_shared/impact_effects/`
@@ -64,25 +64,25 @@ This document explains how converted assets from different file types are integr
 **Component Assets**:
 - Particle effect resources (.tres) from `/features/effects/{effect_name}/{effect_name}.tres`
 - Animation textures from `/features/effects/{effect_name}/textures/`
-- Audio effects from `/features/effects/{effect_name}/assets/sounds/`
+- Audio effects from `/features/effects/{effect_name}/{effect_name}_sound.ogg`
 - Shared particle textures from `/assets/textures/effects/particles/`
-- Shader definitions for special effects from `/assets/shaders/effects/`
+- Shared shader effects from `/features/effects/_shared/shader_effects/`
 
 **Assembly Process**:
 - Create effect root node with effect properties from feature directory following self-contained feature organization
 - Configure particle systems with animation textures from feature-specific texture directory
 - Attach audio components for sound effects from feature-specific audio directory
-- Set up shader materials for visual effects from global shader directory (passes Global Litmus Test)
+- Set up shader materials for visual effects from shared shader effects directory
 - Configure emission and timing properties with effect data resource
 - Link to parent entities for positioning through instancing
 
 ### 5. UI Scenes
 **Component Assets**:
-- UI component definitions from `/features/ui/{component}/{component}.tres`
-- Interface graphics from `/features/ui/{component}/assets/`
+- UI component definitions from `/features/ui/{component}/{component}.tscn`
+- Interface graphics from `/features/ui/{component}/background.png`
 - Animation sequences from `/features/ui/{component}/animations/`
 - Font resources from `/assets/textures/fonts/`
-- Audio feedback from `/features/ui/{component}/assets/sounds/`
+- Audio feedback from `/features/ui/{component}/sounds/`
 - Shared UI elements from `/features/ui/_shared/`
 
 **Assembly Process**:
@@ -202,27 +202,27 @@ wcsaga_godot/
 │       └── dogfight.tres  # Dogfight campaign
 ├── features/              # Self-contained game features organized by category
 │   ├── fighters/          # Fighter ship entities (primary player and AI ships)
-│   │   ├── confed_rapier/ # Raptor fighter - all files together
+│   │   ├── confed_rapier/ # Rapier fighter - all files together
 │   │   │   ├── rapier.tscn    # Scene file
 │   │   │   ├── rapier.gd      # Script file
 │   │   │   ├── rapier.tres    # Ship data resource
 │   │   │   ├── rapier.glb     # 3D model
-│   │   │   ├── rapier.png     # Texture
+│   │   │   ├── rapier_diffuse.webp     # Texture
 │   │   │   └── rapier_engine.ogg # Engine sound
 │   │   ├── kilrathi_dralthi/  # Dralthi fighter
 │   │   │   ├── dralthi.tscn
 │   │   │   ├── dralthi.gd
 │   │   │   ├── dralthi.tres
 │   │   │   ├── dralthi.glb
-│   │   │   ├── dralthi.png
+│   │   │   ├── dralthi_diffuse.webp
 │   │   │   └── dralthi_engine.ogg
 │   │   ├── _shared/           # Shared fighter assets
 │   │   │   ├── cockpits/      # Shared cockpit models
 │   │   │   │   ├── standard_cockpit.glb
 │   │   │   │   └── standard_cockpit_material.tres
 │   │   │   └── effects/       # Shared fighter effects
-│   │   │       ├── engine_trail.png
-│   │   │       └── shield_effect.png
+│   │   │       ├── engine_trail.webp
+│   │   │       └── shield_effect.webp
 │   │   └── templates/         # Fighter templates
 │   ├── capital_ships/         # Capital ship entities
 │   │   ├── tcs_tigers_claw/   # Tigers Claw carrier
@@ -230,7 +230,7 @@ wcsaga_godot/
 │   │   │   ├── tigers_claw.gd
 │   │   │   ├── tigers_claw.tres
 │   │   │   ├── tigers_claw.glb
-│   │   │   └── tigers_claw.png
+│   │   │   └── tigers_claw_diffuse.webp
 │   │   ├── _shared/           # Shared capital ship assets
 │   │   │   ├── bridge_models/ # Shared bridge components
 │   │   │   └── turret_models/ # Shared turret models
@@ -241,7 +241,7 @@ wcsaga_godot/
 │   │   │   ├── laser_cannon.gd      # Script
 │   │   │   ├── laser_cannon.tres    # Weapon data
 │   │   │   ├── laser_cannon.glb     # Model
-│   │   │   ├── laser_cannon.png     # Texture
+│   │   │   ├── laser_cannon_diffuse.webp     # Texture
 │   │   │   └── laser_fire.ogg       # Sound
 │   │   ├── projectiles/       # Projectile entities
 │   │   │   ├── laser_bolt/    # Laser bolt projectile
@@ -262,13 +262,13 @@ wcsaga_godot/
 │   │   │   ├── explosion.tscn
 │   │   │   ├── explosion.gd
 │   │   │   ├── explosion.tres
-│   │   │   ├── explosion_fire.png
+│   │   │   ├── explosion_fire.webp
 │   │   │   └── explosion_sound.ogg
 │   │   ├── fireball/          # Fireball effect
 │   │   │   ├── fireball.tscn
 │   │   │   ├── fireball.gd
 │   │   │   ├── fireball.tres
-│   │   │   ├── fireball_texture.png
+│   │   │   ├── fireball_texture.webp
 │   │   │   └── fireball_sound.ogg
 │   │   ├── _shared/           # Shared effect assets
 │   │   │   ├── particle_textures/ # Shared particle effects
@@ -280,13 +280,13 @@ wcsaga_godot/
 │   │   │   ├── asteroid.gd
 │   │   │   ├── asteroid.tres
 │   │   │   ├── asteroid.glb
-│   │   │   └── asteroid.png
+│   │   │   └── asteroid_diffuse.webp
 │   │   ├── nebula/            # Nebula effect
 │   │   │   ├── nebula.tscn
 │   │   │   ├── nebula.gd
 │   │   │   ├── nebula.tres
 │   │   │   ├── nebula.glb
-│   │   │   └── nebula.png
+│   │   │   └── nebula_diffuse.webp
 │   │   ├── _shared/           # Shared environment assets
 │   │   │   ├── debris/        # Space debris models
 │   │   │   └── environment/   # Environmental textures

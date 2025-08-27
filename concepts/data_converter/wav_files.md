@@ -87,66 +87,45 @@ Global audio assets that follow the "Global Litmus Test" principle: "If I delete
 
 ```
 assets/
-├── audio/                 # Shared audio files
-│   ├── sfx/               # Generic sound effects
-│   │   ├── weapons/       # Weapon sound effects
-│   │   │   ├── firing/    # Weapon firing sounds
-│   │   │   ├── impacts/   # Weapon impact sounds
-│   │   │   ├── explosions/ # Explosion sounds
-│   │   │   └── flyby/     # Projectile flyby sounds
-│   │   ├── ui/            # UI sound effects
-│   │   │   ├── buttons/   # Button interaction sounds
-│   │   │   ├── menus/     # Menu navigation sounds
-│   │   │   └── alerts/    # Alert and notification sounds
-│   │   ├── environment/   # Environmental sounds
-│   │   │   ├── space/     # Space ambient sounds
-│   │   │   ├── cockpit/   # Cockpit sounds
-│   │   │   └── ui/        # User interface sounds
-│   │   ├── ships/         # Generic ship sounds
-│   │   │   ├── engines/   # Generic engine sounds
-│   │   │   ├── movement/  # Ship movement sounds
-│   │   │   └── destruction/ # Generic destruction sounds
-│   │   └── effects/       # Generic effect sounds
-│   ├── music/             # Background music tracks
-│   │   ├── ambient/       # Ambient background music
-│   │   ├── combat/        # Combat music tracks
-│   │   ├── briefing/      # Mission briefing music
-│   │   ├── debriefing/    # Mission debriefing music
-│   │   ├── credits/       # Credits sequence music
-│   │   └── cutscenes/     # Cutscene music
-│   └── voice/             # Voice acting files
-│       ├── mission_briefings/ # Mission briefing voice files
-│       ├── character_dialogue/ # Character dialogue files
-│       ├── system_announcements/ # System announcement voice files
-│       ├── mission_debriefings/ # Mission debriefing voice files
-│       ├── ai/            # AI voice commands and responses
-│       │   ├── terran/    # Terran AI voices
-│       │   ├── kilrathi/  # Kilrathi AI voices
-│       │   └── pirate/    # Pirate AI voices
-│       └── cutscenes/     # Cutscene voice acting
-├── behavior_trees/        # Shared LimboAI behavior trees
-│   ├── ai/                # AI behavior trees
-│   │   ├── combat/        # Combat-related behavior trees
-│   │   ├── navigation/    # Navigation behavior trees
-│   │   └── tactical/      # Tactical behavior trees
-│   └── mission/           # Mission-specific behavior trees
-├── data/                  # Shared data resources
-│   ├── ai/                # AI data resources
-│   │   └── profiles/      # AI profile definitions
-│   ├── ships/             # Ship data resources
-│   ├── weapons/           # Weapon data resources
-│   ├── species/           # Species data resources
-│   ├── iff/               # IFF relationship data
-│   ├── armor/             # Armor type data
-│   ├── effects/           # Effect data resources
-│   └── mission/           # Mission data resources
-├── textures/              # Shared texture files
-│   ├── ui/                # Generic UI elements
-│   ├── effects/           # Particle textures used by multiple effects
-│   └── fonts/             # Font textures
-└── animations/            # Shared animation files
-    ├── ui/                # UI animations
-    └── effects/           # Generic effect animations
+├── audio/                         # Shared audio files
+│   ├── sfx/                       # Generic sound effects
+│   │   ├── weapons/               # Weapon sound effects
+│   │   │   ├── firing/            # Weapon firing sounds
+│   │   │   ├── impacts/           # Weapon impact sounds
+│   │   │   ├── explosions/        # Explosion sounds
+│   │   │   └── flyby/             # Projectile flyby sounds
+│   │   ├── environment/           # Environmental sounds
+│   │   │   ├── space/             # Space ambient sounds
+│   │   │   ├── cockpit/           # Cockpit sounds
+│   │   │   └── ui/                # User interface sounds
+│   │   ├── ships/                 # Generic ship sounds
+│   │   │   ├── engines/           # Generic engine sounds
+│   │   │   ├── movement/          # Ship movement sounds
+│   │   │   └── destruction/       # Generic destruction sounds
+│   │   └── effects/               # Generic effect sounds
+│   ├── music/                     # Background music tracks
+│   │   ├── ambient/               # Ambient background music
+│   │   ├── combat/                # Combat music tracks
+│   │   ├── briefing/              # Mission briefing music
+│   │   ├── debriefing/            # Mission debriefing music
+│   │   ├── credits/               # Credits sequence music
+│   │   └── cutscenes/             # Cutscene music
+│   └── voice/                     # Voice acting files
+│       ├── mission_briefings/     # Mission briefing voice files
+│       ├── character_dialogue/    # Character dialogue files
+│       ├── system_announcements/  # System announcement voice files
+│       └── mission_debriefings/   # Mission debriefing voice files
+├── data/                          # Shared data resources
+│   ├── ai/                        # AI data resources
+│   │   └── profiles/              # AI profile definitions
+│   └── mission/                   # Mission data resources
+├── textures/                      # Shared texture files
+│   ├── ui/                        # Generic UI elements
+│   ├── effects/                   # Particle textures used by multiple effects
+│   └── fonts/                     # Font textures
+└── animations/                    # Shared animation files
+    ├── ui/                        # UI animations
+    └── effects/                   # Generic effect animations
 ```
 
 ### Features Directory Structure (Feature-Specific Assets)
@@ -154,109 +133,111 @@ Feature-specific audio assets that are closely tied to particular features and f
 
 ```
 features/
-├── fighters/              # Fighter ship entities
-│   ├── confed_rapier/     # F-44B Raptor fighter
-│   │   ├── rapier.tscn    # Scene file
-│   │   ├── rapier.gd      # Script file
-│   │   ├── rapier.tres    # Ship data resource
-│   │   ├── rapier.glb     # 3D model
-│   │   ├── rapier.png     # Texture
-│   │   └── assets/        # Feature-specific assets
-│   │       └── sounds/    # Ship-specific sounds
+├── fighters/                      # Fighter ship entities
+│   ├── confed_arrow/              # F-27B Arrow fighter
+│   │   ├── arrow.tscn             # Scene file
+│   │   ├── arrow.gd               # Script file
+│   │   ├── arrow.tres             # Ship data resource
+│   │   ├── arrow.glb              # 3D model
+│   │   ├── arrow_diffuse.webp     # Texture
+│   │   ├── arrow_normal.webp      # Normal map
+│   │   └── assets/                # Feature-specific assets
+│   │       └── sounds/            # Ship-specific sounds
 │   │           ├── engine_loop.ogg # Engine loop sound
 │   │           ├── maneuver.ogg    # Maneuvering thrusters
 │   │           └── afterburner.ogg # Afterburner sound
-│   ├── kilrathi_dralthi/  # Dralthi fighter
-│   │   ├── dralthi.tscn   # Scene file
-│   │   ├── dralthi.gd     # Script file
-│   │   ├── dralthi.tres   # Ship data resource
-│   │   ├── dralthi.glb    # 3D model
-│   │   ├── dralthi.png    # Texture
-│   │   └── assets/        # Feature-specific assets
-│   │       └── sounds/    # Ship-specific sounds
+│   ├── confed_rapier/             # F-44B Raptor fighter
+│   │   ├── rapier.tscn            # Scene file
+│   │   ├── rapier.gd              # Script file
+│   │   ├── rapier.tres            # Ship data resource
+│   │   ├── rapier.glb             # 3D model
+│   │   ├── rapier.png             # Texture
+│   │   └── assets/                # Feature-specific assets
+│   │       └── sounds/            # Ship-specific sounds
 │   │           └── engine_loop.ogg # Engine loop sound
-│   └── _shared/           # Shared fighter assets
-├── capital_ships/         # Capital ship entities
-│   ├── tcs_behemoth/      # TCS Behemoth capital ship
-│   │   ├── behemoth.tscn  # Scene file
-│   │   ├── behemoth.gd    # Script file
-│   │   ├── behemoth.tres  # Ship data resource
-│   │   ├── behemoth.glb   # 3D model
-│   │   ├── behemoth.png   # Texture
-│   │   └── assets/        # Feature-specific assets
-│   │       └── sounds/    # Ship-specific sounds
+│   └── _shared/                   # Shared fighter assets
+├── capital_ships/                 # Capital ship entities
+│   ├── tcs_behemoth/              # TCS Behemoth capital ship
+│   │   ├── behemoth.tscn          # Scene file
+│   │   ├── behemoth.gd            # Script file
+│   │   ├── behemoth.tres          # Ship data resource
+│   │   ├── behemoth.glb           # 3D model
+│   │   ├── behemoth_diffuse.webp  # Texture
+│   │   ├── behemoth_normal.webp   # Normal map
+│   │   └── assets/                # Feature-specific assets
+│   │       └── sounds/            # Ship-specific sounds
 │   │           └── engine_loop.ogg # Engine loop sound
-│   └── _shared/           # Shared capital ship assets
-├── weapons/               # Weapon entities
-│   ├── ion_cannon/        # Ion cannon weapon
-│   │   ├── ion_cannon.tscn    # Scene
-│   │   ├── ion_cannon.gd      # Script
-│   │   ├── ion_cannon.tres    # Weapon data
-│   │   ├── ion_cannon.glb     # Model
-│   │   ├── ion_cannon.png     # Texture
-│   │   └── assets/        # Feature-specific assets
-│   │       └── sounds/    # Weapon-specific sounds
+│   └── _shared/                   # Shared capital ship assets
+├── weapons/                       # Weapon entities
+│   ├── ion_cannon/                # Ion cannon weapon
+│   │   ├── ion_cannon.tscn        # Scene
+│   │   ├── ion_cannon.gd          # Script
+│   │   ├── ion_cannon.tres        # Weapon data
+│   │   ├── ion_cannon.glb         # Model
+│   │   ├── ion_cannon.webp        # Texture
+│   │   └── assets/                # Feature-specific assets
+│   │       └── sounds/            # Weapon-specific sounds
 │   │           ├── fire_sound.ogg # Firing sound
 │   │           └── impact_sound.ogg # Impact sound
-│   ├── javelin_missile/   # Javelin missile weapon
+│   ├── javelin_missile/           # Javelin missile weapon
 │   │   ├── javelin_missile.tscn   # Scene
 │   │   ├── javelin_missile.gd     # Script
 │   │   ├── javelin_missile.tres   # Weapon data
 │   │   ├── javelin_missile.glb    # Model
-│   │   ├── javelin_missile.png    # Texture
-│   │   └── assets/        # Feature-specific assets
-│   │       └── sounds/    # Weapon-specific sounds
+│   │   ├── javelin_missile.webp   # Texture
+│   │   └── assets/                # Feature-specific assets
+│   │       └── sounds/            # Weapon-specific sounds
 │   │           ├── fire_sound.ogg # Firing sound
 │   │           └── impact_sound.ogg # Impact sound
-│   └── _shared/           # Shared weapon assets
-├── effects/               # Effect entities
-│   ├── explosion/         # Explosion effect
-│   │   ├── explosion.tscn # Scene file
-│   │   ├── explosion.gd   # Script file
-│   │   ├── explosion.tres # Effect data resource
-│   │   ├── explosion_fire.png # Texture
-│   │   └── assets/        # Feature-specific assets
-│   │       └── sounds/    # Effect-specific sounds
+│   └── _shared/                   # Shared weapon assets
+├── effects/                       # Effect entities
+│   ├── explosion/                 # Explosion effect
+│   │   ├── explosion.tscn         # Scene file
+│   │   ├── explosion.gd           # Script file
+│   │   ├── explosion.tres         # Effect data resource
+│   │   ├── explosion_fire.webp    # Texture
+│   │   └── assets/                # Feature-specific assets
+│   │       └── sounds/            # Effect-specific sounds
 │   │           └── explosion_sound.ogg # Explosion sound
-│   ├── fireball/          # Fireball effect
-│   │   ├── fireball.tscn  # Scene file
-│   │   ├── fireball.gd    # Script file
-│   │   ├── fireball.tres  # Effect data resource
-│   │   ├── fireball_texture.png # Texture
-│   │   └── assets/        # Feature-specific assets
-│   │       └── sounds/    # Effect-specific sounds
+│   ├── fireball/                  # Fireball effect
+│   │   ├── fireball.tscn          # Scene file
+│   │   ├── fireball.gd            # Script file
+│   │   ├── fireball.tres          # Effect data resource
+│   │   ├── fireball_texture.webp  # Texture
+│   │   └── assets/                # Feature-specific assets
+│   │       └── sounds/            # Effect-specific sounds
 │   │           └── fireball_sound.ogg # Fireball sound
-│   └── _shared/           # Shared effect assets
-├── environment/           # Environmental objects and props
-│   ├── asteroid/          # Asteroid object
-│   │   ├── asteroid.tscn  # Scene file
-│   │   ├── asteroid.gd    # Script file
-│   │   ├── asteroid.tres  # Data resource
-│   │   ├── asteroid.glb   # 3D model
-│   │   ├── asteroid.png   # Texture
-│   │   └── assets/        # Feature-specific assets
-│   │       └── sounds/    # Environment-specific sounds
+│   └── _shared/                   # Shared effect assets
+├── environment/                   # Environmental objects and props
+│   ├── asteroid/                  # Asteroid object
+│   │   ├── asteroid.tscn          # Scene file
+│   │   ├── asteroid.gd            # Script file
+│   │   ├── asteroid.tres          # Data resource
+│   │   ├── asteroid.glb           # 3D model
+│   │   ├── asteroid.webp          # Texture
+│   │   └── assets/                # Feature-specific assets
+│   │       └── sounds/            # Environment-specific sounds
 │   │           └── collision_sound.ogg # Collision sound
-│   └── _shared/           # Shared environment assets
-└── ui/                    # UI feature elements
-    ├── main_menu/         # Main menu interface
-    │   ├── main_menu.tscn # Scene file
-    │   ├── main_menu.gd   # Script file
-    │   ├── background.png # Background texture
-    │   └── assets/        # Feature-specific assets
-    │       └── sounds/    # UI-specific sounds
+│   └── _shared/                   # Shared environment assets
+└── ui/                            # UI feature elements
+    ├── main_menu/                 # Main menu interface
+    │   ├── main_menu.tscn         # Scene file
+    │   ├── main_menu.gd           # Script file
+    │   ├── background.webp        # Background texture
+    │   └── assets/                # Feature-specific assets
+    │       └── sounds/            # UI-specific sounds
     │           ├── click.ogg      # Button click sound
     │           ├── hover.ogg      # Button hover sound
     │           └── transition.ogg # Menu transition sound
-    ├── hud/               # Heads-up display
-    │   ├── player_hud.tscn # Scene file
-    │   ├── player_hud.gd  # Script file
-    │   └── assets/        # Feature-specific assets
-    │       └── sounds/    # UI-specific sounds
+    ├── hud/                       # Heads-up display
+    │   ├── player_hud.tscn        # Scene file
+    │   ├── player_hud.gd          # Script file
+    │   └── assets/                # Feature-specific assets
+    │       └── sounds/            # UI-specific sounds
     │           ├── warning.ogg        # Warning sound
     │           ├── target_acquired.ogg # Target acquired sound
     │           └── system_status.ogg  # System status sound
-    └── _shared/           # Shared UI assets
+    └── _shared/                   # Shared UI assets
 ```
 
 ## Integration Points

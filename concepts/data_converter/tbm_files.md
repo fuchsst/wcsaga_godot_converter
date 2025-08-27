@@ -89,17 +89,14 @@ Global data resources that follow the "Global Litmus Test" principle: "If I dele
 assets/
 ├── audio/                         # Shared audio files
 │   ├── sfx/                       # Generic sound effects
-│   │   ├── weapons/               # Weapon sound effects
-│   │   ├── explosions/            # Explosion sound effects
-│   │   └── ui/                    # UI sound effects
 │   ├── music/                     # Background music tracks
-│   └── voice/                     # Voice acting files
+│   └── ui/                        # UI sound effects
 ├── behavior_trees/                # Shared LimboAI behavior trees
 │   ├── ai/                        # AI behavior trees
 │   │   ├── combat/                # Combat-related behavior trees
 │   │   ├── navigation/            # Navigation behavior trees
 │   │   └── tactical/              # Tactical behavior trees
-│   └── mission/                  # Mission-specific behavior trees
+│   └── mission/                   # Mission-specific behavior trees
 ├── data/                          # Shared data resources
 │   ├── ai/                        # AI data resources
 │   │   └── profiles/              # AI profile definitions
@@ -107,19 +104,19 @@ assets/
 │   │       └── overrides/         # TBM override files
 │   ├── ships/                     # Ship data resources
 │   │   ├── base.tres              # Base ship definitions
-│   │   └── overrides/            # TBM override files
+│   │   └── overrides/             # TBM override files
 │   ├── weapons/                   # Weapon data resources
 │   │   ├── base.tres              # Base weapon definitions
 │   │   └── overrides/             # TBM override files
 │   ├── species/                   # Species data resources
 │   │   ├── base.tres              # Base species definitions
-│   │   └── overrides/            # TBM override files
+│   │   └── overrides/             # TBM override files
 │   ├── iff/                       # IFF relationship data
 │   │   ├── base.tres              # Base IFF definitions
 │   │   └── overrides/             # TBM override files
 │   ├── armor/                     # Armor type data
 │   │   ├── base.tres              # Base armor definitions
-│   │   └── overrides/            # TBM override files
+│   │   └── overrides/             # TBM override files
 │   └── effects/                   # Effect data resources
 │       ├── base.tres              # Base effect definitions
 │       └── overrides/             # TBM override files
