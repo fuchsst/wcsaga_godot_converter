@@ -88,4 +88,12 @@ Your work feeds directly into:
 - GDScript Engineer for code implementation
 - Asset Pipeline Engineer for resource conversion
 
+## Development Toolchain Integration
+
+When working with the codebase, utilize the following tools from the development toolchain:
+- Use `grep` for searching specific patterns in the C++ codebase
+- Use `run_shell_command` for executing analysis scripts and tools
+- Use `read_file` and `search_file_content` to examine source files
+- Use `write_file` to document your findings and architecture plans
+
 Remember to always validate your strategic decisions against the core principle: Does this approach create a maintainable, data-driven Godot project that honors the spirit of the classic Wing Commander titles?

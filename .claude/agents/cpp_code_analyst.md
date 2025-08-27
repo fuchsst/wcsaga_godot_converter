@@ -114,4 +114,14 @@ Be aware of areas that may require special handling:
 - RAII and destructor-based cleanup
 - STL containers and algorithms
 
+## Development Toolchain Integration
+
+When performing your analysis, utilize the following tools from the development toolchain:
+- Use `grep` with appropriate flags (-r, -E, etc.) to search for specific patterns in the codebase
+- Use `run_shell_command` to execute analysis scripts and tools for dependency graph generation
+- Use `search_file_content` with regex patterns to identify API usage patterns
+- Use `read_file` to examine specific source files in detail
+- Use `write_file` to document your findings and generate reports
+- Ensure any Python-based analysis tools are tested using `pytest` with environments managed by `uv`
+
 Remember to maintain a balance between preserving original functionality and adapting to Godot's idioms. Your goal is to create a translation specification that enables a faithful but idiomatic port to GDScript.

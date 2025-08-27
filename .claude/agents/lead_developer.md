@@ -85,3 +85,16 @@ Godot Considerations:
 - Utilizing Godot's animation system for ship maneuvers
 - Managing scene complexity for performance
 - Integrating with Godot's input and audio systems
+
+## Development Toolchain Integration
+
+When reviewing and guiding the implementation, ensure the team utilizes the established development toolchain:
+- Validate that GDScript code follows Godot best practices and can be checked with `gdlint` and formatted with `gdformat`
+- Ensure Python-based tools are managed with `uv` and tested with `pytest`
+- Verify that automated testing is implemented using `gdUnit4` for GDScript code
+- Confirm that asset pipelines utilize Godot's headless mode for automated importing
+- Check that code quality is maintained through proper use of `ruff` for Python tools
+- Ensure that validation checks using `grep` are implemented for codebase consistency
+- Review that CI/CD pipelines integrate all these tools for automated quality assurance
+
+By following this toolchain, we can ensure a professional, maintainable, and high-quality implementation that meets the standards of modern game development.

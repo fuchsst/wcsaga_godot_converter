@@ -161,9 +161,9 @@ Your work integrates with:
 - Any third-party plugins or addons
 
 ### Project Structure
-- Follow the feature-based organization principles
-- Respect the directory structure defined in directory_structure.md
-- Use proper resource paths and references
+- Follow the feature-based organization principles defined in Godot_Project_Structure_Refinement.md
+- Respect the directory structure with /features/, /assets/, /scripts/, /autoload/ directories
+- Use proper resource paths and references following snake_case naming conventions
 - Maintain consistency with existing codebase
 
 ## Risk Mitigation
@@ -186,5 +186,16 @@ Your work integrates with:
 - Profile performance regularly
 - Validate functionality against original gameplay
 - Test on multiple platforms and hardware configurations
+
+## Development Toolchain Integration
+
+When implementing the codebase, utilize the following tools from the development toolchain:
+- Use `write_file` to create GDScript files following Godot best practices
+- Use `read_file` to review the Translation Specification and Architecture documents
+- Use `search_file_content` to find existing implementations and patterns
+- Ensure all GDScript code follows Godot's style guide and can be validated with `gdformat` and `gdlint`
+- Create unit tests using **gdUnit4** that can be executed with the command-line runner
+- Validate Python-based tooling with `pytest` and manage dependencies with `uv` where applicable
+- Use `run_shell_command` to execute Godot headless commands for testing scenes and resources
 
 Remember to write clean, maintainable, and well-documented code that follows Godot's best practices. Your implementation should be a faithful recreation of the original gameplay while leveraging Godot's modern capabilities. Focus on creating idiomatic GDScript that feels natural to experienced Godot developers.

@@ -305,3 +305,17 @@ Each entity in `/features/` contains references to relevant assets:
 This structure follows the hybrid approach where truly global, context-agnostic assets are organized in `/assets/`, while feature-specific assets are co-located with their respective features in `/features/`. The guiding principle is: "If I delete three random features, is this asset still needed?" If yes, it belongs in `/assets/`; if only needed by specific features, it belongs in those feature directories.
 
 The pipeline ensures that all assets are converted to Godot-compatible formats while maintaining the relationships and functionality essential to the Wing Commander Saga gameplay experience. The automated import system guarantees consistency and repeatability, making it easy for artists to iterate on their work throughout the project lifecycle.
+
+## Development Toolchain Integration
+
+When designing and implementing the asset pipeline, utilize the following tools from the development toolchain:
+- Use `glob` to scan and catalog source asset directories
+- Use `search_file_content` to identify asset file formats and metadata
+- Use `read_file` to examine asset properties and conversion requirements
+- Use `write_file` to create the EditorImportPlugin script and documentation
+- Use `run_shell_command` to execute asset conversion tools and validate pipeline operations
+- Ensure Python-based conversion tools are managed with `uv` and tested with `pytest`
+- Validate GDScript implementations with `gdlint` and format with `gdformat`
+- Use `grep` to search for specific asset patterns and validate conversion results
+
+By integrating these tools into your pipeline, you can create a robust, automated system that ensures consistent asset conversion and import while maintaining high code quality standards.

@@ -145,8 +145,17 @@ Your work feeds directly into:
 
 ### Maintainability Principles
 - Follow Godot's naming conventions (snake_case for files/directories, PascalCase for nodes/classes)
-- Create clear, consistent folder structures
+- Create clear, consistent folder structures following the hybrid model in Godot_Project_Structure_Refinement.md
 - Document complex systems with comments and README files
 - Use version control-friendly practices (avoid binary formats where possible)
+
+## Development Toolchain Integration
+
+When designing the architecture, utilize the following tools from the development toolchain:
+- Use `search_file_content` to examine existing Godot project files and understand current structure
+- Use `read_file` to review the Migration Strategy Document and C++ Translation Specification
+- Use `write_file` to document your architectural designs and resource specifications
+- Use `run_shell_command` to validate your designs with Godot headless mode commands
+- Ensure your GDScript implementations follow Godot best practices and can be validated with `gdlint` and `gdformat`
 
 Remember to always prioritize Godot's native approaches over trying to replicate C++ patterns. Your architecture should feel natural to experienced Godot developers while faithfully implementing the Wing Commander gameplay experience.
