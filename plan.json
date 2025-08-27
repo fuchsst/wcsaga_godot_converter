@@ -1,0 +1,141 @@
+[
+  {
+    "id": "asset_converter_1",
+    "title": "Implement Core Data Structures for Asset Conversion",
+    "dependencies": [],
+    "files_to_modify": [
+      "data_converter/core/table_data_structures.py"
+    ]
+  },
+  {
+    "id": "asset_converter_2",
+    "title": "Develop POF Parser for Model Conversion",
+    "dependencies": [
+      "asset_converter_1"
+    ],
+    "files_to_modify": [
+      "data_converter/pof_parser/pof_parser.py",
+      "data_converter/pof_parser/pof_types.py"
+    ]
+  },
+  {
+    "id": "asset_converter_3",
+    "title": "Create Table Converters for Game Data",
+    "dependencies": [
+      "asset_converter_1"
+    ],
+    "files_to_modify": [
+      "data_converter/table_converters/base_converter.py",
+      "data_converter/table_converters/ship_table_converter.py",
+      "data_converter/table_converters/weapon_table_converter.py"
+    ]
+  },
+  {
+    "id": "asset_converter_4",
+    "title": "Implement Resource Generators for Godot",
+    "dependencies": [
+      "asset_converter_3"
+    ],
+    "files_to_modify": [
+      "data_converter/resource_generators/ship_class_generator.py",
+      "data_converter/resource_generators/weapon_resource_generator.py"
+    ]
+  },
+  {
+    "id": "asset_converter_5",
+    "title": "Build Scene Generators for Asset Assembly",
+    "dependencies": [
+      "asset_converter_2",
+      "asset_converter_4"
+    ],
+    "files_to_modify": [
+      "data_converter/scene_generators/ship_scene_generator.py",
+      "data_converter/scene_generators/weapon_scene_generator.py"
+    ]
+  },
+  {
+    "id": "asset_converter_6",
+    "title": "Integrate Asset Discovery Engine",
+    "dependencies": [
+      "asset_converter_1"
+    ],
+    "files_to_modify": [
+      "data_converter/core/asset_discovery.py"
+    ]
+  },
+  {
+    "id": "asset_converter_7",
+    "title": "Develop Table Data Converter Orchestrator",
+    "dependencies": [
+      "asset_converter_3",
+      "asset_converter_6"
+    ],
+    "files_to_modify": [
+      "data_converter/table_data_converter.py"
+    ]
+  },
+  {
+    "id": "game_logic_1",
+    "title": "Design Core Game Logic Architecture",
+    "dependencies": [
+      "asset_converter_5"
+    ],
+    "files_to_modify": [
+      "converter/context/STYLE_GUIDE.md"
+    ]
+  },
+  {
+    "id": "game_logic_2",
+    "title": "Implement Ship Movement and Physics System",
+    "dependencies": [
+      "game_logic_1",
+      "asset_converter_5"
+    ],
+    "files_to_modify": [
+      "target/scripts/ship_movement.gd"
+    ]
+  },
+  {
+    "id": "game_logic_3",
+    "title": "Develop Weapon Systems and Combat Logic",
+    "dependencies": [
+      "game_logic_1",
+      "asset_converter_5"
+    ],
+    "files_to_modify": [
+      "target/scripts/weapon_system.gd",
+      "target/scripts/combat_logic.gd"
+    ]
+  },
+  {
+    "id": "game_logic_4",
+    "title": "Create AI Behavior Framework",
+    "dependencies": [
+      "game_logic_2",
+      "game_logic_3"
+    ],
+    "files_to_modify": [
+      "target/scripts/ai_behavior.gd"
+    ]
+  },
+  {
+    "id": "game_logic_5",
+    "title": "Implement Mission System and Scripting",
+    "dependencies": [
+      "game_logic_1"
+    ],
+    "files_to_modify": [
+      "target/scripts/mission_system.gd"
+    ]
+  },
+  {
+    "id": "game_logic_6",
+    "title": "Build User Interface Components",
+    "dependencies": [
+      "game_logic_1"
+    ],
+    "files_to_modify": [
+      "target/scripts/ui_components.gd"
+    ]
+  }
+]
