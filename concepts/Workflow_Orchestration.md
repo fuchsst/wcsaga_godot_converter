@@ -7,7 +7,7 @@ To elevate qwen-code from an interactive assistant to a true orchestration engin
 ### **1.1 Engineering Repeatability with Custom Commands**
 
 The foundation of a robust automation workflow is the ability to define custom, reusable commands. Drawing from the capabilities of its parent, Gemini CLI, qwen-code can be extended with user-defined slash commands stored in .toml files.1 To ensure that workflow logic is version-controlled alongside the project's source code, these definitions should be stored in a project-local  
-.qwen/commands/ directory.  
+.claude/commands/ directory.  
 The .toml file structure is simple yet powerful, requiring only two primary keys:
 
 * description: A brief, human-readable summary of the command's function, which appears in the CLI's interactive help.  
@@ -21,9 +21,9 @@ These commands can be parameterized using the {{args}} placeholder, which allows
 A reliable orchestration system requires a resilient method for tracking state. A file-based system using markdown is ideal, as it is both human-readable for easy inspection and machine-parsable for agent interaction, a common practice in modern developer tooling.3  
 The following directory structure, located at the project root, will serve as the state machine for the workflow:
 
-* .qwen\_workflow/: The root directory for all workflow state files.  
-* .qwen\_workflow/tasks/: Contains individual markdown files for each discrete task (e.g., 001-add-user-auth.md).  
-* .qwen\_workflow/logs/: Stores output logs from validation and testing runs.  
+* ..claude\_workflow/: The root directory for all workflow state files.  
+* ..claude\_workflow/tasks/: Contains individual markdown files for each discrete task (e.g., 001-add-user-auth.md).  
+* ..claude\_workflow/logs/: Stores output logs from validation and testing runs.  
 * PROJECT\_STATUS.md: A high-level dashboard file in the project root, summarizing the status of all tasks.
 
 The agent will interact with this structure using its built-in file system tools, such as ReadFile, WriteFile, and Edit, which are fundamental capabilities inherited from its Gemini CLI origins.5 This approach requires adherence to best practices analogous to those for managing Terraform state: the state files should be treated as a single source of truth, manual edits should be avoided to prevent corruption, and interactions should be designed to be as atomic as possible.7  
@@ -48,7 +48,7 @@ The initial phase of the workflow leverages the agent's reasoning capabilities t
 ### **2.1 The /workflow:plan Command**
 
 This custom command instructs the agent to act as a senior software architect. It takes a high-level user story or feature request as its argument and produces a structured plan for implementation.  
-**File: .qwen/commands/workflow/plan.toml**
+**File: .claude/commands/workflow/plan.toml**
 
 Ini, TOML
 
@@ -85,11 +85,11 @@ USER\_STORY="$1"
 qwen /workflow:plan "$USER\_STORY" \> plan.json
 
 \# A helper script (e.g., in Python or Node.js) parses the JSON  
-\# and creates the corresponding markdown files in.qwen\_workflow/tasks/  
+\# and creates the corresponding markdown files in..claude\_workflow/tasks/  
 \# and updates the main PROJECT\_STATUS.md file.  
 python parse\_plan.py plan.json
 
-echo "Workflow initialized. Tasks created in.qwen\_workflow/tasks/"
+echo "Workflow initialized. Tasks created in..claude\_workflow/tasks/"
 
 This script invokes the /workflow:plan command and pipes the output to a file. A helper script then parses this structured data to create the individual task files according to the schema defined in Table 1\. This process transforms the agent's abstract plan into a concrete set of stateful artifacts that will drive the rest of the workflow. The resulting markdown files serve as a contract between the human supervisor and the AI agent for the work to be performed.
 
@@ -100,7 +100,7 @@ With a plan in place, the workflow transitions to the implementation phase. This
 ### **3.1 The /workflow:implement Command**
 
 This command is the workhorse of the implementation phase. It takes a single task ID as an argument and instructs the agent to execute the steps defined in the corresponding markdown file.  
-**File: .qwen/commands/workflow/implement.toml**
+**File: .claude/commands/workflow/implement.toml**
 
 Ini, TOML
 
@@ -110,7 +110,7 @@ prompt \= """
 You are an expert software engineer. Your task is to implement the task with the ID: "{{args}}".
 
 Your process is as follows:  
-1\.  Read the markdown file located at \`.qwen\_workflow/tasks/{{args}}.md\`.  
+1\.  Read the markdown file located at \`..claude\_workflow/tasks/{{args}}.md\`.  
 2\.  Update the 'status' in the file's frontmatter to 'in\_progress' and save the file.  
 3\.  \*\*CRITICAL\*\*: Check for a "\#\# Feedback" section in the markdown body. If it exists, you MUST prioritize addressing this feedback above all other instructions.  
 4\.  Execute the implementation steps outlined in the file's "Acceptance Criteria" checklist. Use your code editing tools to modify the specified files. The \`@\` syntax (e.g., \`edit @src/file.js\`) should be used to scope your changes precisely.  
@@ -130,7 +130,7 @@ The process is as follows:
 1. The agent completes its first implementation pass for a task.  
 2. A human developer reviews the generated code changes (e.g., using git diff).
 
-3. ## **If corrections are needed, the reviewer does not modify the code directly. Instead, they open the relevant task file (e.g., .qwen\_workflow/tasks/TASK-001.md) and add a new section:**     **Feedback** 
+3. ## **If corrections are needed, the reviewer does not modify the code directly. Instead, they open the relevant task file (e.g., ..claude\_workflow/tasks/TASK-001.md) and add a new section:**     **Feedback** 
 
    * The database query in src/auth.js is vulnerable to SQL injection. Please refactor it to use a parameterized query.  
    * Add JSDoc comments to the new login function.  
@@ -145,7 +145,7 @@ After implementation, the workflow enters a validation phase where automated qua
 ### **4.1 The /workflow:validate Command**
 
 This command orchestrates the execution of the project's entire suite of quality checks, including linting, testing, and security scanning. It leverages the CLI's ability to execute arbitrary shell commands, a feature inferred from its Gemini CLI heritage 5, to integrate with existing toolchains.  
-**File: .qwen/commands/workflow/validate.toml**
+**File: .claude/commands/workflow/validate.toml**
 
 Ini, TOML
 
@@ -160,7 +160,7 @@ Execute the following sequence of quality checks using your shell tool. Capture 
 3\.  Run integration tests: \`\! npm run test:integration\`
 
 If all commands execute successfully (exit code 0), your task is complete.  
-If any command fails, save the complete, unabridged output (both \`stdout\` and \`stderr\`) of the failing command to a new log file at \`.qwen\_workflow/logs/{{args}}-failure.log\`.  
+If any command fails, save the complete, unabridged output (both \`stdout\` and \`stderr\`) of the failing command to a new log file at \`..claude\_workflow/logs/{{args}}-failure.log\`.  
 """
 
 This command acts as a bridge between the AI agent and the project's existing CI/CD practices.17 The ability to wrap any command-line tool makes this workflow language-agnostic and highly adaptable.  
@@ -168,11 +168,11 @@ This command acts as a bridge between the AI agent and the project's existing CI
 
 | Tool Category | Ecosystem | Tool | qwen Command Example within /workflow:validate |
 | :---- | :---- | :---- | :---- |
-| **Linting** | JavaScript | ESLint | \! npx eslint. \--format json \--output-file.qwen\_workflow/logs/lint.json |
-| **Linting** | Python | Flake8 | \! flake8. \--output-file=.qwen\_workflow/logs/lint.txt |
-| **Unit Testing** | JavaScript | Jest | \! npx jest \--json \--outputFile=.qwen\_workflow/logs/jest.json |
-| **Unit Testing** | Python | Pytest | \! pytest \--junitxml=.qwen\_workflow/logs/pytest.xml |
-| **Security** | General | Semgrep | \! semgrep scan \--json \-o.qwen\_workflow/logs/semgrep.json |
+| **Linting** | JavaScript | ESLint | \! npx eslint. \--format json \--output-file..claude\_workflow/logs/lint.json |
+| **Linting** | Python | Flake8 | \! flake8. \--output-file=..claude\_workflow/logs/lint.txt |
+| **Unit Testing** | JavaScript | Jest | \! npx jest \--json \--outputFile=..claude\_workflow/logs/jest.json |
+| **Unit Testing** | Python | Pytest | \! pytest \--junitxml=..claude\_workflow/logs/pytest.xml |
+| **Security** | General | Semgrep | \! semgrep scan \--json \-o..claude\_workflow/logs/semgrep.json |
 
 ### **4.2 Closing the Quality Loop (Automated Remediation)**
 
@@ -181,7 +181,7 @@ An orchestration script manages this process:
 
 1. The script executes qwen /workflow:validate TASK-001.  
 2. It checks the exit code of the command.  
-3. If the validation fails, the script identifies the newly created error log (e.g., .qwen\_workflow/logs/TASK-001-failure.log).  
+3. If the validation fails, the script identifies the newly created error log (e.g., ..claude\_workflow/logs/TASK-001-failure.log).  
 4. It then appends the content of this error log to the \#\# Feedback section of the corresponding task markdown file.  
 5. Finally, it re-invokes qwen /workflow:implement TASK-001.
 
@@ -229,8 +229,8 @@ for TASK\_ID in $TASK\_IDS; do
     else  
       echo "❌ Validation failed for $TASK\_ID. Logging feedback for remediation."  
       \# Append the failure log to the task's feedback section  
-      LOG\_FILE=".qwen\_workflow/logs/${TASK\_ID}-failure.log"  
-      echo \-e "\\n\#\# Feedback (Automated from Validation Failure)\\n\\\`\\\`\\\`\\n$(cat $LOG\_FILE)\\n\\\`\\\`\\\`" \>\> ".qwen\_workflow/tasks/${TASK\_ID}.md"  
+      LOG\_FILE="..claude\_workflow/logs/${TASK\_ID}-failure.log"  
+      echo \-e "\\n\#\# Feedback (Automated from Validation Failure)\\n\\\`\\\`\\\`\\n$(cat $LOG\_FILE)\\n\\\`\\\`\\\`" \>\> "..claude\_workflow/tasks/${TASK\_ID}.md"  
         
       if; then  
         echo "🔥 Maximum attempts reached for $TASK\_ID. Manual intervention required."  
