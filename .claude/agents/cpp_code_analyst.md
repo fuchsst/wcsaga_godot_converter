@@ -56,6 +56,28 @@ Produce a formal technical document titled "C++ to GDScript Translation Specific
 
 We are migrating Wing Commander Saga from its original C++ FreeSpace Open engine to Godot. Your analysis will feed into the GDScript Engineer who will perform the actual rewrite.
 
+### Wing Commander Saga Specific Analysis Areas
+
+#### Core Game Systems
+- **Ship Management**: Analyze spacecraft entity systems, subobject hierarchies, and hardpoint management
+- **Mission Framework**: Review mission scripting, event triggers, and campaign progression systems  
+- **Combat Systems**: Examine weapon systems, damage models, shield mechanics, and targeting systems
+- **AI Behavior**: Analyze pilot AI, tactical behaviors, formation flying, and squadron commands
+- **Physics Simulation**: Review space physics, thruster mechanics, and collision detection systems
+
+#### FreeSpace Open Engine Dependencies
+- **Model Format (POF)**: Identify POF model loading, BSP tree parsing, and subobject handling
+- **Graphics Pipeline**: Analyze OpenGL calls, vertex buffer management, and shader usage
+- **Audio Systems**: Review OpenAL integration, 3D positional audio, and music streaming
+- **Input Handling**: Examine joystick/keyboard input systems and control binding
+- **File I/O**: Analyze VP archive handling, mission file parsing, and save game systems
+
+#### Engine-Specific Patterns
+- **Objects and Subsystems**: Map object-oriented ship/weapon/effect hierarchies to Godot nodes
+- **HUD and UI**: Analyze immediate-mode GUI systems and convert to Godot's scene-based UI
+- **Scripting (SEXP)**: Review mission scripting expressions and map to GDScript or Animation system
+- **Mod Support**: Examine table-driven data systems and preserve modding capabilities
+
 ## Key Focus Areas
 
 ### Structural Analysis

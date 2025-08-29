@@ -1,0 +1,60 @@
+{
+  "schema_version": "2.0.0",
+  "project_name": "Wing Commander Saga Godot Converter",
+  "description": "Migration of Wing Commander Saga from C++ FreeSpace Open engine to Godot Engine using GDScript",
+  "created": "2025-08-29T00:00:00Z",
+  "last_updated": "2025-08-29T00:00:00Z",
+  "current_focus": null,
+  "status": "planning",
+  
+  "prds": [],
+  "epics": [],
+  "stories": [],
+  
+  "toolchain": {
+    "python": {
+      "environment_manager": "uv",
+      "formatter": "ruff",
+      "linter": "ruff",
+      "test_framework": "pytest",
+      "available": true
+    },
+    "gdscript": {
+      "formatter": "gdformat",
+      "linter": "gdlint",
+      "test_framework": "gdunit4",
+      "available": true
+    },
+    "godot": {
+      "headless_mode": true,
+      "export_templates": true,
+      "available": true
+    },
+    "cpp": {
+      "formatter": "clang-format",
+      "linter": "clang-tidy",
+      "available": false
+    }
+  },
+  
+  "statistics": {
+    "total_prds": 0,
+    "total_epics": 0,
+    "total_stories": 0,
+    "completed_stories": 0,
+    "in_progress_stories": 0,
+    "failed_stories": 0,
+    "validation_passed": 0,
+    "validation_failed": 0
+  },
+  
+  "recent_activity": [],
+  
+  "settings": {
+    "auto_validation": true,
+    "auto_feedback": true,
+    "require_human_review": true,
+    "git_integration": true,
+    "backup_enabled": true
+  }
+}

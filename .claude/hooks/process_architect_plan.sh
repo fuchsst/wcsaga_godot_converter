@@ -47,6 +47,54 @@ if [ -n "$JSON_PLAN" ]; then
     echo "$(date): Running process_plan.py on extracted plan" >> ./.claude_workflow/logs/hook.log
     if uv run python ./.claude/hooks/process_plan.py ./.claude_workflow/temp_plan.json; then
         echo "$(date): Plan processing successful" >> ./.claude_workflow/logs/hook.log
+        
+        # Extract plan entities and update project state
+        echo "$(date): Updating project state with plan entities" >> ./.claude_workflow/logs/hook.log
+        
+        # Parse JSON and create hierarchical entities
+        if command -v python3 &> /dev/null; then
+            python3 -c "
+import json
+import sys
+import subprocess
+import datetime
+
+try:
+    with open('./.claude_workflow/temp_plan.json', 'r') as f:
+        plan = json.load(f)
+    
+    # Generate PRD from plan context
+    plan_title = 'Architect Plan - ' + datetime.datetime.now().strftime('%Y-%m-%d')
+    prd_id = 'PRD-ARCHITECT-' + datetime.datetime.now().strftime('%Y%m%d-%H%M%S')
+    
+    subprocess.run(['./.claude/hooks/state_update.sh', 'update', 'add_prd', prd_id, plan_title], 
+                   capture_output=True, text=True)
+    
+    # If plan contains structured tasks, create epics and stories
+    if isinstance(plan, list):
+        for i, task in enumerate(plan):
+            if isinstance(task, dict) and 'title' in task:
+                epic_id = f'EPIC-{i+1:03d}'
+                epic_title = task.get('title', f'Epic {i+1}')
+                
+                subprocess.run(['./.claude/hooks/state_update.sh', 'update', 'add_epic', 
+                               epic_id, epic_title, prd_id], capture_output=True, text=True)
+                
+                # Create story for the task
+                story_id = f'STORY-{i+1:03d}'
+                story_title = task.get('description', epic_title)
+                
+                subprocess.run(['./.claude/hooks/state_update.sh', 'update', 'add_story', 
+                               story_id, story_title, epic_id], capture_output=True, text=True)
+    
+    print('Project state updated with plan entities')
+    
+except Exception as e:
+    print(f'Error updating project state: {e}', file=sys.stderr)
+    sys.exit(1)
+" 2>>./.claude_workflow/logs/hook.log || true
+        fi
+        
         # Clean up temporary file
         rm -f ./.claude_workflow/temp_plan.json
     else

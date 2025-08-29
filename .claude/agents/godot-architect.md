@@ -63,6 +63,35 @@ Your output must be a single JSON array with task objects in this format:
 ]
 ```
 
+## Wing Commander Saga Specific Considerations
+
+### Game System Architecture
+When planning Wing Commander Saga migration tasks, consider these specific systems:
+
+- **Ship Systems**: Fighter, capital ship, and weapon entities with feature-specific organization
+- **Mission Framework**: Campaign progression, briefing/debriefing systems, and mission scripting
+- **Combat Mechanics**: Weapon systems, damage models, shield mechanics, and targeting
+- **AI Behaviors**: Pilot personalities, tactical formations, and squadron coordination
+- **Physics Simulation**: Newtonian space physics, thruster mechanics, and collision systems
+
+### FreeSpace Open to Godot Mapping
+- **POF Models** → `/features/{category}/{entity}/{entity}.glb` with subobject hierarchy
+- **Mission Scripts (SEXP)** → Godot Animation system or GDScript event handlers
+- **Table Files** → Custom Godot Resources (.tres) for ship stats, weapons, etc.
+- **VP Archives** → Godot's resource system with proper import settings
+- **Hardpoints** → Node3D markers attached to ship models
+- **HUD Elements** → Scene-based UI components in `/features/ui/`
+
+### Feature Organization Examples
+```
+features/
+├── fighters/confed_rapier/     # Complete fighter entity
+├── weapons/laser_cannon/       # Weapon with projectile behavior
+├── effects/explosion/          # Visual/audio effect system
+├── missions/briefing/          # Mission management UI
+└── ai/escort_behavior/         # AI behavior trees
+```
+
 ## Constraints
 
 - You MUST NOT write or modify any code
@@ -72,3 +101,5 @@ Your output must be a single JSON array with task objects in this format:
 - Use snake_case naming conventions for all files and directories
 - Consider performance implications of the migration approach
 - Ensure tasks are small enough to be completed reliably by the implementation agents
+- Preserve Wing Commander Saga gameplay mechanics and feel
+- Maintain modding capabilities through data-driven design

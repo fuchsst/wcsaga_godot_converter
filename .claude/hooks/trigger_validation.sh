@@ -29,28 +29,46 @@ if [ -n "$TOOLCHAIN_COMMANDS" ]; then
     echo "$(date): Detected toolchain commands: $TOOLCHAIN_COMMANDS" >> ./.claude_workflow/logs/hook.log
 fi
 
+# Update project state - mark story as starting validation
+./.claude/hooks/state_update.sh update update_validation "$TASK_ID" "running" 2>/dev/null || true
+
 # Run the validation based on agent type and toolchain usage
+VALIDATION_RESULT=0
 case "$AGENT_NAME" in
     "gdscript-engineer")
         echo "$(date): Running GDScript validation for $TASK_ID" >> ./.claude_workflow/logs/hook.log
         ./.claude/hooks/run_validation.sh "$TASK_ID" "gdscript" "$TOOLCHAIN_COMMANDS"
+        VALIDATION_RESULT=$?
         ;;
     "cpp-code-analyst")
         echo "$(date): Running C++ validation for $TASK_ID" >> ./.claude_workflow/logs/hook.log
         ./.claude/hooks/run_validation.sh "$TASK_ID" "cpp" "$TOOLCHAIN_COMMANDS"
+        VALIDATION_RESULT=$?
         ;;
     "asset-pipeline-engineer")
         echo "$(date): Running asset pipeline validation for $TASK_ID" >> ./.claude_workflow/logs/hook.log
         ./.claude/hooks/run_validation.sh "$TASK_ID" "assets" "$TOOLCHAIN_COMMANDS"
+        VALIDATION_RESULT=$?
         ;;
     "migration-architect" | "godot-architect")
         echo "$(date): Running architectural validation for $TASK_ID" >> ./.claude_workflow/logs/hook.log
         ./.claude/hooks/run_validation.sh "$TASK_ID" "architecture" "$TOOLCHAIN_COMMANDS"
+        VALIDATION_RESULT=$?
         ;;
     *)
         echo "$(date): Running comprehensive toolchain validation for $TASK_ID" >> ./.claude_workflow/logs/hook.log
         ./.claude/hooks/run_validation.sh "$TASK_ID" "comprehensive" "$TOOLCHAIN_COMMANDS"
+        VALIDATION_RESULT=$?
         ;;
 esac
 
 echo "$(date): Validation complete for $TASK_ID" >> ./.claude_workflow/logs/hook.log
+
+# Update project state based on validation result
+if [ $VALIDATION_RESULT -eq 0 ]; then
+    ./.claude/hooks/state_update.sh update update_validation "$TASK_ID" "passed" 2>/dev/null || true
+    ./.claude/hooks/state_update.sh update update_status "story" "$TASK_ID" "completed" 2>/dev/null || true
+else
+    ./.claude/hooks/state_update.sh update update_validation "$TASK_ID" "failed" 2>/dev/null || true
+    ./.claude/hooks/state_update.sh update update_status "story" "$TASK_ID" "failed" 2>/dev/null || true
+fi
