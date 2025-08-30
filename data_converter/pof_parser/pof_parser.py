@@ -7,9 +7,8 @@ chunk processing and error handling. Based on WCS C++ source analysis.
 """
 
 import logging
-import struct
 from pathlib import Path
-from typing import Any, BinaryIO, Dict, List, Optional, Set
+from typing import Any, BinaryIO, Dict, Optional, Set
 
 # Import constants and utilities
 from .pof_chunks import (
@@ -48,7 +47,15 @@ from .pof_weapon_points_parser import read_gpnt_chunk, read_mpnt_chunk
 
 # Import enhanced error handling and types
 from .pof_error_handler import UnifiedPOFErrorHandler, ErrorSeverity, ErrorCategory
-from .pof_types import POFModelData, SubObject, SpecialPoint, BSPNode, POFVersion, POFHeader, BoundingBox, Vector3D, BSPNodeType
+from .pof_types import (
+    POFModelData,
+    BSPNode,
+    POFVersion,
+    POFHeader,
+    BoundingBox,
+    Vector3D,
+    BSPNodeType,
+)
 
 # Import version handler for comprehensive version-specific parsing
 from .pof_version_handler import POFVersionHandler
@@ -96,9 +103,13 @@ class POFParser:
                 debris_pieces=[-1] * 32,
                 mass=0.0,
                 mass_center=Vector3D(0, 0, 0),
-                moment_of_inertia=[Vector3D(0, 0, 0), Vector3D(0, 0, 0), Vector3D(0, 0, 0)],
+                moment_of_inertia=[
+                    Vector3D(0, 0, 0),
+                    Vector3D(0, 0, 0),
+                    Vector3D(0, 0, 0),
+                ],
                 cross_sections=[],
-                lights=[]
+                lights=[],
             ),
             textures=[],
             subobjects=[],
@@ -113,7 +124,7 @@ class POFParser:
             insignia=[],
             autocenter=None,
             glow_banks=[],
-            shield_collision_tree=None
+            shield_collision_tree=None,
         )
 
     def _read_bsp_data(
@@ -146,16 +157,14 @@ class POFParser:
 
         # Find the subobject data in the parsed structure
         sobj_data = next(
-            (
-                obj
-                for obj in self.pof_data.subobjects
-                if obj.number == subobj_num
-            ),
+            (obj for obj in self.pof_data.subobjects if obj.number == subobj_num),
             None,
         )
 
         if sobj_data and sobj_data.has_bsp_data():
-            return self._read_bsp_data(subobj_num, sobj_data.bsp_data_offset, sobj_data.bsp_data_size)
+            return self._read_bsp_data(
+                subobj_num, sobj_data.bsp_data_offset, sobj_data.bsp_data_size
+            )
 
         logger.warning(f"Subobject {subobj_num} not found in parsed data.")
         return None
@@ -163,60 +172,65 @@ class POFParser:
     def parse_subobject_bsp_tree(self, subobj_num: int) -> Optional[BSPNode]:
         """
         Parse and reconstruct BSP tree for a specific subobject.
-        
+
         This method reads the raw BSP data and converts it into a structured
         BSP tree with proper node hierarchy and polygon data.
         """
         raw_bsp_data = self.get_subobject_bsp_data(subobj_num)
         if not raw_bsp_data:
             return None
-        
+
         try:
             # Use the BSP parser to convert raw bytes to structured tree
             from .pof_bsp_parser import parse_bsp_data
-            
+
             bsp_result = parse_bsp_data(raw_bsp_data, self.pof_data.version.value)
-            if bsp_result and 'bsp_tree' in bsp_result:
+            if bsp_result and "bsp_tree" in bsp_result:
                 # Update the subobject with the parsed BSP tree
-                subobj = next((so for so in self.pof_data.subobjects if so.number == subobj_num), None)
+                subobj = next(
+                    (so for so in self.pof_data.subobjects if so.number == subobj_num),
+                    None,
+                )
                 if subobj:
-                    subobj.bsp_tree = bsp_result['bsp_tree']
-                return bsp_result['bsp_tree']
-            
+                    subobj.bsp_tree = bsp_result["bsp_tree"]
+                return bsp_result["bsp_tree"]
+
         except Exception as e:
             logger.error(f"Failed to parse BSP tree for subobject {subobj_num}: {e}")
             self.error_handler.add_error(
                 f"BSP parsing error for subobject {subobj_num}: {e}",
                 severity=ErrorSeverity.ERROR,
                 category=ErrorCategory.PARSING,
-                recovery_action="Use fallback geometry extraction"
+                recovery_action="Use fallback geometry extraction",
             )
-        
+
         return None
 
     def parse_all_bsp_trees(self) -> Dict[int, Optional[BSPNode]]:
         """
         Parse BSP trees for all subobjects that have BSP data.
-        
+
         Returns:
             Dictionary mapping subobject numbers to their parsed BSP trees
         """
         results = {}
-        
+
         for subobj in self.pof_data.subobjects:
             if subobj.has_bsp_data():
                 bsp_tree = self.parse_subobject_bsp_tree(subobj.number)
                 results[subobj.number] = bsp_tree
-                
+
                 if bsp_tree is None:
-                    logger.warning(f"Failed to parse BSP tree for subobject {subobj.number}")
-        
+                    logger.warning(
+                        f"Failed to parse BSP tree for subobject {subobj.number}"
+                    )
+
         return results
-    
+
     def _sanitize_and_finalize(self) -> None:
         """
         Perform post-parse validation and data sanitization.
-        
+
         Based on Rust reference implementation, this method:
         - Validates subobject parent-child relationships
         - Prunes unused textures and re-indexes remaining ones
@@ -226,82 +240,88 @@ class POFParser:
         try:
             # Validate subobject hierarchy
             self._validate_subobject_hierarchy()
-            
+
             # Prune unused textures
             self._prune_unused_textures()
-            
+
             # Validate detail levels and debris pieces
             self._validate_detail_and_debris_references()
-            
+
             logger.info("Post-parse sanitization completed successfully")
-            
+
         except Exception as e:
             logger.error(f"Failed during post-parse sanitization: {e}")
             self.error_handler.add_error(
                 f"Sanitization error: {e}",
                 severity=ErrorSeverity.WARNING,
                 category=ErrorCategory.DATA_INTEGRITY,
-                recovery_action="Continue with potentially inconsistent data"
+                recovery_action="Continue with potentially inconsistent data",
             )
-    
+
     def _validate_subobject_hierarchy(self) -> None:
         """Validate subobject parent-child relationships."""
         valid_subobj_numbers = {sobj.number for sobj in self.pof_data.subobjects}
-        
+
         for subobj in self.pof_data.subobjects:
             if subobj.parent != -1 and subobj.parent not in valid_subobj_numbers:
-                logger.warning(f"Subobject {subobj.number} has invalid parent {subobj.parent}")
+                logger.warning(
+                    f"Subobject {subobj.number} has invalid parent {subobj.parent}"
+                )
                 self.error_handler.add_data_integrity_warning(
                     f"Invalid parent reference in subobject {subobj.number}",
-                    recovery_action="Set parent to -1 (root)"
+                    recovery_action="Set parent to -1 (root)",
                 )
                 subobj.parent = -1  # Fix invalid parent reference
-    
+
     def _prune_unused_textures(self) -> None:
         """Prune textures that are not referenced by any polygon."""
         if not self.pof_data.textures:
             return
-        
+
         # Get all texture indices used in BSP trees
         used_texture_indices = set()
         for subobj in self.pof_data.subobjects:
             if subobj.bsp_tree:
-                used_texture_indices.update(self._get_used_texture_indices(subobj.bsp_tree))
-        
+                used_texture_indices.update(
+                    self._get_used_texture_indices(subobj.bsp_tree)
+                )
+
         # Create new texture list with only used textures
         old_to_new_index = {}
         new_textures = []
-        
+
         for old_index, texture_name in enumerate(self.pof_data.textures):
             if old_index in used_texture_indices:
                 old_to_new_index[old_index] = len(new_textures)
                 new_textures.append(texture_name)
-        
+
         # Update texture references in BSP trees
         if len(new_textures) < len(self.pof_data.textures):
-            logger.info(f"Pruned {len(self.pof_data.textures) - len(new_textures)} unused textures")
+            logger.info(
+                f"Pruned {len(self.pof_data.textures) - len(new_textures)} unused textures"
+            )
             self.pof_data.textures = new_textures
-            
+
             # Update texture indices in all BSP trees
             for subobj in self.pof_data.subobjects:
                 if subobj.bsp_tree:
                     self._update_texture_indices(subobj.bsp_tree, old_to_new_index)
-    
+
     def _get_used_texture_indices(self, node: BSPNode) -> Set[int]:
         """Recursively get all texture indices used in BSP tree."""
         indices = set()
-        
+
         if node.node_type == BSPNodeType.LEAF:
             for polygon in node.polygons:
                 indices.add(polygon.texture_index)
-        
+
         if node.front_child:
             indices.update(self._get_used_texture_indices(node.front_child))
         if node.back_child:
             indices.update(self._get_used_texture_indices(node.back_child))
-        
+
         return indices
-    
+
     def _update_texture_indices(self, node: BSPNode, index_map: Dict[int, int]) -> None:
         """Recursively update texture indices in BSP tree."""
         if node.node_type == BSPNodeType.LEAF:
@@ -312,33 +332,37 @@ class POFParser:
                 else:
                     # Texture was pruned, mark as untextured
                     polygon.texture_index = 0xFFFFFFFF
-        
+
         if node.front_child:
             self._update_texture_indices(node.front_child, index_map)
         if node.back_child:
             self._update_texture_indices(node.back_child, index_map)
-    
+
     def _validate_detail_and_debris_references(self) -> None:
         """Validate detail level and debris piece references."""
         valid_subobj_numbers = {sobj.number for sobj in self.pof_data.subobjects}
-        
+
         # Validate detail levels
         for i, detail_num in enumerate(self.pof_data.header.detail_levels):
             if detail_num != -1 and detail_num not in valid_subobj_numbers:
-                logger.warning(f"Detail level {i} references invalid subobject {detail_num}")
+                logger.warning(
+                    f"Detail level {i} references invalid subobject {detail_num}"
+                )
                 self.error_handler.add_data_integrity_warning(
                     f"Invalid detail level reference: {detail_num}",
-                    recovery_action="Set to -1 (no detail)"
+                    recovery_action="Set to -1 (no detail)",
                 )
                 self.pof_data.header.detail_levels[i] = -1
-        
+
         # Validate debris pieces
         for i, debris_num in enumerate(self.pof_data.header.debris_pieces):
             if debris_num != -1 and debris_num not in valid_subobj_numbers:
-                logger.warning(f"Debris piece {i} references invalid subobject {debris_num}")
+                logger.warning(
+                    f"Debris piece {i} references invalid subobject {debris_num}"
+                )
                 self.error_handler.add_data_integrity_warning(
                     f"Invalid debris piece reference: {debris_num}",
-                    recovery_action="Set to -1 (no debris)"
+                    recovery_action="Set to -1 (no debris)",
                 )
                 self.pof_data.header.debris_pieces[i] = -1
 
@@ -371,7 +395,7 @@ class POFParser:
                         "Failed to validate POF header",
                         severity=ErrorSeverity.ERROR,
                         category=ErrorCategory.VALIDATION,
-                        recovery_action="Cannot continue parsing"
+                        recovery_action="Cannot continue parsing",
                     )
                     return None
 
@@ -380,21 +404,30 @@ class POFParser:
 
                 # Parse BSP trees for all subobjects
                 bsp_results = self.parse_all_bsp_trees()
-                successful_bsp_parses = sum(1 for result in bsp_results.values() if result is not None)
-                
+                successful_bsp_parses = sum(
+                    1 for result in bsp_results.values() if result is not None
+                )
+
                 if successful_bsp_parses < len(bsp_results):
-                    logger.warning(f"BSP parsing: {successful_bsp_parses}/{len(bsp_results)} trees parsed successfully")
-                
+                    logger.warning(
+                        f"BSP parsing: {successful_bsp_parses}/{len(bsp_results)} trees parsed successfully"
+                    )
+
                 # Perform post-parse sanitization and data cleanup
                 self._sanitize_and_finalize()
-                
+
                 # Run comprehensive validation
                 from .validation_system import validate_pof_model
-                validation_result = validate_pof_model(self.pof_data, self.error_handler)
-                
+
+                validation_result = validate_pof_model(
+                    self.pof_data, self.error_handler
+                )
+
                 if not validation_result.is_valid:
-                    logger.warning(f"Validation completed with issues: {len(validation_result.errors)} errors, {len(validation_result.warnings)} warnings")
-                
+                    logger.warning(
+                        f"Validation completed with issues: {len(validation_result.errors)} errors, {len(validation_result.warnings)} warnings"
+                    )
+
                 # Check if parsing was successful
                 if self.error_handler.has_errors(ErrorSeverity.ERROR):
                     logger.warning(f"Parsing completed with errors: {file_path}")
@@ -409,7 +442,7 @@ class POFParser:
                 f"POF file not found: {file_path}",
                 severity=ErrorSeverity.ERROR,
                 category=ErrorCategory.IO,
-                recovery_action="Check file path and permissions"
+                recovery_action="Check file path and permissions",
             )
             logger.error(str(error))
             return None
@@ -418,7 +451,7 @@ class POFParser:
                 f"Unexpected error parsing POF file {file_path}: {e}",
                 severity=ErrorSeverity.CRITICAL,
                 category=ErrorCategory.PARSING,
-                recovery_action="Review file integrity and try again"
+                recovery_action="Review file integrity and try again",
             )
             logger.error(str(error), exc_info=True)
             return None
@@ -438,10 +471,10 @@ class POFParser:
         try:
             current_pos = f.tell()
             self.error_handler.set_position(current_pos)
-            
+
             # Use unified binary reader
             reader = create_reader(f)
-            
+
             # Read POF header
             pof_id = reader.read_uint32()
             pof_version = reader.read_int32()
@@ -451,36 +484,38 @@ class POFParser:
                     f"Invalid POF header ID. Expected {POF_HEADER_ID:08X}, got {pof_id:08X}",
                     severity=ErrorSeverity.ERROR,
                     category=ErrorCategory.VALIDATION,
-                    recovery_action="Check if file is a valid POF file"
+                    recovery_action="Check if file is a valid POF file",
                 )
                 return False
 
             # Version compatibility check using comprehensive version handler
             self.error_handler.set_version_context(pof_version)
-            
+
             # Use version handler for comprehensive validation
             version_info = self.version_handler.validate_version(pof_version)
-            
+
             if not version_info["compatible"]:
                 self.error_handler.add_error(
                     f"POF version {pof_version} is not compatible",
                     severity=ErrorSeverity.ERROR,
                     category=ErrorCategory.COMPATIBILITY,
-                    recovery_action="Use a different POF file or version"
+                    recovery_action="Use a different POF file or version",
                 )
                 return False
-            
+
             # Add version-specific warnings
             for warning in version_info.get("warnings", []):
                 self.error_handler.add_error(
                     f"Version {pof_version} warning: {warning}",
                     severity=ErrorSeverity.WARNING,
                     category=ErrorCategory.COMPATIBILITY,
-                    recovery_action="Proceed with caution"
+                    recovery_action="Proceed with caution",
                 )
 
             self.pof_data.version = POFVersion.from_int(pof_version)
-            logger.debug(f"POF Version: {pof_version} - {version_info.get('name', 'Unknown')}")
+            logger.debug(
+                f"POF Version: {pof_version} - {version_info.get('name', 'Unknown')}"
+            )
             return True
 
         except Exception as e:
@@ -488,7 +523,7 @@ class POFParser:
                 f"Failed to read POF header: {e}",
                 severity=ErrorSeverity.ERROR,
                 category=ErrorCategory.PARSING,
-                recovery_action="Check file integrity and size"
+                recovery_action="Check file integrity and size",
             )
             return False
 
@@ -553,16 +588,18 @@ class POFParser:
                 reader = create_reader(f)
                 chunk_id, chunk_len = reader.read_chunk_header()
                 chunk_name = get_chunk_name(chunk_id)
-                
+
                 self.error_handler.set_chunk_context(chunk_id, chunk_name)
-                logger.debug(f"Found chunk ID: {chunk_id:08X} ({chunk_name}), Length: {chunk_len}")
+                logger.debug(
+                    f"Found chunk ID: {chunk_id:08X} ({chunk_name}), Length: {chunk_len}"
+                )
 
             except Exception as e:
                 self.error_handler.add_error(
                     f"Failed to read chunk header: {e}",
                     severity=ErrorSeverity.WARNING,
                     category=ErrorCategory.PARSING,
-                    recovery_action="Assume end of file reached"
+                    recovery_action="Assume end of file reached",
                 )
                 logger.debug("Reached end of file or failed to read chunk header")
                 break
@@ -573,7 +610,7 @@ class POFParser:
                     f"Invalid negative chunk length {chunk_len} for ID {chunk_id:08X}",
                     severity=ErrorSeverity.ERROR,
                     category=ErrorCategory.VALIDATION,
-                    recovery_action="Skip this chunk"
+                    recovery_action="Skip this chunk",
                 )
                 break
 
@@ -616,7 +653,7 @@ class POFParser:
                         f"Error parsing chunk {chunk_name}: {e}",
                         severity=ErrorSeverity.ERROR,
                         category=ErrorCategory.PARSING,
-                        recovery_action="Skip chunk and continue parsing"
+                        recovery_action="Skip chunk and continue parsing",
                     )
                     read_unknown_chunk(f, chunk_len, chunk_id)
             else:
@@ -624,7 +661,7 @@ class POFParser:
                     f"No data key mapped for chunk ID {chunk_id:08X} ({chunk_name})",
                     severity=ErrorSeverity.WARNING,
                     category=ErrorCategory.PARSING,
-                    recovery_action="Skip chunk"
+                    recovery_action="Skip chunk",
                 )
                 read_unknown_chunk(f, chunk_len, chunk_id)
         else:
@@ -633,7 +670,7 @@ class POFParser:
                 f"Unknown chunk type {chunk_id:08X} ({chunk_name})",
                 severity=ErrorSeverity.WARNING,
                 category=ErrorCategory.COMPATIBILITY,
-                recovery_action="Skip unknown chunk"
+                recovery_action="Skip unknown chunk",
             )
             read_unknown_chunk(f, chunk_len, chunk_id)
 
@@ -643,8 +680,11 @@ class POFParser:
             if chunk_id == ID_OHDR:
                 # OHDR contains complete header data - convert from dict to POFHeader
                 from .pof_types import dict_to_header
-                self.pof_data.header = dict_to_header(parsed_data, self.pof_data.version)
-            
+
+                self.pof_data.header = dict_to_header(
+                    parsed_data, self.pof_data.version
+                )
+
             elif chunk_id == ID_SOBJ:
                 # SOBJ now returns SubObject dataclass instances directly
                 if isinstance(parsed_data, list):
@@ -653,35 +693,37 @@ class POFParser:
                             self.pof_data.subobjects.append(subobj)
                 elif parsed_data is not None:
                     self.pof_data.subobjects.append(parsed_data)
-            
+
             elif chunk_id == ID_TXTR:
                 # TXTR returns list of texture names
                 if isinstance(parsed_data, list):
                     self.pof_data.textures.extend(parsed_data)
                 else:
                     self.pof_data.textures.append(parsed_data)
-            
+
             elif chunk_id in [ID_SPCL, ID_GPNT, ID_MPNT, ID_DOCK, ID_FUEL, ID_EYE]:
                 # Special points types - convert dictionaries to SpecialPoint dataclasses
                 target_list = getattr(self.pof_data, data_key)
-                
+
                 # Determine point type based on chunk ID
                 point_type_map = {
-                    ID_SPCL: 'special',
-                    ID_GPNT: 'gun',
-                    ID_MPNT: 'missile', 
-                    ID_DOCK: 'docking',
-                    ID_FUEL: 'thruster',
-                    ID_EYE: 'eye'
+                    ID_SPCL: "special",
+                    ID_GPNT: "gun",
+                    ID_MPNT: "missile",
+                    ID_DOCK: "docking",
+                    ID_FUEL: "thruster",
+                    ID_EYE: "eye",
                 }
-                point_type = point_type_map.get(chunk_id, 'unknown')
-                
+                point_type = point_type_map.get(chunk_id, "unknown")
+
                 from .pof_types import dict_to_special_point
-                
+
                 if isinstance(parsed_data, list):
                     for point_data in parsed_data:
                         if isinstance(point_data, dict):
-                            target_list.append(dict_to_special_point(point_data, point_type))
+                            target_list.append(
+                                dict_to_special_point(point_data, point_type)
+                            )
                         else:
                             # Already converted or invalid
                             target_list.append(point_data)
@@ -690,15 +732,17 @@ class POFParser:
                 else:
                     # Already converted or invalid
                     target_list.append(parsed_data)
-            
+
             elif chunk_id == ID_PATH:
                 # PATH returns AnimationPath instances - convert dictionaries
                 from .pof_types import dict_to_animation_path
-                
+
                 if isinstance(parsed_data, list):
                     for path_data in parsed_data:
                         if isinstance(path_data, dict):
-                            self.pof_data.paths.append(dict_to_animation_path(path_data))
+                            self.pof_data.paths.append(
+                                dict_to_animation_path(path_data)
+                            )
                         else:
                             # Already converted
                             self.pof_data.paths.append(path_data)
@@ -707,25 +751,27 @@ class POFParser:
                 else:
                     # Already converted
                     self.pof_data.paths.append(parsed_data)
-            
+
             elif chunk_id == ID_SHLD:
                 # SHLD returns ShieldMesh - convert dictionary
                 from .pof_types import dict_to_shield_mesh
-                
+
                 if isinstance(parsed_data, dict):
                     self.pof_data.shield_mesh = dict_to_shield_mesh(parsed_data)
                 else:
                     # Already converted
                     self.pof_data.shield_mesh = parsed_data
-            
+
             elif chunk_id == ID_INSG:
                 # INSG returns InsigniaData instances - convert dictionaries
                 from .pof_types import dict_to_insignia
-                
+
                 if isinstance(parsed_data, list):
                     for insignia_data in parsed_data:
                         if isinstance(insignia_data, dict):
-                            self.pof_data.insignia.append(dict_to_insignia(insignia_data))
+                            self.pof_data.insignia.append(
+                                dict_to_insignia(insignia_data)
+                            )
                         else:
                             # Already converted
                             self.pof_data.insignia.append(insignia_data)
@@ -734,25 +780,27 @@ class POFParser:
                 else:
                     # Already converted
                     self.pof_data.insignia.append(parsed_data)
-            
+
             elif chunk_id == ID_ACEN:
                 # ACEN returns Vector3D - convert list to Vector3D
                 from .pof_types import list_to_vector3d
-                
+
                 if isinstance(parsed_data, list):
                     self.pof_data.autocenter = list_to_vector3d(parsed_data)
                 else:
                     # Already converted
                     self.pof_data.autocenter = parsed_data
-            
+
             elif chunk_id == ID_GLOW:
                 # GLOW returns GlowBank instances - convert dictionaries
                 from .pof_types import dict_to_glow_bank
-                
+
                 if isinstance(parsed_data, list):
                     for glow_data in parsed_data:
                         if isinstance(glow_data, dict):
-                            self.pof_data.glow_banks.append(dict_to_glow_bank(glow_data))
+                            self.pof_data.glow_banks.append(
+                                dict_to_glow_bank(glow_data)
+                            )
                         else:
                             # Already converted
                             self.pof_data.glow_banks.append(glow_data)
@@ -761,21 +809,21 @@ class POFParser:
                 else:
                     # Already converted
                     self.pof_data.glow_banks.append(parsed_data)
-            
+
             elif chunk_id == ID_SLDC:
                 # SLDC returns BSPNode (shield collision tree)
                 self.pof_data.shield_collision_tree = parsed_data
-            
+
             else:
                 logger.warning(f"No storage handler for chunk ID {chunk_id:08X}")
-                
+
         except Exception as e:
             logger.error(f"Failed to store chunk data for {chunk_id:08X}: {e}")
             self.error_handler.add_error(
                 f"Data storage error for chunk {chunk_id:08X}: {e}",
                 severity=ErrorSeverity.ERROR,
                 category=ErrorCategory.DATA_INTEGRITY,
-                recovery_action="Skip problematic chunk data"
+                recovery_action="Skip problematic chunk data",
             )
 
     def _verify_chunk_position(
@@ -795,7 +843,7 @@ class POFParser:
                 f"Read past end of chunk {chunk_name}! Expected {next_chunk_pos}, got {current_pos}",
                 severity=ErrorSeverity.ERROR,
                 category=ErrorCategory.PARSING,
-                recovery_action="Seek to next chunk position"
+                recovery_action="Seek to next chunk position",
             )
             f.seek(next_chunk_pos)
         elif current_pos < next_chunk_pos:
@@ -806,6 +854,6 @@ class POFParser:
                 f"Skipping {bytes_skipped} bytes",
                 severity=ErrorSeverity.WARNING,
                 category=ErrorCategory.DATA_INTEGRITY,
-                recovery_action="Seek to expected position"
+                recovery_action="Seek to expected position",
             )
             f.seek(next_chunk_pos)

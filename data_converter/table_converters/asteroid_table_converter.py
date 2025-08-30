@@ -228,7 +228,9 @@ class AsteroidTableConverter(BaseTableConverter):
 
         # Convert animation reference to Godot path using entities/effects/ structure
         if impact_explosion:
-            impact_explosion = f"entities/effects/explosions/{impact_explosion.lower()}.tscn"
+            impact_explosion = (
+                f"entities/effects/explosions/{impact_explosion.lower()}.tscn"
+            )
 
         return {
             "impact_explosion": impact_explosion,

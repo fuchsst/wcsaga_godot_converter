@@ -11,7 +11,7 @@ import logging
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional
 
 from .godot_material_converter import WCSMaterialProperties, WCSRenderMode
 
@@ -672,7 +672,7 @@ if __name__ == "__main__":
 
     # Generate shader report
     report = mapper.generate_shader_report(materials)
-    print(f"\nShader Report:")
+    print("\nShader Report:")
     print(f"  Total materials: {report['total_materials']}")
     print(f"  Custom shaders needed: {report['custom_shaders_needed']}")
     print(f"  Standard materials: {report['standard_materials']}")

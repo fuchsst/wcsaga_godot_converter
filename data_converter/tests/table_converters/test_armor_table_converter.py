@@ -18,9 +18,9 @@ def test_armor_converter_initialization():
         target_dir = Path(temp_dir) / "target"
         source_dir.mkdir()
         target_dir.mkdir()
-        
+
         converter = ArmorTableConverter(source_dir, target_dir)
-        
+
         # Check that the converter is properly initialized
         assert converter.source_dir == source_dir
         assert converter.target_dir == target_dir
@@ -35,16 +35,16 @@ def test_armor_converter_can_convert():
         target_dir = Path(temp_dir) / "target"
         source_dir.mkdir()
         target_dir.mkdir()
-        
+
         converter = ArmorTableConverter(source_dir, target_dir)
-        
+
         # Create a test armor table file
         armor_file = source_dir / "armor.tbl"
         with open(armor_file, "w") as f:
             f.write("#Armor Type\\n$Name: Test Armor\\n#End")
-        
+
         # Should be able to convert armor table files
-        assert converter.can_convert(armor_file) == True
+        assert converter.can_convert(armor_file)
 
 
 def test_parse_armor_entry():
@@ -54,19 +54,19 @@ def test_parse_armor_entry():
         "$Name: Light Hull",
         "$Damage Type: Laser",
         "$Reduction: 0.8",
-        "#End"
+        "#End",
     ]
-    
+
     state = ParseState(lines=test_content, current_line=0)
     with tempfile.TemporaryDirectory() as temp_dir:
         source_dir = Path(temp_dir) / "source"
         target_dir = Path(temp_dir) / "target"
         source_dir.mkdir()
         target_dir.mkdir()
-        
+
         converter = ArmorTableConverter(source_dir, target_dir)
         result = converter.parse_entry(state)
-        
+
         assert result is not None
         assert result["name"] == "Light Hull"
         assert result["damage_type"] == "Laser"
@@ -80,28 +80,20 @@ def test_validate_armor_entry():
         target_dir = Path(temp_dir) / "target"
         source_dir.mkdir()
         target_dir.mkdir()
-        
+
         converter = ArmorTableConverter(source_dir, target_dir)
-        
+
         # Valid entry
-        valid_entry = {
-            "name": "Test Armor",
-            "reduction": 0.8
-        }
-        assert converter.validate_entry(valid_entry) == True
-        
+        valid_entry = {"name": "Test Armor", "reduction": 0.8}
+        assert converter.validate_entry(valid_entry)
+
         # Invalid entry - missing name
-        invalid_entry = {
-            "reduction": 0.8
-        }
-        assert converter.validate_entry(invalid_entry) == False
-        
+        invalid_entry = {"reduction": 0.8}
+        assert not converter.validate_entry(invalid_entry)
+
         # Invalid entry - wrong type for numeric field
-        invalid_entry2 = {
-            "name": "Test Armor",
-            "reduction": "invalid"
-        }
-        assert converter.validate_entry(invalid_entry2) == False
+        invalid_entry2 = {"name": "Test Armor", "reduction": "invalid"}
+        assert not converter.validate_entry(invalid_entry2)
 
 
 def test_convert_armor_table_file():
@@ -111,9 +103,9 @@ def test_convert_armor_table_file():
         target_dir = Path(temp_dir) / "target"
         source_dir.mkdir()
         target_dir.mkdir()
-        
+
         converter = ArmorTableConverter(source_dir, target_dir)
-        
+
         # Create test table content
         table_content = """#Armor Type
 
@@ -123,16 +115,16 @@ $Reduction: 0.8
 
 #End
 """
-        
+
         # Create test file
         test_file = source_dir / "armor.tbl"
         with open(test_file, "w") as f:
             f.write(table_content)
-        
+
         # Test conversion
         success = converter.convert_table_file(test_file)
-        assert success == True
-        
+        assert success
+
         # Check that output files were created
         output_files = list((target_dir / "assets" / "tables").glob("*.tres"))
         assert len(output_files) >= 0  # At least the main table file

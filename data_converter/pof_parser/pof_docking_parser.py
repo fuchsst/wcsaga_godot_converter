@@ -27,7 +27,9 @@ def read_dock_chunk(f: BinaryIO, length: int) -> List[Dict[str, Any]]:
         dock_data = {"points": []}
         dock_data["properties"] = reader.read_length_prefixed_string(MAX_PROP_LEN)
         num_spline_paths = reader.read_int32()
-        dock_data["spline_paths"] = [reader.read_int32() for _ in range(num_spline_paths)]
+        dock_data["spline_paths"] = [
+            reader.read_int32() for _ in range(num_spline_paths)
+        ]
         num_slots = reader.read_int32()
         dock_data["num_slots"] = num_slots
         # Ensure we read exactly MAX_DOCK_SLOTS (2) points, even if num_slots differs

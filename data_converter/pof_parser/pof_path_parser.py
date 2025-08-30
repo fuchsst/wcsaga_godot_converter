@@ -23,7 +23,9 @@ def read_path_chunk(f: BinaryIO, length: int) -> List[Dict[str, Any]]:
     for _ in range(num_paths):
         path_data = {"verts": []}
         path_data["name"] = reader.read_length_prefixed_string(MAX_NAME_LEN)
-        path_data["parent_name"] = reader.read_length_prefixed_string(MAX_NAME_LEN)  # POF v2002+
+        path_data["parent_name"] = reader.read_length_prefixed_string(
+            MAX_NAME_LEN
+        )  # POF v2002+
         num_verts = reader.read_int32()
         path_data["nverts"] = num_verts
         for _ in range(num_verts):

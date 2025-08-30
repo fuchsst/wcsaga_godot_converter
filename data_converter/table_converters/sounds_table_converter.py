@@ -11,7 +11,6 @@ logic of other converters.
 import re
 from typing import Any, Dict, List, Optional
 
-from ..core.path_resolver import TargetPathResolver
 
 from .base_converter import BaseTableConverter, ParseState, TableType
 
@@ -30,10 +29,12 @@ class SoundsTableConverter(BaseTableConverter):
             "section_start": re.compile(r"^#\s*(\w+)\s+Sounds\s+Start", re.IGNORECASE),
             "section_end": re.compile(r"^#\s*(\w+)\s+Sounds\s+End", re.IGNORECASE),
             "sound_entry": re.compile(
-                r"^\$Name:\s*(\d+)\s+([^,]+),\s*(\d+),\s*([\d\.]+),\s*(\d+)(?:,\s*([\d\.]+),\s*([\d\.]+))?\s*;\s*(.*)", re.IGNORECASE
+                r"^\$Name:\s*(\d+)\s+([^,]+),\s*(\d+),\s*([\d\.]+),\s*(\d+)(?:,\s*([\d\.]+),\s*([\d\.]+))?\s*;\s*(.*)",
+                re.IGNORECASE,
             ),
             "flyby_entry": re.compile(
-                r"^\$(\w+):\s*(\d+)\s+([^,]+),\s*(\d+),\s*([\d\.]+),\s*(\d+)(?:,\s*([\d\.]+),\s*([\d\.]+))?\s*;\s*\*\s*(.*)", re.IGNORECASE
+                r"^\$(\w+):\s*(\d+)\s+([^,]+),\s*(\d+),\s*([\d\.]+),\s*(\d+)(?:,\s*([\d\.]+),\s*([\d\.]+))?\s*;\s*\*\s*(.*)",
+                re.IGNORECASE,
             ),
         }
 
@@ -75,8 +76,14 @@ class SoundsTableConverter(BaseTableConverter):
             if entry and self.validate_entry(entry):
                 entries.append(entry)
                 self.logger.debug(f"Parsed sound entry: {entry['name']}")
-            elif line.strip() and not line.strip().startswith(';') and current_section != "unknown":
-                self.logger.debug(f"Skipped line in section '{current_section}': {line.strip()}")
+            elif (
+                line.strip()
+                and not line.strip().startswith(";")
+                and current_section != "unknown"
+            ):
+                self.logger.debug(
+                    f"Skipped line in section '{current_section}': {line.strip()}"
+                )
 
         return entries
 
@@ -88,7 +95,9 @@ class SoundsTableConverter(BaseTableConverter):
         if not match:
             return None
 
-        sound_id, filename, preload, volume, sound_type, min_dist, max_dist, comment = match.groups()
+        sound_id, filename, preload, volume, sound_type, min_dist, max_dist, comment = (
+            match.groups()
+        )
         unique_name = f"{section}_{sound_id}"
 
         return {
@@ -108,7 +117,17 @@ class SoundsTableConverter(BaseTableConverter):
         if not match:
             return None
 
-        faction, sound_id, filename, preload, volume, sound_type, min_dist, max_dist, comment = match.groups()
+        (
+            faction,
+            sound_id,
+            filename,
+            preload,
+            volume,
+            sound_type,
+            min_dist,
+            max_dist,
+            comment,
+        ) = match.groups()
         unique_name = f"{section}_{faction.lower()}_{sound_id}"
 
         return {
@@ -128,11 +147,11 @@ class SoundsTableConverter(BaseTableConverter):
         filename = sound.get("filename", "")
         if filename.lower() == "none.wav":
             return None
-        
+
         # Determine audio type and target path based on documentation
         audio_type = self._determine_audio_type(sound)
         target_path = self._generate_target_path(filename, audio_type)
-        
+
         return {
             "display_name": sound.get("name", "Unknown Sound"),
             "filename": filename,
@@ -145,12 +164,12 @@ class SoundsTableConverter(BaseTableConverter):
             "max_distance": sound.get("max_distance", 1000.0),
             "audio_type": audio_type,
         }
-    
+
     def _determine_audio_type(self, sound: Dict[str, Any]) -> str:
         """Determine the audio type based on sound properties and documentation."""
         name = sound.get("name", "").lower()
-        comment = sound.get("comment", "").lower()
-        
+        sound.get("comment", "").lower()
+
         if "weapon" in name or "laser" in name or "missile" in name or "fire" in name:
             return "weapon"
         elif "explosion" in name or "explode" in name or "blast" in name:
@@ -167,11 +186,11 @@ class SoundsTableConverter(BaseTableConverter):
             return "flyby"
         else:
             return "sfx"
-    
+
     def _generate_target_path(self, filename: str, audio_type: str) -> str:
         """Generate target path based on audio type and documentation."""
         base_name = filename.replace(".wav", ".ogg")
-        
+
         if audio_type == "weapon":
             return f"res://audio/sfx/weapons/{base_name}"
         elif audio_type == "explosion":

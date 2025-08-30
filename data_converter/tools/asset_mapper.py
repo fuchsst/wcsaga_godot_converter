@@ -138,7 +138,7 @@ class AssetMapper:
                         if (
                             clean_name
                             and not clean_name.startswith("#")
-                            and not clean_name.lower() in ["default", "none"]
+                            and clean_name.lower() not in ["default", "none"]
                         ):
                             entities[clean_name] = table_type
                 except Exception as e:
@@ -398,7 +398,6 @@ class AssetMapper:
 def main():
     """Command-line interface for the asset mapper."""
     import argparse
-    from datetime import datetime
 
     parser = argparse.ArgumentParser(
         description="Generate asset relationship mapping from WCS source files."

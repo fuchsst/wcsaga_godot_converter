@@ -29,19 +29,21 @@ $Name: Aggressive
 $end
 #End
 """
-    
+
     with tempfile.TemporaryDirectory() as temp_dir:
         temp_path = Path(temp_dir)
         converter = AITableConverter(temp_path, temp_path)
-        
-        state = ParseState(lines=ai_content.split('\n'), filename="test_ai.tbl")
+
+        state = ParseState(lines=ai_content.split("\n"), filename="test_ai.tbl")
         entries = converter.parse_table(state)
-        
+
         assert len(entries) == 2, f"Expected 2 AI class entries, got {len(entries)}"
-        assert entries[0]['name'] == 'Default', "First AI class should be Default"
-        assert entries[1]['name'] == 'Aggressive', "Second AI class should be Aggressive"
-        assert 'properties' in entries[0], "AI class should have properties"
-        assert 'flags' in entries[0], "AI class should have flags"
+        assert entries[0]["name"] == "Default", "First AI class should be Default"
+        assert (
+            entries[1]["name"] == "Aggressive"
+        ), "Second AI class should be Aggressive"
+        assert "properties" in entries[0], "AI class should have properties"
+        assert "flags" in entries[0], "AI class should have flags"
 
 
 def test_ai_converter_validates_entries():
@@ -54,14 +56,14 @@ $Name: Invalid
 $end
 #End
 """
-    
+
     with tempfile.TemporaryDirectory() as temp_dir:
         temp_path = Path(temp_dir)
         converter = AITableConverter(temp_path, temp_path)
-        
-        state = ParseState(lines=ai_content.split('\n'), filename="test_ai.tbl")
+
+        state = ParseState(lines=ai_content.split("\n"), filename="test_ai.tbl")
         entries = converter.parse_table(state)
-        
+
         # Should return empty list due to validation failure
         assert len(entries) == 0, "Should return empty list for invalid entries"
 
@@ -78,22 +80,22 @@ $Name: TestAI
 $end
 #End
 """
-    
+
     with tempfile.TemporaryDirectory() as temp_dir:
         temp_path = Path(temp_dir)
         converter = AITableConverter(temp_path, temp_path)
-        
-        state = ParseState(lines=ai_content.split('\n'), filename="test_ai.tbl")
+
+        state = ParseState(lines=ai_content.split("\n"), filename="test_ai.tbl")
         entries = converter.parse_table(state)
-        
+
         godot_resource = converter.convert_to_godot_resource(entries)
-        
-        assert 'resource_type' in godot_resource
-        assert godot_resource['resource_type'] == 'WCSAIDatabase'
-        assert 'ai_classes' in godot_resource
-        assert 'ai_class_count' in godot_resource
-        assert len(godot_resource['ai_classes']) == 1
-        assert 'TestAI' in godot_resource['ai_classes']
+
+        assert "resource_type" in godot_resource
+        assert godot_resource["resource_type"] == "WCSAIDatabase"
+        assert "ai_classes" in godot_resource
+        assert "ai_class_count" in godot_resource
+        assert len(godot_resource["ai_classes"]) == 1
+        assert "TestAI" in godot_resource["ai_classes"]
 
 
 def test_ai_converter_handles_skill_levels():
@@ -106,20 +108,20 @@ $Name: TestAI
 $end
 #End
 """
-    
+
     with tempfile.TemporaryDirectory() as temp_dir:
         temp_path = Path(temp_dir)
         converter = AITableConverter(temp_path, temp_path)
-        
-        state = ParseState(lines=ai_content.split('\n'), filename="test_ai.tbl")
+
+        state = ParseState(lines=ai_content.split("\n"), filename="test_ai.tbl")
         entries = converter.parse_table(state)
-        
+
         godot_resource = converter.convert_to_godot_resource(entries)
-        ai_class = godot_resource['ai_classes']['TestAI']
-        
+        ai_class = godot_resource["ai_classes"]["TestAI"]
+
         # Should have skill level properties
-        assert 'primary_weapon_delay_trainee' in ai_class
-        assert 'primary_weapon_delay_rookie' in ai_class
-        assert 'primary_weapon_delay_hotshot' in ai_class
-        assert 'primary_weapon_delay_ace' in ai_class
-        assert 'primary_weapon_delay_insane' in ai_class
+        assert "primary_weapon_delay_trainee" in ai_class
+        assert "primary_weapon_delay_rookie" in ai_class
+        assert "primary_weapon_delay_hotshot" in ai_class
+        assert "primary_weapon_delay_ace" in ai_class
+        assert "primary_weapon_delay_insane" in ai_class

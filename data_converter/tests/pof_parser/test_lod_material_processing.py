@@ -11,10 +11,8 @@ import tempfile
 import unittest
 from dataclasses import asdict
 from pathlib import Path
-from typing import Any, Dict, List
 
 from data_converter.pof_parser.collision_mesh_generator import (
-    CollisionMeshData,
     CollisionMeshGenerator,
     CollisionMeshSettings,
     CollisionType,
@@ -42,7 +40,6 @@ from data_converter.pof_parser.mesh_optimization_tools import (
 )
 from data_converter.pof_parser.pof_lod_processor import (
     LODHierarchy,
-    LODLevel,
     POFLODProcessor,
     create_default_lod_hierarchy,
 )

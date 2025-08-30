@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 import logging
-import struct
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Dict, List, Tuple
 
 # Import enhanced types for type safety
-from .pof_types import POFModelData, SubObject
+from .pof_types import POFModelData
 
 import numpy as np
 
@@ -108,9 +107,7 @@ def convert_pof_to_gltf(
         logger.error("Please install it using: pip install pygltflib numpy")
         return False
 
-    logger.info(
-        f"Starting GLTF conversion for {pof_data.filename}"
-    )
+    logger.info(f"Starting GLTF conversion for {pof_data.filename}")
 
     # --- Basic GLTF Structure ---
     gltf = GLTF2()
@@ -162,9 +159,7 @@ def convert_pof_to_gltf(
 
     for subobj_index, subobj in enumerate(pof_data.subobjects):
         subobj_num = subobj.number
-        logger.debug(
-            f"Processing geometry for subobject {subobj_num}: {subobj.name}"
-        )
+        logger.debug(f"Processing geometry for subobject {subobj_num}: {subobj.name}")
 
         # --- Read BSP Data ---
         bsp_data_offset = subobj.bsp_data_offset
@@ -512,7 +507,6 @@ def convert_pof_to_gltf(
     # --- Create Meshes and Primitives ---
     logger.info("Creating meshes and primitives...")
     mesh_map = {}  # gltf_node_index -> gltf_mesh_index
-    primitives_by_node: Dict[int, List[Primitive]] = {}  # node_index -> [Primitive]
 
     # Create primitives grouped by material index first
     primitives_by_material: Dict[int, Primitive] = {}

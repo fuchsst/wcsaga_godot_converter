@@ -159,41 +159,37 @@ class MusicTableConverter(BaseTableConverter):
             },
         }
 
-
     def _convert_menu_music_entry(self, menu_music: Dict[str, Any]) -> Dict[str, Any]:
         """Convert a single menu music entry to the target Godot format."""
         filename = menu_music.get("filename", "")
         target_path = self._generate_music_target_path(filename, "menu")
-        
+
         return {
             "name": menu_music.get("name"),
             "filename": filename,
             "target_path": target_path,
             "description": menu_music.get("description"),
         }
-    
+
     def _convert_soundtrack_entry(self, soundtrack: Dict[str, Any]) -> Dict[str, Any]:
         """Convert a single soundtrack entry to the target Godot format."""
         converted_tracks = []
         for track in soundtrack.get("tracks", []):
             filename = track.get("filename", "")
             target_path = self._generate_music_target_path(filename, "mission")
-            converted_tracks.append({
-                **track,
-                "target_path": target_path
-            })
-        
+            converted_tracks.append({**track, "target_path": target_path})
+
         return {
             "name": soundtrack.get("name"),
             "overlay": soundtrack.get("overlay", False),
             "lock_ambient": soundtrack.get("lock_ambient", False),
             "tracks": converted_tracks,
         }
-    
+
     def _generate_music_target_path(self, filename: str, music_type: str) -> str:
         """Generate target path for music files based on type."""
         base_name = filename.replace(".ogg", ".ogg")  # Already in ogg format
-        
+
         if music_type == "menu":
             return f"res://audio/music/menu/{base_name}"
         elif music_type == "mission":

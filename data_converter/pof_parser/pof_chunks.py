@@ -38,7 +38,7 @@ ID_EYE = 0x20455945  # EYE  - Eye Points
 ID_INSG = 0x47534E49  # INSG - Insignia
 ID_ACEN = 0x4E454341  # ACEN - Auto-center
 ID_GLOW = 0x574F4C47  # GLOW - Glow Points
-ID_GLOX = 0x584f4c47  # GLOX - Glow Points Extended (Unused)
+ID_GLOX = 0x584F4C47  # GLOX - Glow Points Extended (Unused)
 ID_SLDC = 0x43444C53  # SLDC - Shield Collision Tree
 
 # BSP Chunk IDs (from modelinterp.cpp and modelsinc.h)
@@ -74,11 +74,11 @@ def read_unknown_chunk(f: BinaryIO, length: int, chunk_id: int) -> None:
         chunk_id_str = struct.pack("<I", chunk_id).decode("ascii", errors="replace")
     except:
         chunk_id_str = "Invalid ID"
-    
+
     logger.warning(
         f"Skipping unknown chunk '{chunk_id_str}' (ID: {chunk_id:08X}) of length {length}"
     )
-    
+
     try:
         f.seek(length, 1)
     except Exception as e:
@@ -88,11 +88,12 @@ def read_unknown_chunk(f: BinaryIO, length: int, chunk_id: int) -> None:
 
 # --- Utility Functions ---
 
+
 def get_chunk_name(chunk_id: int) -> str:
     """Get human-readable name for chunk ID."""
     chunk_names = {
         ID_OHDR: "HDR2",
-        ID_SOBJ: "OBJ2", 
+        ID_SOBJ: "OBJ2",
         ID_TXTR: "TXTR",
         ID_INFO: "PINF",
         ID_GRID: "GRID",
@@ -118,10 +119,10 @@ def get_chunk_name(chunk_id: int) -> str:
         OP_SORTNORM: "SORTNORM",
         OP_BOUNDBOX: "BOUNDBOX",
     }
-    
+
     if chunk_id in chunk_names:
         return chunk_names[chunk_id]
-    
+
     # Try to decode as ASCII
     try:
         chunk_str = struct.pack("<I", chunk_id).decode("ascii", errors="replace")
@@ -137,12 +138,9 @@ def is_valid_chunk_length(length: int) -> bool:
     # Negative lengths are invalid
     if length < 0:
         return False
-    
+
     # Extremely large chunks are suspicious
     if length > 100 * 1024 * 1024:  # 100MB limit
         return False
-    
+
     return True
-
-
-

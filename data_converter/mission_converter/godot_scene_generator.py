@@ -8,17 +8,16 @@ mission layout and object relationships from parsed FS2 mission data.
 
 import json
 import logging
-from dataclasses import asdict, dataclass
+from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 from .fs2_mission_parser import (
     MissionData,
     MissionObject,
     MissionWaypoint,
     MissionWing,
-    ObjectType,
 )
 
 
@@ -721,8 +720,8 @@ func is_mission_active() -> bool:
             lines.append(f'        "name": "{goal_name}",')
             lines.append(f'        "message": "{goal_message}",')
             lines.append(f'        "formula": "{goal.formula}",')
-            lines.append(f'        "completed": false,')
-            lines.append(f'        "failed": false')
+            lines.append('        "completed": false,')
+            lines.append('        "failed": false')
             lines.append("    }")
 
         return "\n".join(lines)
@@ -736,12 +735,12 @@ func is_mission_active() -> bool:
         for i, event in enumerate(events):
             event_name = event.name or f"event_{i}"
 
-            lines.append(f"    events.append({{")
+            lines.append("    events.append({")
             lines.append(f'        "name": "{event_name}",')
             lines.append(f'        "formula": "{event.formula}",')
             lines.append(f'        "repeat_count": {event.repeat_count},')
             lines.append(f'        "score": {event.score},')
-            lines.append(f'        "active": true')
+            lines.append('        "active": true')
             lines.append("    })")
 
         return "\n".join(lines)
@@ -757,7 +756,6 @@ if __name__ == "__main__":
     # Test with sample mission data
     from .fs2_mission_parser import (
         MissionData,
-        MissionEvent,
         MissionGoal,
         MissionInfo,
         MissionObject,

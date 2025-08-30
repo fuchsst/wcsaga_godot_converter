@@ -8,12 +8,11 @@ with proper material preservation, optimization, and Godot compatibility.
 Based on EPIC-003 architecture requirements for mesh conversion pipeline.
 """
 
-import json
 import logging
 import subprocess
 import tempfile
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Dict, Optional
 
 logger = logging.getLogger(__name__)
 

@@ -23,7 +23,9 @@ class AITableConverter(BaseTableConverter):
         return {
             "ai_class_start": re.compile(r"^\$Name:\s*(.+)$", re.IGNORECASE),
             "ai_class_end": re.compile(r"^\$end$", re.IGNORECASE),
-            "ai_property": re.compile(r"^\$(\w[\w\s#]*):\s*([\d\-\.\s,]+)$", re.IGNORECASE),
+            "ai_property": re.compile(
+                r"^\$(\w[\w\s#]*):\s*([\d\-\.\s,]+)$", re.IGNORECASE
+            ),
             "boolean_flag": re.compile(r"^\$(\w[\w\s]*):\s*(YES|NO)$", re.IGNORECASE),
             "section_end": re.compile(r"^#End$", re.IGNORECASE),
         }
@@ -70,7 +72,7 @@ class AITableConverter(BaseTableConverter):
             line = line.strip()
             if not line:
                 continue
-            
+
             # Strip inline comments (semicolons)
             if ";" in line:
                 line = line.split(";", 1)[0].strip()

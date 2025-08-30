@@ -21,7 +21,7 @@ import json
 import logging
 import sys
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Type
+from typing import Any, Dict, List, Type
 
 # Import all specialized table converters
 from ..table_converters.ai_profiles_table_converter import AIProfilesTableConverter
@@ -40,7 +40,6 @@ from ..table_converters.rank_table_converter import RankTableConverter
 from ..table_converters.scripting_table_converter import ScriptingTableConverter
 from ..table_converters.ship_table_converter import ShipTableConverter
 from ..table_converters.sounds_table_converter import SoundsTableConverter
-from ..table_converters.species_defs_table_converter import SpeciesDefsTableConverter
 from ..table_converters.species_table_converter import SpeciesTableConverter
 from ..table_converters.stars_table_converter import StarsTableConverter
 from ..table_converters.weapon_table_converter import WeaponTableConverter
@@ -514,7 +513,7 @@ class TableConversionCLI:
                 self.stats["tables_failed"] += 1
 
         # Print summary
-        logger.info(f"Conversion complete:")
+        logger.info("Conversion complete:")
         logger.info(f"  Tables processed: {self.stats['tables_processed']}")
         logger.info(f"  Successful: {self.stats['tables_success']}")
         logger.info(f"  Failed: {self.stats['tables_failed']}")

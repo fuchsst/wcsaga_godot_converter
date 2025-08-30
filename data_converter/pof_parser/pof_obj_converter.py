@@ -9,14 +9,11 @@ Based on WCS C++ analysis from source/code/model/modelinterp.cpp
 """
 
 import logging
-import struct
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, BinaryIO, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 from .pof_data_extractor import POFDataExtractor
-from .pof_bsp_parser import parse_bsp_data
-from .pof_types import Vector3D
 
 logger = logging.getLogger(__name__)
 
@@ -390,7 +387,7 @@ class POFOBJConverter:
         try:
             with open(obj_path, "w", encoding="utf-8") as f:
                 # Write header
-                f.write(f"# OBJ file generated from POF model\n")
+                f.write("# OBJ file generated from POF model\n")
                 f.write(
                     f"# Vertices: {len(result.vertices)}, Faces: {len(result.faces)}\n"
                 )

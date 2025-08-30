@@ -14,7 +14,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 from .pof_parser import POFParser
-from .pof_types import POFModelData, Vector3D
+from .pof_types import POFModelData
 
 logger = logging.getLogger(__name__)
 

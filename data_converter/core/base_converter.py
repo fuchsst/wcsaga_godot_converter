@@ -13,16 +13,12 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
 from .data_structures import ConversionReport, ConversionSettings
 from .interfaces import (
     IFileConverter,
     IDirectoryConverter,
-    IBatchConverter,
-    IValidatableConverter,
-    IConfigurableConverter,
-    IProgressReporter,
 )
 
 

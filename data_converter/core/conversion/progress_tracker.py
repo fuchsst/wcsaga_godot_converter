@@ -12,7 +12,7 @@ from dataclasses import dataclass
 from threading import Lock
 from typing import Any, Callable, Dict, List, Optional
 
-from .job_manager import ConversionJob, JobStatus
+from .job_manager import ConversionJob
 
 logger = logging.getLogger(__name__)
 

@@ -12,7 +12,7 @@ import logging
 import struct
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, BinaryIO, Dict, List, Optional, Tuple
+from typing import Any, BinaryIO, Dict, List, Optional
 
 from .pof_chunks import (
     ID_ACEN,
@@ -34,6 +34,7 @@ from .pof_chunks import (
     PM_OBJFILE_MAJOR_VERSION,
     POF_HEADER_ID,
 )
+
 # Import unified binary reader
 from .pof_binary_reader import create_reader
 

@@ -7,10 +7,9 @@ Creates multiple mesh versions with appropriate detail levels for different view
 """
 
 import logging
-import math
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 
 from .pof_data_extractor import POFDataExtractor
 from .pof_parser import POFParser
@@ -448,7 +447,7 @@ if __name__ == "__main__":
 
     # Test distance-based LOD selection
     test_distances = [5.0, 15.0, 30.0, 75.0, 150.0, 300.0, 600.0, 1200.0]
-    print(f"\nLOD selection for test distances:")
+    print("\nLOD selection for test distances:")
     for distance in test_distances:
         selected_lod = hierarchy.get_lod_for_distance(distance)
         print(f"  Distance {distance:4.0f} → LOD {selected_lod.level}")

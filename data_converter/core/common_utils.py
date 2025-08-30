@@ -12,9 +12,8 @@ Epic: EPIC-003 - Data Migration & Conversion Tools
 """
 
 import logging
-import re
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import List, Optional, Tuple
 
 
 class ConversionUtils:
@@ -358,19 +357,12 @@ class TableTypeDetector:
         Returns:
             TableType enum value
         """
+        # Import TableType for type annotation
+        from ..core.table_data_structures import TableType
         table_type_str = TableTypeDetector.determine_table_type(table_file)
 
         # Map string to TableType enum
         try:
-            # Try different import paths to handle different execution contexts
-            try:
-                from ..table_converters.table_types import TableType
-            except ImportError:
-                from table_converters.table_types import TableType
-            return TableType[table_type_str.upper()]
-        except (ImportError, KeyError):
-            try:
-                from ..table_converters.table_types import TableType
-            except ImportError:
-                from table_converters.table_types import TableType
+            return TableType(table_type_str)
+        except ValueError:
             return TableType.UNKNOWN

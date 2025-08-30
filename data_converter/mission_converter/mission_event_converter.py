@@ -10,8 +10,7 @@ import logging
 import re
 from dataclasses import dataclass
 from enum import Enum
-from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple, Union
+from typing import Dict, List, Optional, Tuple
 
 from .fs2_mission_parser import MissionData, MissionEvent, MissionGoal
 

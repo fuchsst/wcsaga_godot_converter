@@ -152,12 +152,14 @@ class MflashTableConverter(BaseTableConverter):
         """Convert a single mflash entry to Godot format"""
         converted_blobs = []
         for blob in mflash.get("blobs", []):
-            converted_blobs.append({
-                "name": blob.get("name", ""),
-                "offset": blob.get("offset", 0.0),
-                "radius": blob.get("radius", 1.0),
-                "texture_path": f"res://textures/effects/weapons/muzzle_flashes/{blob.get('name', '')}.webp",
-            })
+            converted_blobs.append(
+                {
+                    "name": blob.get("name", ""),
+                    "offset": blob.get("offset", 0.0),
+                    "radius": blob.get("radius", 1.0),
+                    "texture_path": f"res://textures/effects/weapons/muzzle_flashes/{blob.get('name', '')}.webp",
+                }
+            )
 
         return {
             "name": mflash.get("name", ""),

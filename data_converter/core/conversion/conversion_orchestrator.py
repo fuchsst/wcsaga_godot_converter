@@ -9,18 +9,15 @@ Refactored to use Dependency Injection for better decoupling.
 """
 
 import logging
-from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 from ..dependency_injection import (
     get_container,
     register_converter_services,
     inject_dependencies,
 )
-from ..catalog.asset_catalog import AssetCatalog
-from .job_manager import ConversionJob, JobManager
-from .progress_tracker import ProgressTracker
+from .job_manager import ConversionJob
 
 logger = logging.getLogger(__name__)
 

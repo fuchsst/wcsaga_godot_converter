@@ -16,7 +16,6 @@ import sys
 import tempfile
 from pathlib import Path
 
-import pytest
 
 # Import the module under test
 sys.path.append(str(Path(__file__).parent.parent.parent))
@@ -61,7 +60,7 @@ class TestConfigMigrationCore:
 
         gameplay_godot = gameplay.to_godot_settings()
         assert gameplay_godot["game/difficulty_level"] == 2
-        assert gameplay_godot["game/auto_targeting"] == True
+        assert gameplay_godot["game/auto_targeting"]
 
     def test_wcs_control_actions_database_loaded(self):
         """Test that WCS control actions database is properly loaded and accessible."""
@@ -105,11 +104,11 @@ AutoTargeting=true
             # Verify settings were parsed
             assert migrator.graphics_settings.resolution_width == 1024
             assert migrator.graphics_settings.resolution_height == 768
-            assert migrator.graphics_settings.fullscreen == False
+            assert not migrator.graphics_settings.fullscreen
             assert migrator.audio_settings.master_volume == 1.0
             assert migrator.audio_settings.music_volume == 0.7
             assert migrator.gameplay_settings.difficulty == 1
-            assert migrator.gameplay_settings.auto_targeting == True
+            assert migrator.gameplay_settings.auto_targeting
 
             # Test project settings generation
             success = migrator._generate_godot_project_settings(godot_target)

@@ -10,7 +10,7 @@ import json
 import logging
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 
 from .fs2_mission_parser import FS2MissionParser, MissionData
 from .godot_scene_generator import GodotSceneGenerator
@@ -79,18 +79,18 @@ class MissionFileConverter:
             converted_events = self._convert_mission_events(mission_data, result)
 
             # Step 3: Generate Godot scene
-            scene_files = self._generate_godot_scene(mission_data, output_dir, result)
+            self._generate_godot_scene(mission_data, output_dir, result)
 
             # Step 4: Generate mission resources (data-driven approach)
-            resource_files = self._generate_mission_resources(
+            self._generate_mission_resources(
                 mission_data, converted_events, output_dir, result
             )
 
             # Step 4.5: Generate resource script files
-            script_files = self._generate_resource_scripts(output_dir, result)
+            self._generate_resource_scripts(output_dir, result)
 
             # Step 5: Generate SEXP mapping documentation
-            sexp_docs = self._generate_sexp_documentation(
+            self._generate_sexp_documentation(
                 mission_data, converted_events, output_dir, result
             )
 
@@ -110,7 +110,7 @@ class MissionFileConverter:
                     f"Successfully converted mission: {result.mission_name}"
                 )
             else:
-                self.logger.error(f"Mission conversion failed with critical errors")
+                self.logger.error("Mission conversion failed with critical errors")
 
             result.conversion_time = time.time() - start_time
             return result
@@ -849,7 +849,7 @@ if __name__ == "__main__":
                 args.input, args.output, args.validate
             )
 
-            print(f"\nConversion Result:")
+            print("\nConversion Result:")
             print(f"Success: {result.success}")
             print(f"Mission: {result.mission_name}")
             print(f"Time: {result.conversion_time:.2f}s")
@@ -865,7 +865,7 @@ if __name__ == "__main__":
                 for error in result.errors[:5]:  # Show first 5
                     print(f"  {error}")
 
-            print(f"\nStatistics:")
+            print("\nStatistics:")
             for category, stats in result.statistics.items():
                 print(f"  {category}: {stats}")
 
@@ -876,7 +876,7 @@ if __name__ == "__main__":
             successful = sum(1 for r in results if r.success)
             total_time = sum(r.conversion_time for r in results)
 
-            print(f"\nBatch Conversion Results:")
+            print("\nBatch Conversion Results:")
             print(f"Total Files: {len(results)}")
             print(f"Successful: {successful}")
             print(f"Failed: {len(results) - successful}")
@@ -886,7 +886,7 @@ if __name__ == "__main__":
             # Show failed conversions
             failed = [r for r in results if not r.success]
             if failed:
-                print(f"\nFailed Conversions:")
+                print("\nFailed Conversions:")
                 for result in failed:
                     print(
                         f"  {result.mission_name}: {result.errors[0] if result.errors else 'Unknown error'}"

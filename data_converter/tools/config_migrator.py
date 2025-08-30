@@ -15,11 +15,10 @@ Epic: EPIC-003 - Data Migration & Conversion Tools
 import json
 import os
 import re
-import shutil
 from dataclasses import asdict, dataclass
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 
 
 class ConfigType(Enum):
@@ -446,8 +445,6 @@ class ConfigMigrator:
         try:
             # Parse WCS configuration sources
             print("ConfigMigrator: Parsing WCS configuration files...")
-            success &= self._parse_wcs_registry()
-            success &= self._parse_wcs_config_files(wcs_source_dir)
             success &= self._parse_wcs_pilot_files(wcs_source_dir)
             success &= self._parse_wcs_control_config(wcs_source_dir)
 
@@ -479,173 +476,6 @@ class ConfigMigrator:
             success = False
 
         return success
-
-    def _parse_wcs_registry(self) -> bool:
-        """Parse WCS Windows Registry settings."""
-        if os.name != "nt":
-            print("ConfigMigrator: Not on Windows, skipping registry parsing")
-            return True
-
-        try:
-            # Parse graphics settings
-            graphics_key = rf"{self.wcs_registry_root}\Settings"
-            try:
-                with winreg.OpenKey(winreg.HKEY_CURRENT_USER, graphics_key) as key:
-                    self.graphics_settings.resolution_width = self._read_registry_int(
-                        key, "ScreenWidth", 1024
-                    )
-                    self.graphics_settings.resolution_height = self._read_registry_int(
-                        key, "ScreenHeight", 768
-                    )
-                    self.graphics_settings.fullscreen = self._read_registry_bool(
-                        key, "Fullscreen", False
-                    )
-                    self.graphics_settings.vsync = self._read_registry_bool(
-                        key, "VSync", True
-                    )
-                    self.graphics_settings.gamma = self._read_registry_float(
-                        key, "Gamma", 1.0
-                    )
-                    self.graphics_settings.detail_level = self._read_registry_int(
-                        key, "DetailLevel", 2
-                    )
-                    self.graphics_settings.anti_aliasing = self._read_registry_int(
-                        key, "AntiAlias", 0
-                    )
-
-                    print(
-                        f"ConfigMigrator: Parsed graphics settings from registry (Resolution: {self.graphics_settings.resolution_width}x{self.graphics_settings.resolution_height})"
-                    )
-            except FileNotFoundError:
-                print(
-                    "ConfigMigrator: WCS graphics registry key not found, using defaults"
-                )
-
-            # Parse audio settings
-            audio_key = rf"{self.wcs_registry_root}\Audio"
-            try:
-                with winreg.OpenKey(winreg.HKEY_CURRENT_USER, audio_key) as key:
-                    self.audio_settings.master_volume = self._read_registry_float(
-                        key, "MasterVolume", 1.0
-                    )
-                    self.audio_settings.music_volume = self._read_registry_float(
-                        key, "MusicVolume", 0.7
-                    )
-                    self.audio_settings.sfx_volume = self._read_registry_float(
-                        key, "SFXVolume", 0.9
-                    )
-                    self.audio_settings.voice_volume = self._read_registry_float(
-                        key, "VoiceVolume", 0.8
-                    )
-                    self.audio_settings.sound_enabled = self._read_registry_bool(
-                        key, "SoundEnabled", True
-                    )
-                    self.audio_settings.music_enabled = self._read_registry_bool(
-                        key, "MusicEnabled", True
-                    )
-
-                    print(
-                        f"ConfigMigrator: Parsed audio settings from registry (Master Volume: {self.audio_settings.master_volume:.2f})"
-                    )
-            except FileNotFoundError:
-                print(
-                    "ConfigMigrator: WCS audio registry key not found, using defaults"
-                )
-
-            # Parse gameplay settings
-            gameplay_key = rf"{self.wcs_registry_root}\Game"
-            try:
-                with winreg.OpenKey(winreg.HKEY_CURRENT_USER, gameplay_key) as key:
-                    self.gameplay_settings.difficulty = self._read_registry_int(
-                        key, "Difficulty", 1
-                    )
-                    self.gameplay_settings.auto_targeting = self._read_registry_bool(
-                        key, "AutoTargeting", True
-                    )
-                    self.gameplay_settings.auto_speed_matching = (
-                        self._read_registry_bool(key, "AutoSpeedMatching", False)
-                    )
-                    self.gameplay_settings.show_subtitles = self._read_registry_bool(
-                        key, "ShowSubtitles", True
-                    )
-                    self.gameplay_settings.auto_aim = self._read_registry_bool(
-                        key, "AutoAim", False
-                    )
-
-                    print(
-                        f"ConfigMigrator: Parsed gameplay settings from registry (Difficulty: {self.gameplay_settings.difficulty})"
-                    )
-            except FileNotFoundError:
-                print(
-                    "ConfigMigrator: WCS gameplay registry key not found, using defaults"
-                )
-
-            return True
-
-        except Exception as e:
-            print(f"ConfigMigrator: Failed to parse WCS registry: {e}")
-            return False
-
-    def _read_registry_int(self, key, name: str, default: int) -> int:
-        """Read integer value from registry with default fallback."""
-        try:
-            value, _ = winreg.QueryValueEx(key, name)
-            return int(value)
-        except (FileNotFoundError, ValueError):
-            return default
-
-    def _read_registry_float(self, key, name: str, default: float) -> float:
-        """Read float value from registry with default fallback."""
-        try:
-            value, _ = winreg.QueryValueEx(key, name)
-            return float(value)
-        except (FileNotFoundError, ValueError):
-            return default
-
-    def _read_registry_bool(self, key, name: str, default: bool) -> bool:
-        """Read boolean value from registry with default fallback."""
-        try:
-            value, _ = winreg.QueryValueEx(key, name)
-            return bool(int(value))
-        except (FileNotFoundError, ValueError):
-            return default
-
-    def _read_registry_string(self, key, name: str, default: str) -> str:
-        """Read string value from registry with default fallback."""
-        try:
-            value, _ = winreg.QueryValueEx(key, name)
-            return str(value)
-        except FileNotFoundError:
-            return default
-
-    def _parse_wcs_config_files(self, wcs_source_dir: Path) -> bool:
-        """Parse WCS INI-style configuration files."""
-        try:
-            # Look for common WCS config files
-            config_files = [
-                "fs2_open.ini",
-                "wcsaga.ini",
-                "config.ini",
-                "data/cmdline_fso.cfg",
-            ]
-
-            found_config = False
-
-            for config_file in config_files:
-                config_path = wcs_source_dir / config_file
-                if config_path.exists():
-                    print(f"ConfigMigrator: Parsing WCS config file: {config_file}")
-                    self._parse_ini_file(config_path)
-                    found_config = True
-
-            if not found_config:
-                print("ConfigMigrator: No WCS config files found, using defaults")
-
-            return True
-
-        except Exception as e:
-            print(f"ConfigMigrator: Failed to parse WCS config files: {e}")
-            return False
 
     def _parse_ini_file(self, config_path: Path) -> None:
         """Parse INI-style configuration file."""

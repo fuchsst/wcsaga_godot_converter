@@ -4,7 +4,6 @@ Vector3D Tests - pytest tests for Vector3D functionality.
 """
 
 import struct
-from io import BytesIO
 
 import pytest
 
@@ -110,7 +109,7 @@ def test_vector3d_subtraction():
 def test_vector3d_multiplication():
     """Test Vector3D multiplication."""
     v = Vector3D(1.0, 2.0, 3.0)
-    
+
     # Test scalar multiplication
     result = v * 2.0
     assert isinstance(result, Vector3D)
@@ -133,7 +132,7 @@ def test_vector3d_multiplication():
 def test_vector3d_division():
     """Test Vector3D division."""
     v = Vector3D(2.0, 4.0, 6.0)
-    
+
     # Test scalar division
     result = v / 2.0
     assert isinstance(result, Vector3D)
@@ -190,10 +189,10 @@ def test_vector3d_dot_product():
     """Test Vector3D dot product."""
     v1 = Vector3D(1.0, 2.0, 3.0)
     v2 = Vector3D(4.0, 5.0, 6.0)
-    
+
     # Test normal dot product
     result = v1.dot(v2)
-    expected = 1*4 + 2*5 + 3*6  # 4 + 10 + 18 = 32
+    expected = 1 * 4 + 2 * 5 + 3 * 6  # 4 + 10 + 18 = 32
     assert result == expected
 
     # Test with non-Vector3D (should raise TypeError)
@@ -205,7 +204,7 @@ def test_vector3d_cross_product():
     """Test Vector3D cross product."""
     v1 = Vector3D(1.0, 0.0, 0.0)
     v2 = Vector3D(0.0, 1.0, 0.0)
-    
+
     # Test cross product
     result = v1.cross(v2)
     assert isinstance(result, Vector3D)
@@ -223,13 +222,13 @@ def test_vector3d_equality():
     v1 = Vector3D(1.0, 2.0, 3.0)
     v2 = Vector3D(1.0, 2.0, 3.0)
     v3 = Vector3D(1.0, 2.0, 3.1)
-    
+
     # Test equal vectors
     assert v1 == v2
-    
+
     # Test unequal vectors
     assert not (v1 == v3)
-    
+
     # Test comparison with non-Vector3D
     assert not (v1 == "not a vector")
 

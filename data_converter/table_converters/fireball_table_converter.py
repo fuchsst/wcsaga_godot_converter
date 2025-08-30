@@ -23,7 +23,9 @@ class FireballTableConverter(BaseTableConverter):
     def _init_parse_patterns(self) -> Dict[str, re.Pattern]:
         """Initialize regex patterns for fireball table parsing"""
         return {
-            "fireball_entry": re.compile(r"^\$Name:[\s\t]*(\w+)[\s\t]*.*$", re.IGNORECASE),
+            "fireball_entry": re.compile(
+                r"^\$Name:[\s\t]*(\w+)[\s\t]*.*$", re.IGNORECASE
+            ),
             "lod_entry": re.compile(r"^\$LOD:[\s\t]*(\d+)[\s\t]*$", re.IGNORECASE),
             "section_start": re.compile(r"^#Start$", re.IGNORECASE),
             "section_end": re.compile(r"^#End$", re.IGNORECASE),
@@ -94,7 +96,9 @@ class FireballTableConverter(BaseTableConverter):
 
         # Validate LOD value
         if entry["lod"] not in [0, 1]:
-            self.logger.warning(f"Fireball {entry['name']}: Invalid LOD value: {entry['lod']}")
+            self.logger.warning(
+                f"Fireball {entry['name']}: Invalid LOD value: {entry['lod']}"
+            )
             return False
 
         return True

@@ -19,19 +19,19 @@ def test_parse_acceleration_properties():
         "$Forward decel: 4.0",
         "$Slide accel: 3.0",
         "$Slide decel: 2.0",
-        "$end_multi_text"
+        "$end_multi_text",
     ]
-    
+
     state = ParseState(lines=test_content, current_line=0)
     with tempfile.TemporaryDirectory() as temp_dir:
         source_dir = Path(temp_dir) / "source"
         target_dir = Path(temp_dir) / "target"
         source_dir.mkdir()
         target_dir.mkdir()
-        
+
         converter = ShipTableConverter(source_dir, target_dir)
         result = converter.parse_entry(state)
-        
+
         assert result is not None
         assert result["name"] == "Test Ship"
         assert result["forward_accel"] == 5.0
@@ -47,34 +47,34 @@ def test_parse_rotation_properties():
         "$Rotation time: 3.0, 3.0, 3.0",
         "$Rotation accel: 2.0, 2.0, 2.0",
         "$Rotation decel: 1.0, 1.0, 1.0",
-        "$end_multi_text"
+        "$end_multi_text",
     ]
-    
+
     state = ParseState(lines=test_content, current_line=0)
     with tempfile.TemporaryDirectory() as temp_dir:
         source_dir = Path(temp_dir) / "source"
         target_dir = Path(temp_dir) / "target"
         source_dir.mkdir()
         target_dir.mkdir()
-        
+
         converter = ShipTableConverter(source_dir, target_dir)
         result = converter.parse_entry(state)
-        
+
         assert result is not None
         assert result["name"] == "Test Ship"
-        
+
         # Check rotation time
         assert isinstance(result["rotation_time"], dict)
         assert result["rotation_time"]["pitch"] == 3.0
         assert result["rotation_time"]["bank"] == 3.0
         assert result["rotation_time"]["heading"] == 3.0
-        
+
         # Check rotation accel
         assert isinstance(result["rotation_accel"], dict)
         assert result["rotation_accel"]["pitch"] == 2.0
         assert result["rotation_accel"]["bank"] == 2.0
         assert result["rotation_accel"]["heading"] == 2.0
-        
+
         # Check rotation decel
         assert isinstance(result["rotation_decel"], dict)
         assert result["rotation_decel"]["pitch"] == 1.0
@@ -84,25 +84,21 @@ def test_parse_rotation_properties():
 
 def test_parse_rotation_single_value():
     """Test parsing rotation properties with single value"""
-    test_content = [
-        "$Name: Test Ship",
-        "$Rotation time: 3.0",
-        "$end_multi_text"
-    ]
-    
+    test_content = ["$Name: Test Ship", "$Rotation time: 3.0", "$end_multi_text"]
+
     state = ParseState(lines=test_content, current_line=0)
     with tempfile.TemporaryDirectory() as temp_dir:
         source_dir = Path(temp_dir) / "source"
         target_dir = Path(temp_dir) / "target"
         source_dir.mkdir()
         target_dir.mkdir()
-        
+
         converter = ShipTableConverter(source_dir, target_dir)
         result = converter.parse_entry(state)
-        
+
         assert result is not None
         assert result["name"] == "Test Ship"
-        
+
         # Check rotation time with single value
         assert isinstance(result["rotation_time"], dict)
         assert result["rotation_time"]["pitch"] == 3.0
@@ -117,9 +113,9 @@ def test_validate_physics_entry():
         target_dir = Path(temp_dir) / "target"
         source_dir.mkdir()
         target_dir.mkdir()
-        
+
         converter = ShipTableConverter(source_dir, target_dir)
-        
+
         # Valid entry with physics properties
         valid_entry = {
             "name": "Test Ship",
@@ -130,15 +126,15 @@ def test_validate_physics_entry():
             "slide_accel": 3.0,
             "slide_decel": 2.0,
         }
-        assert converter.validate_entry(valid_entry) == True
-        
+        assert converter.validate_entry(valid_entry)
+
         # Invalid entry - wrong type for numeric field
         invalid_entry = {
             "name": "Test Ship",
             "mass": "invalid",
             "forward_accel": 5.0,
         }
-        assert converter.validate_entry(invalid_entry) == False
+        assert not converter.validate_entry(invalid_entry)
 
 
 if __name__ == "__main__":

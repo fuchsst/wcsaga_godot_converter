@@ -9,16 +9,12 @@ and performance characteristics while achieving optimization goals.
 
 import json
 import logging
-import math
 from dataclasses import asdict, dataclass
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional
 
-from .collision_mesh_generator import CollisionMeshData
-from .godot_material_converter import GodotMaterialProperties, WCSMaterialProperties
-from .mesh_optimization_tools import MeshOptimizationResult, OptimizationProfile
-from .pof_lod_processor import LODHierarchy, LODLevel
+from .pof_lod_processor import LODHierarchy
 
 
 class ValidationLevel(Enum):
@@ -887,7 +883,7 @@ if __name__ == "__main__":
     print(f"Quality Score: {report._calculate_quality_score():.1f}/100")
 
     if report.recommendations:
-        print(f"\nRecommendations:")
+        print("\nRecommendations:")
         for rec in report.recommendations:
             print(f"  - {rec}")
 

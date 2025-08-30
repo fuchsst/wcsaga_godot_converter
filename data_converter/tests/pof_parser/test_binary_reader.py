@@ -4,10 +4,8 @@ Binary Reader Tests - pytest tests for unified binary reader functionality.
 """
 
 import struct
-import tempfile
 import unittest
 from io import BytesIO
-from pathlib import Path
 
 from data_converter.pof_parser.pof_binary_reader import (
     POFBinaryReader,
@@ -152,7 +150,7 @@ class TestPOFBinaryReader(unittest.TestCase):
     def test_read_chunk_header(self):
         """Test reading chunk headers."""
         from data_converter.pof_parser.pof_chunks import ID_OHDR
-        
+
         # Test regular chunk header
         data = struct.pack("<II", ID_OHDR, 100)
         f = BytesIO(data)

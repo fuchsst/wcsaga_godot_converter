@@ -13,10 +13,10 @@ Epic: EPIC-003 - Data Migration & Conversion Tools
 
 import inspect
 from pathlib import Path
-from typing import Dict, List, Optional, Type, Callable
+from typing import Dict, List, Optional, Callable
 
-from .table_types import TableType
 from .base_converter import BaseTableConverter
+from ..core.table_data_structures import TableType
 
 
 class ConverterRegistry:
@@ -124,7 +124,6 @@ def auto_register_converters() -> None:
     This function uses introspection to find all converter classes
     and register them with the appropriate table types.
     """
-    import sys
     import os
 
     # Get the table_converters module

@@ -22,8 +22,12 @@ class AIProfilesTableConverter(BaseTableConverter):
         """Initialize regex patterns for ai_profiles.tbl parsing"""
         return {
             "profile_name": re.compile(r"^\$Profile Name:\s*(.+)$", re.IGNORECASE),
-            "default_profile": re.compile(r"^\$Default Profile:\s*(.+)$", re.IGNORECASE),
-            "difficulty_scale": re.compile(r"^\$(.+):\s*([\d\-\.\s,]+)$", re.IGNORECASE),
+            "default_profile": re.compile(
+                r"^\$Default Profile:\s*(.+)$", re.IGNORECASE
+            ),
+            "difficulty_scale": re.compile(
+                r"^\$(.+):\s*([\d\-\.\s,]+)$", re.IGNORECASE
+            ),
             "boolean_flag": re.compile(r"^\$(.+):\s*(YES|NO)$", re.IGNORECASE),
             "section_end": re.compile(r"^#End$", re.IGNORECASE),
         }
@@ -70,7 +74,7 @@ class AIProfilesTableConverter(BaseTableConverter):
             line = line.strip()
             if not line:
                 continue
-            
+
             # Strip inline comments (semicolons)
             if ";" in line:
                 line = line.split(";", 1)[0].strip()
@@ -141,7 +145,11 @@ class AIProfilesTableConverter(BaseTableConverter):
                 entry["name"]: self._convert_profile_entry(entry) for entry in entries
             },
             "profile_count": len(entries),
-            "default_profile": entries[0].get("default_profile", "SAGA RETAIL") if entries else "SAGA RETAIL",
+            "default_profile": (
+                entries[0].get("default_profile", "SAGA RETAIL")
+                if entries
+                else "SAGA RETAIL"
+            ),
         }
 
     def _convert_profile_entry(self, entry: Dict[str, Any]) -> Dict[str, Any]:

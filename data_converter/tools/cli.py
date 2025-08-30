@@ -14,7 +14,6 @@ Epic: EPIC-003 - Data Migration & Conversion Tools
 import argparse
 import json
 import logging
-import sys
 from pathlib import Path
 
 from ..table_data_converter import TableDataConverter

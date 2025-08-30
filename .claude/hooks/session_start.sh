@@ -43,6 +43,15 @@ else
     echo ""
 fi
 
+echo "=== MAIN CONCEPT DOCUMENTS ==="
+echo "@concepts/target_structure/directory_structure.md"
+echo "@concepts/target_structure/module_relationships.md"
+echo "@concepts/source_module_hierarchy/module_mapping_summary.md"
+echo "@concepts/data_converter.md"
+echo "@concepts/data_converter/source_to_target_mapping.md"
+echo "@concepts/data_converter/godot_integration_mapping.md"
+
+
 # Display available agents, hooks, and commands by name
 echo "=== AI ORCHESTRATION SYSTEM ==="
 echo "Agents:"

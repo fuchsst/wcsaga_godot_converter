@@ -18,9 +18,9 @@ def test_ship_converter_initialization():
         target_dir = Path(temp_dir) / "target"
         source_dir.mkdir()
         target_dir.mkdir()
-        
+
         converter = ShipTableConverter(source_dir, target_dir)
-        
+
         # Check that the converter is properly initialized
         assert converter.source_dir == source_dir
         assert converter.target_dir == target_dir
@@ -35,16 +35,16 @@ def test_ship_converter_can_convert():
         target_dir = Path(temp_dir) / "target"
         source_dir.mkdir()
         target_dir.mkdir()
-        
+
         converter = ShipTableConverter(source_dir, target_dir)
-        
+
         # Create a test ship table file
         ship_file = source_dir / "ships.tbl"
         with open(ship_file, "w") as f:
             f.write("#Ship Classes\\n$Name: Test Ship\\n#End")
-        
+
         # Should be able to convert ship table files
-        assert converter.can_convert(ship_file) == True
+        assert converter.can_convert(ship_file)
 
 
 def test_parse_ship_entry():
@@ -57,19 +57,19 @@ def test_parse_ship_entry():
         "$Max velocity: 100, 100, 100",
         "$Shields: 100",
         "$Hitpoints: 150",
-        "$end_multi_text"
+        "$end_multi_text",
     ]
-    
+
     state = ParseState(lines=test_content, current_line=0)
     with tempfile.TemporaryDirectory() as temp_dir:
         source_dir = Path(temp_dir) / "source"
         target_dir = Path(temp_dir) / "target"
         source_dir.mkdir()
         target_dir.mkdir()
-        
+
         converter = ShipTableConverter(source_dir, target_dir)
         result = converter.parse_entry(state)
-        
+
         assert result is not None
         assert result["name"] == "Test Fighter"
         assert result["species"] == "Terran"
@@ -86,15 +86,15 @@ def test_parse_velocity_vector():
         target_dir = Path(temp_dir) / "target"
         source_dir.mkdir()
         target_dir.mkdir()
-        
+
         converter = ShipTableConverter(source_dir, target_dir)
-        
+
         # Test 3-component vector
         result = converter._parse_velocity_vector("100, 75, 50")
         assert result["forward"] == 100.0
         assert result["reverse"] == 75.0
         assert result["side"] == 50.0
-        
+
         # Test single value
         result = converter._parse_velocity_vector("65")
         assert result["forward"] == 65.0
@@ -109,31 +109,20 @@ def test_validate_ship_entry():
         target_dir = Path(temp_dir) / "target"
         source_dir.mkdir()
         target_dir.mkdir()
-        
+
         converter = ShipTableConverter(source_dir, target_dir)
-        
+
         # Valid entry
-        valid_entry = {
-            "name": "Test Ship",
-            "hitpoints": 100.0,
-            "mass": 50.0
-        }
-        assert converter.validate_entry(valid_entry) == True
-        
+        valid_entry = {"name": "Test Ship", "hitpoints": 100.0, "mass": 50.0}
+        assert converter.validate_entry(valid_entry)
+
         # Invalid entry - missing name
-        invalid_entry = {
-            "hitpoints": 100.0,
-            "mass": 50.0
-        }
-        assert converter.validate_entry(invalid_entry) == False
-        
+        invalid_entry = {"hitpoints": 100.0, "mass": 50.0}
+        assert not converter.validate_entry(invalid_entry)
+
         # Invalid entry - wrong type for numeric field
-        invalid_entry2 = {
-            "name": "Test Ship",
-            "hitpoints": "invalid",
-            "mass": 50.0
-        }
-        assert converter.validate_entry(invalid_entry2) == False
+        invalid_entry2 = {"name": "Test Ship", "hitpoints": "invalid", "mass": 50.0}
+        assert not converter.validate_entry(invalid_entry2)
 
 
 def test_convert_ship_table_file():
@@ -143,9 +132,9 @@ def test_convert_ship_table_file():
         target_dir = Path(temp_dir) / "target"
         source_dir.mkdir()
         target_dir.mkdir()
-        
+
         converter = ShipTableConverter(source_dir, target_dir)
-        
+
         # Create test table content
         table_content = """#Ship Classes
 
@@ -158,16 +147,16 @@ $Hitpoints: 150
 
 $end_multi_text
 """
-        
+
         # Create test file
         test_file = source_dir / "ships.tbl"
         with open(test_file, "w") as f:
             f.write(table_content)
-        
+
         # Test conversion
         success = converter.convert_table_file(test_file)
-        assert success == True
-        
+        assert success
+
         # Check that output files were created
         output_files = list((target_dir / "assets" / "tables").glob("*.tres"))
         assert len(output_files) >= 0  # At least the main table file
@@ -187,27 +176,27 @@ def test_ship_converter_new_asset_patterns():
         "$Closeup_zoom: 0.43633",
         "$Thruster01 Radius factor: 0.6",
         "$Thruster02 Length factor: 0.7",
-        "$Allowed PBanks: ( \"Laser\" ) ( \"Ion\" )",
-        "$Allowed SBanks: ( \"Spiculum IR\" \"Javelin HS\" )",
-        "$Default PBanks: ( \"Laser\" \"Ion\" )",
-        "$Default SBanks: ( \"Javelin HS\" \"Spiculum IR\" )",
+        '$Allowed PBanks: ( "Laser" ) ( "Ion" )',
+        '$Allowed SBanks: ( "Spiculum IR" "Javelin HS" )',
+        '$Default PBanks: ( "Laser" "Ion" )',
+        '$Default SBanks: ( "Javelin HS" "Spiculum IR" )',
         "$SBank Capacity: (20, 20)",
         "$Subsystem: communication, 10.0, 0.0",
         "    $Alt Subsystem Name: Comm",
         "    $Alt Damage Popup Subsystem Name: Communication",
-        "$end_multi_text"
+        "$end_multi_text",
     ]
-    
+
     state = ParseState(lines=test_content, current_line=0)
     with tempfile.TemporaryDirectory() as temp_dir:
         source_dir = Path(temp_dir) / "source"
         target_dir = Path(temp_dir) / "target"
         source_dir.mkdir()
         target_dir.mkdir()
-        
+
         converter = ShipTableConverter(source_dir, target_dir)
         result = converter.parse_entry(state)
-        
+
         assert result is not None
         assert result["name"] == "Test Ship"
         assert result["short_name"] == "Test"
@@ -222,7 +211,7 @@ def test_ship_converter_new_asset_patterns():
         assert result["allowed_pbanks"] == [["Laser"], ["Ion"]]
         assert result["allowed_sbanks"] == [["Spiculum IR", "Javelin HS"]]
         assert result["sbank_capacity"] == [20, 20]
-        
+
         # Check asset relationships were captured
         registries = converter.get_registries()
         asset_registry = registries["asset_registry"]
@@ -265,22 +254,22 @@ def test_asset_reference_extraction_and_mapping():
         "$Tech Image: tech_image.tga",
         # Texture assets
         "$Texture Replace: old_texture.dds, new_texture.png",
-        "$end_multi_text"
+        "$end_multi_text",
     ]
-    
+
     state = ParseState(lines=test_content, current_line=0)
     with tempfile.TemporaryDirectory() as temp_dir:
         source_dir = Path(temp_dir) / "source"
         target_dir = Path(temp_dir) / "target"
         source_dir.mkdir()
         target_dir.mkdir()
-        
+
         converter = ShipTableConverter(source_dir, target_dir)
         result = converter.parse_entry(state)
-        
+
         assert result is not None
         assert result["name"] == "Asset Test Ship"
-        
+
         # Check that all asset properties were parsed
         assert result["pof_file"] == "test_ship.pof"
         assert result["cockpit_pof_file"] == "test_cockpit.pof"
@@ -307,32 +296,40 @@ def test_asset_reference_extraction_and_mapping():
         assert result["tech_anim"] == "tech_anim"
         assert result["tech_image"] == "tech_image.tga"
         assert result["texture_replace"] == "old_texture.dds, new_texture.png"
-        
+
         # Check asset relationships were captured with correct types
         registries = converter.get_registries()
         asset_registry = registries["asset_registry"]
         assert "Asset Test Ship" in asset_registry
-        
+
         assets = asset_registry["Asset Test Ship"]
         assert len(assets) > 0
-        
+
         # Check that assets are categorized correctly
         model_assets = [asset for asset in assets if asset["asset_type"] == "model"]
         audio_assets = [asset for asset in assets if asset["asset_type"] == "audio"]
-        animation_assets = [asset for asset in assets if asset["asset_type"] == "animation"]
+        animation_assets = [
+            asset for asset in assets if asset["asset_type"] == "animation"
+        ]
         texture_assets = [asset for asset in assets if asset["asset_type"] == "texture"]
-        
+
         # Should have model assets
         assert len(model_assets) >= 3  # pof_file, cockpit_pof_file, pof_target_file
-        
+
         # Should have audio assets
-        assert len(audio_assets) >= 7  # engine, alive, dead, warpin, warpout, rotation, turret sounds
-        
+        assert (
+            len(audio_assets) >= 7
+        )  # engine, alive, dead, warpin, warpout, rotation, turret sounds
+
         # Should have animation/effect assets
-        assert len(animation_assets) >= 7  # warpin, warpout, explosion, shockwave, selection, thruster flame/glow
-        
+        assert (
+            len(animation_assets) >= 7
+        )  # warpin, warpout, explosion, shockwave, selection, thruster flame/glow
+
         # Should have texture assets
-        assert len(texture_assets) >= 5  # shield_icon, ship_icon, ship_overhead, tech_image, tech_model
+        assert (
+            len(texture_assets) >= 5
+        )  # shield_icon, ship_icon, ship_overhead, tech_image, tech_model
 
 
 if __name__ == "__main__":

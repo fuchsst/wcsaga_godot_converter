@@ -12,7 +12,7 @@ Epic: EPIC-003 - Data Migration & Conversion Tools
 """
 
 from pathlib import Path
-from typing import Any, Callable, Dict, Optional, Type
+from typing import Any, Callable, Dict
 
 
 class DIContainer:
@@ -110,7 +110,6 @@ def register_converter_services(wcs_source_dir: Path, godot_target_dir: Path) ->
 
     # Register strategy factories
     from ..table_converters.strategies.ship_strategy import ShipTableStrategy
-    from ..table_converters.strategies.base_strategy import BaseTableStrategy
 
     container.register_factory(
         "ship_strategy", lambda: ShipTableStrategy(wcs_source_dir, godot_target_dir)

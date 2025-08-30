@@ -26,10 +26,17 @@ class IFFTableConverter(BaseTableConverter):
                 r"^\$Color:\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)$", re.IGNORECASE
             ),
             "iff_attacks": re.compile(r"^\$Attacks:\s*\(([^)]+)\)$", re.IGNORECASE),
-            "iff_sees_as": re.compile(r"^\+Sees (\w+) As:\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)$", re.IGNORECASE),
+            "iff_sees_as": re.compile(
+                r"^\+Sees (\w+) As:\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)$",
+                re.IGNORECASE,
+            ),
             "iff_flags": re.compile(r"^\$Flags:\s*\(([^)]+)\)$", re.IGNORECASE),
-            "iff_default_flags": re.compile(r"^\$Default Ship Flags:\s*\(([^)]+)\)$", re.IGNORECASE),
-            "iff_default_flags2": re.compile(r"^\$Default Ship Flags2:\s*\(([^)]+)\)$", re.IGNORECASE),
+            "iff_default_flags": re.compile(
+                r"^\$Default Ship Flags:\s*\(([^)]+)\)$", re.IGNORECASE
+            ),
+            "iff_default_flags2": re.compile(
+                r"^\$Default Ship Flags2:\s*\(([^)]+)\)$", re.IGNORECASE
+            ),
             "traitor_iff": re.compile(r"^\$Traitor IFF:\s*(.+)$", re.IGNORECASE),
             "section_end": re.compile(r"^#End$", re.IGNORECASE),
         }
@@ -39,7 +46,13 @@ class IFFTableConverter(BaseTableConverter):
 
     def parse_entry(self, state: ParseState) -> Optional[Dict[str, Any]]:
         """Parse a single IFF entry from the table"""
-        iff_data = {"attacks": [], "flags": [], "default_ship_flags": [], "default_ship_flags2": [], "sees_as": {}}
+        iff_data = {
+            "attacks": [],
+            "flags": [],
+            "default_ship_flags": [],
+            "default_ship_flags2": [],
+            "sees_as": {},
+        }
 
         while state.has_more_lines():
             line = state.next_line()
@@ -89,24 +102,44 @@ class IFFTableConverter(BaseTableConverter):
                     ]
                 elif property_name == "iff_attacks":
                     # Parse list of IFFs that this IFF attacks
-                    attacks = [a.strip().strip('"') for a in match.group(1).split() if a.strip()]
+                    attacks = [
+                        a.strip().strip('"')
+                        for a in match.group(1).split()
+                        if a.strip()
+                    ]
                     iff_data["attacks"] = attacks
                 elif property_name == "iff_sees_as":
                     # Parse how this IFF sees other IFFs
                     target_iff = match.group(1).strip()
-                    color = [int(match.group(2)), int(match.group(3)), int(match.group(4))]
+                    color = [
+                        int(match.group(2)),
+                        int(match.group(3)),
+                        int(match.group(4)),
+                    ]
                     iff_data["sees_as"][target_iff] = color
                 elif property_name == "iff_flags":
                     # Parse IFF flags
-                    flags = [f.strip().strip('"') for f in match.group(1).split() if f.strip()]
+                    flags = [
+                        f.strip().strip('"')
+                        for f in match.group(1).split()
+                        if f.strip()
+                    ]
                     iff_data["flags"] = flags
                 elif property_name == "iff_default_flags":
                     # Parse default ship flags
-                    flags = [f.strip().strip('"') for f in match.group(1).split() if f.strip()]
+                    flags = [
+                        f.strip().strip('"')
+                        for f in match.group(1).split()
+                        if f.strip()
+                    ]
                     iff_data["default_ship_flags"] = flags
                 elif property_name == "iff_default_flags2":
                     # Parse default ship flags 2
-                    flags = [f.strip().strip('"') for f in match.group(1).split() if f.strip()]
+                    flags = [
+                        f.strip().strip('"')
+                        for f in match.group(1).split()
+                        if f.strip()
+                    ]
                     iff_data["default_ship_flags2"] = flags
                 elif property_name == "traitor_iff":
                     # Parse traitor IFF reference
@@ -144,7 +177,9 @@ class IFFTableConverter(BaseTableConverter):
         # Validate sees_as colors
         for target_iff, color in entry.get("sees_as", {}).items():
             if not isinstance(color, list) or len(color) != 3:
-                self.logger.warning(f"IFF {entry['name']}: Invalid sees_as color for {target_iff}")
+                self.logger.warning(
+                    f"IFF {entry['name']}: Invalid sees_as color for {target_iff}"
+                )
                 return False
             for component in color:
                 if not isinstance(component, int) or not (0 <= component <= 255):

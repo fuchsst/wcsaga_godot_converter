@@ -19,15 +19,13 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 sys.path.append(str(Path(__file__).parent.parent.parent))
 from data_converter.tools.config_migrator import (
     AudioSettings,
     ConfigMigrator,
-    ConfigType,
     ControlBinding,
-    ControlType,
     GameplaySettings,
     GraphicsSettings,
     PilotProfile,

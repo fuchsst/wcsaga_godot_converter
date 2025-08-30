@@ -11,10 +11,9 @@ Story: DM-009 - SOLID Principle Refactoring
 Epic: EPIC-003 - Data Migration & Conversion Tools
 """
 
-import logging
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 
 from .base_strategy import BaseTableStrategy
 from ...core.table_data_structures import ParseState, ShipClassData

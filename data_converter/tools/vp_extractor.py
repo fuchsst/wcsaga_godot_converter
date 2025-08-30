@@ -15,7 +15,6 @@ Epic: EPIC-003 - Data Migration & Conversion Tools
 
 import argparse
 import logging
-import os
 import struct
 from pathlib import Path
 from typing import List, NamedTuple

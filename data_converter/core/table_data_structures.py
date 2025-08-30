@@ -8,8 +8,7 @@ These classes are designed to be independent and not depend on any other modules
 
 from dataclasses import dataclass, field
 from enum import Enum
-from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List
 
 
 class ParseError(Exception):
@@ -23,26 +22,32 @@ class ParseError(Exception):
 
 
 class TableType(Enum):
-    """Enumeration of supported table types."""
+    """Table file types supported by the converter"""
 
-    UNKNOWN = "unknown"
-    SHIPS = "ships"
-    WEAPONS = "weapons"
-    ARMOR = "armor"
-    SPECIES = "species"
-    IFF = "iff"
-    SOUNDS = "sounds"
-    MUSIC = "music"
-    FIREBALLS = "fireballs"
-    LIGHTNING = "lightning"
-    ASTEROIDS = "asteroids"
-    STARS = "stars"
     AI = "ai"
     AI_PROFILES = "ai_profiles"
-    RANKS = "ranks"
-    MEDALS = "medals"
+    ARMOR = "armor"
+    ASTEROID = "asteroid"
     CUTSCENES = "cutscenes"
+    FIREBALL = "fireball"
+    HUD_GAUGES = "hud_gauges"
+    IFF = "iff_defs"
+    LIGHTNING = "lightning"
+    NEBULA = "nebula"
+    MEDALS = "medals"
+    MFLASH = "mflash"
+    MUSIC = "music"
+    RANK = "rank"
     SCRIPTING = "scripting"
+    SHIPS = "ships"
+    SOUNDS = "sounds"
+    SPECIES = "species_defs"
+    SPECIES_ENTRIES = "species"
+    STARS = "stars"
+    STRINGS = "strings"
+    UNKNOWN = "unknown"
+    WEAPONS = "weapons"
+    WEAPON_EXPL = "weapon_expl"
 
 
 @dataclass

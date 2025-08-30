@@ -9,43 +9,41 @@ from .asset_references import (
     VisualEffectAsset,
     TextureAsset,
     AssetReference,
-    ShipAssetCollection
+    ShipAssetCollection,
 )
 from .ship_physics import (
     VelocityVector,
     AccelerationRates,
     RotationalPhysics,
     AfterburnerStats,
-    ShipPhysics
+    ShipPhysics,
 )
 from .weapon_banks import (
     WeaponBank,
     PrimaryWeaponBank,
     SecondaryWeaponBank,
     WeaponBankConfiguration,
-    WeaponSystem
+    WeaponSystem,
 )
 
 __all__ = [
     # Asset references
-    'ModelAsset',
-    'AudioAsset',
-    'VisualEffectAsset',
-    'TextureAsset',
-    'AssetReference',
-    'ShipAssetCollection',
-    
+    "ModelAsset",
+    "AudioAsset",
+    "VisualEffectAsset",
+    "TextureAsset",
+    "AssetReference",
+    "ShipAssetCollection",
     # Ship physics
-    'VelocityVector',
-    'AccelerationRates',
-    'RotationalPhysics',
-    'AfterburnerStats',
-    'ShipPhysics',
-    
+    "VelocityVector",
+    "AccelerationRates",
+    "RotationalPhysics",
+    "AfterburnerStats",
+    "ShipPhysics",
     # Weapon banks
-    'WeaponBank',
-    'PrimaryWeaponBank',
-    'SecondaryWeaponBank',
-    'WeaponBankConfiguration',
-    'WeaponSystem'
+    "WeaponBank",
+    "PrimaryWeaponBank",
+    "SecondaryWeaponBank",
+    "WeaponBankConfiguration",
+    "WeaponSystem",
 ]

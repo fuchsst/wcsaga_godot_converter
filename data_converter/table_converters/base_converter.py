@@ -15,14 +15,15 @@ SOLID Principles Applied:
 
 import logging
 import re
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Protocol, Tuple, Union
+from typing import Any, Dict, List, Optional, Protocol, Tuple
 
 from ..core.common_utils import ConversionUtils
 from ..core.interfaces import IFileConverter, IValidatableConverter
+from ..core.table_data_structures import TableType
 
 logger = logging.getLogger(__name__)
 
@@ -37,35 +38,6 @@ class ParseError(Exception):
         super().__init__(
             f"{filename}:{line_number}: {message}" if line_number > 0 else message
         )
-
-
-class TableType(Enum):
-    """Table file types supported by the converter"""
-
-    AI = "ai"
-    AI_PROFILES = "ai_profiles"
-    ARMOR = "armor"
-    ASTEROID = "asteroid"
-    CUTSCENES = "cutscenes"
-    FIREBALL = "fireball"
-    HUD_GAUGES = "hud_gauges"
-    IFF = "iff_defs"
-    LIGHTNING = "lightning"
-    NEBULA = "nebula"
-    MEDALS = "medals"
-    MFLASH = "mflash"
-    MUSIC = "music"
-    RANK = "rank"
-    SCRIPTING = "scripting"
-    SHIPS = "ships"
-    SOUNDS = "sounds"
-    SPECIES = "species_defs"
-    SPECIES_ENTRIES = "species"
-    STARS = "stars"
-    STRINGS = "strings"
-    UNKNOWN = "unknown"
-    WEAPONS = "weapons"
-    WEAPON_EXPL = "weapon_expl"
 
 
 @dataclass
@@ -226,6 +198,17 @@ class BaseTableConverter(IFileConverter, IValidatableConverter):
         """Parse all entries from the table"""
         entries = []
         while state.has_more_lines():
+            # Check for section headers
+            line = state.peek_line()
+            if line:
+                line = line.strip()
+                # Check for section header patterns
+                if line.startswith("#") and not line.startswith(("#", "$", "+", ";")):
+                    # This is a section header, store it
+                    state.current_section = line.strip("#").strip()
+                    state.skip_line()  # Skip the section header line
+                    continue
+
             entry = self.parse_entry(state)
             if entry:
                 entries.append(entry)
@@ -276,7 +259,9 @@ class BaseTableConverter(IFileConverter, IValidatableConverter):
             formatted_items = [self._format_value(item) for item in value]
             return f"[{', '.join(formatted_items)}]"
         elif isinstance(value, dict):
-            formatted_items = [f"{k}: {self._format_value(v)}" for k, v in value.items()]
+            formatted_items = [
+                f"{k}: {self._format_value(v)}" for k, v in value.items()
+            ]
             return f"{{{', '.join(formatted_items)}}}"
         else:
             return f'"{str(value)}"'

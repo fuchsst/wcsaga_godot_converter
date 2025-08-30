@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import logging
-from typing import Any, BinaryIO, Dict, List
+from typing import Any, BinaryIO, Dict
 
 # Import unified binary reader
 from .pof_binary_reader import create_reader

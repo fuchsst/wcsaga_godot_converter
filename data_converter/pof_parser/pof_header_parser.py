@@ -7,14 +7,13 @@ all POF versions, using the enhanced binary reader for robust error handling.
 """
 
 import logging
-from typing import Any, BinaryIO, Dict, List
+from typing import Any, BinaryIO, Dict
 
 from .pof_chunks import (
     MAX_DEBRIS_OBJECTS,
     MAX_MODEL_DETAIL_LEVELS,
 )
 from .pof_binary_reader import create_reader
-from .pof_types import Vector3D, BoundingBox
 from .pof_error_handler import get_global_error_handler, ErrorSeverity, ErrorCategory
 
 logger = logging.getLogger(__name__)
@@ -23,16 +22,16 @@ logger = logging.getLogger(__name__)
 def read_ohdr_chunk(f: BinaryIO, length: int) -> Dict[str, Any]:
     """
     Parses the Object Header (OHDR/HDR2) chunk with enhanced error handling.
-    
+
     This is the main header parsing function that handles all POF versions
     through adaptive parsing based on available data length.
     """
     reader = create_reader(f)
     error_handler = get_global_error_handler()
-    
+
     start_pos = f.tell()
     header_data = {}
-    
+
     try:
         # Basic header information (present in all versions)
         header_data["max_radius"] = reader.read_float32()
@@ -55,10 +54,10 @@ def read_ohdr_chunk(f: BinaryIO, length: int) -> Dict[str, Any]:
 
         # Calculate bytes read so far
         bytes_read = f.tell() - start_pos
-        
+
         # Enhanced properties (added in later POF versions)
         # Check remaining length to determine what additional fields exist
-        
+
         # Mass properties (added in FS2/WCS)
         if bytes_read + 4 <= length:
             header_data["mass"] = reader.read_float32()
@@ -81,7 +80,11 @@ def read_ohdr_chunk(f: BinaryIO, length: int) -> Dict[str, Any]:
             fvec = reader.read_vector3d()
             bytes_read += 36
             # Store as list of lists (rows)
-            header_data["moment_inertia"] = [rvec.to_list(), uvec.to_list(), fvec.to_list()]
+            header_data["moment_inertia"] = [
+                rvec.to_list(),
+                uvec.to_list(),
+                fvec.to_list(),
+            ]
         else:
             header_data["moment_inertia"] = [
                 [1, 0, 0],
@@ -94,17 +97,17 @@ def read_ohdr_chunk(f: BinaryIO, length: int) -> Dict[str, Any]:
         if bytes_read + 4 <= length:
             num_cross_sections = reader.read_int32()
             bytes_read += 4
-            
+
             # Validate number of cross sections
             if num_cross_sections > 1000:  # Arbitrary reasonable limit
                 error_handler.add_error(
                     f"Unreasonable number of cross sections: {num_cross_sections}",
                     severity=ErrorSeverity.WARNING,
                     category=ErrorCategory.VALIDATION,
-                    recovery_action="Limiting to 1000 cross sections"
+                    recovery_action="Limiting to 1000 cross sections",
                 )
                 num_cross_sections = min(num_cross_sections, 1000)
-            
+
             for _ in range(num_cross_sections):
                 if bytes_read + 8 <= length:  # 2 floats × 4 bytes each
                     depth = reader.read_float32()
@@ -116,7 +119,7 @@ def read_ohdr_chunk(f: BinaryIO, length: int) -> Dict[str, Any]:
                         "Insufficient data for cross section",
                         severity=ErrorSeverity.WARNING,
                         category=ErrorCategory.PARSING,
-                        recovery_action="Skipping remaining cross sections"
+                        recovery_action="Skipping remaining cross sections",
                     )
                     break
 
@@ -125,17 +128,17 @@ def read_ohdr_chunk(f: BinaryIO, length: int) -> Dict[str, Any]:
         if bytes_read + 4 <= length:
             num_lights = reader.read_int32()
             bytes_read += 4
-            
+
             # Validate number of lights
             if num_lights > 1000:  # Arbitrary reasonable limit
                 error_handler.add_error(
                     f"Unreasonable number of lights: {num_lights}",
                     severity=ErrorSeverity.WARNING,
                     category=ErrorCategory.VALIDATION,
-                    recovery_action="Limiting to 1000 lights"
+                    recovery_action="Limiting to 1000 lights",
                 )
                 num_lights = min(num_lights, 1000)
-            
+
             for _ in range(num_lights):
                 if bytes_read + 16 <= length:  # Vector3D (12) + int (4)
                     pos = reader.read_vector3d()
@@ -149,7 +152,7 @@ def read_ohdr_chunk(f: BinaryIO, length: int) -> Dict[str, Any]:
                         "Insufficient data for light",
                         severity=ErrorSeverity.WARNING,
                         category=ErrorCategory.PARSING,
-                        recovery_action="Skipping remaining lights"
+                        recovery_action="Skipping remaining lights",
                     )
                     break
 
@@ -163,7 +166,7 @@ def read_ohdr_chunk(f: BinaryIO, length: int) -> Dict[str, Any]:
                 f"Read past end of OHDR chunk by {-remaining} bytes!",
                 severity=ErrorSeverity.ERROR,
                 category=ErrorCategory.PARSING,
-                recovery_action="Continue with parsed data"
+                recovery_action="Continue with parsed data",
             )
 
         return header_data
@@ -173,7 +176,7 @@ def read_ohdr_chunk(f: BinaryIO, length: int) -> Dict[str, Any]:
             f"Failed to parse OHDR chunk: {e}",
             severity=ErrorSeverity.ERROR,
             category=ErrorCategory.PARSING,
-            recovery_action="Return partial header data"
+            recovery_action="Return partial header data",
         )
         # Return whatever data we managed to parse
         return header_data
@@ -181,10 +184,11 @@ def read_ohdr_chunk(f: BinaryIO, length: int) -> Dict[str, Any]:
 
 # --- Version-Specific Parsers (Maintained for backward compatibility) ---
 
+
 def read_ohdr_chunk_v1800(f: BinaryIO, length: int) -> Dict[str, Any]:
     """Parses OHDR chunk for FS1 format (version 1800)."""
     reader = create_reader(f)
-    
+
     header_data = {}
     header_data["max_radius"] = reader.read_float32()
     header_data["obj_flags"] = reader.read_uint32()
@@ -215,7 +219,7 @@ def read_ohdr_chunk_v1800(f: BinaryIO, length: int) -> Dict[str, Any]:
 def read_ohdr_chunk_v2100(f: BinaryIO, length: int) -> Dict[str, Any]:
     """Parses OHDR chunk for FS2 base format (version 2100)."""
     reader = create_reader(f)
-    
+
     header_data = {}
     header_data["max_radius"] = reader.read_float32()
     header_data["obj_flags"] = reader.read_uint32()
@@ -237,7 +241,7 @@ def read_ohdr_chunk_v2100(f: BinaryIO, length: int) -> Dict[str, Any]:
     header_data["mass"] = reader.read_float32()
     mass_center = reader.read_vector3d()
     header_data["mass_center"] = mass_center.to_list()
-    
+
     # Moment of inertia (3x3 matrix stored as 3 vectors)
     rvec = reader.read_vector3d()
     uvec = reader.read_vector3d()
@@ -253,7 +257,7 @@ def read_ohdr_chunk_v2100(f: BinaryIO, length: int) -> Dict[str, Any]:
 def read_ohdr_chunk_v2112(f: BinaryIO, length: int) -> Dict[str, Any]:
     """Parses OHDR chunk for FS2 enhanced format (version 2112)."""
     reader = create_reader(f)
-    
+
     header_data = {}
     header_data["max_radius"] = reader.read_float32()
     header_data["obj_flags"] = reader.read_uint32()
@@ -275,7 +279,7 @@ def read_ohdr_chunk_v2112(f: BinaryIO, length: int) -> Dict[str, Any]:
     header_data["mass"] = reader.read_float32()
     mass_center = reader.read_vector3d()
     header_data["mass_center"] = mass_center.to_list()
-    
+
     # Moment of inertia (3x3 matrix stored as 3 vectors)
     rvec = reader.read_vector3d()
     uvec = reader.read_vector3d()
@@ -298,7 +302,7 @@ def read_ohdr_chunk_v2112(f: BinaryIO, length: int) -> Dict[str, Any]:
 def read_ohdr_chunk_v2117(f: BinaryIO, length: int) -> Dict[str, Any]:
     """Parses OHDR chunk for WCS current format (version 2117)."""
     reader = create_reader(f)
-    
+
     header_data = {}
     header_data["max_radius"] = reader.read_float32()
     header_data["obj_flags"] = reader.read_uint32()
@@ -320,7 +324,7 @@ def read_ohdr_chunk_v2117(f: BinaryIO, length: int) -> Dict[str, Any]:
     header_data["mass"] = reader.read_float32()
     mass_center = reader.read_vector3d()
     header_data["mass_center"] = mass_center.to_list()
-    
+
     # Moment of inertia (3x3 matrix stored as 3 vectors)
     rvec = reader.read_vector3d()
     uvec = reader.read_vector3d()

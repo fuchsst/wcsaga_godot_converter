@@ -146,7 +146,7 @@ class CutscenesTableConverter(BaseTableConverter):
             audio_path = f"audio/cutscenes/{filename}"
         else:
             audio_path = ""
-        
+
         return {
             "name": entry.get("name"),
             "filename": audio_path,

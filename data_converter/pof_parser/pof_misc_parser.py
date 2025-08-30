@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import logging
 import struct
-from typing import Any, BinaryIO, Dict, List, Tuple
+from typing import Any, BinaryIO, Dict, List
 
 # Import necessary helper functions and constants from pof_chunks
 from .pof_chunks import (
@@ -12,7 +12,6 @@ from .pof_chunks import (
 from .pof_binary_reader import create_reader
 
 # Import Vector3D if needed for type hinting or direct use
-from .pof_types import Vector3D
 
 logger = logging.getLogger(__name__)
 
@@ -63,5 +62,3 @@ def read_unknown_chunk(f: BinaryIO, length: int, chunk_id: int) -> None:
         f"Skipping unknown chunk '{chunk_id_str}' (ID: {chunk_id:08X}) of length {length}"
     )
     f.seek(length, 1)
-
-

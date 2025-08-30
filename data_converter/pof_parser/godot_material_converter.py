@@ -9,10 +9,10 @@ and rendering properties based on WCS material specifications.
 
 import json
 import logging
-from dataclasses import asdict, dataclass
+from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional
 
 
 class WCSRenderMode(Enum):
@@ -424,7 +424,7 @@ class GodotMaterialConverter:
 
     def _generate_tres_content(self, material: GodotMaterialProperties) -> str:
         """Generate Godot .tres resource file content."""
-        lines = [f'[gd_resource type="StandardMaterial3D" format=3]', "", "[resource]"]
+        lines = ['[gd_resource type="StandardMaterial3D" format=3]', "", "[resource]"]
 
         # Add non-default properties
         if material.albedo_color != [1.0, 1.0, 1.0, 1.0]:
@@ -447,14 +447,14 @@ class GodotMaterialConverter:
             lines.append(f'roughness_texture = preload("{material.roughness_texture}")')
 
         if material.normal_enabled:
-            lines.append(f"normal_enabled = true")
+            lines.append("normal_enabled = true")
             if material.normal_texture:
                 lines.append(f'normal_texture = preload("{material.normal_texture}")')
             if material.normal_scale != 1.0:
                 lines.append(f"normal_scale = {material.normal_scale}")
 
         if material.emission_enabled:
-            lines.append(f"emission_enabled = true")
+            lines.append("emission_enabled = true")
             if material.emission_color != [0.0, 0.0, 0.0]:
                 color_str = f"Color({material.emission_color[0]}, {material.emission_color[1]}, {material.emission_color[2]})"
                 lines.append(f"emission = {color_str}")

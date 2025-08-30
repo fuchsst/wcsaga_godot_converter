@@ -9,9 +9,8 @@ Date: Today
 """
 
 from pathlib import Path
-from typing import Optional
 
-from .table_types import TableType
+from ..core.table_data_structures import TableType
 
 
 class ConverterFactory:

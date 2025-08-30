@@ -11,7 +11,7 @@ import json
 import logging
 import sys
 from pathlib import Path
-from typing import List, Optional
+from typing import Optional
 
 from .pof_data_extractor import POFDataExtractor
 from .pof_format_analyzer import POFFormatAnalyzer
@@ -19,7 +19,6 @@ from .pof_mesh_converter import POFMeshConverter
 from .pof_parser import POFParser
 
 # Import enhanced types for type safety
-from .pof_types import POFModelData
 
 # Configure logging
 logging.basicConfig(
@@ -53,28 +52,28 @@ def analyze_pof_format(file_path: Path, output_file: Optional[Path] = None) -> b
         print(f"Total Chunks: {analysis.total_chunks}")
 
         if analysis.chunk_count_by_type:
-            print(f"\nChunk Types:")
+            print("\nChunk Types:")
             for chunk_type, count in sorted(analysis.chunk_count_by_type.items()):
                 print(f"  {chunk_type}: {count}")
 
         if analysis.warnings:
-            print(f"\nWarnings:")
+            print("\nWarnings:")
             for warning in analysis.warnings:
                 print(f"  - {warning}")
 
         if analysis.parsing_errors:
-            print(f"\nErrors:")
+            print("\nErrors:")
             for error in analysis.parsing_errors:
                 print(f"  - {error}")
 
         # Validate format compliance
         compliance_issues = analyzer.validate_format_compliance(analysis)
         if compliance_issues:
-            print(f"\nFormat Compliance Issues:")
+            print("\nFormat Compliance Issues:")
             for issue in compliance_issues:
                 print(f"  - {issue}")
         else:
-            print(f"\nFormat Compliance: ✓ PASSED")
+            print("\nFormat Compliance: ✓ PASSED")
 
         # Save detailed analysis if requested
         if output_file:
@@ -196,7 +195,7 @@ def parse_pof_file(file_path: Path, output_file: Optional[Path] = None) -> bool:
         print(f"Max Radius: {parsed_data.header.max_radius:.2f}")
         print(f"Subobjects: {parsed_data.header.num_subobjects}")
 
-        print(f"Parsed Chunks:")
+        print("Parsed Chunks:")
         print(f"  Textures: {len(parsed_data.textures)}")
         print(f"  Objects: {len(parsed_data.subobjects)}")
         print(f"  Special Points: {len(parsed_data.special_points)}")
@@ -291,13 +290,13 @@ def process_directory(
                 print(f"✗ {operation.capitalize()} failed")
 
         except KeyboardInterrupt:
-            print(f"\nOperation cancelled by user")
+            print("\nOperation cancelled by user")
             break
         except Exception as e:
             logger.error(f"Error processing {pof_file}: {e}")
             print(f"✗ Error processing file: {e}")
 
-    print(f"\n=== Summary ===")
+    print("\n=== Summary ===")
     print(f"Processed: {success_count}/{len(pof_files)} files successfully")
 
 
@@ -349,7 +348,7 @@ def convert_pof_to_glb(
             print(f"  GLB Size: {report.glb_file_size:,} bytes")
             return True
         else:
-            print(f"✗ Conversion failed")
+            print("✗ Conversion failed")
             for error in report.errors:
                 print(f"  Error: {error}")
             return False
@@ -502,7 +501,7 @@ Examples:
             sys.exit(1)
 
     except KeyboardInterrupt:
-        print(f"\nOperation cancelled by user")
+        print("\nOperation cancelled by user")
         sys.exit(1)
     except Exception as e:
         logger.error(f"Unexpected error: {e}", exc_info=True)

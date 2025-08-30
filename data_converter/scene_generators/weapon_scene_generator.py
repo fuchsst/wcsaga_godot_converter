@@ -7,7 +7,6 @@ Follows scene-based asset architecture instead of .tres resources.
 """
 
 import os
-from pathlib import Path
 from typing import Any, Dict, List
 
 

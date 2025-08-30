@@ -42,7 +42,7 @@ class ShipTableConverter(BaseTableConverter):
             "species": re.compile(r"^\$Species:\s*(.+)$", re.IGNORECASE),
             "type": re.compile(r"^\$Type:\s*(.+)$", re.IGNORECASE),
         }
-        
+
         # Engine wash properties
         engine_wash_patterns = {
             "engine_wash_start": re.compile(r"^\$Name:\s*(.+)$", re.IGNORECASE),
@@ -51,7 +51,7 @@ class ShipTableConverter(BaseTableConverter):
             "length": re.compile(r"^\$Length:\s*([\d\.]+)$", re.IGNORECASE),
             "intensity": re.compile(r"^\$Intensity:\s*([\d\.]+)$", re.IGNORECASE),
         }
-        
+
         # Physics and performance
         physics_patterns = {
             "max_velocity": re.compile(
@@ -78,12 +78,8 @@ class ShipTableConverter(BaseTableConverter):
             "forward_decel": re.compile(
                 r"^\$Forward decel:\s*([\d\.]+)$", re.IGNORECASE
             ),
-            "slide_accel": re.compile(
-                r"^\$Slide accel:\s*([\d\.]+)$", re.IGNORECASE
-            ),
-            "slide_decel": re.compile(
-                r"^\$Slide decel:\s*([\d\.]+)$", re.IGNORECASE
-            ),
+            "slide_accel": re.compile(r"^\$Slide accel:\s*([\d\.]+)$", re.IGNORECASE),
+            "slide_decel": re.compile(r"^\$Slide decel:\s*([\d\.]+)$", re.IGNORECASE),
             # Rotational physics properties
             "rotation_time": re.compile(
                 r"^\$Rotation time:\s*([\d\.\-\s,]+)$", re.IGNORECASE
@@ -95,7 +91,7 @@ class ShipTableConverter(BaseTableConverter):
                 r"^\$Rotation decel:\s*([\d\.\-\s,]+)$", re.IGNORECASE
             ),
         }
-        
+
         # 3D Models and geometry
         model_patterns = {
             "model_file": re.compile(r"^\$Model file:\s*(.+)$", re.IGNORECASE),
@@ -110,7 +106,7 @@ class ShipTableConverter(BaseTableConverter):
                 r"^\$Detail distance:\s*([\d\.]+)$", re.IGNORECASE
             ),
         }
-        
+
         # Audio assets
         audio_patterns = {
             "warpin_start_sound": re.compile(
@@ -136,7 +132,7 @@ class ShipTableConverter(BaseTableConverter):
                 r"^\$Turret Gun RotationSnd:\s*(.+)$", re.IGNORECASE
             ),
         }
-        
+
         # Animation and effects
         animation_patterns = {
             "warpin_animation": re.compile(
@@ -155,7 +151,7 @@ class ShipTableConverter(BaseTableConverter):
                 r"^\$Selection Effect:\s*(.+)$", re.IGNORECASE
             ),
         }
-        
+
         # Thruster configuration and effects
         thruster_patterns = {
             "thruster_flame": re.compile(
@@ -168,7 +164,7 @@ class ShipTableConverter(BaseTableConverter):
             "thruster_loop_sound": re.compile(r"^\+LoopSnd:\s*(.+)$", re.IGNORECASE),
             "thruster_stop_sound": re.compile(r"^\+StopSnd:\s*(.+)$", re.IGNORECASE),
         }
-        
+
         # UI and HUD assets
         ui_patterns = {
             "shield_icon": re.compile(r"^\$Shield_icon:\s*(.+)$", re.IGNORECASE),
@@ -176,26 +172,34 @@ class ShipTableConverter(BaseTableConverter):
             "ship_anim": re.compile(r"^\$Ship_anim:\s*(.+)$", re.IGNORECASE),
             "ship_overhead": re.compile(r"^\$Ship_overhead:\s*(.+)$", re.IGNORECASE),
         }
-        
+
         # Camera and viewport
         camera_patterns = {
             "closeup_pos": re.compile(r"^\$Closeup_pos:\s*(.+)$", re.IGNORECASE),
             "closeup_zoom": re.compile(r"^\$Closeup_zoom:\s*(.+)$", re.IGNORECASE),
         }
-        
+
         # Thruster configuration factors
         thruster_config_patterns = {
-            "thruster_radius_factor": re.compile(r"^\$Thruster.*Radius factor:\s*(.+)$", re.IGNORECASE),
-            "thruster_length_factor": re.compile(r"^\$Thruster.*Length factor:\s*(.+)$", re.IGNORECASE),
+            "thruster_radius_factor": re.compile(
+                r"^\$Thruster.*Radius factor:\s*(.+)$", re.IGNORECASE
+            ),
+            "thruster_length_factor": re.compile(
+                r"^\$Thruster.*Length factor:\s*(.+)$", re.IGNORECASE
+            ),
         }
-        
+
         # Subsystem definitions
         subsystem_patterns = {
             "subsystem": re.compile(r"^\$Subsystem:\s*(.+)$", re.IGNORECASE),
-            "alt_subsystem_name": re.compile(r"^\s*\$Alt Subsystem Name:\s*(.+)$", re.IGNORECASE),
-            "alt_damage_popup_name": re.compile(r"^\s*\$Alt Damage Popup Subsystem Name:\s*(.+)$", re.IGNORECASE),
+            "alt_subsystem_name": re.compile(
+                r"^\s*\$Alt Subsystem Name:\s*(.+)$", re.IGNORECASE
+            ),
+            "alt_damage_popup_name": re.compile(
+                r"^\s*\$Alt Damage Popup Subsystem Name:\s*(.+)$", re.IGNORECASE
+            ),
         }
-        
+
         # Weapon bank allocations
         weapon_patterns = {
             "allowed_pbanks": re.compile(r"^\$Allowed PBanks:\s*(.+)$", re.IGNORECASE),
@@ -204,32 +208,40 @@ class ShipTableConverter(BaseTableConverter):
             "default_sbanks": re.compile(r"^\$Default SBanks:\s*(.+)$", re.IGNORECASE),
             "sbank_capacity": re.compile(r"^\$SBank Capacity:\s*(.+)$", re.IGNORECASE),
             # Dogfight mode weapon banks
-            "allowed_dogfight_pbanks": re.compile(r"^\$Allowed Dogfight PBanks:\s*(.+)$", re.IGNORECASE),
-            "allowed_dogfight_sbanks": re.compile(r"^\$Allowed Dogfight SBanks:\s*(.+)$", re.IGNORECASE),
+            "allowed_dogfight_pbanks": re.compile(
+                r"^\$Allowed Dogfight PBanks:\s*(.+)$", re.IGNORECASE
+            ),
+            "allowed_dogfight_sbanks": re.compile(
+                r"^\$Allowed Dogfight SBanks:\s*(.+)$", re.IGNORECASE
+            ),
             # Weapon energy properties
-            "weapon_regeneration_rate": re.compile(r"^\$Weapon Regeneration Rate:\s*([\d\.]+)$", re.IGNORECASE),
-            "max_weapon_energy": re.compile(r"^\$Max Weapon Eng:\s*([\d\.]+)$", re.IGNORECASE),
+            "weapon_regeneration_rate": re.compile(
+                r"^\$Weapon Regeneration Rate:\s*([\d\.]+)$", re.IGNORECASE
+            ),
+            "max_weapon_energy": re.compile(
+                r"^\$Max Weapon Eng:\s*([\d\.]+)$", re.IGNORECASE
+            ),
         }
-        
+
         # Tech database assets
         tech_patterns = {
             "tech_model": re.compile(r"^\$Tech Model:\s*(.+)$", re.IGNORECASE),
             "tech_anim": re.compile(r"^\$Tech Anim:\s*(.+)$", re.IGNORECASE),
             "tech_image": re.compile(r"^\$Tech Image:\s*(.+)$", re.IGNORECASE),
         }
-        
+
         # Texture modifications
         texture_patterns = {
             "texture_replace": re.compile(
                 r"^\$Texture Replace:\s*(.+)$", re.IGNORECASE
             ),
         }
-        
+
         # Section termination
         section_patterns = {
             "section_end": re.compile(r"^#End\s*$", re.IGNORECASE),
         }
-        
+
         # Combine all patterns
         all_patterns = {}
         all_patterns.update(basic_patterns)
@@ -247,7 +259,7 @@ class ShipTableConverter(BaseTableConverter):
         all_patterns.update(tech_patterns)
         all_patterns.update(texture_patterns)
         all_patterns.update(section_patterns)
-        
+
         return all_patterns
 
     def get_table_type(self) -> TableType:
@@ -256,21 +268,21 @@ class ShipTableConverter(BaseTableConverter):
     def parse_table(self, state: ParseState) -> List[Dict[str, Any]]:
         """Parse the entire ships.tbl file, handling all sections"""
         entries = []
-        
+
         # First, skip to the #Ship Classes section
         while state.has_more_lines():
             line = state.peek_line()
             if not line or self._should_skip_line(line, state):
                 state.skip_line()
                 continue
-                
+
             # Look for the Ship Classes section
             if "#Ship Classes" in line:
                 state.skip_line()  # Skip the section header
                 break
             else:
                 state.skip_line()
-        
+
         # Now parse all ship class entries
         while state.has_more_lines():
             line = state.peek_line()
@@ -290,7 +302,7 @@ class ShipTableConverter(BaseTableConverter):
                 break
             else:
                 state.skip_line()
-        
+
         return entries
 
     def parse_entry(self, state: ParseState) -> Optional[Dict[str, Any]]:
@@ -330,7 +342,7 @@ class ShipTableConverter(BaseTableConverter):
                     return ship_data if ship_data else None
 
                 # Check for start of next ship entry (dash comment line pattern)
-                if line.startswith(';---') and state.has_more_lines():
+                if line.startswith(";---") and state.has_more_lines():
                     # This is a separator line between ships, return current entry
                     return ship_data if ship_data else None
 
@@ -384,11 +396,11 @@ class ShipTableConverter(BaseTableConverter):
                 match = pattern.match(line)
                 if match:
                     value = match.group(1).strip()
-                    
+
                     # Strip inline comments (semicolons)
                     if ";" in value:
                         value = value.split(";", 1)[0].strip()
-                    
+
                     # Parse numeric values
                     wash_data[property_name] = self.parse_value(value, float)
                     return True
@@ -404,7 +416,7 @@ class ShipTableConverter(BaseTableConverter):
             match = pattern.match(line)
             if match:
                 value = match.group(1).strip()
-                
+
                 # Strip inline comments (semicolons)
                 if ";" in value:
                     value = value.split(";", 1)[0].strip()
@@ -448,7 +460,14 @@ class ShipTableConverter(BaseTableConverter):
                 ]:
                     # Parse rotation properties as vectors
                     ship_data[property_name] = self._parse_rotation_vector(value)
-                elif property_name in ["allowed_pbanks", "allowed_sbanks", "default_pbanks", "default_sbanks", "allowed_dogfight_pbanks", "allowed_dogfight_sbanks"]:
+                elif property_name in [
+                    "allowed_pbanks",
+                    "allowed_sbanks",
+                    "default_pbanks",
+                    "default_sbanks",
+                    "allowed_dogfight_pbanks",
+                    "allowed_dogfight_sbanks",
+                ]:
                     # Handle weapon bank lists - parse as string lists
                     ship_data[property_name] = self._parse_weapon_banks(value)
                 elif property_name == "sbank_capacity":
@@ -486,7 +505,7 @@ class ShipTableConverter(BaseTableConverter):
             # Strip inline comments (semicolons)
             if ";" in position_str:
                 position_str = position_str.split(";", 1)[0].strip()
-            
+
             components = [float(x.strip()) for x in position_str.split(",")]
             if len(components) == 3:
                 return {
@@ -525,7 +544,7 @@ class ShipTableConverter(BaseTableConverter):
             # Strip inline comments (semicolons)
             if ";" in rotation_str:
                 rotation_str = rotation_str.split(";", 1)[0].strip()
-            
+
             components = [float(x.strip()) for x in rotation_str.split(",")]
             if len(components) == 3:
                 return {
@@ -551,32 +570,32 @@ class ShipTableConverter(BaseTableConverter):
             bank_str = bank_str.strip()
             if not bank_str.startswith("(") or not bank_str.endswith(")"):
                 return []
-            
+
             # Extract individual bank groups
             banks = []
             current_bank = []
             in_quotes = False
             current_token = ""
-            
+
             for char in bank_str[1:-1]:  # Skip outer parentheses
                 if char == '"':
                     in_quotes = not in_quotes
                     if not in_quotes and current_token:
                         current_bank.append(current_token)
                         current_token = ""
-                elif char == ')' and not in_quotes:
+                elif char == ")" and not in_quotes:
                     if current_bank:
                         banks.append(current_bank)
                         current_bank = []
-                elif char not in ' ()' or in_quotes:
+                elif char not in " ()" or in_quotes:
                     current_token += char
-            
+
             # Add the last bank if any
             if current_bank:
                 banks.append(current_bank)
-            
+
             return banks
-            
+
         except Exception as e:
             self.logger.warning(f"Failed to parse weapon banks: {bank_str}, error: {e}")
             return []
@@ -588,7 +607,7 @@ class ShipTableConverter(BaseTableConverter):
             list_str = list_str.strip().strip("()")
             if not list_str:
                 return []
-            
+
             return [int(x.strip()) for x in list_str.split(",") if x.strip()]
         except (ValueError, IndexError):
             self.logger.warning(f"Failed to parse integer list: {list_str}")
@@ -612,28 +631,33 @@ class ShipTableConverter(BaseTableConverter):
             "power_output",
             "afterburner_fuel",
         ]
-        
+
         weapon_numeric_fields = [
             "weapon_regeneration_rate",
             "max_weapon_energy",
         ]
-        
+
         acceleration_numeric_fields = [
             "forward_accel",
             "forward_decel",
             "slide_accel",
             "slide_decel",
         ]
-        
+
         configuration_numeric_fields = [
             "detail_distance",
             "closeup_zoom",
             "thruster_radius_factor",
             "thruster_length_factor",
         ]
-        
-        all_numeric_fields = physics_numeric_fields + weapon_numeric_fields + acceleration_numeric_fields + configuration_numeric_fields
-        
+
+        all_numeric_fields = (
+            physics_numeric_fields
+            + weapon_numeric_fields
+            + acceleration_numeric_fields
+            + configuration_numeric_fields
+        )
+
         for field in all_numeric_fields:
             if field in entry and not isinstance(entry[field], (int, float)):
                 self.logger.warning(f"Ship {entry['name']}: Invalid {field} value")
@@ -683,7 +707,7 @@ class ShipTableConverter(BaseTableConverter):
             "pof_target_file",
             "cockpit_pof_file",
         ]
-        
+
         audio_assets = [
             "warpin_start_sound",
             "warpin_end_sound",
@@ -699,7 +723,7 @@ class ShipTableConverter(BaseTableConverter):
             "thruster_loop_sound",
             "thruster_stop_sound",
         ]
-        
+
         animation_assets = [
             "warpin_animation",
             "warpout_animation",
@@ -709,24 +733,24 @@ class ShipTableConverter(BaseTableConverter):
             "thruster_flame",
             "thruster_glow",
         ]
-        
+
         ui_assets = [
             "shield_icon",
             "ship_icon",
             "ship_anim",
             "ship_overhead",
         ]
-        
+
         tech_assets = [
             "tech_model",
             "tech_anim",
             "tech_image",
         ]
-        
+
         texture_assets = [
             "texture_replace",
         ]
-        
+
         # Configuration assets (not traditional assets but still tracked)
         configuration_assets = [
             "closeup_pos",
@@ -734,7 +758,7 @@ class ShipTableConverter(BaseTableConverter):
             "thruster_radius_factor",
             "thruster_length_factor",
         ]
-        
+
         # Weapon configuration assets
         weapon_assets = [
             "allowed_pbanks",
@@ -747,11 +771,17 @@ class ShipTableConverter(BaseTableConverter):
             "weapon_regeneration_rate",
             "max_weapon_energy",
         ]
-        
+
         # Combine all asset properties
         all_asset_properties = (
-            model_assets + audio_assets + animation_assets + ui_assets + 
-            tech_assets + texture_assets + configuration_assets + weapon_assets
+            model_assets
+            + audio_assets
+            + animation_assets
+            + ui_assets
+            + tech_assets
+            + texture_assets
+            + configuration_assets
+            + weapon_assets
         )
 
         for prop_name in all_asset_properties:
@@ -799,9 +829,15 @@ class ShipTableConverter(BaseTableConverter):
             return "audio"
         elif any(prop in property_name.lower() for prop in ["model", "pof"]):
             return "model"
-        elif any(prop in property_name.lower() for prop in ["animation", "anim", "effect", "flame", "glow"]):
+        elif any(
+            prop in property_name.lower()
+            for prop in ["animation", "anim", "effect", "flame", "glow"]
+        ):
             return "animation"
-        elif any(prop in property_name.lower() for prop in ["icon", "image", "overhead", "tech"]):
+        elif any(
+            prop in property_name.lower()
+            for prop in ["icon", "image", "overhead", "tech"]
+        ):
             return "texture"
         else:
             # Infer from file extension

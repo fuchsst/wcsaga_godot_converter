@@ -8,12 +8,9 @@ Date: January 29, 2025
 Story: DM-008 - Asset Table Processing
 """
 
-import shutil
-import sys
 import tempfile
 from pathlib import Path
 
-import pytest
 
 # Import from same directory
 from data_converter.core.table_data_structures import (
@@ -33,7 +30,7 @@ def test_parse_state():
     state = ParseState(lines=lines, filename="test.tbl")
 
     assert state.get_current_line_text() == "line1"
-    assert state.advance_line() == True
+    assert state.advance_line()
     assert state.get_current_line_text() == "line2"
     assert state.peek_line() == "line3"
 

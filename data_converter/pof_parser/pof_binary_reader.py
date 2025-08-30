@@ -19,21 +19,21 @@ logger = logging.getLogger(__name__)
 
 class POFBinaryReader:
     """Unified binary reader for POF file parsing with enhanced error handling."""
-    
+
     def __init__(self, file_handle: Optional[BinaryIO] = None):
         """Initialize binary reader with optional file handle."""
         self.file_handle = file_handle
         self.current_position = 0
         self.error_handler = get_global_error_handler()
-    
+
     # --- Position Management ---
-    
+
     def tell(self) -> int:
         """Get current file position."""
         if self.file_handle:
             return self.file_handle.tell()
         return self.current_position
-    
+
     def seek(self, position: int, whence: int = 0) -> int:
         """Seek to position in file."""
         if self.file_handle:
@@ -49,9 +49,9 @@ class POFBinaryReader:
             # This would require knowing buffer size
             raise NotImplementedError("SEEK_END not supported for buffer reading")
         return self.current_position
-    
+
     # --- Core Reading Functions ---
-    
+
     def read_bytes(self, count: int) -> bytes:
         """Read raw bytes with error handling."""
         try:
@@ -60,26 +60,26 @@ class POFBinaryReader:
                 self.current_position = self.file_handle.tell()
             else:
                 raise RuntimeError("No file handle available for reading")
-            
+
             if len(data) < count:
                 self.error_handler.add_error(
                     f"Unexpected end of file: requested {count} bytes but got {len(data)}",
                     severity=ErrorSeverity.ERROR,
                     category=ErrorCategory.IO,
-                    recovery_action="Attempt to continue with partial data"
+                    recovery_action="Attempt to continue with partial data",
                 )
-            
+
             return data
-            
+
         except Exception as e:
             self.error_handler.add_error(
                 f"Failed to read {count} bytes: {e}",
                 severity=ErrorSeverity.CRITICAL,
                 category=ErrorCategory.IO,
-                recovery_action="Abort reading operation"
+                recovery_action="Abort reading operation",
             )
             raise
-    
+
     def read_struct(self, format_string: str) -> Tuple[Any, ...]:
         """Read structured binary data."""
         try:
@@ -93,46 +93,46 @@ class POFBinaryReader:
                 f"Failed to unpack struct with format {format_string}: {e}",
                 severity=ErrorSeverity.ERROR,
                 category=ErrorCategory.PARSING,
-                recovery_action="Skip struct and continue"
+                recovery_action="Skip struct and continue",
             )
             raise
-    
+
     # --- Primitive Type Readers ---
-    
+
     def read_int8(self) -> int:
         """Read signed 8-bit integer."""
         return self.read_struct("<b")[0]
-    
+
     def read_uint8(self) -> int:
         """Read unsigned 8-bit integer."""
         return self.read_struct("<B")[0]
-    
+
     def read_int16(self) -> int:
         """Read signed 16-bit integer."""
         return self.read_struct("<h")[0]
-    
+
     def read_uint16(self) -> int:
         """Read unsigned 16-bit integer."""
         return self.read_struct("<H")[0]
-    
+
     def read_int32(self) -> int:
         """Read signed 32-bit integer."""
         return self.read_struct("<i")[0]
-    
+
     def read_uint32(self) -> int:
         """Read unsigned 32-bit integer."""
         return self.read_struct("<I")[0]
-    
+
     def read_float32(self) -> float:
         """Read 32-bit floating point number."""
         return self.read_struct("<f")[0]
-    
+
     def read_double64(self) -> float:
         """Read 64-bit floating point number."""
         return self.read_struct("<d")[0]
-    
+
     # --- String Readers ---
-    
+
     def read_string(self, max_length: int) -> str:
         """Read null-terminated string with maximum length."""
         try:
@@ -142,18 +142,18 @@ class POFBinaryReader:
                 if not byte or byte == b"\x00":
                     break
                 chars.append(byte)
-            
+
             return b"".join(chars).decode("utf-8", errors="replace")
-            
+
         except Exception as e:
             self.error_handler.add_error(
                 f"Failed to read string of max length {max_length}: {e}",
                 severity=ErrorSeverity.WARNING,
                 category=ErrorCategory.PARSING,
-                recovery_action="Return empty string"
+                recovery_action="Return empty string",
             )
             return ""
-    
+
     def read_length_prefixed_string(self, max_length: int = 1024) -> str:
         """Read length-prefixed string."""
         try:
@@ -165,24 +165,24 @@ class POFBinaryReader:
                     f"String length {length} exceeds maximum {max_length}",
                     severity=ErrorSeverity.WARNING,
                     category=ErrorCategory.VALIDATION,
-                    recovery_action=f"Truncating to {max_length} characters"
+                    recovery_action=f"Truncating to {max_length} characters",
                 )
                 length = max_length
-            
+
             data = self.read_bytes(length)
             return data.decode("utf-8", errors="replace")
-            
+
         except Exception as e:
             self.error_handler.add_error(
                 f"Failed to read length-prefixed string: {e}",
                 severity=ErrorSeverity.WARNING,
                 category=ErrorCategory.PARSING,
-                recovery_action="Return empty string"
+                recovery_action="Return empty string",
             )
             return ""
-    
+
     # --- Vector Readers ---
-    
+
     def read_vector3d(self) -> Vector3D:
         """Read 3D vector (12 bytes: 3 floats)."""
         try:
@@ -193,10 +193,10 @@ class POFBinaryReader:
                 f"Failed to read Vector3D: {e}",
                 severity=ErrorSeverity.ERROR,
                 category=ErrorCategory.PARSING,
-                recovery_action="Return zero vector"
+                recovery_action="Return zero vector",
             )
             return Vector3D(0.0, 0.0, 0.0)
-    
+
     def read_matrix3x3(self) -> List[List[float]]:
         """Read 3x3 matrix (36 bytes: 9 floats, stored as row-major)."""
         try:
@@ -210,12 +210,12 @@ class POFBinaryReader:
                 f"Failed to read 3x3 matrix: {e}",
                 severity=ErrorSeverity.ERROR,
                 category=ErrorCategory.PARSING,
-                recovery_action="Return identity matrix"
+                recovery_action="Return identity matrix",
             )
             return [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
-    
+
     # --- Array Readers ---
-    
+
     def read_array(self, element_reader, count: int) -> List[Any]:
         """Read array of elements using provided reader function."""
         elements = []
@@ -228,27 +228,27 @@ class POFBinaryReader:
                     f"Failed to read array element {i}/{count}: {e}",
                     severity=ErrorSeverity.ERROR,
                     category=ErrorCategory.PARSING,
-                    recovery_action="Skip element and continue"
+                    recovery_action="Skip element and continue",
                 )
                 # Depending on context, we might want to break or continue
                 # For now, continue to maintain array size
                 elements.append(None)
         return elements
-    
+
     def read_vector3d_array(self, count: int) -> List[Vector3D]:
         """Read array of Vector3D objects."""
         return self.read_array(self.read_vector3d, count)
-    
+
     def read_float32_array(self, count: int) -> List[float]:
         """Read array of 32-bit floats."""
         return [self.read_float32() for _ in range(count)]
-    
+
     def read_int32_array(self, count: int) -> List[int]:
         """Read array of 32-bit integers."""
         return [self.read_int32() for _ in range(count)]
-    
+
     # --- Chunk Header Reader ---
-    
+
     def read_chunk_header(self) -> Tuple[int, int]:
         """Read 8-byte chunk header (ID and Length)."""
         try:
@@ -260,39 +260,47 @@ class POFBinaryReader:
                 f"Failed to read chunk header: {e}",
                 severity=ErrorSeverity.ERROR,
                 category=ErrorCategory.PARSING,
-                recovery_action="Assume end of file"
+                recovery_action="Assume end of file",
             )
             raise
-    
+
     # --- Validation Helpers ---
-    
-    def validate_range(self, value: Union[int, float], min_val: Union[int, float], 
-                      max_val: Union[int, float], name: str = "value") -> bool:
+
+    def validate_range(
+        self,
+        value: Union[int, float],
+        min_val: Union[int, float],
+        max_val: Union[int, float],
+        name: str = "value",
+    ) -> bool:
         """Validate that value is within range."""
         if not (min_val <= value <= max_val):
             self.error_handler.add_error(
                 f"{name} {value} out of range [{min_val}, {max_val}]",
                 severity=ErrorSeverity.WARNING,
                 category=ErrorCategory.VALIDATION,
-                recovery_action=f"Clamp {name} to valid range"
+                recovery_action=f"Clamp {name} to valid range",
             )
             return False
         return True
-    
-    def validate_non_negative(self, value: Union[int, float], name: str = "value") -> bool:
+
+    def validate_non_negative(
+        self, value: Union[int, float], name: str = "value"
+    ) -> bool:
         """Validate that value is non-negative."""
         if value < 0:
             self.error_handler.add_error(
                 f"{name} {value} should be non-negative",
                 severity=ErrorSeverity.WARNING,
                 category=ErrorCategory.VALIDATION,
-                recovery_action=f"Use absolute value for {name}"
+                recovery_action=f"Use absolute value for {name}",
             )
             return False
         return True
 
 
 # --- Convenience Functions ---
+
 
 def create_reader(file_handle: BinaryIO) -> POFBinaryReader:
     """Create POF binary reader instance."""
@@ -301,6 +309,7 @@ def create_reader(file_handle: BinaryIO) -> POFBinaryReader:
 
 # --- Backward Compatibility Aliases ---
 # These maintain the same interface as the original pof_chunks.py functions
+
 
 def read_int(f: BinaryIO) -> int:
     """Read 4-byte signed integer (backward compatibility)."""

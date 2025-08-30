@@ -42,15 +42,19 @@ class ShipClassGenerator:
         # Determine faction and ship type for directory structure
         faction = self._determine_faction(ship_name)
         ship_category = self._determine_ship_category(ship_name)
-        
+
         # Create feature-based directory structure
         # /features/fighters/{faction}/{ship_name}/{ship_name}.tres for fighters and bombers
         # /features/capital_ships/{faction}/{ship_name}/{ship_name}.tres for capital ships
         if ship_category in ["fighter", "bomber", "interceptor", "stealth", "corvette"]:
-            feature_dir = os.path.join(self.output_dir, "features", "fighters", faction, safe_name)
+            feature_dir = os.path.join(
+                self.output_dir, "features", "fighters", faction, safe_name
+            )
         else:
-            feature_dir = os.path.join(self.output_dir, "features", "capital_ships", faction, safe_name)
-        
+            feature_dir = os.path.join(
+                self.output_dir, "features", "capital_ships", faction, safe_name
+            )
+
         os.makedirs(feature_dir, exist_ok=True)
 
         # Create .tres resource content
@@ -70,10 +74,10 @@ class ShipClassGenerator:
 
     def _create_ship_resource_content(self, ship: Dict[str, Any]) -> str:
         """Create .tres resource content for ShipClass with complete ship data"""
-        
+
         # Extract ship properties with defaults
         ship_name = ship.get("name", "Unknown Ship")
-        
+
         # Handle max_velocity which can be a dictionary or single value
         max_velocity_data = ship.get("max_velocity", 75.0)
         if isinstance(max_velocity_data, dict):
@@ -82,33 +86,35 @@ class ShipClassGenerator:
         else:
             # Use single value directly
             max_velocity = max_velocity_data
-            
+
         max_hull_strength = ship.get("hitpoints", 100.0)  # hitpoints in source data
         max_shield_strength = ship.get("max_shield", 50.0)
         mass = ship.get("mass", 1000.0)
-        
+
         # Physics properties
         density = ship.get("density", 1.0)
         power_output = ship.get("power_output", 100.0)
         afterburner_fuel = ship.get("afterburner_fuel", 500.0)
         max_weapon_energy = ship.get("max_weapon_energy", 100.0)
         weapon_regeneration_rate = ship.get("weapon_regeneration_rate", 0.1)
-        
+
         # Acceleration properties
         forward_accel = ship.get("forward_accel", 5.0)
         forward_decel = ship.get("forward_decel", 4.0)
         slide_accel = ship.get("slide_accel", 3.0)
         slide_decel = ship.get("slide_decel", 2.0)
-        
+
         # Rotation properties
-        rotation_time = ship.get("rotation_time", {"pitch": 3.0, "bank": 3.0, "heading": 3.0})
+        rotation_time = ship.get(
+            "rotation_time", {"pitch": 3.0, "bank": 3.0, "heading": 3.0}
+        )
         if isinstance(rotation_time, dict):
             pitch_time = rotation_time.get("pitch", 3.0)
             bank_time = rotation_time.get("bank", 3.0)
             heading_time = rotation_time.get("heading", 3.0)
         else:
             pitch_time = bank_time = heading_time = rotation_time
-            
+
         # Determine ship type
         ship_type = self._determine_ship_type(ship_name)
 
@@ -124,7 +130,7 @@ class ShipClassGenerator:
         tech_image = ship.get("tech_image", "")
         thruster_flame = ship.get("thruster_flame", "")
         thruster_glow = ship.get("thruster_glow", "")
-        
+
         # Audio assets
         engine_sound = ship.get("engine_sound", "")
         alive_sound = ship.get("alive_sound", "")
@@ -136,7 +142,7 @@ class ShipClassGenerator:
         rotation_sound = ship.get("rotation_sound", "")
         turret_base_rotation_sound = ship.get("turret_base_rotation_sound", "")
         turret_gun_rotation_sound = ship.get("turret_gun_rotation_sound", "")
-        
+
         # Weapon bank configurations
         allowed_pbanks = ship.get("allowed_pbanks", [])
         allowed_sbanks = ship.get("allowed_sbanks", [])
@@ -145,7 +151,7 @@ class ShipClassGenerator:
         sbank_capacity = ship.get("sbank_capacity", [])
         allowed_dogfight_pbanks = ship.get("allowed_dogfight_pbanks", [])
         allowed_dogfight_sbanks = ship.get("allowed_dogfight_sbanks", [])
-        
+
         # Convert weapon banks to Godot format
         allowed_pbanks_str = self._format_weapon_banks(allowed_pbanks)
         allowed_sbanks_str = self._format_weapon_banks(allowed_sbanks)
@@ -371,7 +377,7 @@ turret_gun_rotation_sound_path = "{f'res://assets/audio/ships/{turret_gun_rotati
         """Format weapon bank configuration as Godot array of arrays"""
         if not weapon_banks:
             return "[]"
-        
+
         formatted_banks = []
         for bank in weapon_banks:
             if isinstance(bank, list):
@@ -380,14 +386,14 @@ turret_gun_rotation_sound_path = "{f'res://assets/audio/ships/{turret_gun_rotati
             else:
                 # Handle single weapon strings
                 formatted_banks.append(f'["{bank}"]')
-        
+
         return "[" + ", ".join(formatted_banks) + "]"
 
     def _format_integer_list(self, int_list: List[int]) -> str:
         """Format integer list as Godot array"""
         if not int_list:
             return "[]"
-        
+
         formatted_items = [str(item) for item in int_list]
         return "[" + ", ".join(formatted_items) + "]"
 
@@ -418,7 +424,7 @@ ship_classes = {
             ship_name = ship.get("name", "unknown")
             faction = self._determine_faction(ship_name)
             category = self._determine_ship_category(ship_name)
-            
+
             if faction not in ships_by_faction:
                 ships_by_faction[faction] = {}
             if category not in ships_by_faction[faction]:
@@ -433,7 +439,13 @@ ship_classes = {
                     ship_name = ship.get("name", "unknown")
                     safe_name = self._sanitize_filename(ship_name)
                     # Use the new feature-based path structure
-                    if category in ["fighter", "bomber", "interceptor", "stealth", "corvette"]:
+                    if category in [
+                        "fighter",
+                        "bomber",
+                        "interceptor",
+                        "stealth",
+                        "corvette",
+                    ]:
                         resource_path = f"res://features/fighters/{faction}/{safe_name}/{safe_name}.tres"
                     else:
                         resource_path = f"res://features/capital_ships/{faction}/{safe_name}/{safe_name}.tres"

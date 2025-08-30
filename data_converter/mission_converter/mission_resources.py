@@ -6,16 +6,12 @@ Creates Godot Resource files (.tres) containing mission metadata, objectives,
 and configuration data for runtime use. Follows EPIC-001/002 data-driven approach.
 """
 
-import json
 import logging
-from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Tuple
 
 from .fs2_mission_parser import (
     MissionData,
-    MissionEvent,
-    MissionGoal,
     MissionObject,
     MissionWaypoint,
     MissionWing,
@@ -417,7 +413,7 @@ waypoints = [{", ".join(waypoint_positions)}]
 
         goal_dicts = []
         for goal in goals:
-            goal_dict = f'{{"name": "{goal.name or ''}", "type": "{goal.type}", "message": "{self._escape_string(goal.message or '')}"}}'
+            goal_dict = f'{{"name": "{goal.name or ""}", "type": "{goal.type}", "message": "{self._escape_string(goal.message or "")}"}}'
             goal_dicts.append(goal_dict)
 
         return f"[{', '.join(goal_dicts)}]"

@@ -99,9 +99,7 @@ class TargetPathResolver:
             return f"entities/installations/{clean_name}.tscn"
 
         elif entity_type == EntityType.ASTEROID:
-            return (
-                f"entities/environment/asteroids/{clean_name}.tscn"
-            )
+            return f"entities/environment/asteroids/{clean_name}.tscn"
 
         elif entity_type == EntityType.DEBRIS:
             return f"entities/environment/debris/{clean_name}.tscn"
@@ -359,15 +357,15 @@ class TargetPathResolver:
             if mission_num is not None:
                 return f"campaigns/hermes/audio/voice/mission_{mission_num:02d}/{target_filename}"
             else:
-                return (
-                    f"campaigns/hermes/audio/voice/misc/{target_filename}"
-                )
+                return f"campaigns/hermes/audio/voice/misc/{target_filename}"
 
         elif audio_category == "control_tower":
             # Organize by location/ship
             location = self._extract_location_from_filename(target_filename)
             if location:
-                return f"campaigns/hermes/audio/voice/control/{location}/{target_filename}"
+                return (
+                    f"campaigns/hermes/audio/voice/control/{location}/{target_filename}"
+                )
             else:
                 return f"campaigns/hermes/audio/voice/control/misc/{target_filename}"
 

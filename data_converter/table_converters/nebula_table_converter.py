@@ -50,19 +50,23 @@ class NebulaTableConverter(BaseTableConverter):
             # Nebula background bitmaps
             match = self._parse_patterns["nebula"].match(line)
             if match:
-                entries.append({
-                    "name": match.group(1).strip(),
-                    "type": "nebula_background",
-                })
+                entries.append(
+                    {
+                        "name": match.group(1).strip(),
+                        "type": "nebula_background",
+                    }
+                )
                 continue
 
             # Poof cloud bitmaps
             match = self._parse_patterns["poof"].match(line)
             if match:
-                entries.append({
-                    "name": match.group(1).strip(),
-                    "type": "poof_cloud",
-                })
+                entries.append(
+                    {
+                        "name": match.group(1).strip(),
+                        "type": "poof_cloud",
+                    }
+                )
                 continue
 
         return entries
@@ -79,7 +83,9 @@ class NebulaTableConverter(BaseTableConverter):
         self, entries: List[Dict[str, Any]]
     ) -> Dict[str, Any]:
         """Convert parsed nebula entries to a Godot resource dictionary."""
-        nebula_backgrounds = [e for e in entries if e.get("type") == "nebula_background"]
+        nebula_backgrounds = [
+            e for e in entries if e.get("type") == "nebula_background"
+        ]
         poof_clouds = [e for e in entries if e.get("type") == "poof_cloud"]
 
         return {

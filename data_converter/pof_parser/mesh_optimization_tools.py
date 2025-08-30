@@ -11,7 +11,7 @@ import math
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Tuple
 
 from .pof_lod_processor import LODLevel
 
@@ -715,7 +715,7 @@ class TextureOptimizer:
 
     def _optimize_single_texture(self, texture_path: str) -> Dict[str, Any]:
         """Optimize individual texture."""
-        base_name = Path(texture_path).stem
+        Path(texture_path).stem
 
         optimization = {
             "original_path": texture_path,
@@ -815,7 +815,7 @@ if __name__ == "__main__":
         test_geometry, test_materials
     )
 
-    print(f"\nOptimization Results:")
+    print("\nOptimization Results:")
     print(
         f"Vertices: {result.original_vertices} → {result.optimized_vertices} "
         f"({result.vertex_reduction_ratio:.1%} reduction)"

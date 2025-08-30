@@ -19,7 +19,7 @@ import logging
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 
 from .blender_converter import BlenderOBJConverter
 from .godot_import_generator import GodotImportGenerator, WCSImportConfigGenerator

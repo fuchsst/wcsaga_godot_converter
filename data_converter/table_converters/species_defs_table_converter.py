@@ -47,7 +47,7 @@ class SpeciesDefsTableConverter(BaseTableConverter):
     def parse_table(self, state: ParseState) -> List[Dict[str, Any]]:
         """Parse the entire Species_defs.tbl file."""
         entries = []
-        
+
         while state.has_more_lines():
             line = state.peek_line()
             if not line or self._should_skip_line(line, state):

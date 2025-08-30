@@ -23,7 +23,9 @@ class WeaponExplTableConverter(BaseTableConverter):
     def _init_parse_patterns(self) -> Dict[str, re.Pattern]:
         """Initialize regex patterns for weapon explosion table parsing"""
         return {
-            "explosion_entry": re.compile(r"^\$Name:[\s\t]*(\w+)[\s\t]*.*$", re.IGNORECASE),
+            "explosion_entry": re.compile(
+                r"^\$Name:[\s\t]*(\w+)[\s\t]*.*$", re.IGNORECASE
+            ),
             "lod_entry": re.compile(r"^\$LOD:[\s\t]*(\d+)[\s\t]*$", re.IGNORECASE),
             "section_start": re.compile(r"^#Start$", re.IGNORECASE),
             "section_end": re.compile(r"^#End$", re.IGNORECASE),
@@ -89,12 +91,16 @@ class WeaponExplTableConverter(BaseTableConverter):
 
         for field in required_fields:
             if field not in entry:
-                self.logger.warning(f"Weapon explosion entry missing required field: {field}")
+                self.logger.warning(
+                    f"Weapon explosion entry missing required field: {field}"
+                )
                 return False
 
         # Validate LOD value
         if entry["lod"] not in [0, 1]:
-            self.logger.warning(f"Weapon explosion {entry['name']}: Invalid LOD value: {entry['lod']}")
+            self.logger.warning(
+                f"Weapon explosion {entry['name']}: Invalid LOD value: {entry['lod']}"
+            )
             return False
 
         return True

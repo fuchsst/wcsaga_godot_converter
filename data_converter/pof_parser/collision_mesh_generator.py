@@ -11,7 +11,7 @@ import math
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 from .pof_data_extractor import POFDataExtractor
 from .pof_parser import POFParser
@@ -492,7 +492,7 @@ class CollisionMeshGenerator:
         simplified_vertices = self._simplify_vertices(vertices, settings)
 
         # Filter faces to only include those with remaining vertices
-        vertex_mapping = {id(v): i for i, v in enumerate(simplified_vertices)}
+        {id(v): i for i, v in enumerate(simplified_vertices)}
         simplified_faces = []
 
         for face in faces:

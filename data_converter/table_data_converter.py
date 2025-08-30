@@ -25,7 +25,7 @@ from typing import Any, Dict, List
 
 # Import our new modular components
 from .table_converters.converter_factory import ConverterFactory
-from .table_converters.table_types import TableType
+from .core.table_data_structures import TableType
 
 logger = logging.getLogger(__name__)
 

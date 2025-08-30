@@ -22,7 +22,9 @@ def read_insg_chunk(f: BinaryIO, length: int) -> List[Dict[str, Any]]:
         ins_data["lod"] = reader.read_int32()
         num_faces = reader.read_int32()
         num_verts = reader.read_int32()  # Total verts for this insignia's geometry
-        verts = [reader.read_vector3d() for _ in range(num_verts)]  # Read Vector3D objects
+        verts = [
+            reader.read_vector3d() for _ in range(num_verts)
+        ]  # Read Vector3D objects
         ins_data["offset"] = reader.read_vector3d().to_list()
         for _ in range(num_faces):
             face_verts_with_uvs = []
