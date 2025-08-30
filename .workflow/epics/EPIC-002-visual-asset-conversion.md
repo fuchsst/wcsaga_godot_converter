@@ -37,7 +37,7 @@ Convert 3D ship models (POF), textures (PCX/DDS) to Godot-compatible formats (gl
 ## Agent Assignments
 - **asset-pipeline-engineer**: POF/PCX/DDS parsing and conversion
 - **godot-systems-designer**: Material mapping and glTF export
-- **qa-engineer**: Visual quality validation and performance testing
+- **qa_engineer**: Visual quality validation and performance testing
 
 ## Success Metrics
 - 95%+ of visual assets successfully converted

@@ -53,7 +53,7 @@ case "$AGENT_NAME" in
         ./.claude/hooks/run_validation.sh "$TASK_ID" "assets" "$TOOLCHAIN_COMMANDS"
         VALIDATION_RESULT=$?
         ;;
-    "migration-architect" | "godot-architect")
+    "migration-architect" | "godot_architect")
         echo "$(date): Running architectural validation for $TASK_ID" >> ./.workflow/logs/hook.log
         ./.claude/hooks/run_validation.sh "$TASK_ID" "architecture" "$TOOLCHAIN_COMMANDS"
         VALIDATION_RESULT=$?

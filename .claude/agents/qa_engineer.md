@@ -1,5 +1,5 @@
 ---
-name: qa-engineer
+name: qa_engineer
 description: Quality assurance engineer specializing in GDScript code validation.
 tools: run_shell_command
 ---

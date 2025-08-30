@@ -3,7 +3,7 @@
   "project_name": "Wing Commander Saga Godot Converter",
   "description": "Migration of Wing Commander Saga from C++ FreeSpace Open engine to Godot Engine using GDScript",
   "created": "2025-08-29T00:00:00Z",
-  "last_updated": "2025-08-30T19:30:00Z",
+  "last_updated": "2025-08-30T20:30:00Z",
   "current_focus": "epic-implementation",
   "status": "epics-created",
   "prds": [
@@ -457,7 +457,7 @@
     {
       "timestamp": "2025-08-30T20:00:00Z",
       "activity": "Created task breakdown for STORY-002: Weapons Table Converter with 6 implementation tasks",
-      "user": "godot-architect"
+      "user": "godot_architect"
     },
     {
       "timestamp": "2025-08-30T19:30:00Z",
@@ -467,7 +467,7 @@
     {
       "timestamp": "2025-08-30T19:00:00Z",
       "activity": "Completed STORY-001: Implement Ships Table Converter with all validation criteria met",
-      "user": "qa-engineer"
+      "user": "qa_engineer"
     },
     {
       "timestamp": "2025-08-30T18:00:00Z",
@@ -497,7 +497,7 @@
     {
       "timestamp": "2025-08-30T13:00:00Z",
       "activity": "Created task breakdown for STORY-001: Ships Table Converter with 6 implementation tasks",
-      "user": "godot-architect"
+      "user": "godot_architect"
     },
     {
       "timestamp": "2025-08-30T12:30:00Z",

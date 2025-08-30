@@ -5,10 +5,10 @@ allowed-tools: ["Read", "Write", "Glob", "Grep", "Task"]
 
 # Task Breakdown Agent Orchestration
 
-You are orchestrating task breakdown following the **AI-Orchestrated Development** methodology. Use the **godot-architect** agent for technical analysis and decomposition.
+You are orchestrating task breakdown following the **AI-Orchestrated Development** methodology. Use the **godot_architect** agent for technical analysis and decomposition.
 
 ## Agent Assignment
-- **Primary Agent**: godot-architect
+- **Primary Agent**: godot_architect
 - **Task**: Break down story into implementation tasks: "$ARGUMENTS"
 
 ## Breakdown Execution Checklist
@@ -67,7 +67,7 @@ You are orchestrating task breakdown following the **AI-Orchestrated Development
 - **Pattern**: Layout → Theme → Logic → UX Testing
 
 ### **Quality Assurance Tasks**
-- **Agent**: qa-engineer
+- **Agent**: qa_engineer
 - **Focus**: Testing, validation, performance
 - **Pattern**: Test design → Implementation → Automation → Reporting
 
@@ -132,7 +132,7 @@ You are orchestrating task breakdown following the **AI-Orchestrated Development
       "title": "Analyze C++ [system] implementation",
       "description": "Study existing code and document architecture",
       "dependencies": [],
-      "agent": "godot-architect",
+      "agent": "godot_architect",
       "complexity": "medium",
       "files_to_modify": ["analysis/system_review.md"],
       "validation_criteria": ["Architecture documented", "Dependencies mapped"],
@@ -158,7 +158,7 @@ You are orchestrating task breakdown following the **AI-Orchestrated Development
 
 ## State-Aware Execution
 
-Use the **Task tool** to invoke the godot-architect agent with:
+Use the **Task tool** to invoke the godot_architect agent with:
 - Complete story context and requirements
 - Current project state information
 - Codebase analysis findings

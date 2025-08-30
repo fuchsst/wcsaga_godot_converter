@@ -37,7 +37,7 @@ Convert Wing Commander's proprietary ANI animation format to Godot sprite sheets
 ## Agent Assignments
 - **asset-pipeline-engineer**: ANI parsing and sprite sheet generation
 - **godot-systems-designer**: Animation resource creation and integration
-- **qa-engineer**: Animation quality validation and performance testing
+- **qa_engineer**: Animation quality validation and performance testing
 
 ## Success Metrics
 - 98%+ of animations successfully converted

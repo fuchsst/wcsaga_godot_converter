@@ -37,7 +37,7 @@ Convert Wing Commander Saga mission files (FS2/FC2) to Godot scenes and resource
 ## Agent Assignments
 - **asset-pipeline-engineer**: Mission file parsing and data extraction
 - **godot-systems-designer**: Scene generation and AI behavior mapping
-- **qa-engineer**: Mission functionality validation and performance testing
+- **qa_engineer**: Mission functionality validation and performance testing
 
 ## Success Metrics
 - 95%+ of missions successfully converted

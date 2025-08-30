@@ -9,7 +9,7 @@ You are orchestrating feature refinement following the **AI-Orchestrated Develop
 
 ## Agent Selection by Refinement Type
 - **Code Quality Improvement**: cpp-code-analyst + gdscript-engineer
-- **Architecture Refinement**: godot-architect + godot-systems-designer
+- **Architecture Refinement**: godot_architect + godot-systems-designer
 - **Asset Optimization**: asset-pipeline-engineer
 - **User Experience Enhancement**: godot-systems-designer
 
@@ -65,7 +65,7 @@ You are orchestrating feature refinement following the **AI-Orchestrated Develop
 - **Focus**: System design, scalability, extensibility
 - **Techniques**: Component composition, signal optimization, scene restructuring
 - **Metrics**: Coupling, cohesion, extensibility
-- **Agent**: godot-architect + godot-systems-designer
+- **Agent**: godot_architect + godot-systems-designer
 
 ### **Asset Optimization**
 - **Focus**: File sizes, loading performance, quality

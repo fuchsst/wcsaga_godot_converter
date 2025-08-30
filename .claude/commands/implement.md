@@ -12,7 +12,7 @@ You are orchestrating task implementation following the **AI-Orchestrated Develo
 - **Asset Pipeline**: asset-pipeline-engineer
 - **System Architecture**: godot-systems-designer
 - **UI/UX Development**: gdscript-engineer + godot-systems-designer
-- **Quality Assurance**: qa-engineer
+- **Quality Assurance**: qa_engineer
 
 ## Implementation Execution Checklist
 

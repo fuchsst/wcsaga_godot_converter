@@ -15,6 +15,11 @@ from ..core.table_data_structures import WeaponData
 
 class WeaponTableConverter(BaseTableConverter):
     """Converts WCS weapons.tbl files to Godot weapon resources"""
+    
+    # Metadata for auto-registration
+    TABLE_TYPE = TableType.WEAPONS
+    FILENAME_PATTERNS = ["weapon"]
+    CONTENT_PATTERNS = ["#primary weapons", "#secondary weapons", "$damage:"]
 
     def _init_parse_patterns(self) -> Dict[str, re.Pattern]:
         """Initialize regex patterns for weapon table parsing with comprehensive asset fields"""
@@ -39,6 +44,10 @@ class WeaponTableConverter(BaseTableConverter):
                 r"^\$Energy Consumed:\s*([\d\.]+)$", re.IGNORECASE
             ),
             "cargo_size": re.compile(r"^\$Cargo Size:\s*([\d\.]+)$", re.IGNORECASE),
+            # Damage factors
+            "armor_factor": re.compile(r"^\$Armor Factor:\s*([\d\.]+)$", re.IGNORECASE),
+            "shield_factor": re.compile(r"^\$Shield Factor:\s*([\d\.]+)$", re.IGNORECASE),
+            "subsystem_factor": re.compile(r"^\$Subsystem Factor:\s*([\d\.]+)$", re.IGNORECASE),
             # 3D Models and geometry
             "model_file": re.compile(r"^\$Model file:\s*(.+)$", re.IGNORECASE),
             "pof_file": re.compile(r"^\$POF file:\s*(.+)$", re.IGNORECASE),
@@ -80,6 +89,7 @@ class WeaponTableConverter(BaseTableConverter):
             # Homing properties
             "homing_type": re.compile(r"^\$Homing:\s*(.+)$", re.IGNORECASE),
             "turn_time": re.compile(r"^\$Turn Time:\s*([\d\.]+)$", re.IGNORECASE),
+            "free_flight_time": re.compile(r"^\$Free Flight Time:\s*([\d\.]+)$", re.IGNORECASE),
             "fov": re.compile(r"^\$FOV:\s*([\d\.]+)$", re.IGNORECASE),
             "seeker_strength": re.compile(
                 r"^\$Seeker Strength:\s*([\d\.]+)$", re.IGNORECASE
@@ -149,8 +159,12 @@ class WeaponTableConverter(BaseTableConverter):
                     "laser_head_radius",
                     "laser_tail_radius",
                     "turn_time",
+                    "free_flight_time",
                     "fov",
                     "seeker_strength",
+                    "armor_factor",
+                    "shield_factor",
+                    "subsystem_factor",
                 ]
                 integer_props = ["swarm_count", "swarm_wait"]
 
@@ -175,7 +189,7 @@ class WeaponTableConverter(BaseTableConverter):
                 return False
 
         # Validate numeric fields
-        numeric_fields = ["damage", "mass", "velocity", "fire_wait", "weapon_range"]
+        numeric_fields = ["damage", "mass", "velocity", "fire_wait", "weapon_range", "armor_factor", "shield_factor", "subsystem_factor", "turn_time", "free_flight_time"]
         for field in numeric_fields:
             if field in entry and not isinstance(entry[field], (int, float)):
                 self.logger.warning(f"Weapon {entry['name']}: Invalid {field} value")

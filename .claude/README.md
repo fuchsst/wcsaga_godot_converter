@@ -108,11 +108,11 @@ The system uses several specialized agents with distinct expertise:
 
 The system uses comprehensive hooks to automate workflow transitions with full toolchain integration:
 
-1. **SubagentStop (godot-architect)** - Processes architectural plans and creates task files
+1. **SubagentStop (godot_architect)** - Processes architectural plans and creates task files
 2. **SubagentStop (gdscript-engineer)** - Triggers comprehensive validation after implementation
 3. **SubagentStop (asset-pipeline-engineer)** - Processes asset pipeline plans with Godot integration
 4. **SubagentStop (cpp-code-analyst)** - Processes code analysis reports with toolchain analysis
-5. **SubagentStop (qa-engineer)** - Checks test status and generates feedback
+5. **SubagentStop (qa_engineer)** - Checks test status and generates feedback
 6. **PostToolUse (Bash)** - Checks build status and generates automated feedback
 7. **PreToolUse (Write)** - Validates file structure and naming conventions
 8. **SessionStart** - Loads project state and context at session initialization

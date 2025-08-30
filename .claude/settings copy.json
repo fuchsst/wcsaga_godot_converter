@@ -21,7 +21,7 @@
         ]
       },
       {
-        "matcher": "godot-architect",
+        "matcher": "godot_architect",
         "hooks": [
           {
             "type": "command",
@@ -48,7 +48,7 @@
         ]
       },
       {
-        "matcher": "qa-engineer",
+        "matcher": "qa_engineer",
         "hooks": [
           {
             "type": "command",

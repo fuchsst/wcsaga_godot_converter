@@ -1,5 +1,5 @@
 ---
-name: godot-architect
+name: godot_architect
 description: Senior software architect specializing in Godot Engine architecture and C++ to GDScript migration planning.
 tools: read_file, write_file, search_file_content, glob, grep
 ---

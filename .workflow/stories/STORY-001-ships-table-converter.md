@@ -49,4 +49,4 @@ As an asset pipeline engineer, I want to convert ships.tbl/.tbm files to Godot .
 ## Agent Assignment
 **asset-pipeline-engineer**: Implementation of table parsing and data extraction
 **godot-systems-designer**: Resource mapping and Godot integration following feature-based organization
-**qa-engineer**: Testing and validation with comprehensive test coverage
+**qa_engineer**: Testing and validation with comprehensive test coverage

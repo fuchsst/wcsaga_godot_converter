@@ -80,25 +80,6 @@
     },
     {
       "id": "task-005",
-      "title": "Implement TBM inheritance and override system",
-      "description": "Create TBM inheritance and override system to properly merge base weapon definitions with modular TBM overrides. Handle inheritance chains and property merging with proper precedence rules.",
-      "dependencies": ["task-001", "task-002", "task-003", "task-004"],
-      "agent": "code-analyst",
-      "complexity": "high",
-      "files_to_modify": [
-        "data_converter/table_converters/weapon_table_converter.py",
-        "data_converter/utils/tbm_merger.py"
-      ],
-      "validation_criteria": [
-        "TBM inheritance correctly merges with base weapon definitions",
-        "Property precedence rules are properly implemented",
-        "Circular inheritance is detected and prevented",
-        "Unit tests validate inheritance merging logic"
-      ],
-      "estimated_hours": 4
-    },
-    {
-      "id": "task-006",
       "title": "Implement WeaponResourceGenerator and Godot .tres file generation",
       "description": "Create WeaponResourceGenerator to map parsed data to Godot Resource classes with exported variables. Generate individual .tres files for each weapon type following Godot feature-based organization in /features/weapons/{weapon_name}/ directories.",
       "dependencies": ["task-002", "task-003", "task-004"],

@@ -75,6 +75,48 @@ def test_parse_weapon_entry():
         assert result["fire_wait"] == 0.5
 
 
+def test_parse_weapon_physics_properties():
+    """Test parsing comprehensive weapon physics properties"""
+    # Create test content with physics properties
+    test_content = [
+        "$Name: Test Missile",
+        "$Damage: 100",
+        "$Velocity: 300",
+        "$Fire Wait: 2.0",
+        "$Lifetime: 10.0",
+        "$Energy Consumed: 5.0",
+        "$Armor Factor: 1.5",
+        "$Shield Factor: 0.8",
+        "$Subsystem Factor: 0.5",
+        "$Turn Time: 1.5",
+        "$Free Flight Time: 0.5",
+        "$end_multi_text"
+    ]
+    
+    state = ParseState(lines=test_content, current_line=0)
+    with tempfile.TemporaryDirectory() as temp_dir:
+        source_dir = Path(temp_dir) / "source"
+        target_dir = Path(temp_dir) / "target"
+        source_dir.mkdir()
+        target_dir.mkdir()
+        
+        converter = WeaponTableConverter(source_dir, target_dir)
+        result = converter.parse_entry(state)
+        
+        assert result is not None
+        assert result["name"] == "Test Missile"
+        assert result["damage"] == 100.0
+        assert result["velocity"] == 300.0
+        assert result["fire_wait"] == 2.0
+        assert result["lifetime"] == 10.0
+        assert result["energy_consumed"] == 5.0
+        assert result["armor_factor"] == 1.5
+        assert result["shield_factor"] == 0.8
+        assert result["subsystem_factor"] == 0.5
+        assert result["turn_time"] == 1.5
+        assert result["free_flight_time"] == 0.5
+
+
 def test_validate_weapon_entry():
     """Test weapon entry validation"""
     with tempfile.TemporaryDirectory() as temp_dir:

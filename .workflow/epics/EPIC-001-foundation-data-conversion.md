@@ -66,7 +66,7 @@ Specific table types to be converted:
 ## Agent Assignments
 - **asset-pipeline-engineer**: Format parsing and data extraction
 - **godot-systems-designer**: Resource mapping, serialization, and Godot integration
-- **qa-engineer**: Validation, quality assurance, and cross-reference integrity testing
+- **qa_engineer**: Validation, quality assurance, and cross-reference integrity testing
 
 ## Success Metrics
 - 100% of foundation data files converted with zero data corruption incidents

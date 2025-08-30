@@ -4,7 +4,7 @@
 As an asset pipeline engineer, I want to convert weapons.tbl/.tbm files to Godot .tres resources so that weapon definitions are available in the Godot engine with all their properties and effects.
 
 ## Epic Reference
-[EPIC-001: Foundation Data Conversion (.tbl/.tbm → .tres)](../epics/EPIC-001-foundation-data-conversion.md)
+[EPIC-001: Foundation Data Conversion (.tbl → .tres)](../epics/EPIC-001-foundation-data-conversion.md)
 
 ## Godot Implementation
 - Create a WeaponTableConverter class that extends BaseTableConverter
@@ -23,8 +23,7 @@ As an asset pipeline engineer, I want to convert weapons.tbl/.tbm files to Godot
 - [task-002](../tasks/task-002-weapon-physics-parsing.md): Implement comprehensive weapon physics and damage property parsing
 - [task-003](../tasks/task-003-weapon-categorization-parsing.md): Implement weapon class categorization and targeting properties parsing
 - [task-004](../tasks/task-004-weapon-asset-reference-mapping.md): Implement visual and audio asset reference extraction and mapping
-- [task-005](../tasks/task-005-tbm-inheritance.md): Implement TBM inheritance and override system
-- [task-006](../tasks/task-006-weapon-godot-generation.md): Implement WeaponResourceGenerator and Godot .tres file generation
+- [task-005](../tasks/task-005-weapon-godot-generation.md): Implement WeaponResourceGenerator and Godot .tres file generation
 
 ## Acceptance Criteria
 - [ ] WeaponTableConverter successfully parses weapons.tbl files with all properties
@@ -49,4 +48,4 @@ As an asset pipeline engineer, I want to convert weapons.tbl/.tbm files to Godot
 ## Agent Assignment
 **asset-pipeline-engineer**: Implementation of table parsing and data extraction
 **godot-systems-designer**: Resource mapping and Godot integration
-**qa-engineer**: Testing and validation
+**qa_engineer**: Testing and validation

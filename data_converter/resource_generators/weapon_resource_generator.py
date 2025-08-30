@@ -99,131 +99,8 @@ class WeaponResourceGenerator:
         self, weapon: Dict[str, Any], weapon_type: str
     ) -> str:
         """Create .tres resource content for WeaponData"""
-
-        # Extract weapon properties with defaults
-        weapon_name = weapon.get("name", "Unknown Weapon")
-        damage = weapon.get("damage", 100.0)
-        velocity = weapon.get("velocity", 500.0)
-        mass = weapon.get("mass", 1.0)
-        fire_wait = weapon.get("fire_wait", 0.5)
-        weapon_range = weapon.get("weapon_range", 1000.0)
-
-        # Determine weapon characteristics
-        is_homing = self._is_homing_weapon(weapon_name)
-        pierces_shields = self._pierces_shields(weapon_name)
-        weapon_class = self._get_weapon_class(weapon_type)
-
-        # Asset paths
-        safe_name = self._sanitize_filename(weapon_name)
-        projectile_scene = (
-            f"res://scenes/weapons/{weapon_type}/{safe_name}_projectile.tscn"
-        )
-        firing_sound = f"res://assets/audio/weapons/{safe_name}_fire.ogg"
-        impact_sound = f"res://assets/audio/weapons/{safe_name}_impact.ogg"
-
-        # Create .tres content using existing WeaponData structure
-        resource_content = self._create_comprehensive_weapon_resource(
-            weapon, weapon_type
-        )
-
-        # Create comprehensive WeaponData .tres content
-        resource_content = f"""[gd_resource type="WeaponData" script_class="WeaponData" load_steps=2 format=3]
-
-[ext_resource type="Script" path="res://addons/wcs_asset_core/structures/weapon_data.gd" id="1"]
-
-[resource]
-script = ExtResource("1")
-
-# General Information
-weapon_name = "{weapon_name_val}"
-alt_name = "{alt_name_val}"
-title = "{title_val}"
-weapon_description = "{description_val}"
-tech_title = "{tech_title_val}"
-tech_description = "{tech_description_val}"
-tech_anim_filename = "{tech_anim}"
-tech_model = "{tech_model}"
-hud_filename = ""
-icon_filename = ""
-anim_filename = ""
-
-# Type and Rendering
-subtype = {self._get_weapon_subtype(weapon_type)}
-render_type = {self._get_render_type(weapon, weapon_type)}
-
-# Model and Visuals
-pof_file = "{pof_file}"
-projectile_scene_path = "{projectile_scene}"
-
-# Laser Properties
-laser_bitmap = "{laser_bitmap}"
-laser_glow_bitmap = "{laser_glow_bitmap}"
-laser_color_1 = Color(1,1,1)
-laser_color_2 = Color(0,0,0)
-laser_length = {weapon.get('laser_length', 10.0)}
-laser_head_radius = {weapon.get('laser_head_radius', 1.0)}
-laser_tail_radius = {weapon.get('laser_tail_radius', 1.0)}
-
-# Physics and Movement
-mass = {mass}
-max_speed = {max_speed}
-lifetime = {lifetime}
-weapon_range = {weapon_range}
-weapon_min_range = {weapon_min_range}
-
-# Firing Properties
-fire_wait = {fire_wait}
-energy_consumed = {energy_consumed}
-rearm_rate = {weapon.get('rearm_rate', 1.0)}
-shots = {weapon.get('shots', 1)}
-burst_shots = {weapon.get('burst_shots', 0)}
-burst_delay = {weapon.get('burst_delay', 0.1)}
-
-# Damage Properties
-damage = {damage}
-damage_type_idx = {weapon.get('damage_type_idx', -1)}
-armor_factor = {weapon.get('armor_factor', 1.0)}
-shield_factor = {weapon.get('shield_factor', 1.0)}
-subsystem_factor = {weapon.get('subsystem_factor', 1.0)}
-
-# Homing Properties
-homing_type = {weapon.get('homing_type', 0)}
-free_flight_time = {weapon.get('free_flight_time', 0.25)}
-turn_time = {weapon.get('turn_time', 1.0)}
-fov = {weapon.get('fov', 0.5)}
-min_lock_time = {weapon.get('min_lock_time', 0.0)}
-seeker_strength = {weapon.get('seeker_strength', 1.0)}
-
-# Sound Effects (use extracted sound indices/paths)
-launch_snd = -1  # TODO: Map to sound index
-impact_snd = -1  # TODO: Map to sound index
-flyby_snd = -1   # TODO: Map to sound index
-
-# Sound paths for resource loading
-firing_sound_path = "{firing_sound_path}"
-impact_sound_path = "{impact_sound_path}"
-
-# Visual Effects
-muzzle_flash_effect_path = "{self._get_effect_path(muzzle_effect, 'muzzle', weapon_type)}"
-impact_effect_path = "{self._get_effect_path(impact_effect, 'impact', weapon_type)}"
-trail_effect_path = "res://effects/weapons/trail_{weapon_type}.tscn"
-
-# Thruster Properties
-thruster_flame_anim = "{thruster_flame}"
-thruster_glow_anim = "{thruster_glow}"
-
-# Tech Database Assets
-tech_image_path = "{f'res://assets/images/tech/{tech_image}' if tech_image else ''}"
-tech_model_path = "{f'res://assets/models/tech/{tech_model}' if tech_model else ''}"
-
-# Weapon Flags
-flags = 0  # TODO: Parse weapon flags from table
-flags2 = 0
-
-# Miscellaneous
-cargo_size = {weapon.get('cargo_size', 1.0)}
-"""
-        return resource_content
+        # Use the comprehensive weapon resource method
+        return self._create_comprehensive_weapon_resource(weapon, weapon_type)
 
     def _is_homing_weapon(self, weapon_name: str) -> bool:
         """Determine if weapon has homing capability"""
@@ -258,12 +135,12 @@ cargo_size = {weapon.get('cargo_size', 1.0)}
     def _create_comprehensive_weapon_resource(self, weapon: Dict[str, Any], weapon_type: str) -> str:
         """Create comprehensive weapon resource content"""
         # Extract weapon properties
-        weapon_name_val = weapon.get("name", "Unknown Weapon")
-        alt_name_val = weapon.get("alt_name", "")
-        title_val = weapon.get("title", "")
-        description_val = weapon.get("description", "")
-        tech_title_val = weapon.get("tech_title", "")
-        tech_description_val = weapon.get("tech_description", "")
+        weapon_name = weapon.get("name", "Unknown Weapon")
+        alt_name = weapon.get("alt_name", "")
+        title = weapon.get("title", "")
+        description = weapon.get("description", "")
+        tech_title = weapon.get("tech_title", "")
+        tech_description = weapon.get("tech_description", "")
         
         # Physics properties
         damage = weapon.get("damage", 0.0)
@@ -299,12 +176,12 @@ cargo_size = {weapon.get('cargo_size', 1.0)}
 script = ExtResource("1")
 
 # General Information
-weapon_name = "{weapon_name_val}"
-alt_name = "{alt_name_val}"
-title = "{title_val}"
-description = "{description_val}"
-tech_title = "{tech_title_val}"
-tech_description = "{tech_description_val}"
+weapon_name = "{weapon_name}"
+alt_name = "{alt_name}"
+title = "{title}"
+description = "{description}"
+tech_title = "{tech_title}"
+tech_description = "{tech_description}"
 
 # Physics Properties
 damage = {damage}

@@ -37,7 +37,7 @@ Convert all audio assets (WAV/OGG) to Ogg Vorbis format optimized for Godot's au
 ## Agent Assignments
 - **asset-pipeline-engineer**: Audio format parsing and conversion
 - **godot-systems-designer**: Spatial audio mapping and integration
-- **qa-engineer**: Audio quality validation and performance testing
+- **qa_engineer**: Audio quality validation and performance testing
 
 ## Success Metrics
 - 100% of audio assets converted

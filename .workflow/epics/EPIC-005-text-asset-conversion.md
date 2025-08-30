@@ -36,7 +36,7 @@
 ## Agent Assignments
 - **asset-pipeline-engineer**: Text parsing and format conversion
 - **godot-systems-designer**: BBCode mapping and UI integration
-- **qa-engineer**: Text rendering validation and localization testing
+- **qa_engineer**: Text rendering validation and localization testing
 
 ## Success Metrics
 - 100% of text assets converted

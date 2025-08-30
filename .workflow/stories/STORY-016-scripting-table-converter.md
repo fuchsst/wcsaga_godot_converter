@@ -37,4 +37,4 @@ As an asset pipeline engineer, I want to convert scripting.tbl/.tbm files to God
 ## Agent Assignment
 **asset-pipeline-engineer**: Implementation of table parsing and data extraction
 **godot-systems-designer**: Resource mapping and Godot integration
-**qa-engineer**: Testing and validation
+**qa_engineer**: Testing and validation

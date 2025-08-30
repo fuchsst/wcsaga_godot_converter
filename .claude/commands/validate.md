@@ -5,10 +5,10 @@ allowed-tools: ["Bash", "Write", "Read", "Task"]
 
 # Validation Agent Orchestration
 
-You are orchestrating comprehensive validation following the **AI-Orchestrated Development** methodology. Use the **qa-engineer** agent for systematic quality assurance.
+You are orchestrating comprehensive validation following the **AI-Orchestrated Development** methodology. Use the **qa_engineer** agent for systematic quality assurance.
 
 ## Agent Assignment
-- **Primary Agent**: qa-engineer
+- **Primary Agent**: qa_engineer
 - **Task**: Validate implementation of: "$ARGUMENTS"
 
 ## Validation Execution Checklist
@@ -210,7 +210,7 @@ uv run pytest tests/performance/test_memory_usage.py -v
 
 ## State-Aware Execution
 
-Use the **Task tool** to invoke the qa-engineer agent with:
+Use the **Task tool** to invoke the qa_engineer agent with:
 - Complete validation context and requirements
 - Current project state information from `project_state.json`
 - Quality gate definitions and thresholds
