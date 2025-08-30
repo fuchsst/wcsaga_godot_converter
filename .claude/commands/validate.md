@@ -18,7 +18,7 @@ You are orchestrating comprehensive validation following the **AI-Orchestrated D
 - [ ] Extract validation requirements and acceptance criteria
 - [ ] Identify modified files and affected systems
 - [ ] Review implementation completeness against requirements
-- [ ] Load current project state context
+- [ ] Load current project state context from `project_state.json`
 
 ### Phase 2: Code Quality Gates
 - [ ] **GDScript Formatting**: `uv run gdformat --check .`
@@ -49,8 +49,8 @@ You are orchestrating comprehensive validation following the **AI-Orchestrated D
 ### Phase 6: Documentation & Reporting
 - [ ] Generate comprehensive validation report
 - [ ] Update task/story status based on results
-- [ ] Update `project_state.json` with validation metadata
-- [ ] Document any issues for remediation
+- [ ] Update `project_state.json` with validation metadata and results
+- [ ] Document any issues for remediation in `.workflow/logs/`
 - [ ] Provide recommendations for improvements
 
 ## Quality Gate Definitions
@@ -158,7 +158,7 @@ uv run pytest tests/performance/test_memory_usage.py -v
 ```bash
 # Update validation status to PASSED
 # Update project_state.json with success metadata
-# Generate success summary report
+# Generate success summary report in .workflow/logs/
 # Mark all quality gates as completed
 ```
 
@@ -166,7 +166,8 @@ uv run pytest tests/performance/test_memory_usage.py -v
 ```bash
 # Capture complete stdout/stderr of failing commands
 # Save detailed logs to .workflow/logs/$ARGUMENTS-validation-failure.log
-# Update status to VALIDATION_FAILED
+# Update status to VALIDATION_FAILED in task/story file
+# Update project_state.json with failure metadata
 # Generate comprehensive failure analysis
 # Provide specific remediation steps
 ```
@@ -211,9 +212,16 @@ uv run pytest tests/performance/test_memory_usage.py -v
 
 Use the **Task tool** to invoke the qa-engineer agent with:
 - Complete validation context and requirements
-- Current project state information
+- Current project state information from `project_state.json`
 - Quality gate definitions and thresholds
 - Error handling and reporting procedures
 - Migration-specific validation criteria
 
-**Critical**: Validation should be thorough but not create unnecessary development friction. Focus on ensuring quality while maintaining velocity toward Wing Commander Saga migration goals.
+After validation is complete, ensure that:
+1. The `project_state.json` file is updated with validation results, metadata, and statistics
+2. Task or story status is updated in the respective markdown file
+3. All validation logs are saved to `.workflow/logs/` with appropriate naming
+4. Any failed validations generate automated feedback as described in the error handling procedures
+5. Validation metrics and trends are tracked for project analytics
+
+**Critical**: Validation should be thorough but not create unnecessary development friction. Focus on ensuring quality while maintaining velocity toward Wing Commander Saga migration goals. All validation activities should update the project state for progress tracking.

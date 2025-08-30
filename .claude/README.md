@@ -6,119 +6,138 @@ This directory contains the configuration and scripts for orchestrating the AI-a
 
 The orchestration system implements the workflow using:
 
-1. **Sub-agents** - Specialized AI personas for different roles in the migration process
+1. **Specialized Agents** - AI personas with distinct expertise for different roles in the migration process
 2. **Hooks** - Event-driven automation that triggers actions based on agent lifecycle events
 3. **File-based State Management** - Markdown files that track task status and feedback
+4. **Custom Commands** - Workflow commands for planning, implementation, and validation
 
 ## Workflow Commands
 
 The system uses custom workflow commands:
 
-- `/workflow:plan` - Analyzes a user story and breaks it down into a structured plan of implementation tasks
-- `/workflow:implement` - Implements the specified task by reading its markdown file and applying code changes
-- `/workflow:validate` - Runs all project quality gates for the changes related to a task
+- `/workflow:plan` - Analyzes user stories and breaks them down into detailed implementation tasks
+- `/workflow:implement` - Implements specified tasks by reading markdown files and applying code changes
+- `/workflow:validate` - Runs comprehensive validation of implementations with quality gates
+- `/workflow:breakdown` - Breaks down user stories into detailed implementation tasks
+- `/workflow:refine` - Refines and optimizes implemented features with performance tuning
+- `/workflow:status` - Provides comprehensive project status reports with analytics
 
-## Components Created
+## Components
 
-### 1. Sub-agent Definitions
-Created specialized sub-agents in `.claude/agents/`:
-- `godot-architect.md` - Plans Godot project structure and creates implementation plans
-- `qa-engineer.md` - Validates implementations through testing and quality checks
+### 1. Specialized Agents
+Created specialized agents in `.claude/agents/` for different aspects of the migration:
 
-Existing agents were retained and aligned with Godot project structure:
-- `migration-architect.md` - Creates high-level migration strategies
-- `cpp-code-analyst.md` - Analyzes existing C++ codebases
-- `godot-systems-designer.md` - Designs Godot-specific architectures following best practices
-- `gdscript-engineer.md` - Implements game logic in GDScript
-- `asset-pipeline-engineer.md` - Handles asset conversion and integration
-- `lead-developer.md` - Provides oversight and technical guidance
+- **Godot Architect** - Plans Godot project structure and creates implementation plans
+- **QA Engineer** - Validates implementations through testing and quality checks
+- **Migration Architect** - Creates high-level migration strategies with data-centric architecture
+- **C++ Code Analyst** - Analyzes existing C++ codebases and creates translation specifications
+- **Godot Systems Designer** - Designs Godot-specific architectures following best practices
+- **GDScript Engineer** - Implements game logic in GDScript with unit testing
+- **Asset Pipeline Engineer** - Handles asset conversion and integration with automated pipelines
+- **Lead Developer** - Provides oversight, technical guidance, and architectural review
 
 ### 2. Hook System
 Created comprehensive event-driven automation in `.claude/hooks/` with full toolchain integration:
+
 - `trigger_validation.sh` - Triggers QA validation after implementation with toolchain detection
 - `process_architect_plan.sh` - Processes architectural plans into tasks using Python toolchain
 - `check_build_status.sh` - Checks build status with toolchain-specific analysis and generates automated feedback
 - `check_test_status.sh` - Checks test status with framework-specific analysis and generates automated feedback
-- `run_validation.sh` - Runs comprehensive quality checks across all toolchains (GDScript, Python, C++, assets, architecture)
-- `process_asset_pipeline.sh` - Processes asset pipeline plans with Godot headless mode and Python toolchain integration
+- `run_validation.sh` - Runs comprehensive quality checks across all toolchains
+- `process_asset_pipeline.sh` - Processes asset pipeline plans with Godot headless mode integration
 - `process_code_analysis.sh` - Processes code analysis reports with comprehensive toolchain analysis
 - `generate_feedback.sh` - Generates toolchain-aware automated feedback based on failure types
-- `validate_file_structure.sh` - Validates file structure and naming conventions before writing files
+- `validate_file_structure.sh` - Validates file structure and manages project state updates when agents stop
+- `session_start.sh` - Loads project state and context at session initialization
+- `state_update.sh` - Updates project state JSON file with task completion information
 - `process_plan.py` - Python script to convert JSON plans to task files
 
-### 3. Configuration
+### 3. Custom Commands
+Implemented workflow commands in `.claude/commands/`:
+
+- `plan.md` - Creates and manages project planning artifacts (PRDs, Epics, Stories)
+- `breakdown.md` - Breaks down user stories into detailed implementation tasks
+- `implement.md` - Implements migration tasks using specialized agents
+- `validate.md` - Comprehensive validation of migration tasks with quality gates
+- `refine.md` - Refinement and optimization of implemented features
+- `status.md` - Provides comprehensive project status report with analytics
+
+### 4. Configuration
 - `.claude/settings.json` - Defines hook triggers and commands (with relative paths)
 - `.claude/settings.local.json` - Maintains existing permissions
 
-### 4. Workflow Directories
-- `.claude_workflow/tasks/` - Storage for task files
-- `.claude_workflow/logs/` - Storage for log files
-
-### 5. Documentation
-- `.claude/README.md` - System overview and usage guide
-- `.claude/CLAUDE_vs_QWEN.md` - Comparison with existing Qwen system
-- `.claude/sample_plan.json` - Example JSON plan
+### 5. Workflow Directories
+- `.workflow/tasks/` - Storage for task files
+- `.workflow/logs/` - Storage for log files
+- `.workflow/prds/` - Storage for Product Requirement Documents
+- `.workflow/epics/` - Storage for Epics
+- `.workflow/stories/` - Storage for User Stories
 
 ## Directory Structure
 
 ```
 .claude/
-├── agents/                 # Sub-agent configurations
+├── agents/                 # Specialized agent configurations
 ├── commands/               # Custom workflow commands
-│   └── workflow/           # Workflow-specific commands
 ├── hooks/                  # Hook scripts for automation
 ├── settings.json           # Claude Code hook configuration
 └── settings.local.json     # Local permissions configuration
 
-.claude_workflow/
+.workflow/
 ├── tasks/                  # Individual task files in markdown format
-└── logs/                   # Log files from validation and other processes
+├── logs/                   # Log files from validation and other processes
+├── prds/                   # Product Requirement Documents
+├── epics/                  # Epics
+└── stories/                # User Stories
 ```
 
-## Sub-agents
+## Specialized Agents
 
-The system uses several specialized sub-agents aligned with the Godot project structure:
+The system uses several specialized agents with distinct expertise:
 
-1. **Godot Architect** - Plans migrations and creates structured implementation plans following Godot best practices
-2. **QA Engineer** - Validates implementations through testing and quality checks
-3. **Migration Architect** - Creates high-level migration strategies
-4. **C++ Code Analyst** - Analyzes existing C++ codebases
-5. **Godot Systems Designer** - Designs Godot-specific architectures using the hybrid model (features, assets, autoload, etc.)
-6. **GDScript Engineer** - Implements game logic in GDScript following snake_case naming conventions
-7. **Asset Pipeline Engineer** - Handles asset conversion and integration following the Global Litmus Test
-8. **Lead Developer** - Provides oversight and technical guidance
+1. **Godot Architect** - Breaks down user stories into implementation tasks with Godot migration patterns
+2. **QA Engineer** - Validates GDScript implementations with comprehensive quality gates
+3. **Migration Architect** - Creates data-centric architecture plans using Godot's Resource system
+4. **C++ Code Analyst** - Performs deep static analysis and creates translation specifications
+5. **Godot Systems Designer** - Designs Godot-specific architectures and custom resource specifications
+6. **GDScript Engineer** - Implements game logic in GDScript with unit testing
+7. **Asset Pipeline Engineer** - Builds automated asset conversion pipelines with EditorImportPlugin
+8. **Lead Developer** - Provides architectural oversight and technical guidance
 
 ## Hooks
 
 The system uses comprehensive hooks to automate workflow transitions with full toolchain integration:
 
-1. **SubagentStop (godot-architect)** - Processes architectural plans and creates task files using Python toolchain
-2. **SubagentStop (gdscript-engineer)** - Triggers comprehensive validation after implementation tasks
-3. **SubagentStop (asset-pipeline-engineer)** - Processes asset pipeline plans with Godot headless mode and Python toolchain
-4. **SubagentStop (cpp-code-analyst)** - Processes code analysis reports with comprehensive toolchain analysis
-5. **SubagentStop (qa-engineer)** - Checks test status with framework-specific analysis and generates feedback
-6. **PostToolUse (Bash)** - Checks build status with toolchain-specific analysis and generates automated feedback
-7. **PreToolUse (Write)** - Validates file structure and naming conventions before writing files
-8. **PreToolUse (MultiEdit)** - Validates file structure and naming conventions before multi-file edits
+1. **SubagentStop (godot-architect)** - Processes architectural plans and creates task files
+2. **SubagentStop (gdscript-engineer)** - Triggers comprehensive validation after implementation
+3. **SubagentStop (asset-pipeline-engineer)** - Processes asset pipeline plans with Godot integration
+4. **SubagentStop (cpp-code-analyst)** - Processes code analysis reports with toolchain analysis
+5. **SubagentStop (qa-engineer)** - Checks test status and generates feedback
+6. **PostToolUse (Bash)** - Checks build status and generates automated feedback
+7. **PreToolUse (Write)** - Validates file structure and naming conventions
+8. **SessionStart** - Loads project state and context at session initialization
 
 ## Workflow Process
 
-1. **Planning**: User requests a migration task, which is handled by the Godot Architect or Migration Architect
-2. **Analysis**: C++ Code Analyst examines the source code and creates a translation specification
-3. **Design**: Godot Systems Designer creates the target architecture following the hybrid model
-4. **Task Creation**: The architect's plan is automatically converted into individual task files
-5. **Implementation**: GDScript Engineer implements each task, checking for feedback
-6. **Validation**: QA Engineer automatically validates each implementation
-7. **Remediation**: Failed validations automatically generate feedback for the engineer
+1. **Planning**: Create PRDs, Epics, and Stories using the planning command
+2. **Breakdown**: Break down stories into implementation tasks using the breakdown command
+3. **Analysis**: C++ Code Analyst examines source code and creates translation specification
+4. **Design**: Godot Systems Designer creates target architecture and resource specifications
+5. **Implementation**: GDScript Engineer implements tasks with unit tests
+6. **Validation**: QA Engineer automatically validates implementations through hooks
+7. **Refinement**: Optimize and improve implemented features based on performance metrics
+8. **Status Monitoring**: Track progress and identify blockers with status reports
 
 ## Key Features
 
+- **AI-Orchestrated Development**: Workflow follows structured methodology with specialized agents
 - **Event-Driven Automation**: Hooks automatically trigger next steps based on agent completion
-- **File-Based State Management**: Markdown files track task status and feedback
-- **Automated Remediation**: Failed validations automatically generate feedback
+- **File-Based State Management**: Markdown files track task status and feedback with YAML frontmatter
+- **Automated Remediation**: Failed validations automatically generate detailed feedback
 - **Specialized Roles**: Granular agent specialization for technical domains
-- **Relative Paths**: All paths are relative to the project root for portability
-- **Godot Best Practices**: Aligned with the hybrid project structure and naming conventions
+- **Hierarchical Planning**: PRDs → Epics → Stories → Tasks structure for project organization
+- **Toolchain Integration**: Full integration with Godot, Python, and GDScript development tools
+- **Quality Gates**: Automated validation at every step with comprehensive testing
 
 ## Task File Format
 
@@ -130,19 +149,20 @@ id: TASK-001
 title: Setup native class boilerplate
 status: pending
 dependencies: []
+assignee: gdscript-engineer
 files_to_modify:
-  - src/file.h
-  - src/file.cpp
+  - src/file.gd
 ---
 
 # Task: Setup native class boilerplate
 
 ## Description
-Brief description of what needs to be done.
+Brief description of what needs to be done following Godot best practices.
 
 ## Acceptance Criteria
 - [ ] Checklist of requirements
 - [ ] Each item should be verifiable
+- [ ] Follows Godot project structure conventions
 
 ## Implementation Notes
 Additional context for the implementer.
@@ -151,29 +171,22 @@ Additional context for the implementer.
 Human or automated feedback goes here.
 ```
 
-## Sample Files
-
-This repository includes several sample files to demonstrate the system:
-
-- `sample_plan.json` - Example of a JSON plan generated by the Godot Architect
-- `tasks/TASK-001.md` - Example task file for setting up native class boilerplate
-- `tasks/TASK-002.md` - Example task file for binding methods and properties
-
 ## Usage
 
 To use the orchestration system:
 
-1. Define a migration task using the Godot Architect or Migration Architect sub-agent
-2. Use C++ Code Analyst to analyze source code
-3. Use Godot Systems Designer to create target architecture
-4. The system will automatically create individual task files
-5. Implement each task using the GDScript Engineer sub-agent
-6. Validation will happen automatically through hooks
-7. Address any feedback in the task files
+1. Create planning artifacts using the `/workflow:plan` command
+2. Break down stories into tasks with the `/workflow:breakdown` command
+3. Use C++ Code Analyst to analyze source code and create translation specifications
+4. Use Godot Systems Designer to create target architecture and resource specifications
+5. Implement tasks using the GDScript Engineer agent via `/workflow:implement`
+6. Validation happens automatically through hooks with QA Engineer
+7. Refine implementations using the `/workflow:refine` command
+8. Monitor progress with the `/workflow:status` command
 
 ## Development Toolchain Integration
 
-The system now features comprehensive integration with the full development toolchain as described in `concepts/Development_Toolchain.md`:
+The system features comprehensive integration with the full development toolchain:
 
 ### Core Toolchain Integration:
 - **Godot Headless Mode** - Automated asset processing and validation
@@ -181,7 +194,6 @@ The system now features comprehensive integration with the full development tool
 - **Python Environment** - `uv` for high-performance dependency management
 - **Python Linting/Formatting** - `ruff` for comprehensive Python code quality
 - **Python Testing** - `pytest` for unit testing and test automation
-- **C++ Toolchain** - `clang-tidy` and `clang-format` for static analysis (when available)
 - **Pattern Analysis** - Sophisticated `grep` usage for log analysis and validation
 
 ### Framework-Specific Analysis:
@@ -202,7 +214,7 @@ This orchestration system enables a semi-autonomous workflow that de-risks compl
 
 The system has been comprehensively tested with full toolchain integration:
 - All hook scripts execute properly with relative paths and toolchain detection
-- Python script for processing architectural plans works correctly with uv integration
+- Python scripts for processing architectural plans work correctly with uv integration
 - Task files are generated with proper YAML frontmatter and toolchain-aware content
 - Log files are created with comprehensive toolchain analysis and error categorization
 - Framework-specific validation works for Python, GDScript, and Godot toolchains
@@ -212,13 +224,9 @@ The system has been comprehensively tested with full toolchain integration:
 ## Next Steps
 
 The system is ready for use. To begin a migration task:
-1. Trigger the Godot Architect or Migration Architect sub-agent with a migration request
+1. Create planning artifacts using the `/workflow:plan` command
 2. Use C++ Code Analyst to analyze the source code
 3. Use Godot Systems Designer to create the target architecture
-4. The hook system will automatically process the resulting plan
-5. Use the GDScript Engineer sub-agent to implement tasks
-6. Validation will happen automatically through hooks
-
-## Relationship to Qwen System
-
-This Claude Code system complements the existing Qwen Code system rather than replacing it. See `CLAUDE_vs_QWEN.md` for a detailed comparison and integration approaches.
+4. Break down stories into tasks with the `/workflow:breakdown` command
+5. Implement tasks using the GDScript Engineer agent via `/workflow:implement`
+6. Validation will happen automatically through hooks with QA Engineer

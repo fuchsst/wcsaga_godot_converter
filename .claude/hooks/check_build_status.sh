@@ -7,9 +7,9 @@
 set -e
 
 # Create log directory if it doesn't exist
-mkdir -p ./.claude_workflow/logs
+mkdir -p ./.workflow/logs
 
-echo "$(date): Build status check triggered" >> ./.claude_workflow/logs/hook.log
+echo "$(date): Build status check triggered" >> ./.workflow/logs/hook.log
 
 # Check the exit code of the last command
 LAST_EXIT_CODE=$?
@@ -28,70 +28,70 @@ elif echo "$COMMAND_EXECUTED" | grep -q "make\|cmake\|gcc\|g++\|clang"; then
     TOOLCHAIN_TYPE="cpp_build"
 fi
 
-echo "$(date): Command executed: $COMMAND_EXECUTED, Exit code: $LAST_EXIT_CODE, Toolchain: $TOOLCHAIN_TYPE" >> ./.claude_workflow/logs/hook.log
+echo "$(date): Command executed: $COMMAND_EXECUTED, Exit code: $LAST_EXIT_CODE, Toolchain: $TOOLCHAIN_TYPE" >> ./.workflow/logs/hook.log
 
 if [ $LAST_EXIT_CODE -eq 0 ]; then
-    echo "$(date): Build command successful" >> ./.claude_workflow/logs/hook.log
+    echo "$(date): Build command successful" >> ./.workflow/logs/hook.log
     
     # Enhanced warning detection using grep with toolchain-specific patterns
-    echo "$(date): Performing comprehensive build output analysis" >> ./.claude_workflow/logs/hook.log
+    echo "$(date): Performing comprehensive build output analysis" >> ./.workflow/logs/hook.log
     
     # Check for warnings using toolchain-specific patterns
     WARNING_PATTERNS="warning\|deprecated\|obsolete\|legacy\|experimental"
     if echo "$HOOK_DATA" | grep -i "$WARNING_PATTERNS" > /dev/null; then
-        echo "$(date): Warnings found in build output" >> ./.claude_workflow/logs/hook.log
+        echo "$(date): Warnings found in build output" >> ./.workflow/logs/hook.log
         
         # Extract warnings with context for better analysis
         WARNINGS=$(echo "$HOOK_DATA" | grep -i -A2 -B2 "$WARNING_PATTERNS")
-        echo "Warnings detected during build:" >> ./.claude_workflow/logs/hook.log
-        echo "$WARNINGS" >> ./.claude_workflow/logs/hook.log
+        echo "Warnings detected during build:" >> ./.workflow/logs/hook.log
+        echo "$WARNINGS" >> ./.workflow/logs/hook.log
         
         # Toolchain-specific warning analysis
         case "$TOOLCHAIN_TYPE" in
             "godot_build")
-                echo "Godot build warnings analysis:" >> ./.claude_workflow/logs/hook.log
+                echo "Godot build warnings analysis:" >> ./.workflow/logs/hook.log
                 # Check for asset import warnings
                 if echo "$HOOK_DATA" | grep -i "texture\|mesh\|import\|asset" | grep -i "warning" > /dev/null; then
-                    echo "⚠ Asset-related warnings detected" >> ./.claude_workflow/logs/hook.log
+                    echo "⚠ Asset-related warnings detected" >> ./.workflow/logs/hook.log
                 fi
                 ;;
             "python_build")
-                echo "Python build warnings analysis:" >> ./.claude_workflow/logs/hook.log
+                echo "Python build warnings analysis:" >> ./.workflow/logs/hook.log
                 # Check for dependency warnings
                 if echo "$HOOK_DATA" | grep -i "dependency\|version\|requirement" | grep -i "warning" > /dev/null; then
-                    echo "⚠ Dependency-related warnings detected" >> ./.claude_workflow/logs/hook.log
+                    echo "⚠ Dependency-related warnings detected" >> ./.workflow/logs/hook.log
                 fi
                 ;;
         esac
     else
-        echo "$(date): No warnings found in build output" >> ./.claude_workflow/logs/hook.log
+        echo "$(date): No warnings found in build output" >> ./.workflow/logs/hook.log
     fi
     
     # Check for successful build artifacts based on toolchain
-    echo "$(date): Checking for build artifacts" >> ./.claude_workflow/logs/hook.log
+    echo "$(date): Checking for build artifacts" >> ./.workflow/logs/hook.log
     case "$TOOLCHAIN_TYPE" in
         "godot_build")
             # Check for Godot export artifacts
             if echo "$COMMAND_EXECUTED" | grep -q "--export" && find . -name "*.exe" -o -name "*.x86_64" -o -name "*.app" -o -path "*/web/*" | head -1 > /dev/null; then
-                echo "✓ Godot export artifacts found" >> ./.claude_workflow/logs/hook.log
+                echo "✓ Godot export artifacts found" >> ./.workflow/logs/hook.log
             fi
             ;;
         "python_build")
             # Check for Python package artifacts
             if find . -name "*.whl" -o -name "*.tar.gz" -o -name "dist" -type d | head -1 > /dev/null; then
-                echo "✓ Python build artifacts found" >> ./.claude_workflow/logs/hook.log
+                echo "✓ Python build artifacts found" >> ./.workflow/logs/hook.log
             fi
             ;;
     esac
     
 else
-    echo "$(date): Build command failed with exit code $LAST_EXIT_CODE" >> ./.claude_workflow/logs/hook.log
+    echo "$(date): Build command failed with exit code $LAST_EXIT_CODE" >> ./.workflow/logs/hook.log
     
     # Try to identify the current task context
-    CURRENT_TASK=$(ls -t ./.claude_workflow/tasks/*.md 2>/dev/null | head -1 | xargs basename -s .md 2>/dev/null || echo "TASK-001")
+    CURRENT_TASK=$(ls -t ./.workflow/tasks/*.md 2>/dev/null | head -1 | xargs basename -s .md 2>/dev/null || echo "TASK-001")
     
     # Generate failure log
-    FAILURE_LOG="./.claude_workflow/logs/${CURRENT_TASK}-build-failure.log"
+    FAILURE_LOG="./.workflow/logs/${CURRENT_TASK}-build-failure.log"
     echo "Build failed at $(date)" > "$FAILURE_LOG"
     echo "Command: $COMMAND_EXECUTED" >> "$FAILURE_LOG"
     echo "Exit code: $LAST_EXIT_CODE" >> "$FAILURE_LOG"
@@ -139,5 +139,5 @@ else
     # Generate automated feedback
     ./.claude/hooks/generate_feedback.sh "$CURRENT_TASK" "$FAILURE_LOG"
     
-    echo "$(date): Automated feedback generated for build failure" >> ./.claude_workflow/logs/hook.log
+    echo "$(date): Automated feedback generated for build failure" >> ./.workflow/logs/hook.log
 fi

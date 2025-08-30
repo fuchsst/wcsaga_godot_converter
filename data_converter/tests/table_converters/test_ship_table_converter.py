@@ -230,5 +230,110 @@ def test_ship_converter_new_asset_patterns():
         assert len(asset_registry["Test Ship"]) > 0
 
 
+def test_asset_reference_extraction_and_mapping():
+    """Test comprehensive asset reference extraction and mapping"""
+    # Create test content with all types of asset references
+    test_content = [
+        "$Name: Asset Test Ship",
+        # Model assets
+        "$POF file: test_ship.pof",
+        "$Cockpit POF file: test_cockpit.pof",
+        "$POF target file: test_target.pof",
+        # Audio assets
+        "$EngineSnd: engine_sound.wav",
+        "$AliveSnd: alive_sound.ogg",
+        "$DeadSnd: dead_sound.mp3",
+        "$Warpin Start Sound: warpin_start.wav",
+        "$Warpout End Sound: warpout_end.ogg",
+        "$RotationSnd: rotation_sound.wav",
+        "$Turret Base RotationSnd: turret_base.wav",
+        "$Turret Gun RotationSnd: turret_gun.wav",
+        # Visual effects
+        "$Warpin animation: warpin_effect",
+        "$Warpout animation: warpout_effect",
+        "$Explosion Animations: explosion_effect",
+        "$Shockwave model: shockwave_effect",
+        "$Selection Effect: selection_effect",
+        "$Thruster flame effect: thruster_flame",
+        "$Thruster glow effect: thruster_glow",
+        # UI assets
+        "$Shield_icon: shield_icon.dds",
+        "$Ship_icon: ship_icon.png",
+        "$Ship_overhead: overhead_view.jpg",
+        "$Tech Model: tech_model.obj",
+        "$Tech Anim: tech_anim",
+        "$Tech Image: tech_image.tga",
+        # Texture assets
+        "$Texture Replace: old_texture.dds, new_texture.png",
+        "$end_multi_text"
+    ]
+    
+    state = ParseState(lines=test_content, current_line=0)
+    with tempfile.TemporaryDirectory() as temp_dir:
+        source_dir = Path(temp_dir) / "source"
+        target_dir = Path(temp_dir) / "target"
+        source_dir.mkdir()
+        target_dir.mkdir()
+        
+        converter = ShipTableConverter(source_dir, target_dir)
+        result = converter.parse_entry(state)
+        
+        assert result is not None
+        assert result["name"] == "Asset Test Ship"
+        
+        # Check that all asset properties were parsed
+        assert result["pof_file"] == "test_ship.pof"
+        assert result["cockpit_pof_file"] == "test_cockpit.pof"
+        assert result["pof_target_file"] == "test_target.pof"
+        assert result["engine_sound"] == "engine_sound.wav"
+        assert result["alive_sound"] == "alive_sound.ogg"
+        assert result["dead_sound"] == "dead_sound.mp3"
+        assert result["warpin_start_sound"] == "warpin_start.wav"
+        assert result["warpout_end_sound"] == "warpout_end.ogg"
+        assert result["rotation_sound"] == "rotation_sound.wav"
+        assert result["turret_base_rotation_sound"] == "turret_base.wav"
+        assert result["turret_gun_rotation_sound"] == "turret_gun.wav"
+        assert result["warpin_animation"] == "warpin_effect"
+        assert result["warpout_animation"] == "warpout_effect"
+        assert result["explosion_animations"] == "explosion_effect"
+        assert result["shockwave_model"] == "shockwave_effect"
+        assert result["selection_effect"] == "selection_effect"
+        assert result["thruster_flame"] == "thruster_flame"
+        assert result["thruster_glow"] == "thruster_glow"
+        assert result["shield_icon"] == "shield_icon.dds"
+        assert result["ship_icon"] == "ship_icon.png"
+        assert result["ship_overhead"] == "overhead_view.jpg"
+        assert result["tech_model"] == "tech_model.obj"
+        assert result["tech_anim"] == "tech_anim"
+        assert result["tech_image"] == "tech_image.tga"
+        assert result["texture_replace"] == "old_texture.dds, new_texture.png"
+        
+        # Check asset relationships were captured with correct types
+        registries = converter.get_registries()
+        asset_registry = registries["asset_registry"]
+        assert "Asset Test Ship" in asset_registry
+        
+        assets = asset_registry["Asset Test Ship"]
+        assert len(assets) > 0
+        
+        # Check that assets are categorized correctly
+        model_assets = [asset for asset in assets if asset["asset_type"] == "model"]
+        audio_assets = [asset for asset in assets if asset["asset_type"] == "audio"]
+        animation_assets = [asset for asset in assets if asset["asset_type"] == "animation"]
+        texture_assets = [asset for asset in assets if asset["asset_type"] == "texture"]
+        
+        # Should have model assets
+        assert len(model_assets) >= 3  # pof_file, cockpit_pof_file, pof_target_file
+        
+        # Should have audio assets
+        assert len(audio_assets) >= 7  # engine, alive, dead, warpin, warpout, rotation, turret sounds
+        
+        # Should have animation/effect assets
+        assert len(animation_assets) >= 7  # warpin, warpout, explosion, shockwave, selection, thruster flame/glow
+        
+        # Should have texture assets
+        assert len(texture_assets) >= 5  # shield_icon, ship_icon, ship_overhead, tech_image, tech_model
+
+
 if __name__ == "__main__":
     pytest.main([__file__])

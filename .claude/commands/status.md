@@ -16,7 +16,7 @@ You are orchestrating project status reporting following the **AI-Orchestrated D
 ### Phase 1: State Validation
 - [ ] Read and validate `project_state.json` schema and integrity
 - [ ] Verify all referenced artifacts exist in `.workflow/` directories
-- [ ] Check for orphaned or missing dependencies
+- [ ] Check for orphaned or missing dependencies in `.workflow/prds/`, `.workflow/epics/`, and `.workflow/stories/`
 - [ ] Validate status transitions and timestamps
 - [ ] Identify data inconsistencies or corruption
 
@@ -46,12 +46,13 @@ You are orchestrating project status reporting following the **AI-Orchestrated D
 - [ ] Recommend resource reallocation
 - [ ] Propose timeline adjustments
 
-### Phase 6: Report Generation
+### Phase 6: Report Generation and State Update
 - [ ] Generate executive summary with key metrics
 - [ ] Provide detailed progress breakdown
 - [ ] Include actionable recommendations
 - [ ] Document critical path and dependencies
-- [ ] Output formatted status report
+- [ ] Output formatted status report to `.workflow/reports/`
+- [ ] Update `project_state.json` with latest analytics and metrics
 
 ## Status Report Structure
 
@@ -226,14 +227,21 @@ uv run python scripts/calculate_progress.py
 - Machine-readable status data
 - For integration with external tools
 - Supports automated reporting
+- Updates `project_state.json` with latest analytics
 
 ## State-Aware Execution
 
 Use the **Task tool** to invoke the migration-architect agent with:
-- Current project state context
-- Historical progress data
+- Current project state context from `project_state.json`
+- Historical progress data from `.workflow/reports/`
 - Quality metrics and trends
 - Risk assessment criteria
 - Strategic reporting requirements
 
-**Remember**: Status reporting should provide actionable insights that help maintain project velocity and quality while supporting informed decision-making.
+After generating the status report, ensure that:
+1. The `project_state.json` file is updated with the latest analytics, metrics, and timestamp
+2. A detailed report is saved to `.workflow/reports/status-YYYYMMDD.md`
+3. Any identified issues or recommendations are documented
+4. The recent activity log in `project_state.json` is updated with status generation information
+
+**Remember**: Status reporting should provide actionable insights that help maintain project velocity and quality while supporting informed decision-making. All status updates should be tracked in the project state for historical analysis.

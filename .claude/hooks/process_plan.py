@@ -72,7 +72,7 @@ def process_architect_plan(plan_file, tasks_dir):
 if __name__ == "__main__":
     # In a real implementation, these would come from the hook environment
     plan_file = "./.claude/sample_plan.json"
-    tasks_dir = "./.claude_workflow/tasks"
+    tasks_dir = "./.workflow/tasks"
     
     # Ensure the tasks directory exists
     os.makedirs(tasks_dir, exist_ok=True)

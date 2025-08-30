@@ -14,7 +14,7 @@ if [ -z "$TASK_ID" ] || [ -z "$LOG_FILE" ]; then
     exit 1
 fi
 
-TASK_FILE="./.claude_workflow/tasks/${TASK_ID}.md"
+TASK_FILE="./.workflow/tasks/${TASK_ID}.md"
 
 # Check if task file exists
 if [ ! -f "$TASK_FILE" ]; then
@@ -28,7 +28,7 @@ if [ ! -f "$LOG_FILE" ]; then
     exit 1
 fi
 
-echo "$(date): Generating toolchain-aware automated feedback for $TASK_ID" >> ./.claude_workflow/logs/hook.log
+echo "$(date): Generating toolchain-aware automated feedback for $TASK_ID" >> ./.workflow/logs/hook.log
 
 # Analyze the failure type based on log file name and content
 FAILURE_TYPE="unknown"
@@ -57,7 +57,7 @@ elif grep -q "ruff\|gdformat\|gdlint" "$LOG_FILE"; then
     TOOLCHAIN_TYPE="linting"
 fi
 
-echo "$(date): Detected failure type: $FAILURE_TYPE, toolchain: $TOOLCHAIN_TYPE" >> ./.claude_workflow/logs/hook.log
+echo "$(date): Detected failure type: $FAILURE_TYPE, toolchain: $TOOLCHAIN_TYPE" >> ./.workflow/logs/hook.log
 
 # Generate toolchain-specific recommendations
 case "$TOOLCHAIN_TYPE" in
@@ -184,7 +184,7 @@ echo "2. Run the relevant toolchain commands to verify fixes" >> "$TASK_FILE"
 echo "3. Re-run validation to ensure all checks pass" >> "$TASK_FILE"
 echo "4. Update task status once validation succeeds" >> "$TASK_FILE"
 
-echo "$(date): Toolchain-aware automated feedback generated for $TASK_ID" >> ./.claude_workflow/logs/hook.log
+echo "$(date): Toolchain-aware automated feedback generated for $TASK_ID" >> ./.workflow/logs/hook.log
 
 # Update task status to indicate intervention needed
-echo "$(date): Task $TASK_ID requires attention due to $FAILURE_TYPE failures in $TOOLCHAIN_TYPE toolchain" >> ./.claude_workflow/logs/hook.log
+echo "$(date): Task $TASK_ID requires attention due to $FAILURE_TYPE failures in $TOOLCHAIN_TYPE toolchain" >> ./.workflow/logs/hook.log

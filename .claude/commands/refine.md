@@ -1,11 +1,11 @@
 ---
-description: "Refinement and optimization of implemented features with performance tuning, code review, and iterative improvements"
+description: "Refinement and optimization of implemented features with performance tuning, code review, and iterative improvements. Updates project_state.json with refinement results."
 allowed-tools: ["Read", "Write", "Edit", "Bash", "Task"]
 ---
 
 # Refinement Agent Orchestration
 
-You are orchestrating feature refinement following the **AI-Orchestrated Development** methodology. Use specialized agents based on refinement type and scope.
+You are orchestrating feature refinement following the **AI-Orchestrated Development** methodology. Use specialized agents based on refinement type and scope. This command works with stories or tasks in the `.workflow/` directory structure.
 
 ## Agent Selection by Refinement Type
 - **Code Quality Improvement**: cpp-code-analyst + gdscript-engineer
@@ -20,6 +20,7 @@ You are orchestrating feature refinement following the **AI-Orchestrated Develop
 - [ ] Analyze `$ARGUMENTS` to determine refinement scope (story/epic/system)
 - [ ] Review validation reports and identified improvement areas
 - [ ] Identify specific refinement objectives
+- [ ] Locate relevant files in `.workflow/stories/` or `.workflow/tasks/` based on scope
 
 ### Phase 2: Current State Assessment
 - [ ] Analyze implemented code for optimization opportunities
@@ -32,7 +33,7 @@ You are orchestrating feature refinement following the **AI-Orchestrated Develop
 - [ ] Plan optimization approaches and techniques
 - [ ] Identify risks and potential breaking changes
 - [ ] Select appropriate specialized agents for each improvement
-- [ ] Create refinement task breakdown
+- [ ] Create refinement task breakdown in `.workflow/tasks/` if needed
 
 ### Phase 4: Iterative Improvement Execution
 - [ ] Execute planned optimizations using specialized agents
@@ -47,9 +48,10 @@ You are orchestrating feature refinement following the **AI-Orchestrated Develop
 - [ ] Record lessons learned and best practices
 
 ### Phase 6: State Update & Documentation
-- [ ] Update `project_state.json` with refinement results
+- [ ] Update `project_state.json` with refinement results and metrics
 - [ ] Document optimization techniques used
 - [ ] Provide recommendations for future improvements
+- [ ] Update relevant story/task files with refinement outcomes
 
 ## Refinement Categories
 
@@ -257,10 +259,17 @@ echo "=== Godot Memory Usage ==="
 ## State-Aware Execution
 
 Use the **Task tool** to invoke the appropriate specialized agent with:
-- Current implementation state and metrics
+- Current implementation state and metrics from `project_state.json`
 - Specific refinement objectives and scope
 - Performance baselines and target improvements
 - Quality standards and optimization techniques
 - Validation criteria and success metrics
+- References to relevant files in `.workflow/stories/` or `.workflow/tasks/`
 
-**Remember**: Refinement is an iterative process focused on measurable improvements while maintaining system stability and functionality.
+After successful refinement and validation, ensure that:
+1. The `project_state.json` file is updated with refinement results, metrics, and improvement data
+2. Relevant story or task files are updated with refinement outcomes
+3. Documentation is updated to reflect optimizations and improvements
+4. Lessons learned and best practices are recorded for future reference
+
+**Remember**: Refinement is an iterative process focused on measurable improvements while maintaining system stability and functionality. All refinement activities should be tracked in the project state for progress monitoring.

@@ -1,0 +1,73 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/session_start.sh"
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "matcher": "gdscript-engineer",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/trigger_validation.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "godot-architect",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/process_architect_plan.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "asset-pipeline-engineer",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/process_asset_pipeline.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "cpp-code-analyst",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/process_code_analysis.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "qa-engineer",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/check_test_status.sh"
+          }
+        ]
+      }
+      
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/validate_file_structure.sh"
+          }
+        ]
+      }
+    ]
+  }
+}

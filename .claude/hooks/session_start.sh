@@ -13,19 +13,19 @@ if [ -f "./.env" ]; then
 fi
 
 # Create log directory if it doesn't exist
-mkdir -p ./.claude_workflow/logs
+mkdir -p ./.workflow/logs
 
-echo "$(date): SessionStart hook triggered" >> ./.claude_workflow/logs/hook.log
+echo "$(date): SessionStart hook triggered" >> ./.workflow/logs/hook.log
 
 # Load project state if available
 if [ -f "./project_state.json" ]; then
-    echo "$(date): Loading project_state.json" >> ./.claude_workflow/logs/hook.log
+    echo "$(date): Loading project_state.json" >> ./.workflow/logs/hook.log
     
     # Extract basic project info for context using jq
     PROJECT_NAME=$(jq -r '.project_name // "Wing Commander Saga Godot Converter"' ./project_state.json 2>/dev/null || echo "Wing Commander Saga Godot Converter")
     SCHEMA_VERSION=$(jq -r '.schema_version // "2.0.0"' ./project_state.json 2>/dev/null || echo "2.0.0")
     
-    # Count active artifacts
+    # Count active artifacts using jq
     PRD_COUNT=$(jq '.prds | length' ./project_state.json 2>/dev/null || echo 0)
     EPIC_COUNT=$(jq '.epics | length' ./project_state.json 2>/dev/null || echo 0)
     STORY_COUNT=$(jq '.stories | length' ./project_state.json 2>/dev/null || echo 0)
@@ -38,24 +38,39 @@ if [ -f "./project_state.json" ]; then
     echo ""
     
 else
-    echo "$(date): No project_state.json found - will create default structure" >> ./.claude_workflow/logs/hook.log
+    echo "$(date): No project_state.json found - will create default structure" >> ./.workflow/logs/hook.log
     echo "⚠ No project state file found. Use /prd command to start planning."
     echo ""
 fi
 
-# Display available agents and hooks
-AGENT_COUNT=$(ls .claude/agents/ 2>/dev/null | wc -l || echo 0)
-HOOK_COUNT=$(ls .claude/hooks/ 2>/dev/null | wc -l || echo 0)
-COMMAND_COUNT=$(find .claude/commands/ -name "*.toml" 2>/dev/null | wc -l || echo 0)
-
+# Display available agents, hooks, and commands by name
 echo "=== AI ORCHESTRATION SYSTEM ==="
-echo "Agents: $AGENT_COUNT specialized roles available"
-echo "Hooks: $HOOK_COUNT automation scripts configured"
-echo "Commands: $COMMAND_COUNT workflow commands ready"
+echo "Agents:"
+for agent in .claude/agents/*.md; do
+    if [ -f "$agent" ]; then
+        basename "$agent" .md
+    fi
+done | sed 's/^/  • /'
+echo ""
+
+echo "Hooks:"
+for hook in .claude/hooks/*.sh; do
+    if [ -f "$hook" ]; then
+        basename "$hook" .sh
+    fi
+done | sed 's/^/  • /'
+echo ""
+
+echo "Commands:"
+for command in .claude/commands/*.md; do
+    if [ -f "$command" ]; then
+        basename "$command" .md
+    fi
+done | sed 's/^/  • /'
 echo ""
 
 # Check toolchain availability
-echo "$(date): Checking toolchain availability" >> ./.claude_workflow/logs/hook.log
+echo "$(date): Checking toolchain availability" >> ./.workflow/logs/hook.log
 
 TOOLS_AVAILABLE=0
 if command -v uv &> /dev/null; then
@@ -103,8 +118,8 @@ echo "Toolchain: $TOOLS_AVAILABLE tools available"
 echo ""
 
 # Display recent task status if available
-if [ -d "./.claude_workflow/tasks/" ]; then
-    RECENT_TASKS=$(ls -t ./.claude_workflow/tasks/*.md 2>/dev/null | head -3 || true)
+if [ -d "./.workflow/tasks/" ]; then
+    RECENT_TASKS=$(ls -t ./.workflow/tasks/*.md 2>/dev/null | head -3 || true)
     if [ -n "$RECENT_TASKS" ]; then
         echo "=== RECENT TASKS ==="
         for task_file in $RECENT_TASKS; do
@@ -140,4 +155,4 @@ if [ ! -f "./project_state.json" ]; then
     echo ""
 fi
 
-echo "$(date): SessionStart hook completed" >> ./.claude_workflow/logs/hook.log
+echo "$(date): SessionStart hook completed" >> ./.workflow/logs/hook.log

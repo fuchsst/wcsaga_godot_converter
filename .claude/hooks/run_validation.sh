@@ -8,10 +8,10 @@ set -e
 TASK_ID=$1
 VALIDATION_TYPE=${2:-"comprehensive"}
 TOOLCHAIN_COMMANDS=$3
-LOG_FILE="./.claude_workflow/logs/${TASK_ID}-validation.log"
+LOG_FILE="./.workflow/logs/${TASK_ID}-validation.log"
 
 # Create log directory if it doesn't exist
-mkdir -p ./.claude_workflow/logs
+mkdir -p ./.workflow/logs
 
 echo "Running $VALIDATION_TYPE validation for task: $TASK_ID" > "$LOG_FILE"
 echo "Timestamp: $(date)" >> "$LOG_FILE"
@@ -83,15 +83,7 @@ case "$VALIDATION_TYPE" in
             echo "⚠ Godot engine not available" >> "$LOG_FILE"
         fi
         ;;
-        
-    "cpp")
-        echo "Running C++ validation..." >> "$LOG_FILE"
-        
-        # C++ compilation check (placeholder for actual C++ toolchain)
-        echo "C++ validation would run clang-tidy, clang-format, and build tests here" >> "$LOG_FILE"
-        echo "⚠ C++ toolchain not fully configured" >> "$LOG_FILE"
-        ;;
-        
+                
     "python")
         echo "Running Python validation..." >> "$LOG_FILE"
         

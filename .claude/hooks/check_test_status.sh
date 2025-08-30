@@ -7,9 +7,9 @@
 set -e
 
 # Create log directory if it doesn't exist
-mkdir -p ./.claude_workflow/logs
+mkdir -p ./.workflow/logs
 
-echo "$(date): Test status check triggered" >> ./.claude_workflow/logs/hook.log
+echo "$(date): Test status check triggered" >> ./.workflow/logs/hook.log
 
 # Check the exit code of the last command
 LAST_EXIT_CODE=$?
@@ -28,75 +28,75 @@ elif echo "$COMMAND_EXECUTED" | grep -q "unittest\|python.*test"; then
     TEST_FRAMEWORK="unittest"
 fi
 
-echo "$(date): Test command executed: $COMMAND_EXECUTED, Exit code: $LAST_EXIT_CODE, Framework: $TEST_FRAMEWORK" >> ./.claude_workflow/logs/hook.log
+echo "$(date): Test command executed: $COMMAND_EXECUTED, Exit code: $LAST_EXIT_CODE, Framework: $TEST_FRAMEWORK" >> ./.workflow/logs/hook.log
 
 if [ $LAST_EXIT_CODE -eq 0 ]; then
-    echo "$(date): Test command successful" >> ./.claude_workflow/logs/hook.log
+    echo "$(date): Test command successful" >> ./.workflow/logs/hook.log
     
     # Comprehensive test output analysis using grep with framework-specific patterns
-    echo "$(date): Performing comprehensive test output analysis" >> ./.claude_workflow/logs/hook.log
+    echo "$(date): Performing comprehensive test output analysis" >> ./.workflow/logs/hook.log
     
     # Check for warnings, skipped tests, or other issues
     TEST_ISSUE_PATTERNS="warning\|skip\|xfail\|slow\|performance\|deprecated"
     if echo "$HOOK_DATA" | grep -i "$TEST_ISSUE_PATTERNS" > /dev/null; then
-        echo "$(date): Test issues found in output" >> ./.claude_workflow/logs/hook.log
+        echo "$(date): Test issues found in output" >> ./.workflow/logs/hook.log
         
         # Extract issues with context for better analysis
         ISSUES=$(echo "$HOOK_DATA" | grep -i -A2 -B1 "$TEST_ISSUE_PATTERNS")
-        echo "Test issues detected:" >> ./.claude_workflow/logs/hook.log
-        echo "$ISSUES" >> ./.claude_workflow/logs/hook.log
+        echo "Test issues detected:" >> ./.workflow/logs/hook.log
+        echo "$ISSUES" >> ./.workflow/logs/hook.log
         
         # Framework-specific issue analysis
         case "$TEST_FRAMEWORK" in
             "pytest")
-                echo "Pytest-specific analysis:" >> ./.claude_workflow/logs/hook.log
+                echo "Pytest-specific analysis:" >> ./.workflow/logs/hook.log
                 # Check for common pytest issues
                 if echo "$HOOK_DATA" | grep -i "skip" > /dev/null; then
-                    echo "⚠ Skipped tests detected" >> ./.claude_workflow/logs/hook.log
+                    echo "⚠ Skipped tests detected" >> ./.workflow/logs/hook.log
                 fi
                 if echo "$HOOK_DATA" | grep -i "xfail" > /dev/null; then
-                    echo "⚠ Expected failures detected" >> ./.claude_workflow/logs/hook.log
+                    echo "⚠ Expected failures detected" >> ./.workflow/logs/hook.log
                 fi
                 if echo "$HOOK_DATA" | grep -i "slow" > /dev/null; then
-                    echo "⚠ Slow tests detected" >> ./.claude_workflow/logs/hook.log
+                    echo "⚠ Slow tests detected" >> ./.workflow/logs/hook.log
                 fi
                 ;;
             "gdunit4")
-                echo "GdUnit4-specific analysis:" >> ./.claude_workflow/logs/hook.log
+                echo "GdUnit4-specific analysis:" >> ./.workflow/logs/hook.log
                 # Check for common gdunit4 issues
                 if echo "$HOOK_DATA" | grep -i "orphan\|leak" > /dev/null; then
-                    echo "⚠ Orphan node warnings detected" >> ./.claude_workflow/logs/hook.log
+                    echo "⚠ Orphan node warnings detected" >> ./.workflow/logs/hook.log
                 fi
                 ;;
         esac
     else
-        echo "$(date): No test issues found in output" >> ./.claude_workflow/logs/hook.log
+        echo "$(date): No test issues found in output" >> ./.workflow/logs/hook.log
     fi
     
     # Check test coverage and results metrics
-    echo "$(date): Analyzing test results metrics" >> ./.claude_workflow/logs/hook.log
+    echo "$(date): Analyzing test results metrics" >> ./.workflow/logs/hook.log
     
     # Extract test statistics using grep
     if echo "$HOOK_DATA" | grep -E "[0-9]+ passed\|[0-9]+ failed\|[0-9]+ skipped" > /dev/null; then
         TEST_STATS=$(echo "$HOOK_DATA" | grep -E "[0-9]+ passed\|[0-9]+ failed\|[0-9]+ skipped" | head -1)
-        echo "Test statistics: $TEST_STATS" >> ./.claude_workflow/logs/hook.log
+        echo "Test statistics: $TEST_STATS" >> ./.workflow/logs/hook.log
     fi
     
     # Check for coverage reports
     if echo "$HOOK_DATA" | grep -i "coverage\|%" > /dev/null; then
         COVERAGE_INFO=$(echo "$HOOK_DATA" | grep -i "coverage\|%" | head -2)
-        echo "Coverage information:" >> ./.claude_workflow/logs/hook.log
-        echo "$COVERAGE_INFO" >> ./.claude_workflow/logs/hook.log
+        echo "Coverage information:" >> ./.workflow/logs/hook.log
+        echo "$COVERAGE_INFO" >> ./.workflow/logs/hook.log
     fi
     
 else
-    echo "$(date): Test command failed with exit code $LAST_EXIT_CODE" >> ./.claude_workflow/logs/hook.log
+    echo "$(date): Test command failed with exit code $LAST_EXIT_CODE" >> ./.workflow/logs/hook.log
     
     # Try to identify the current task context
-    CURRENT_TASK=$(ls -t ./.claude_workflow/tasks/*.md 2>/dev/null | head -1 | xargs basename -s .md 2>/dev/null || echo "TASK-001")
+    CURRENT_TASK=$(ls -t ./.workflow/tasks/*.md 2>/dev/null | head -1 | xargs basename -s .md 2>/dev/null || echo "TASK-001")
     
     # Generate failure log
-    FAILURE_LOG="./.claude_workflow/logs/${CURRENT_TASK}-test-failure.log"
+    FAILURE_LOG="./.workflow/logs/${CURRENT_TASK}-test-failure.log"
     echo "Tests failed at $(date)" > "$FAILURE_LOG"
     echo "Command: $COMMAND_EXECUTED" >> "$FAILURE_LOG"
     echo "Exit code: $LAST_EXIT_CODE" >> "$FAILURE_LOG"
@@ -170,5 +170,5 @@ else
     # Generate automated feedback
     ./.claude/hooks/generate_feedback.sh "$CURRENT_TASK" "$FAILURE_LOG"
     
-    echo "$(date): Automated feedback generated for test failure" >> ./.claude_workflow/logs/hook.log
+    echo "$(date): Automated feedback generated for test failure" >> ./.workflow/logs/hook.log
 fi

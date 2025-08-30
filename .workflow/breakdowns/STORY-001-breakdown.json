@@ -1,0 +1,92 @@
+{
+  "story_id": "STORY-001",
+  "breakdown_date": "2025-08-30",
+  "total_tasks": 5,
+  "estimated_hours": 23,
+  "critical_path": ["task-001", "task-002", "task-004", "task-006"],
+  "tasks": [
+    {
+      "id": "task-001",
+      "title": "Refactor ShipTableConverter class with SOLID principles",
+      "description": "Enhance the existing ShipTableConverter class to properly extend BaseTableConverter following SOLID principles. Implement proper inheritance, encapsulation, and single responsibility patterns for parsing ships.tbl/.tbm files.",
+      "dependencies": [],
+      "agent": "refactoring-specialist",
+      "complexity": "medium",
+      "files_to_modify": ["data_converter/converters/ship_table_converter.py", "data_converter/converters/base_table_converter.py"],
+      "validation_criteria": [
+        "ShipTableConverter class extends BaseTableConverter with proper inheritance",
+        "SOLID principles are implemented with clear separation of concerns",
+        "Regex-based parsing methods are properly structured",
+        "Unit tests pass with >90% coverage for the refactored class"
+      ],
+      "estimated_hours": 5
+    },
+    {
+      "id": "task-002",
+      "title": "Implement comprehensive ship physics property parsing",
+      "description": "Add parsing logic for all ship physics properties including mass, density, max velocity (forward/side/back), acceleration rates, afterburner stats, and rotational physics. Ensure proper type conversion and validation.",
+      "dependencies": ["task-001"],
+      "agent": "code-analyst",
+      "complexity": "high",
+      "files_to_modify": ["data_converter/converters/ship_table_converter.py", "data_converter/models/ship_physics.py"],
+      "validation_criteria": [
+        "All physics properties are correctly extracted from ships.tbl files",
+        "Type conversion is properly handled for numeric values",
+        "Afterburner stats and rotational physics are parsed accurately",
+        "Unit tests validate physics parsing with sample ship data"
+      ],
+      "estimated_hours": 6
+    },
+    {
+      "id": "task-003",
+      "title": "Implement weapon bank configuration parsing",
+      "description": "Create parsing logic for primary and secondary weapon bank configurations including weapon allocations, capacities, and firing patterns. Structure data for easy mapping to Godot resources.",
+      "dependencies": ["task-001"],
+      "agent": "code-analyst",
+      "complexity": "medium",
+      "files_to_modify": ["data_converter/converters/ship_table_converter.py", "data_converter/models/weapon_banks.py"],
+      "validation_criteria": [
+        "Primary and secondary weapon banks are properly parsed",
+        "Weapon capacities and allocations are correctly extracted",
+        "Firing pattern data is captured in structured format",
+        "Unit tests validate weapon configuration parsing"
+      ],
+      "estimated_hours": 4
+    },
+    {
+      "id": "task-004",
+      "title": "Implement asset reference extraction and mapping",
+      "description": "Extract all asset references including 3D models (POF files), cockpit models, audio assets (engine sounds, alive/dead sounds, warp sounds), visual effects (explosions, thrusters, warp animations, shockwaves), and UI assets (ship icons, overhead views, tech database assets). Create proper mapping for Godot asset integration.",
+      "dependencies": ["task-001"],
+      "agent": "asset-pipeline-specialist",
+      "complexity": "high",
+      "files_to_modify": ["data_converter/converters/ship_table_converter.py", "data_converter/models/asset_references.py"],
+      "validation_criteria": [
+        "All model references (POF files) are extracted and mapped",
+        "Audio asset references are properly captured",
+        "Visual effect references are extracted with proper categorization",
+        "UI asset references are mapped for tech database integration",
+        "Asset mapping follows Godot feature-based organization principles"
+      ],
+      "estimated_hours": 6
+    },
+    {
+      "id": "task-006",
+      "title": "Implement ShipClassGenerator and Godot .tres file generation",
+      "description": "Create ShipClassGenerator to map parsed data to Godot Resource classes with exported variables. Generate individual .tres files for each ship class following Godot feature-based organization in /features/fighters/{faction}/{ship_name}/ and /features/capital_ships/{faction}/{ship_name}/ directories.",
+      "dependencies": ["task-002", "task-003", "task-004"],
+      "agent": "godot-integration-specialist",
+      "complexity": "medium",
+      "files_to_modify": ["data_converter/resource_generators/ship_class_generator.py", "data_converter/table_converters/ship_table_converter.py"],
+      "validation_criteria": [
+        "ShipClassGenerator properly maps data to Godot Resource format",
+        "Individual .tres files are generated for each ship class",
+        "File organization follows /features/fighters/{faction}/{ship_name}/ structure",
+        "Generated resources load correctly in Godot engine",
+        "Format compliance with Godot .tres specifications is verified"
+      ],
+      "estimated_hours": 6,
+      "status": "completed"
+    }
+  ]
+}

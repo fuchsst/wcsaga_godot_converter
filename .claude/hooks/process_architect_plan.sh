@@ -9,11 +9,11 @@ set -e
 HOOK_DATA=$(cat)
 
 # Create log and task directories if they don't exist
-mkdir -p ./.claude_workflow/logs
-mkdir -p ./.claude_workflow/tasks
+mkdir -p ./.workflow/logs
+mkdir -p ./.workflow/tasks
 
 # Log that plan processing is being triggered
-echo "$(date): Plan processing triggered" >> ./.claude_workflow/logs/hook.log
+echo "$(date): Plan processing triggered" >> ./.workflow/logs/hook.log
 
 # Try to extract JSON plan from hook data
 JSON_PLAN=""
@@ -26,30 +26,30 @@ fi
 
 # Validate the JSON plan using Python's json.tool if available
 if [ -n "$JSON_PLAN" ]; then
-    echo "$(date): Found JSON plan in hook data, validating format" >> ./.claude_workflow/logs/hook.log
+    echo "$(date): Found JSON plan in hook data, validating format" >> ./.workflow/logs/hook.log
     # Use Python's built-in JSON validation
     if echo "$JSON_PLAN" | python -m json.tool > /dev/null 2>&1; then
-        echo "$(date): JSON format is valid" >> ./.claude_workflow/logs/hook.log
+        echo "$(date): JSON format is valid" >> ./.workflow/logs/hook.log
     else
-        echo "$(date): JSON format is invalid, attempting to fix" >> ./.claude_workflow/logs/hook.log
+        echo "$(date): JSON format is invalid, attempting to fix" >> ./.workflow/logs/hook.log
         # Try to fix common JSON issues
         JSON_PLAN=$(echo "$JSON_PLAN" | sed 's/\\'/\\\\"/g')
     fi
 fi
 
 if [ -n "$JSON_PLAN" ]; then
-    echo "$(date): Found JSON plan in hook data" >> ./.claude_workflow/logs/hook.log
+    echo "$(date): Found JSON plan in hook data" >> ./.workflow/logs/hook.log
     
     # Save the JSON plan to a temporary file
-    echo "$JSON_PLAN" > ./.claude_workflow/temp_plan.json
+    echo "$JSON_PLAN" > ./.workflow/temp_plan.json
     
     # Run the Python script to process the plan
-    echo "$(date): Running process_plan.py on extracted plan" >> ./.claude_workflow/logs/hook.log
-    if uv run python ./.claude/hooks/process_plan.py ./.claude_workflow/temp_plan.json; then
-        echo "$(date): Plan processing successful" >> ./.claude_workflow/logs/hook.log
+    echo "$(date): Running process_plan.py on extracted plan" >> ./.workflow/logs/hook.log
+    if uv run python ./.claude/hooks/process_plan.py ./.workflow/temp_plan.json; then
+        echo "$(date): Plan processing successful" >> ./.workflow/logs/hook.log
         
         # Extract plan entities and update project state
-        echo "$(date): Updating project state with plan entities" >> ./.claude_workflow/logs/hook.log
+        echo "$(date): Updating project state with plan entities" >> ./.workflow/logs/hook.log
         
         # Parse JSON and create hierarchical entities
         if command -v python3 &> /dev/null; then
@@ -60,7 +60,7 @@ import subprocess
 import datetime
 
 try:
-    with open('./.claude_workflow/temp_plan.json', 'r') as f:
+    with open('./.workflow/temp_plan.json', 'r') as f:
         plan = json.load(f)
     
     # Generate PRD from plan context
@@ -92,31 +92,31 @@ try:
 except Exception as e:
     print(f'Error updating project state: {e}', file=sys.stderr)
     sys.exit(1)
-" 2>>./.claude_workflow/logs/hook.log || true
+" 2>>./.workflow/logs/hook.log || true
         fi
         
         # Clean up temporary file
-        rm -f ./.claude_workflow/temp_plan.json
+        rm -f ./.workflow/temp_plan.json
     else
-        echo "$(date): Plan processing failed" >> ./.claude_workflow/logs/hook.log
+        echo "$(date): Plan processing failed" >> ./.workflow/logs/hook.log
         exit 1
     fi
 else
-    echo "$(date): No JSON plan found in hook data, running with sample plan" >> ./.claude_workflow/logs/hook.log
+    echo "$(date): No JSON plan found in hook data, running with sample plan" >> ./.workflow/logs/hook.log
     
     # Fallback to processing with sample plan if available
     if [ -f "./.claude/sample_plan.json" ]; then
         # Validate the sample plan before processing
         if python -m json.tool ./.claude/sample_plan.json > /dev/null 2>&1; then
-            echo "$(date): Sample plan JSON format is valid" >> ./.claude_workflow/logs/hook.log
+            echo "$(date): Sample plan JSON format is valid" >> ./.workflow/logs/hook.log
             uv run python ./.claude/hooks/process_plan.py ./.claude/sample_plan.json
         else
-            echo "$(date): Sample plan JSON format is invalid" >> ./.claude_workflow/logs/hook.log
+            echo "$(date): Sample plan JSON format is invalid" >> ./.workflow/logs/hook.log
             exit 1
         fi
     else
-        echo "$(date): No sample plan available" >> ./.claude_workflow/logs/hook.log
+        echo "$(date): No sample plan available" >> ./.workflow/logs/hook.log
     fi
 fi
 
-echo "$(date): Plan processing complete" >> ./.claude_workflow/logs/hook.log
+echo "$(date): Plan processing complete" >> ./.workflow/logs/hook.log

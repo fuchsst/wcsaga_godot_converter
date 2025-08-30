@@ -1,0 +1,121 @@
+{
+  "story_id": "STORY-002",
+  "breakdown_date": "2025-08-30",
+  "total_tasks": 6,
+  "estimated_hours": 24,
+  "critical_path": ["task-001", "task-002", "task-004", "task-006"],
+  "tasks": [
+    {
+      "id": "task-001",
+      "title": "Refactor WeaponTableConverter class with SOLID principles",
+      "description": "Enhance the existing WeaponTableConverter class to properly extend BaseTableConverter following SOLID principles. Implement proper inheritance, encapsulation, and single responsibility patterns for parsing weapons.tbl/.tbm files.",
+      "dependencies": [],
+      "agent": "refactoring-specialist",
+      "complexity": "medium",
+      "files_to_modify": [
+        "data_converter/table_converters/weapon_table_converter.py",
+        "data_converter/table_converters/base_converter.py"
+      ],
+      "validation_criteria": [
+        "WeaponTableConverter class extends BaseTableConverter with proper inheritance",
+        "SOLID principles are implemented with clear separation of concerns",
+        "Regex-based parsing methods are properly structured",
+        "Unit tests pass with >90% coverage for the refactored class"
+      ],
+      "estimated_hours": 4
+    },
+    {
+      "id": "task-002",
+      "title": "Implement comprehensive weapon physics and damage property parsing",
+      "description": "Add parsing logic for all weapon physics properties including damage statistics (hull, armor, shield damage factors), firing properties (rate of fire, energy consumption, heat generation), and projectile characteristics (muzzle velocity, lifetime, range). Ensure proper type conversion and validation.",
+      "dependencies": ["task-001"],
+      "agent": "code-analyst",
+      "complexity": "high",
+      "files_to_modify": [
+        "data_converter/table_converters/weapon_table_converter.py"
+      ],
+      "validation_criteria": [
+        "All damage properties are correctly extracted from weapons.tbl files",
+        "Type conversion is properly handled for numeric values",
+        "Projectile characteristics are parsed accurately",
+        "Unit tests validate physics parsing with sample weapon data"
+      ],
+      "estimated_hours": 5
+    },
+    {
+      "id": "task-003",
+      "title": "Implement weapon class categorization and targeting properties parsing",
+      "description": "Create parsing logic for weapon class categorization and targeting properties including homing types, turn times, FOV, and seeker strength. Structure data for easy mapping to Godot resources.",
+      "dependencies": ["task-001"],
+      "agent": "code-analyst",
+      "complexity": "medium",
+      "files_to_modify": [
+        "data_converter/table_converters/weapon_table_converter.py"
+      ],
+      "validation_criteria": [
+        "Weapon class categorization is properly parsed",
+        "Targeting properties are correctly extracted",
+        "Homing characteristics are captured in structured format",
+        "Unit tests validate weapon categorization parsing"
+      ],
+      "estimated_hours": 3
+    },
+    {
+      "id": "task-004",
+      "title": "Implement visual and audio asset reference extraction and mapping",
+      "description": "Extract all visual and audio asset references including projectile models, muzzle flashes, impact effects, animations, and audio assets (fire sounds, impact sounds, flyby sounds). Create proper mapping for Godot asset integration following feature-based organization principles.",
+      "dependencies": ["task-001"],
+      "agent": "asset-pipeline-specialist",
+      "complexity": "high",
+      "files_to_modify": [
+        "data_converter/table_converters/weapon_table_converter.py"
+      ],
+      "validation_criteria": [
+        "All visual effect references are extracted and mapped",
+        "Audio asset references are properly captured",
+        "Projectile model references are extracted with proper categorization",
+        "Asset mapping follows Godot feature-based organization principles"
+      ],
+      "estimated_hours": 5
+    },
+    {
+      "id": "task-005",
+      "title": "Implement TBM inheritance and override system",
+      "description": "Create TBM inheritance and override system to properly merge base weapon definitions with modular TBM overrides. Handle inheritance chains and property merging with proper precedence rules.",
+      "dependencies": ["task-001", "task-002", "task-003", "task-004"],
+      "agent": "code-analyst",
+      "complexity": "high",
+      "files_to_modify": [
+        "data_converter/table_converters/weapon_table_converter.py",
+        "data_converter/utils/tbm_merger.py"
+      ],
+      "validation_criteria": [
+        "TBM inheritance correctly merges with base weapon definitions",
+        "Property precedence rules are properly implemented",
+        "Circular inheritance is detected and prevented",
+        "Unit tests validate inheritance merging logic"
+      ],
+      "estimated_hours": 4
+    },
+    {
+      "id": "task-006",
+      "title": "Implement WeaponResourceGenerator and Godot .tres file generation",
+      "description": "Create WeaponResourceGenerator to map parsed data to Godot Resource classes with exported variables. Generate individual .tres files for each weapon type following Godot feature-based organization in /features/weapons/{weapon_name}/ directories.",
+      "dependencies": ["task-002", "task-003", "task-004"],
+      "agent": "godot-integration-specialist",
+      "complexity": "medium",
+      "files_to_modify": [
+        "data_converter/resource_generators/weapon_resource_generator.py",
+        "data_converter/table_converters/weapon_table_converter.py"
+      ],
+      "validation_criteria": [
+        "WeaponResourceGenerator properly maps data to Godot Resource format",
+        "Individual .tres files are generated for each weapon type",
+        "File organization follows /features/weapons/{weapon_name}/ structure",
+        "Generated resources load correctly in Godot engine",
+        "Format compliance with Godot .tres specifications is verified"
+      ],
+      "estimated_hours": 3
+    }
+  ]
+}
