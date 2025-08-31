@@ -54,7 +54,9 @@ class FireballTableConverter(BaseTableConverter):
             if self._parse_patterns["section_end"].match(line):
                 in_section = False
                 if current_fireball:
-                    entries.append(current_fireball)
+                    # Validate the fireball entry before adding it
+                    if self.validate_entry(current_fireball):
+                        entries.append(current_fireball)
                     current_fireball = None
                 continue
 
@@ -65,7 +67,9 @@ class FireballTableConverter(BaseTableConverter):
             match = self._parse_patterns["fireball_entry"].match(line)
             if match:
                 if current_fireball:
-                    entries.append(current_fireball)
+                    # Validate the previous fireball entry before adding it
+                    if self.validate_entry(current_fireball):
+                        entries.append(current_fireball)
                 current_fireball = {"name": match.group(1).strip()}
                 continue
 
@@ -77,7 +81,9 @@ class FireballTableConverter(BaseTableConverter):
 
         # Add the last fireball if exists
         if current_fireball:
-            entries.append(current_fireball)
+            # Validate the fireball entry before adding it
+            if self.validate_entry(current_fireball):
+                entries.append(current_fireball)
 
         return entries
 
@@ -87,13 +93,16 @@ class FireballTableConverter(BaseTableConverter):
 
     def validate_entry(self, entry: Dict[str, Any]) -> bool:
         """Validate a parsed fireball entry"""
-        required_fields = ["name", "lod"]
-
-        for field in required_fields:
-            if field not in entry:
-                self.logger.warning(f"Fireball entry missing required field: {field}")
-                return False
-
+        # Check for required name field
+        if "name" not in entry or not entry["name"]:
+            self.logger.warning("Fireball entry missing required field: name")
+            return False
+        
+        # Check for required LOD field
+        if "lod" not in entry:
+            self.logger.warning(f"Fireball entry '{entry['name']}' missing required field: lod")
+            return False
+            
         # Validate LOD value
         if entry["lod"] not in [0, 1]:
             self.logger.warning(

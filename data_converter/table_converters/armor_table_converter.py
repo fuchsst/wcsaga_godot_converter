@@ -15,6 +15,11 @@ from .base_converter import BaseTableConverter, ParseState, TableType
 class ArmorTableConverter(BaseTableConverter):
     """Converts WCS armor.tbl files to Godot armor resources"""
 
+    # Metadata for auto-registration
+    TABLE_TYPE = TableType.ARMOR
+    FILENAME_PATTERNS = ["armor.tbl"]
+    CONTENT_PATTERNS = ["#Armor Type", "$Name:"]
+
     def _init_parse_patterns(self) -> Dict[str, re.Pattern]:
         return {
             "armor_start": re.compile(r"^\$Name:\s*(.+)$", re.IGNORECASE),

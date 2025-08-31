@@ -20,7 +20,10 @@ class CreditsTableConverter(BaseTableConverter):
 
     def _init_parse_patterns(self) -> Dict[str, re.Pattern]:
         """Initialize regex patterns for credits.tbl parsing"""
-        return {"xstr": re.compile(r'^XSTR\("(.+)",\s*-1\)', re.IGNORECASE)}
+        return {
+            "xstr": re.compile(r'^XSTR\("(.+)",\s*-1\)', re.IGNORECASE),
+            "section_end": re.compile(r"^#end$", re.IGNORECASE),
+        }
 
     def parse_table(self, state: ParseState) -> List[Dict[str, Any]]:
         """Parse the entire credits.tbl file."""

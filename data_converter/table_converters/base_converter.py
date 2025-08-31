@@ -277,6 +277,7 @@ class BaseTableConverter(IFileConverter, IValidatableConverter):
         # Handle multi-line comments
         if "/*" in line:
             state.in_multiline_comment = True
+            return False  # Don't skip the line that starts the comment
         if "*/" in line:
             state.in_multiline_comment = False
             return True
@@ -293,6 +294,11 @@ class BaseTableConverter(IFileConverter, IValidatableConverter):
         """Parse a value string to the expected type"""
         try:
             if expected_type == str:
+                # Strip surrounding quotes if they exist
+                if value_str.startswith('"') and value_str.endswith('"'):
+                    return value_str[1:-1]
+                elif value_str.startswith("'") and value_str.endswith("'"):
+                    return value_str[1:-1]
                 return value_str
             elif expected_type == int:
                 return int(value_str)
