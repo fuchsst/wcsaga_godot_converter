@@ -43,6 +43,7 @@ else
     echo ""
 fi
 
+echo "Read Makefile for available developmen commands"
 echo "=== MAIN CONCEPT DOCUMENTS ==="
 echo "@concepts/target_structure/directory_structure.md"
 echo "@concepts/target_structure/module_relationships.md"

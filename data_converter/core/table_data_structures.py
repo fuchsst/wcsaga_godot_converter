@@ -232,3 +232,52 @@ class IFFData:
     # Relationships
     hostile_to: List[str] = field(default_factory=list)
     friendly_to: List[str] = field(default_factory=list)
+
+
+@dataclass
+class AIProfileData:
+    """AI profile definition data structure with difficulty scaling parameters."""
+
+    name: str = ""
+    default_profile: str = ""
+    
+    # Difficulty scaling parameters (5 values for Very Easy, Easy, Medium, Hard, Insane)
+    primary_weapon_delay: List[float] = field(default_factory=lambda: [0.0] * 5)
+    secondary_weapon_delay: List[float] = field(default_factory=lambda: [0.0] * 5)
+    shield_manage_delay: List[float] = field(default_factory=lambda: [0.0] * 5)
+    predict_position_delay: List[float] = field(default_factory=lambda: [0.0] * 5)
+    in_range_time: List[float] = field(default_factory=lambda: [0.0] * 5)
+    accuracy_scale: List[float] = field(default_factory=lambda: [0.0] * 5)
+    evasion_scale: List[float] = field(default_factory=lambda: [0.0] * 5)
+    courage_scale: List[float] = field(default_factory=lambda: [0.0] * 5)
+    
+    # Boolean flags
+    use_countermeasures: List[bool] = field(default_factory=lambda: [False] * 5)
+    evade_missiles: List[bool] = field(default_factory=lambda: [False] * 5)
+    allow_player_targeting: List[bool] = field(default_factory=lambda: [False] * 5)
+    ai_aims_at_friendly: List[bool] = field(default_factory=lambda: [False] * 5)
+    respect_player_orders: List[bool] = field(default_factory=lambda: [True] * 5)
+
+
+@dataclass
+class AIBehaviorData:
+    """AI behavior definition data structure with combat parameters."""
+
+    name: str = ""
+    
+    # Combat behavior parameters (5 values for Trainee, Rookie, Hotshot, Ace, Insane)
+    accuracy: List[float] = field(default_factory=lambda: [0.0] * 5)  # 0.0 .. 1.0
+    evasion: List[float] = field(default_factory=lambda: [0.0] * 5)   # 0.0 .. 100.0
+    courage: List[float] = field(default_factory=lambda: [0.0] * 5)   # 0.0 .. 100.0
+    patience: List[float] = field(default_factory=lambda: [0.0] * 5)  # 0.0 .. 100.0
+    
+    # Additional behavior parameters
+    afterburner_use_factor: List[float] = field(default_factory=lambda: [0.0] * 5)
+    shockwave_evade_chances: List[float] = field(default_factory=lambda: [0.0] * 5)
+    get_away_chance: List[float] = field(default_factory=lambda: [0.0] * 5)
+    secondary_range_multiplier: List[float] = field(default_factory=lambda: [0.0] * 5)
+    bomb_range_multiplier: List[float] = field(default_factory=lambda: [0.0] * 5)
+    
+    # Boolean flags
+    autoscale_by_ai_class: bool = False
+    ai_countermeasure_firing_chance: List[float] = field(default_factory=lambda: [0.0] * 5)

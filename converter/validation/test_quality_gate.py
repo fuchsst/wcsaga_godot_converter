@@ -491,9 +491,9 @@ class QualityGate:
 
 
 def main():
-    """Main function for testing the TestQualityGate."""
+    """Main function for testing the QualityGate."""
     # Create test quality gate
-    quality_gate = TestQualityGate(min_coverage=85.0, min_test_count=5)
+    quality_gate = QualityGate(min_coverage=85.0, min_test_count=5)
 
     # Test with good results
     good_results = {

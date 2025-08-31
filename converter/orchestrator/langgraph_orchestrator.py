@@ -31,7 +31,7 @@ from converter.hitl.langgraph_hitl import LangGraphHITLIntegration
 from converter.refactoring.refactoring_specialist import RefactoringSpecialist
 from converter.test_generator.test_generator import TestGenerator
 from converter.utils import generate_timestamp, setup_logging
-from converter.validation.test_quality_gate import TestQualityGate
+from converter.validation.test_quality_gate import QualityGate
 from converter.validation.validation_engineer import ValidationEngineer
 
 # Configure logging
@@ -128,7 +128,7 @@ class LangGraphOrchestrator:
 
         # Initialize enhanced components
         self.graph_manager = GraphManager(self.graph_file, auto_save=True)
-        self.quality_gate = TestQualityGate(min_coverage=85.0, min_test_count=5)
+        self.quality_gate = QualityGate(min_coverage=85.0, min_test_count=5)
         self.hitl_integration = LangGraphHITLIntegration()
 
         # Configure checkpointer for state persistence
