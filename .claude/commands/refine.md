@@ -20,7 +20,7 @@ You are orchestrating feature refinement following the **AI-Orchestrated Develop
 - [ ] Analyze `$ARGUMENTS` to determine refinement scope (story/epic/system)
 - [ ] Review validation reports and identified improvement areas
 - [ ] Identify specific refinement objectives
-- [ ] Locate relevant files in `.workflow/stories/` or `.workflow/tasks/` based on scope
+- [ ] Locate relevant files in `.workflow/stories/` or `.workflow/tasks/{story_id}/` based on scope (tasks organized by story ID)
 
 ### Phase 2: Current State Assessment
 - [ ] Analyze implemented code for optimization opportunities
@@ -33,7 +33,7 @@ You are orchestrating feature refinement following the **AI-Orchestrated Develop
 - [ ] Plan optimization approaches and techniques
 - [ ] Identify risks and potential breaking changes
 - [ ] Select appropriate specialized agents for each improvement
-- [ ] Create refinement task breakdown in `.workflow/tasks/` if needed
+- [ ] Create refinement task breakdown in `.workflow/tasks/{story_id}/` if needed (organized by story ID)
 
 ### Phase 4: Iterative Improvement Execution
 - [ ] Execute planned optimizations using specialized agents

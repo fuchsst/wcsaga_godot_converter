@@ -14,7 +14,7 @@ You are orchestrating comprehensive validation following the **AI-Orchestrated D
 ## Validation Execution Checklist
 
 ### Phase 1: Context Loading & Analysis
-- [ ] Read task/story file: `.workflow/tasks/$ARGUMENTS.md` or `.workflow/stories/$ARGUMENTS.md`
+- [ ] Read task/story file: `.workflow/tasks/{story_id}/$ARGUMENTS.md` or `.workflow/stories/$ARGUMENTS.md` (tasks organized by story ID)
 - [ ] Extract validation requirements and acceptance criteria
 - [ ] Identify modified files and affected systems
 - [ ] Review implementation completeness against requirements

@@ -128,7 +128,8 @@ echo ""
 
 # Display recent task status if available
 if [ -d "./.workflow/tasks/" ]; then
-    RECENT_TASKS=$(ls -t ./.workflow/tasks/*.md 2>/dev/null | head -3 || true)
+    # Find task files in subdirectories
+    RECENT_TASKS=$(find ./.workflow/tasks/ -name "*.md" -type f 2>/dev/null | head -3 || true)
     if [ -n "$RECENT_TASKS" ]; then
         echo "=== RECENT TASKS ==="
         for task_file in $RECENT_TASKS; do

@@ -11,7 +11,7 @@ HOOK_DATA=$(cat)
 
 # Create log and task directories if they don't exist
 mkdir -p ./.workflow/logs
-mkdir -p ./.workflow/tasks
+mkdir -p ./.workflow/tasks/ANALYSIS
 
 # Log that code analysis processing is being triggered
 echo "$(date): Code analysis processing triggered with comprehensive toolchain integration" >> ./.workflow/logs/hook.log
@@ -161,7 +161,7 @@ create_analysis_tasks() {
     # Create high priority tasks
     if grep -q "High Priority Issues" "$findings_file"; then
         local task_id="ANALYSIS-$(printf "%03d" $task_count)"
-        cat > "./.workflow/tasks/${task_id}.md" << EOF
+        cat > "./.workflow/tasks/ANALYSIS/${task_id}.md" << EOF
 ---
 id: $task_id
 title: Fix High Priority Code Analysis Issues
@@ -198,7 +198,7 @@ EOF
     # Create medium priority tasks
     if grep -q "Medium Priority Issues" "$findings_file"; then
         local task_id="ANALYSIS-$(printf "%03d" $task_count)"
-        cat > "./.workflow/tasks/${task_id}.md" << EOF
+        cat > "./.workflow/tasks/ANALYSIS/${task_id}.md" << EOF
 ---
 id: $task_id
 title: Address Medium Priority Code Analysis Issues

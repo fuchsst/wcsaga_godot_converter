@@ -14,7 +14,7 @@ if [ -z "$TASK_ID" ] || [ -z "$LOG_FILE" ]; then
     exit 1
 fi
 
-TASK_FILE="./.workflow/tasks/${TASK_ID}.md"
+TASK_FILE=$(find ./.workflow/tasks -name "${TASK_ID}.md" -type f 2>/dev/null | head -1)
 
 # Check if task file exists
 if [ ! -f "$TASK_FILE" ]; then

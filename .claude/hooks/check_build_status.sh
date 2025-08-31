@@ -88,7 +88,7 @@ else
     echo "$(date): Build command failed with exit code $LAST_EXIT_CODE" >> ./.workflow/logs/hook.log
     
     # Try to identify the current task context
-    CURRENT_TASK=$(ls -t ./.workflow/tasks/*.md 2>/dev/null | head -1 | xargs basename -s .md 2>/dev/null || echo "TASK-001")
+    CURRENT_TASK=$(find ./.workflow/tasks -name "*.md" -type f 2>/dev/null | head -1 | xargs basename -s .md 2>/dev/null || echo "TASK-001")
     
     # Generate failure log
     FAILURE_LOG="./.workflow/logs/${CURRENT_TASK}-build-failure.log"

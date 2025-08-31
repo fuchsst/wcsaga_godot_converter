@@ -39,7 +39,7 @@ You are orchestrating task breakdown following the **AI-Orchestrated Development
 - [ ] Define validation criteria per task
 
 ### Phase 5: Task Documentation
-- [ ] Create task files in `.workflow/tasks/`
+- [ ] Create task files in `.workflow/tasks/{story_id}/` (organized by story ID)
 - [ ] Generate structured JSON breakdown plan
 - [ ] Update story with task references
 - [ ] Update project state with task metadata

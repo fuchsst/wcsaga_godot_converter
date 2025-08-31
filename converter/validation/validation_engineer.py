@@ -14,7 +14,7 @@ from xml.etree import ElementTree as ET
 from ..tools.qwen_code_execution_tool import QwenCodeExecutionTool
 from ..tools.qwen_code_wrapper import QwenCodeWrapper
 # Import our validation modules
-from .test_quality_gate import TestQualityGate
+from .test_quality_gate import QualityGate
 
 
 class ValidationEngineer:
@@ -39,7 +39,7 @@ class ValidationEngineer:
         self.godot_command = godot_command
         self.qwen_wrapper = QwenCodeWrapper(qwen_command)
         self.execution_tool = QwenCodeExecutionTool()
-        self.test_quality_gate = TestQualityGate(min_coverage, min_test_count)
+        self.test_quality_gate = QualityGate(min_coverage, min_test_count)
 
     def validate_gdscript_syntax(self, file_path: str) -> Dict[str, Any]:
         """

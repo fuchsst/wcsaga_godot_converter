@@ -67,7 +67,7 @@ Implemented workflow commands in `.claude/commands/`:
 - `.claude/settings.local.json` - Maintains existing permissions
 
 ### 5. Workflow Directories
-- `.workflow/tasks/` - Storage for task files
+- `.workflow/tasks/` - Storage for task files (organized in subdirectories by story ID)
 - `.workflow/logs/` - Storage for log files
 - `.workflow/prds/` - Storage for Product Requirement Documents
 - `.workflow/epics/` - Storage for Epics
@@ -84,7 +84,7 @@ Implemented workflow commands in `.claude/commands/`:
 └── settings.local.json     # Local permissions configuration
 
 .workflow/
-├── tasks/                  # Individual task files in markdown format
+├── tasks/                  # Individual task files in markdown format (organized in subdirectories by story ID)
 ├── logs/                   # Log files from validation and other processes
 ├── prds/                   # Product Requirement Documents
 ├── epics/                  # Epics

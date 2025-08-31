@@ -11,7 +11,7 @@ HOOK_DATA=$(cat)
 
 # Create log and task directories if they don't exist
 mkdir -p ./.workflow/logs
-mkdir -p ./.workflow/tasks
+mkdir -p ./.workflow/tasks/ASSETS
 
 # Log that asset pipeline processing is being triggered
 echo "$(date): Asset pipeline processing triggered" >> ./.workflow/logs/hook.log
@@ -136,7 +136,7 @@ create_placeholder_asset_tasks() {
             local task_id="ASSET-$(printf "%03d" $task_count)"
             
             # Create task file
-            cat > "./.workflow/tasks/${task_id}.md" << EOF
+            cat > "./.workflow/tasks/ASSETS/${task_id}.md" << EOF
 ---
 id: $task_id
 title: $title

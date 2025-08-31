@@ -17,7 +17,7 @@ You are orchestrating task implementation following the **AI-Orchestrated Develo
 ## Implementation Execution Checklist
 
 ### Phase 1: Task Context Loading
-- [ ] Read task file: `.workflow/tasks/$ARGUMENTS.md`
+- [ ] Read task file: `.workflow/tasks/{story_id}/$ARGUMENTS.md` (organized by story ID)
 - [ ] Update task status to 'in_progress' in frontmatter
 - [ ] Extract implementation requirements and acceptance criteria
 - [ ] Identify assigned agent and complexity level
