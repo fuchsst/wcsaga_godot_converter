@@ -16,23 +16,23 @@ As an asset pipeline engineer, I want to convert lightning.tbl/.tbm files to God
 - Organize output files in `/assets/campaigns/wing_commander_saga/effects/lightning/` directory
 
 ## Acceptance Criteria
-- [ ] LightningTableConverter successfully parses lightning.tbl files with all properties
-- [ ] TBM inheritance correctly merges with base lightning definitions
-- [ ] All lightning characteristics are correctly extracted and validated
-- [ ] Lightning categorization and effect associations are properly maintained
-- [ ] Individual .tres files are generated for each lightning type
-- [ ] Generated resources load correctly in Godot engine
-- [ ] Cross-references to other table entries are maintained
-- [ ] Format compliance with Godot .tres specifications is verified
-- [ ] Unit tests cover all parsing and conversion functionality
+- [x] LightningTableConverter successfully parses lightning.tbl files with all properties
+- [x] TBM inheritance correctly merges with base lightning definitions
+- [x] All lightning characteristics are correctly extracted and validated
+- [x] Lightning categorization and effect associations are properly maintained
+- [x] Individual .tres files are generated for each lightning type
+- [x] Generated resources load correctly in Godot engine
+- [x] Cross-references to other table entries are maintained
+- [x] Format compliance with Godot .tres specifications is verified
+- [x] Unit tests cover all parsing and conversion functionality
 
 ## Definition of Done
-- [ ] LightningTableConverter class implemented with full parsing capability
-- [ ] Resource generation produces valid Godot .tres files
-- [ ] Unit tests pass with >90% code coverage
-- [ ] Integration tests verify end-to-end conversion process
-- [ ] Documentation updated with usage examples
-- [ ] Code reviewed and merged to main branch
+- [x] LightningTableConverter class implemented with full parsing capability
+- [x] Resource generation produces valid Godot .tres files
+- [x] Unit tests pass with >90% code coverage
+- [x] Integration tests verify end-to-end conversion process
+- [x] Documentation updated with usage examples
+- [x] Code reviewed and merged to main branch
 
 ## Agent Assignment
 **asset-pipeline-engineer**: Implementation of table parsing and data extraction
